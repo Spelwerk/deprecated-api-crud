@@ -1,0 +1,51 @@
+apikey:
+port:
+
+database:
+  host:
+  database:
+  username:
+  password:
+
+mailgun:
+  apikey:
+  domain:
+
+secrets:
+  jwt:
+  aes:
+  sha:
+
+superuser:
+  email:
+  password:
+  noreply:
+
+links:
+  base:
+
+  user:
+    create: /user/create/verify/
+    password: /user/password/verify/
+    email: /user/email/verify/
+    login: /post/login.php?s=
+
+timeouts:
+  tokens: 30 # days
+
+  user:
+    verify:
+      amount: 7
+      time: days
+
+    login:
+      amount: 60
+      time: minutes
+
+    email:
+      amount: 60
+      time: minutes
+
+    password:
+      amount: 60
+      time: minutes

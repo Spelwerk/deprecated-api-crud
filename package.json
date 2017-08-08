@@ -1,0 +1,39 @@
+{
+  "name": "spelwerk-api-crud",
+  "version": "1.0.1",
+  "private": true,
+  "description": "CRUD API server for spelwerk to connect to MYSQL database and deliver all information to frontend via JSON",
+  "author": "Jonn Nilsson <jonn@spelwerk.se>",
+  "scripts": {
+    "start": "nodemon ./index.js",
+    "test": "mocha ./test/index.js"
+  },
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Spelwerk/spelwerk-api-crud.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Spelwerk/spelwerk-api-crud/issues"
+  },
+  "dependencies": {
+    "async": "^2.3.0",
+    "bcrypt": "^1.0.2",
+    "body-parser": "^1.15.2",
+    "crypto": "0.0.3",
+    "dotenv": "^4.0.0",
+    "express": "^4.14.0",
+    "jsonwebtoken": "^7.1.9",
+    "mailcomposer": "^4.0.1",
+    "mailgun-js": "^0.8.1",
+    "moment": "^2.15.0",
+    "morgan": "^1.7.0",
+    "mysql": "^2.11.1",
+    "nconf": "^0.8.4",
+    "nconf-yaml": "^1.0.2",
+    "nodejs-aes256": "^1.0.1",
+    "path": "^0.12.7",
+    "winston": "^2.2.0"
+  },
+  "license": "MIT"
+}
