@@ -28,26 +28,13 @@ function start(callback) {
         next();
     });
 
-    // Looking up user if token is set in headers
-    app.use(function(req, res, next) {
-        if(!req.headers['x-user-token']) return next();
-
-        req.user = {};
-
-        req.user.token = req.headers['x-user-token'];
-        req.user.decoded = tokens.decode(req.user.token);
-        req.user.email = req.user.decoded.email;
-
-        if(!req.user.decoded) return next('Invalid token.');
-
-        var auth = require(appRoot + '/lib/sql/auth');
-
-        auth.user(req, function(err) {
-            next(err);
-        });
-    });
-
     async.series([
+        function(callback) {
+            logger.info('[SERVER] Initializing user authorization');
+
+            // User Authorization handler
+            require('./auth')(app, callback);
+        },
         function(callback) {
             logger.info('[SERVER] Initializing enabled routes');
 
@@ -61,7 +48,7 @@ function start(callback) {
             require('./errors')(app, callback);
         }
     ], function(err) {
-
+        console.log(err);
     });
 
     logger.info('[SERVER] Listening on port: ' + nconf.get('port'));

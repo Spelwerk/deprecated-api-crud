@@ -11,7 +11,7 @@ function connect(callback) {
         pool = mysql.createPool({
             host: nconf.get('database:host'),
             database: nconf.get('database:database'),
-            user: nconf.get('database:user'),
+            user: nconf.get('database:username'),
             password: nconf.get('database:password'),
             connectionLimit: 100,
             waitForConnections: true,
