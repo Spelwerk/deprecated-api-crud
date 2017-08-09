@@ -7,11 +7,10 @@ var nconf = require('nconf'),
 var logger = require('./lib/logger');
 
 global.appRoot = path.resolve(__dirname);
+global.environment = process.env.NODE_ENV || 'development';
 
 // Load Environment variables from .env file
 require('dotenv').load();
-
-var environment = process.env.NODE_ENV || 'development';
 
 // Load configuration from file
 nconf.file({
@@ -29,12 +28,16 @@ logger.info('[APP] Starting server initialization');
 
 async.series([
     function(callback) {
+        logger.info('[APP] Initializing database configuration');
+
         var database = require('./app/initializers/database');
 
         // Initialize DB Connection
         database.connect(callback);
     },
     function(callback) {
+        logger.info('[APP] Initializing server configuration');
+
         var server = require('./app/initializers/server');
 
         // Start Server
@@ -42,8 +45,8 @@ async.series([
     }
 ],function(err) {
     if (err) {
-        logger.error('[APP] initialization failed', err);
+        logger.error('[APP] Initialization failed', err);
     } else {
-        logger.info('[APP] initialized successfully');
+        logger.info('[APP] Initialized successfully');
     }
 });

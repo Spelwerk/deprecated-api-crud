@@ -6,10 +6,6 @@ var mysql = require('mysql'),
 var pool;
 
 function connect(callback) {
-    var logger = require(appRoot + '/lib/logger');
-
-    logger.info('[DATABASE] Initializing database configuration');
-
     try {
         // Create the connection pool
         pool = mysql.createPool({

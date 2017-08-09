@@ -11,8 +11,6 @@ function start(callback) {
     var logger = require(appRoot + '/lib/logger'),
         tokens = require(appRoot + '/lib/tokens');
 
-    logger.info('[SERVER] Initializing server configuration');
-
     // Set up express
     app = express();
 
@@ -49,19 +47,21 @@ function start(callback) {
         });
     });
 
-    logger.info('[SERVER] Initializing enabled routes');
+    async.series([
+        function(callback) {
+            logger.info('[SERVER] Initializing enabled routes');
 
-    // Initialize routes
-    require('./routes')(app, appRoot + '/app/routes');
+            // Initialize routes
+            require('./routes')(app, appRoot + '/app/routes', callback);
+        },
+        function(callback) {
+            logger.info('[SERVER] Initializing error handler');
 
-    // Error handler
-    app.use(function(err, req, res, next) {
-        res.status(err.status || 500);
-        res.json({
-            message: err.message,
-            error: (app.get('env') === 'development' ? err : {})
-        });
-        next(err);
+            // Error handler
+            require('./errors')(app, callback);
+        }
+    ], function(err) {
+
     });
 
     logger.info('[SERVER] Listening on port: ' + nconf.get('port'));
