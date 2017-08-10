@@ -76,7 +76,7 @@ module.exports = function(router) {
             sequel.clone(req, res, next, tableName, req.params.assetId, adminRestriction, userContent);
         });
 
-    router.route('/:assetId/comment')
+    router.route('/:assetId/co  mment')
         .get(function(req, res, next) {
             comment.get(req, res, next, tableName, req.params.assetId);
         })

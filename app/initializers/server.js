@@ -48,7 +48,7 @@ function start(callback) {
             require('./errors')(app, callback);
         }
     ], function(err) {
-        console.log(err);
+        if(err && environment === 'development') console.error(err);
     });
 
     logger.info('[SERVER] Listening on port: ' + nconf.get('port'));

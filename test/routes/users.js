@@ -11,35 +11,43 @@ var app = require('./../app'),
 
 describe('/users', function() {
 
-    it('should return a list of users', function(done) {
-        app.get('/assets')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
+    describe('/', function() {
 
-                assert.isTrue(res.body.success);
-                assert.isString(res.body.message);
+        it('GET should return a list of users', function(done) {
+            app.get('/users')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
 
-                assert.isArray(res.body.data);
-                expect(res.body.data, 'Data array is empty').to.have.length.of.at.least(1);
+                    assert.isTrue(res.body.success);
+                    assert.isString(res.body.message);
 
-                _.each(res.body.data, function(user) {
-                    assert.isNumber(user.id);
+                    assert.isNumber(res.body.length);
+                    assert.isArray(res.body.results);
+                    assert.lengthOf(res.body.results, res.body.length);
 
-                    assert.isString(user.displayname);
-                    assert.isString(user.email);
+                    _.each(res.body.results, function(user) {
+                        assert.isNumber(user.id);
 
-                    assert.isBoolean(user.verify);
-                    assert.isBoolean(user.admin);
+                        assert.isString(user.displayname);
+                        assert.isString(user.email);
 
-                    assert.isString(user.firstname);
-                    assert.isString(user.surname);
+                        assert.isBoolean(user.verify);
+                        assert.isBoolean(user.admin);
 
-                    assert.isString(user.created);
+                        if(user.firstname) assert.isString(user.firstname);
+                        if(user.surname) assert.isString(user.surname);
+
+                        assert.isString(user.created);
+
+                        if(user.updated) assert.isString(user.updated);
+                        if(user.deleted) assert.isString(user.deleted);
+                    });
+
+                    done();
                 });
+        });
 
-                done();
-            });
     });
 
 });

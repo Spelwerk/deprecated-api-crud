@@ -74,7 +74,7 @@ module.exports = function(router) {
                 });
             },
             function(callback) {
-                user.token = tokens.encode(req, user.email);
+                user.token = tokens.encode(user.email);
 
                 callback();
             },
@@ -180,7 +180,7 @@ module.exports = function(router) {
             async.series([
                 function(callback) {
                     query('SELECT id,password FROM user WHERE email = ? AND deleted IS NULL', [insert.email], function(err, result) {
-                        if(!result[0]) return callback('Missing Email.');
+                        if(!result[0]) return callback({message: 'Missing Email'});
 
                         user.id = result[0].id;
                         user.password = result[0].password;
@@ -190,7 +190,7 @@ module.exports = function(router) {
                 },
                 function(callback) {
                     onion.decrypt(insert.password, user.password, function(err, result) {
-                        if(!result) return callback('Wrong Password.');
+                        if(!result) return callback({message: 'Wrong Password'});
 
                         callback(err);
                     });

@@ -1,3 +1,5 @@
+'use strict';
+
 var express = require('express'),
     path = require('path'),
     fs = require('fs');
@@ -5,8 +7,6 @@ var express = require('express'),
 var logger = require(appRoot + '/lib/logger');
 
 module.exports = function(app, folderName, callback) {
-    'use strict';
-
     fs.readdir(folderName, function(err, files) {
         if(err) callback(err);
 
@@ -25,7 +25,6 @@ module.exports = function(app, folderName, callback) {
                 var fileName = path.parse(file).name;
 
                 logger.info('[APP] Setting up router path for /' + fileName);
-                //console.log('[APP] Setting up router path for /' + fileName);
 
                 // Load express router
                 var router = express.Router();

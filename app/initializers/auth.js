@@ -1,3 +1,5 @@
+'use strict';
+
 var async = require('async');
 
 module.exports = function(app, callback) {
@@ -9,6 +11,7 @@ module.exports = function(app, callback) {
 
         req.user = {};
 
+        req.user.id = null;
         req.user.token = req.headers['x-user-token'];
         req.user.decoded = tokens.decode(req.user.token);
 
