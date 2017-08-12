@@ -19,7 +19,6 @@ describe('/assetgroups', function() {
     var temporaryId;
 
     function verifyGET(body) {
-
         assert.isNumber(body.length);
 
         assert.isArray(body.results);
@@ -42,37 +41,41 @@ describe('/assetgroups', function() {
         assert.isObject(body.fields);
     }
 
-    it('POST / should create a new asset group', function(done) {
-        var payload = {
-            name: hasher(20)
-        };
+    describe('SETUP', function() {
 
-        app.post('/assetgroups', payload)
-            .expect(201)
-            .end(function(err, res) {
-                if(err) return done(err);
+        it('POST / should create a new asset group', function(done) {
+            var payload = {
+                name: hasher(20)
+            };
 
-                assert.isNumber(res.body.affected);
-                assert.notEqual(res.body.affected, 0);
+            app.post('/assetgroups', payload)
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
 
-                assert.isNumber(res.body.id);
+                    assert.isNumber(res.body.affected);
+                    assert.notEqual(res.body.affected, 0);
 
-                temporaryId = res.body.id;
+                    assert.isNumber(res.body.id);
 
-                done();
-            });
-    });
+                    temporaryId = res.body.id;
 
-    it('GET / should return a list of assetgroups', function(done) {
-        app.get('/assetgroups')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
+                    done();
+                });
+        });
 
-                verifyGET(res.body);
+        it('GET / should return a list of assetgroups', function(done) {
+            app.get('/assetgroups')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
 
-                done();
-            });
+                    verifyGET(res.body);
+
+                    done();
+                });
+        });
+
     });
 
     describe('/:assetGroupId', function() {
@@ -137,17 +140,21 @@ describe('/assetgroups', function() {
 
     });
 
-    it('DELETE /:assetGroupId should update the asset deleted field', function(done) {
-        app.delete('/assetgroups/' + temporaryId)
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
+    describe('END', function() {
 
-                assert.isNumber(res.body.affected);
-                assert.notEqual(res.body.affected, 0);
+        it('DELETE /:assetGroupId should update the asset deleted field', function(done) {
+            app.delete('/assetgroups/' + temporaryId)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
 
-                done();
-            })
+                    assert.isNumber(res.body.affected);
+                    assert.notEqual(res.body.affected, 0);
+
+                    done();
+                })
+        });
+
     });
 
 });

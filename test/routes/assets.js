@@ -19,7 +19,6 @@ describe('/assets', function() {
     var temporaryId;
 
     function verifyGET(body) {
-
         assert.isNumber(body.length);
 
         assert.isArray(body.results);
@@ -48,41 +47,45 @@ describe('/assets', function() {
         assert.isObject(body.fields);
     }
 
-    it('POST / should create a new asset', function(done) {
-        var payload = {
-            name: hasher(20),
-            description: hasher(20),
-            price: 10,
-            legal: true,
-            assettype_id: 1
-        };
+    describe('SETUP', function() {
 
-        app.post('/assets', payload)
-            .expect(201)
-            .end(function(err, res) {
-                if(err) return done(err);
+        it('POST / should create a new asset', function(done) {
+            var payload = {
+                name: hasher(20),
+                description: hasher(20),
+                price: 10,
+                legal: true,
+                assettype_id: 1
+            };
 
-                assert.isNumber(res.body.affected);
-                assert.notEqual(res.body.affected, 0);
+            app.post('/assets', payload)
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
 
-                assert.isNumber(res.body.id);
+                    assert.isNumber(res.body.affected);
+                    assert.notEqual(res.body.affected, 0);
 
-                temporaryId = res.body.id;
+                    assert.isNumber(res.body.id);
 
-                done();
-            });
-    });
+                    temporaryId = res.body.id;
 
-    it('GET / should return a list of assets', function(done) {
-        app.get('/assets')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
+                    done();
+                });
+        });
 
-                verifyGET(res.body);
+        it('GET / should return a list of assets', function(done) {
+            app.get('/assets')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
 
-                done();
-            });
+                    verifyGET(res.body);
+
+                    done();
+                });
+        });
+
     });
 
     describe('/:assetId', function() {
@@ -468,7 +471,7 @@ describe('/assets', function() {
 
     });
 
-    describe('end', function() {
+    describe('END', function() {
 
         it('POST /:assetId/clone should create a copy of the asset', function(done) {
             app.post('/assets/' + temporaryId + '/clone')
@@ -483,7 +486,7 @@ describe('/assets', function() {
                 });
         });
 
-        xit('DELETE /:assetId/attributes should remove the attribute from the asset', function(done) {
+        it('DELETE /:assetId/attributes should remove the attribute from the asset', function(done) {
             app.delete('/assets/' + temporaryId + '/attributes/1')
                 .expect(200)
                 .end(function(err, res) {
@@ -495,7 +498,7 @@ describe('/assets', function() {
                 });
         });
 
-        xit('DELETE /:assetId/doctrines should remove the doctrine from the asset', function(done) {
+        it('DELETE /:assetId/doctrines should remove the doctrine from the asset', function(done) {
             app.delete('/assets/' + temporaryId + '/doctrines/1')
                 .expect(200)
                 .end(function(err, res) {
@@ -507,7 +510,7 @@ describe('/assets', function() {
                 });
         });
 
-        xit('DELETE /:assetId/expertises should remove the expertise from the asset', function(done) {
+        it('DELETE /:assetId/expertises should remove the expertise from the asset', function(done) {
             app.delete('/assets/' + temporaryId + '/expertises/1')
                 .expect(200)
                 .end(function(err, res) {
@@ -519,7 +522,7 @@ describe('/assets', function() {
                 });
         });
 
-        xit('DELETE /:assetId/skills should remove the skill from the asset', function(done) {
+        it('DELETE /:assetId/skills should remove the skill from the asset', function(done) {
             app.delete('/assets/' + temporaryId + '/skills/1')
                 .expect(200)
                 .end(function(err, res) {

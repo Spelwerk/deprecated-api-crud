@@ -30,18 +30,22 @@ exports.login = function(callback) {
         });
 };
 
-exports.get = function(path) {
+exports.get = function(path, token) {
+    token = token || adminToken;
+
     var request = supertest(base);
 
     return request
         .get(path)
         .set({
             "x-api-key": key,
-            "x-user-token": adminToken
+            "x-user-token": token
         });
 };
 
-exports.post = function(path, data) {
+exports.post = function(path, data, token) {
+    token = token || adminToken;
+
     var request = supertest(base);
 
     data = data || null;
@@ -51,11 +55,13 @@ exports.post = function(path, data) {
         .send(data)
         .set({
             "x-api-key": key,
-            "x-user-token": adminToken
+            "x-user-token": token
         });
 };
 
-exports.put = function(path, data) {
+exports.put = function(path, data, token) {
+    token = token || adminToken;
+
     var request = supertest(base);
 
     data = data || null;
@@ -65,17 +71,19 @@ exports.put = function(path, data) {
         .send(data)
         .set({
             "x-api-key": key,
-            "x-user-token": adminToken
+            "x-user-token": token
         });
 };
 
-exports.delete = function(path) {
+exports.delete = function(path, token) {
+    token = token || adminToken;
+
     var request = supertest(base);
 
     return request
         .delete(path)
         .set({
             "x-api-key": key,
-            "x-user-token": adminToken
+            "x-user-token": token
         });
 };

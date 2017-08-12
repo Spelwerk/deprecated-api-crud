@@ -19,7 +19,6 @@ describe('/assettypes', function() {
     var temporaryId;
 
     function verifyGET(body) {
-
         assert.isNumber(body.length);
 
         assert.isArray(body.results);
@@ -43,39 +42,43 @@ describe('/assettypes', function() {
         assert.isObject(body.fields);
     }
 
-    it('POST / should create a new asset type', function(done) {
-        var payload = {
-            name: hasher(20),
-            assetgroup_id: 1,
-            icon: 'http://fakeicon.com/' + hasher(20) + '.png'
-        };
+    describe('SETUP', function() {
 
-        app.post('/assettypes', payload)
-            .expect(201)
-            .end(function(err, res) {
-                if(err) return done(err);
+        it('POST / should create a new asset type', function(done) {
+            var payload = {
+                name: hasher(20),
+                assetgroup_id: 1,
+                icon: 'http://fakeicon.com/' + hasher(20) + '.png'
+            };
 
-                assert.isNumber(res.body.affected);
-                assert.notEqual(res.body.affected, 0);
+            app.post('/assettypes', payload)
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
 
-                assert.isNumber(res.body.id);
+                    assert.isNumber(res.body.affected);
+                    assert.notEqual(res.body.affected, 0);
 
-                temporaryId = res.body.id;
+                    assert.isNumber(res.body.id);
 
-                done();
-            });
-    });
+                    temporaryId = res.body.id;
 
-    it('GET / should return a list of assettypes', function(done) {
-        app.get('/assettypes')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
+                    done();
+                });
+        });
 
-                verifyGET(res.body);
+        it('GET / should return a list of assettypes', function(done) {
+            app.get('/assettypes')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
 
-                done();
-            });
+                    verifyGET(res.body);
+
+                    done();
+                });
+        });
+
     });
 
     describe('/assetTypeId', function() {
@@ -142,17 +145,21 @@ describe('/assettypes', function() {
 
     });
 
-    it('DELETE /:assetTypeId should update the asset deleted field', function(done) {
-        app.delete('/assettypes/' + temporaryId)
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
+    describe('END', function() {
 
-                assert.isNumber(res.body.affected);
-                assert.notEqual(res.body.affected, 0);
+        it('DELETE /:assetTypeId should update the asset deleted field', function(done) {
+            app.delete('/assettypes/' + temporaryId)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
 
-                done();
-            })
+                    assert.isNumber(res.body.affected);
+                    assert.notEqual(res.body.affected, 0);
+
+                    done();
+                })
+        });
+
     });
 
 });

@@ -45,8 +45,10 @@ async.series([
     }
 ],function(err) {
     if (err) {
+        console.error('[APP] Initialization failed', err);
         logger.error('[APP] Initialization failed', err);
     } else {
+        console.info('[APP] Initialized successfully');
         logger.info('[APP] Initialized successfully');
     }
 });

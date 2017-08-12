@@ -24,9 +24,9 @@ module.exports = function(app, callback) {
         async.series([
             function(callback) {
                 query('SELECT user_id AS id FROM usertoken WHERE token = ?', [req.user.token], function(err, results) {
-                    if(!results[0]) return callback({status: 404, message: 'Missing token', error: 'Token could not be found in table'});
+                    if(results.length === 0) return callback({status: 403, message: 'Missing token', error: 'Token could not be found in table'});
 
-                    req.user.id = results[0].id;
+                    req.user.id = parseInt(results[0].id);
 
                     callback(err);
                 });

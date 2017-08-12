@@ -1,4 +1,4 @@
-//require('./routes/users');
+require('./routes/users');
 
 require('./routes/assetgroups');
 require('./routes/assettypes');

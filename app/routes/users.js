@@ -55,7 +55,7 @@ module.exports = function(router) {
         user.id = userId;
         user.os = req.body.os || '';
         user.browser = req.body.browser || '';
-        user.ip = req.body.ip || '';
+        user.ip = req.body.ip || req.connection.remoteAddress;
 
         async.series([
             function(callback) {
@@ -81,6 +81,8 @@ module.exports = function(router) {
             callback(err, user.token);
         });
     }
+
+    // Basic user routes
 
     router.route('/')
         .get(function(req, res, next) {
@@ -136,7 +138,7 @@ module.exports = function(router) {
             ],function(err) {
                 if(err) return next(err);
 
-                res.status(201).send({success: true, message: '', id: user.id, token: user.token});
+                res.status(201).send({success: true, message: 'User successfully created. The verification code has been sent to the provided email.', id: user.id, token: user.token});
             });
         });
 
@@ -146,7 +148,14 @@ module.exports = function(router) {
         .get(function(req, res, next) {
             if(!req.user) return next('Forbidden');
 
-            res.status(200).send({success: true, message: '', data: req.user.select});
+            var user = {
+                id: req.user.id,
+                email: req.user.email,
+                verify: req.user.verify,
+                admin: req.user.admin
+            };
+
+            res.status(200).send({success: true, message: 'User query successful', user: user});
         });
 
     // Tokens belonging to current user
@@ -156,7 +165,7 @@ module.exports = function(router) {
             query('SELECT * FROM usertoken WHERE user_id = ?', [req.user.id], function(err, result) {
                 if(err) return next(err);
 
-                res.status(200).send({success: true, message: '', data: result});
+                res.status(200).send({success: true, message: 'Token query successful', results: result});
             });
         });
 
@@ -353,12 +362,18 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    query('UPDATE user SET password = ?, displayname = ?, firstname = ?, surname = ?, verify = 1, verify_secret = NULL, verify_timeout = NULL WHERE id = ?', [insert.encrypted, insert.displayname, insert.firstname, insert.surname, user.id], callback);
+                    query('UPDATE user SET password = ?, displayname = ?, firstname = ?, surname = ?, verify = 1, verify_secret = NULL, verify_timeout = NULL WHERE id = ?', [insert.encrypted, insert.displayname, insert.firstname, insert.surname, user.id], function(err, result) {
+                        if(err) return callback(err);
+
+                        insert.affected = result.affectedRows;
+
+                        callback();
+                    });
                 }
             ],function(err) {
                 if(err) return next(err);
 
-                res.status(200).send({success: true, message: ''});
+                res.status(200).send({success: true, message: 'User successfully verified.', affected: insert.affected});
             });
         });
 
@@ -529,30 +544,32 @@ module.exports = function(router) {
         .put(function(req, res, next) {
             var insert = {};
 
-            insert.id = req.params.userId;
+            insert.id = parseInt(req.params.userId);
             insert.displayname = req.body.displayname;
             insert.firstname = req.body.firstname;
             insert.surname = req.body.surname;
 
-            if(!req.user.token || (!req.user.admin && req.user.id !== insert.id)) return next('Forbidden.');
+            if(!req.user.token) return next({status: 403, message: 'Forbidden', error: 'User is not logged in'});
 
-            query('INSERT INTO user (displayname,firstname,surname) VALUES (?,?,?) WHERE id = ?', [insert.displayname, insert.firstname, insert.surname, insert.id], function(err) {
+            if(!req.user.admin && req.user.id !== insert.id) return next({status: 403, message: 'Forbidden', error: 'User is not administrator and may not edit other users'});
+
+            query('UPDATE user SET displayname = ?, firstname = ?, surname = ? WHERE id = ?', [insert.displayname, insert.firstname, insert.surname, insert.id], function(err, result) {
                 if(err) return next(err);
 
-                res.status(200).send({success: true, message: ''});
+                res.status(200).send({success: true, message: 'Change successful', changed: result.changedRows});
             });
         })
         .delete(function(req, res, next) {
             var insert = {};
 
-            insert.id = req.params.id;
+            insert.id = req.params.userId;
 
-            if(!req.user.admin && req.user.id !== insert.id) return next('Forbidden');
+            if(!req.user.admin && req.user.id !== insert.id) return next({status: 403, message: 'Forbidden', error: 'User is not administrator and may not remove other users'});
 
-            query('UPDATE user SET deleted = CURRENT_TIMESTAMP WHERE id = ?', [insert.id], function(err) {
+            query('DELETE FROM user WHERE id = ?', [insert.id], function(err, result) {
                 if(err) return next(err);
 
-                res.status(200).send({success: true, message: ''});
+                res.status(200).send({success: true, message: '', affected: result.affectedRows});
             });
         });
 
