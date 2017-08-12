@@ -16,7 +16,7 @@ module.exports = function(router) {
         userContent = true,
         adminRestriction = false;
 
-    var call = 'SELECT ' +
+    var sql = 'SELECT ' +
         'id, ' +
         'displayname, ' +
         'email, ' +
@@ -80,9 +80,6 @@ module.exports = function(router) {
             },
             function(callback) {
                 query('INSERT INTO usertoken (user_id,token,os,browser,ip) VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE token = VALUES (token)', [user.id, user.token, user.os, user.browser, user.ip], callback);
-            },
-            function(callback) {
-                query('UPDATE user SET login_secret = NULL, login_timeout = NULL WHERE id = ?', [user.id], callback);
             }
         ],function(err) {
             callback(err, user.token);
@@ -91,7 +88,7 @@ module.exports = function(router) {
 
     router.route('/')
         .get(function(req, res, next) {
-            call = call + ' WHERE deleted is NULL';
+            var call = sql + ' WHERE deleted is NULL';
 
             sequel.get(req, res, next, call);
         })
@@ -276,6 +273,9 @@ module.exports = function(router) {
 
                         callback(err);
                     });
+                },
+                function(callback) {
+                    query('UPDATE user SET login_secret = NULL, login_timeout = NULL WHERE id = ?', [user.id], callback);
                 }
             ],function(err) {
                 if(err) return next(err);
@@ -284,7 +284,7 @@ module.exports = function(router) {
             });
         });
 
-    // Verifying email
+    // Verifying user
 
     router.route('/verify/email')
         .post(function(req, res, next) {
@@ -526,7 +526,7 @@ module.exports = function(router) {
 
     router.route('/:userId')
         .get(function(req, res, next) {
-            call = call + ' WHERE user.id = ?';
+            var call = sql + ' WHERE user.id = ?';
 
             sequel.get(req, res, next, call, [req.params.userId]);
         })

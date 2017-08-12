@@ -11,102 +11,534 @@ var app = require('./../app'),
 
 describe('/assets', function() {
 
-    describe('/', function() {
+    before(function(done) {
+        app.login(done);
+    });
 
-        it('GET should return a list of assets', function(done) {
-            app.get('/assets')
+    var temporaryId;
+
+    function verifyGET(body) {
+
+        assert.isNumber(body.length);
+
+        assert.isArray(body.results);
+        assert.lengthOf(body.results, body.length);
+
+        if(body.length > 0) {
+            _.each(body.results, function(result) {
+                assert.isBoolean(result.canon);
+                assert.isNumber(result.popularity);
+
+                assert.isString(result.name);
+                assert.isString(result.description);
+                assert.isNumber(result.price);
+                assert.isBoolean(result.legal);
+                assert.isNumber(result.assettype_id);
+                assert.isString(result.icon);
+                assert.isNumber(result.assetgroup_id);
+                assert.isBoolean(result.equippable);
+
+                assert.isString(result.created);
+                if(result.updated) assert.isString(result.updated);
+                if(result.deleted) assert.isString(result.deleted);
+            });
+        }
+
+        assert.isObject(body.fields);
+    }
+
+    it('POST / should create a new asset', function(done) {
+        var payload = {
+            name: hasher(20),
+            description: hasher(20),
+            price: 10,
+            legal: true,
+            assettype_id: 1
+        };
+
+        app.post('/assets', payload)
+            .expect(201)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                assert.isNumber(res.body.affected);
+                assert.notEqual(res.body.affected, 0);
+
+                assert.isNumber(res.body.id);
+
+                temporaryId = res.body.id;
+
+                done();
+            });
+    });
+
+    it('GET / should return a list of assets', function(done) {
+        app.get('/assets')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                verifyGET(res.body);
+
+                done();
+            });
+    });
+
+    describe('/:assetId', function() {
+
+        it('GET /:assetId should return a list with one asset', function(done) {
+            app.get('/assets/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isTrue(res.body.success);
-                    assert.isString(res.body.message);
+                    verifyGET(res.body);
 
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-                    assert.lengthOf(res.body.results, res.body.length);
+                    done();
+                })
+        });
 
-                    assert.isObject(res.body.fields);
+        it('GET /:assetId/ownership should return ownership status of the asset if user is logged in', function(done) {
+            app.get('/assets/' + temporaryId + '/ownership')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isBoolean(res.body.ownership);
 
                     done();
                 });
         });
 
-        it('POST should create a new asset', function(done) {
+        it('POST /:assetId/clone should create a copy of the asset', function(done) {
+            app.post('/assets/' + temporaryId + '/clone')
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
+                    assert.isNumber(res.body.id);
+
+                    done();
+                });
+        });
+
+        it('PUT /:assetId should update the item with new values', function(done) {
             var payload = {
-                "name": hasher(20),
-                "description": hasher(20),
-                "price": 10,
-                "legal": 1
+                name: hasher(20),
+                description: hasher(20),
+                price: 10,
+                legal: true,
+                assettype_id: 1
             };
 
-            app.post('/assets', payload)
+            app.put('/assets/' + temporaryId, payload)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isTrue(res.body.success);
-                    assert.isString(res.body.message);
+                    assert.isNumber(res.body.changed);
+                    assert.notEqual(res.body.changed, 0);
 
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
+                    assert.isNumber(res.body.id);
+
+                    done();
+                })
+        });
+
+        it('PUT /:assetId/canon should update the asset canon field', function(done) {
+            app.put('/assets/' + temporaryId + '/canon')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.changed);
+                    assert.notEqual(res.body.changed, 0);
+
+                    assert.isNumber(res.body.id);
+
+                    done();
                 });
         });
 
-        it('DELETE should update the asset deleted field');
+    });
+
+    describe('/:assetId/comments', function() {
+
+        it('POST /:assetId/comments should create a new comment for the asset', function(done) {
+            var payload = {
+                content: hasher(20)
+            };
+
+            app.post('/assets/' + temporaryId + '/comments', payload)
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
+                    assert.isNumber(res.body.id);
+
+                    done();
+                });
+        });
+
+        it('GET /:assetId/comments should get all available comments for the asset', function(done) {
+            app.get('/assets/' + temporaryId + '/comments')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    _.each(res.body.results, function(comment) {
+                        assert.isNumber(comment.id);
+                        assert.isString(comment.content);
+
+                        assert.isNumber(comment.user_id);
+                        assert.isString(comment.displayname);
+
+                        assert.isString(comment.created);
+                        if(comment.updated) assert.isString(comment.updated);
+                        assert.isNull(comment.deleted);
+                    });
+
+                    done();
+                })
+        });
 
     });
 
-    describe('/:assetId', function() {
+    describe('/:assetId/attributes', function() {
 
-        describe('/canon', function() {
+        it('POST should add an attribute to the asset', function(done) {
+            var payload = {
+                insert_id: 1,
+                value: 10
+            };
 
-            it('PUT should update the asset canon field');
+            app.post('/assets/' + temporaryId + '/attributes', payload)
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
 
+                    assert.isNumber(res.body.affected);
+
+                    done();
+                });
         });
 
-        describe('/clone', function() {
+        it('PUT should change the attribute value for the asset', function(done) {
+            var payload = {
+                value: 8
+            };
 
-            it('POST should create a new asset with the same content as original');
+            app.put('/assets/' + temporaryId + '/attributes/1', payload)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
 
+                    assert.isNumber(res.body.changed);
+
+                    done();
+                });
         });
 
-        describe('/comment', function() {
+        it('GET should return a list of attributes', function(done) {
+            app.get('/assets/' + temporaryId + '/attributes')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
 
-            it('GET should return a list of comments for the asset');
+                    assert.isNumber(res.body.length);
+                    assert.isArray(res.body.results);
 
-            it('POST should create a comment for the asset');
+                    _.each(res.body.results, function(item) {
+                        assert.isNumber(item.asset_id);
+                        assert.isNumber(item.attribute_id);
+                        assert.isNumber(item.value);
 
+                        assert.isNumber(item.id);
+                        assert.isBoolean(item.canon);
+                        assert.isString(item.name);
+                        if(item.description) assert.isString(item.description);
+                        assert.isNumber(item.attributetype_id);
+                        assert.isString(item.icon);
+
+                        assert.isString(item.created);
+                        if(item.deleted) assert.isNumber(item.deleted);
+                        if(item.updated) assert.isNumber(item.updated);
+                    });
+
+                    done();
+                });
         });
 
-        describe('/ownership', function() {
+        it('DELETE should remove the attribute from the asset', function(done) {
+            app.delete('/assets/' + temporaryId + '/attributes/1')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
 
-            it('GET should return ownership status of the asset if user is logged in');
+                    assert.isNumber(res.body.affected);
 
-        });
-
-        describe('/revive', function() {
-
-            it('PUT should update the asset deleted field');
-
+                    done();
+                });
         });
 
     });
 
-    describe('/:assetId/:relation', function() {
+    describe('/:assetId/doctrines', function() {
 
-        describe('/attributes', function() {
+        it('POST should add an doctrine to the asset', function(done) {
+            var payload = {
+                insert_id: 1,
+                value: 10
+            };
 
-            it('GET should return a list of attributes');
+            app.post('/assets/' + temporaryId + '/doctrines', payload)
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
 
-            it('POST should add an attribute to the asset');
+                    assert.isNumber(res.body.affected);
 
-            it('PUT should change the attribute value for the asset');
-
-            it('DELETE should remove the attribute from the asset');
-
+                    done();
+                });
         });
 
+        it('PUT should change the doctrine value for the asset', function(done) {
+            var payload = {
+                value: 8
+            };
+
+            app.put('/assets/' + temporaryId + '/doctrines/1', payload)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.changed);
+
+                    done();
+                });
+        });
+
+        it('GET should return a list of doctrines', function(done) {
+            app.get('/assets/' + temporaryId + '/doctrines')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.length);
+                    assert.isArray(res.body.results);
+
+                    _.each(res.body.results, function(item) {
+                        assert.isNumber(item.asset_id);
+                        assert.isNumber(item.doctrine_id);
+                        assert.isNumber(item.value);
+
+                        assert.isNumber(item.id);
+                        assert.isBoolean(item.canon);
+                        assert.isNumber(item.popularity);
+                        assert.isString(item.name);
+                        if(item.description) assert.isString(item.description);
+                        assert.isNumber(item.manifestation_id);
+                        assert.isNumber(item.expertise_id);
+                        assert.isString(item.icon);
+
+                        assert.isString(item.created);
+                        if(item.deleted) assert.isNumber(item.deleted);
+                        if(item.updated) assert.isNumber(item.updated);
+                    });
+
+                    done();
+                });
+        });
+
+        it('DELETE should remove the doctrine from the asset', function(done) {
+            app.delete('/assets/' + temporaryId + '/doctrines/1')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
+
+                    done();
+                });
+        });
+
+    });
+
+    describe('/:assetId/expertises', function() {
+
+        it('POST should add an expertise to the asset', function(done) {
+            var payload = {
+                insert_id: 1,
+                value: 10
+            };
+
+            app.post('/assets/' + temporaryId + '/expertises', payload)
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
+
+                    done();
+                });
+        });
+
+        it('PUT should change the expertise value for the asset', function(done) {
+            var payload = {
+                value: 8
+            };
+
+            app.put('/assets/' + temporaryId + '/expertises/1', payload)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.changed);
+
+                    done();
+                });
+        });
+
+        it('GET should return a list of expertises', function(done) {
+            app.get('/assets/' + temporaryId + '/expertises')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.length);
+                    assert.isArray(res.body.results);
+
+                    _.each(res.body.results, function(item) {
+                        assert.isNumber(item.asset_id);
+                        assert.isNumber(item.expertise_id);
+                        assert.isNumber(item.value);
+
+                        assert.isNumber(item.id);
+                        assert.isBoolean(item.canon);
+                        assert.isNumber(item.popularity);
+                        assert.isString(item.name);
+                        if(item.description) assert.isString(item.description);
+                        assert.isNumber(item.skill_id);
+                        if(item.species_id) assert.isNumber(item.species_id);
+                        if(item.species_id) assert.isNumber(item.manifestation_id);
+
+                        assert.isString(item.created);
+                        if(item.deleted) assert.isNumber(item.deleted);
+                        if(item.updated) assert.isNumber(item.updated);
+                    });
+
+                    done();
+                });
+        });
+
+        it('DELETE should remove the expertise from the asset', function(done) {
+            app.delete('/assets/' + temporaryId + '/expertises/1')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
+
+                    done();
+                });
+        });
+
+    });
+
+    describe('/:assetId/skills', function() {
+
+        it('POST should add an skill to the asset', function(done) {
+            var payload = {
+                insert_id: 1,
+                value: 10
+            };
+
+            app.post('/assets/' + temporaryId + '/skills', payload)
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
+
+                    done();
+                });
+        });
+
+        it('PUT should change the skill value for the asset', function(done) {
+            var payload = {
+                value: 8
+            };
+
+            app.put('/assets/' + temporaryId + '/skills/1', payload)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.changed);
+
+                    done();
+                });
+        });
+
+        it('GET should return a list of skills', function(done) {
+            app.get('/assets/' + temporaryId + '/skills')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.length);
+                    assert.isArray(res.body.results);
+
+                    _.each(res.body.results, function(item) {
+                        assert.isNumber(item.asset_id);
+                        assert.isNumber(item.skill_id);
+                        assert.isNumber(item.value);
+
+                        assert.isNumber(item.id);
+                        assert.isBoolean(item.canon);
+                        assert.isNumber(item.popularity);
+                        assert.isBoolean(item.manifestation);
+                        assert.isString(item.name);
+                        if(item.description) assert.isString(item.description);
+                        if(item.species_id) assert.isNumber(item.species_id);
+                        assert.isString(item.icon);
+
+                        assert.isString(item.created);
+                        if(item.deleted) assert.isNumber(item.deleted);
+                        if(item.updated) assert.isNumber(item.updated);
+                    });
+
+                    done();
+                });
+        });
+
+        it('DELETE should remove the skill from the asset', function(done) {
+            app.delete('/assets/' + temporaryId + '/skills/1')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
+
+                    done();
+                });
+        });
+
+    });
+
+    it('DELETE /:assetId should update the asset deleted field', function(done) {
+        app.delete('/assets/' + temporaryId)
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                assert.isNumber(res.body.affected);
+                assert.notEqual(res.body.affected, 0);
+
+                done();
+            })
     });
 
 });

@@ -10,7 +10,7 @@ module.exports = function(router) {
         userContent = true,
         adminRestriction = false;
 
-    var call = 'SELECT ' +
+    var sql = 'SELECT ' +
         'asset.id, ' +
         'asset.canon, ' +
         'asset.popularity, ' +
@@ -19,17 +19,19 @@ module.exports = function(router) {
         'asset.price, ' +
         'asset.legal, ' +
         'asset.assettype_id, ' +
-        'assettype.name AS assettype_name, ' +
         'assettype.icon, ' +
         'assettype.assetgroup_id, ' +
-        'assetgroup.name ' +
+        'assetgroup.equippable, ' +
+        'asset.created, ' +
+        'asset.updated, ' +
+        'asset.deleted ' +
         'FROM asset ' +
         'LEFT JOIN assettype ON assettype.id = asset.assettype_id ' +
         'LEFT JOIN assetgroup ON assetgroup.id = assettype.assetgroup_id';
 
     router.route('/')
         .get(function(req, res, next) {
-            call = call + ' WHERE ' +
+            var call = sql + ' WHERE ' +
                 'asset.canon = 1 AND ' +
                 'asset.deleted IS NULL';
 
@@ -43,7 +45,7 @@ module.exports = function(router) {
 
     router.route('/type/:typeId')
         .get(function(req, res, next) {
-            call = call + ' WHERE ' +
+            var call = sql + ' WHERE ' +
                 'asset.canon = 1 AND ' +
                 'asset.assettype_id = ? AND ' +
                 'asset.deleted IS NULL';
@@ -55,7 +57,7 @@ module.exports = function(router) {
 
     router.route('/:assetId')
         .get(function(req, res, next) {
-            call = call + ' WHERE asset.id = ?';
+            var call = sql + ' WHERE asset.id = ?';
 
             sequel.get(req, res, next, call, [req.params.assetId]);
         })
@@ -76,7 +78,7 @@ module.exports = function(router) {
             sequel.clone(req, res, next, tableName, req.params.assetId, adminRestriction, userContent);
         });
 
-    router.route('/:assetId/co  mment')
+    router.route('/:assetId/comments')
         .get(function(req, res, next) {
             comment.get(req, res, next, tableName, req.params.assetId);
         })
@@ -87,15 +89,12 @@ module.exports = function(router) {
     router.route('/:assetId/ownership')
         .get(function(req, res, next) {
             ownership(req, tableName, req.params.assetId, adminRestriction, function(err) {
-                if(err) return next(err);
+                var ownership = true;
 
-                res.status(200).send({success: true, message: 'Ownership verified'});
+                if(err) ownership = false;
+
+                res.status(200).send({success: true, message: 'Ownership verified', ownership: ownership});
             })
-        });
-
-    router.route('/:assetId/revive')
-        .put(function(req, res, next) {
-            sequel.revive(req, res, next, tableName, req.params.assetId);
         });
 
     // Attribute List
@@ -107,7 +106,7 @@ module.exports = function(router) {
                 'WHERE ' +
                 'asset_has_attribute.asset_id = ?';
 
-            sequel.get(req, res, next, call, [req.params.id]);
+            sequel.get(req, res, next, call, [req.params.assetId]);
         })
         .post(function(req, res, next) {
             relation.post(req, res, next, tableName, req.params.assetId, 'attribute', req.body.insert_id, req.body.value);
@@ -130,7 +129,7 @@ module.exports = function(router) {
                 'WHERE ' +
                 'asset_has_doctrine.asset_id = ?';
 
-            sequel.get(req, res, next, call, [req.params.id]);
+            sequel.get(req, res, next, call, [req.params.assetId]);
         })
         .post(function(req, res, next) {
             relation.post(req, res, next, tableName, req.params.assetId, 'doctrine', req.body.insert_id, req.body.value);
@@ -153,7 +152,7 @@ module.exports = function(router) {
                 'WHERE ' +
                 'asset_has_expertise.asset_id = ?';
 
-            sequel.get(req, res, next, call, [req.params.id]);
+            sequel.get(req, res, next, call, [req.params.assetId]);
         })
         .post(function(req, res, next) {
             relation.post(req, res, next, tableName, req.params.assetId, 'expertise', req.body.insert_id, req.body.value);
@@ -176,7 +175,7 @@ module.exports = function(router) {
                 'WHERE ' +
                 'asset_has_skill.asset_id = ?';
 
-            sequel.get(req, res, next, call, [req.params.id]);
+            sequel.get(req, res, next, call, [req.params.assetId]);
         })
         .post(function(req, res, next) {
             relation.post(req, res, next, tableName, req.params.assetId, 'skill', req.body.insert_id, req.body.value);
