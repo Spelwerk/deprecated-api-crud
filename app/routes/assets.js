@@ -75,7 +75,14 @@ module.exports = function(router) {
 
     router.route('/:assetId/clone')
         .post(function(req, res, next) {
-            sequel.clone(req, res, next, tableName, req.params.assetId, adminRestriction, userContent);
+            var relationTables = [
+                'asset_has_attribute',
+                'asset_has_doctrine',
+                'asset_has_expertise',
+                'asset_has_skill'
+            ];
+
+            sequel.clone(req, res, next, tableName, req.params.assetId, adminRestriction, userContent, relationTables);
         });
 
     router.route('/:assetId/comments')

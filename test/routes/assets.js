@@ -111,19 +111,6 @@ describe('/assets', function() {
                 });
         });
 
-        it('POST /:assetId/clone should create a copy of the asset', function(done) {
-            app.post('/assets/' + temporaryId + '/clone')
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
-        });
-
         it('PUT /:assetId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
@@ -272,18 +259,6 @@ describe('/assets', function() {
                 });
         });
 
-        it('DELETE should remove the attribute from the asset', function(done) {
-            app.delete('/assets/' + temporaryId + '/attributes/1')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
-        });
-
     });
 
     describe('/:assetId/doctrines', function() {
@@ -348,18 +323,6 @@ describe('/assets', function() {
                         if(item.deleted) assert.isNumber(item.deleted);
                         if(item.updated) assert.isNumber(item.updated);
                     });
-
-                    done();
-                });
-        });
-
-        it('DELETE should remove the doctrine from the asset', function(done) {
-            app.delete('/assets/' + temporaryId + '/doctrines/1')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
 
                     done();
                 });
@@ -434,18 +397,6 @@ describe('/assets', function() {
                 });
         });
 
-        it('DELETE should remove the expertise from the asset', function(done) {
-            app.delete('/assets/' + temporaryId + '/expertises/1')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
-        });
-
     });
 
     describe('/:assetId/skills', function() {
@@ -515,7 +466,60 @@ describe('/assets', function() {
                 });
         });
 
-        it('DELETE should remove the skill from the asset', function(done) {
+    });
+
+    describe('end', function() {
+
+        it('POST /:assetId/clone should create a copy of the asset', function(done) {
+            app.post('/assets/' + temporaryId + '/clone')
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
+                    assert.isNumber(res.body.id);
+
+                    done();
+                });
+        });
+
+        xit('DELETE /:assetId/attributes should remove the attribute from the asset', function(done) {
+            app.delete('/assets/' + temporaryId + '/attributes/1')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
+
+                    done();
+                });
+        });
+
+        xit('DELETE /:assetId/doctrines should remove the doctrine from the asset', function(done) {
+            app.delete('/assets/' + temporaryId + '/doctrines/1')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
+
+                    done();
+                });
+        });
+
+        xit('DELETE /:assetId/expertises should remove the expertise from the asset', function(done) {
+            app.delete('/assets/' + temporaryId + '/expertises/1')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
+
+                    done();
+                });
+        });
+
+        xit('DELETE /:assetId/skills should remove the skill from the asset', function(done) {
             app.delete('/assets/' + temporaryId + '/skills/1')
                 .expect(200)
                 .end(function(err, res) {
@@ -527,19 +531,19 @@ describe('/assets', function() {
                 });
         });
 
-    });
+        it('DELETE /:assetId should update the asset deleted field', function(done) {
+            app.delete('/assets/' + temporaryId)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
 
-    it('DELETE /:assetId should update the asset deleted field', function(done) {
-        app.delete('/assets/' + temporaryId)
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
+                    assert.isNumber(res.body.affected);
+                    assert.notEqual(res.body.affected, 0);
 
-                assert.isNumber(res.body.affected);
-                assert.notEqual(res.body.affected, 0);
+                    done();
+                })
+        });
 
-                done();
-            })
     });
 
 });

@@ -12,10 +12,6 @@ var query = require('./../../lib/sql/query'),
     tokens = require('./../../lib/tokens');
 
 module.exports = function(router) {
-    var tableName = '',
-        userContent = true,
-        adminRestriction = false;
-
     var sql = 'SELECT ' +
         'id, ' +
         'displayname, ' +
