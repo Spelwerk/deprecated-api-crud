@@ -1,6 +1,7 @@
 var async = require('async'),
     _ = require('underscore'),
-    chai = require('chai');
+    chai = require('chai'),
+    validator = require('validator');
 
 var should = chai.should(),
     assert = chai.assert,
@@ -25,17 +26,17 @@ describe('/assettypes', function() {
         assert.lengthOf(body.results, body.length);
 
         if(body.length > 0) {
-            _.each(body.results, function(result) {
-                assert.isBoolean(result.canon);
-                assert.isNumber(result.popularity);
+            _.each(body.results, function(item) {
+                assert.isBoolean(item.canon);
+                assert.isNumber(item.popularity);
 
-                assert.isString(result.name);
-                assert.isNumber(result.assetgroup_id);
-                assert.isString(result.icon);
+                assert.isString(item.name);
+                assert.isNumber(item.assetgroup_id);
+                if(item.icon) assert.equal(validator.isURL(item.icon), true);
 
-                assert.isString(result.created);
-                if(result.updated) assert.isString(result.updated);
-                if(result.deleted) assert.isString(result.deleted);
+                assert.isString(item.created);
+                if(item.updated) assert.isString(item.updated);
+                if(item.deleted) assert.isString(item.deleted);
             });
         }
 
@@ -46,7 +47,7 @@ describe('/assettypes', function() {
         var payload = {
             name: hasher(20),
             assetgroup_id: 1,
-            icon: hasher(20)
+            icon: 'http://fakeicon.com/' + hasher(20) + '.png'
         };
 
         app.post('/assettypes', payload)
@@ -107,7 +108,7 @@ describe('/assettypes', function() {
             var payload = {
                 name: hasher(20),
                 assetgroup_id: 1,
-                icon: hasher(20)
+                icon: 'http://fakeicon.com/' + hasher(20) + '.png'
             };
 
             app.put('/assettypes/' + temporaryId, payload)

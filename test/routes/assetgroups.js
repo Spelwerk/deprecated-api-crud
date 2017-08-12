@@ -1,6 +1,7 @@
 var async = require('async'),
     _ = require('underscore'),
-    chai = require('chai');
+    chai = require('chai'),
+    validator = require('validator');
 
 var should = chai.should(),
     assert = chai.assert,

@@ -1,6 +1,7 @@
 var async = require('async'),
     _ = require('underscore'),
-    chai = require('chai');
+    chai = require('chai'),
+    validator = require('validator');
 
 var should = chai.should(),
     assert = chai.assert,
@@ -25,22 +26,22 @@ describe('/assets', function() {
         assert.lengthOf(body.results, body.length);
 
         if(body.length > 0) {
-            _.each(body.results, function(result) {
-                assert.isBoolean(result.canon);
-                assert.isNumber(result.popularity);
+            _.each(body.results, function(item) {
+                assert.isBoolean(item.canon);
+                assert.isNumber(item.popularity);
 
-                assert.isString(result.name);
-                assert.isString(result.description);
-                assert.isNumber(result.price);
-                assert.isBoolean(result.legal);
-                assert.isNumber(result.assettype_id);
-                assert.isString(result.icon);
-                assert.isNumber(result.assetgroup_id);
-                assert.isBoolean(result.equippable);
+                assert.isString(item.name);
+                assert.isString(item.description);
+                assert.isNumber(item.price);
+                assert.isBoolean(item.legal);
+                assert.isNumber(item.assettype_id);
+                if(item.icon) assert.equal(validator.isURL(item.icon), true);
+                assert.isNumber(item.assetgroup_id);
+                assert.isBoolean(item.equippable);
 
-                assert.isString(result.created);
-                if(result.updated) assert.isString(result.updated);
-                if(result.deleted) assert.isString(result.deleted);
+                assert.isString(item.created);
+                if(item.updated) assert.isString(item.updated);
+                if(item.deleted) assert.isString(item.deleted);
             });
         }
 
@@ -260,7 +261,7 @@ describe('/assets', function() {
                         assert.isString(item.name);
                         if(item.description) assert.isString(item.description);
                         assert.isNumber(item.attributetype_id);
-                        assert.isString(item.icon);
+                        if(item.icon) assert.equal(validator.isURL(item.icon), true);
 
                         assert.isString(item.created);
                         if(item.deleted) assert.isNumber(item.deleted);
@@ -341,7 +342,7 @@ describe('/assets', function() {
                         if(item.description) assert.isString(item.description);
                         assert.isNumber(item.manifestation_id);
                         assert.isNumber(item.expertise_id);
-                        assert.isString(item.icon);
+                        if(item.icon) assert.equal(validator.isURL(item.icon), true);
 
                         assert.isString(item.created);
                         if(item.deleted) assert.isNumber(item.deleted);
@@ -503,7 +504,7 @@ describe('/assets', function() {
                         assert.isString(item.name);
                         if(item.description) assert.isString(item.description);
                         if(item.species_id) assert.isNumber(item.species_id);
-                        assert.isString(item.icon);
+                        if(item.icon) assert.equal(validator.isURL(item.icon), true);
 
                         assert.isString(item.created);
                         if(item.deleted) assert.isNumber(item.deleted);
