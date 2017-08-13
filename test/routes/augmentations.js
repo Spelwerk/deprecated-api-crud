@@ -10,7 +10,7 @@ var should = chai.should(),
 var app = require('./../app'),
     hasher = require('./../../lib/hasher');
 
-describe('/assets', function() {
+describe('/augmentations', function() {
 
     before(function(done) {
         app.login(done);
@@ -33,10 +33,7 @@ describe('/assets', function() {
                 if(item.description) assert.isString(item.description);
                 assert.isNumber(item.price);
                 assert.isBoolean(item.legal);
-                assert.isNumber(item.assettype_id);
-                if(item.icon) assert.equal(validator.isURL(item.icon), true);
-                assert.isNumber(item.assetgroup_id);
-                assert.isBoolean(item.equippable);
+                if(item.weapon_id) assert.isNumber(item.weapon_id);
 
                 assert.isString(item.created);
                 if(item.updated) assert.isString(item.updated);
@@ -49,16 +46,16 @@ describe('/assets', function() {
 
     describe('SETUP', function() {
 
-        it('POST / should create a new asset', function(done) {
+        it('POST / should create a new augmentation', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
                 price: 10,
                 legal: true,
-                assettype_id: 1
+                weapon_id: 1
             };
 
-            app.post('/assets', payload)
+            app.post('/augmentations', payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -74,8 +71,8 @@ describe('/assets', function() {
                 });
         });
 
-        it('GET / should return a list of assets', function(done) {
-            app.get('/assets')
+        it('GET / should return a list of augmentations', function(done) {
+            app.get('/augmentations')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -88,10 +85,10 @@ describe('/assets', function() {
 
     });
 
-    describe('/:assetId', function() {
+    describe('/:augmentationId', function() {
 
-        it('GET /:assetId should return a list with one asset', function(done) {
-            app.get('/assets/' + temporaryId)
+        it('GET /:augmentationId should return a list with one augmentation', function(done) {
+            app.get('/augmentations/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -102,8 +99,8 @@ describe('/assets', function() {
                 })
         });
 
-        it('GET /:assetId/ownership should return ownership status of the asset if user is logged in', function(done) {
-            app.get('/assets/' + temporaryId + '/ownership')
+        it('GET /:augmentationId/ownership should return ownership status of the augmentation if user is logged in', function(done) {
+            app.get('/augmentations/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -114,16 +111,14 @@ describe('/assets', function() {
                 });
         });
 
-        it('PUT /:assetId should update the item with new values', function(done) {
+        it('PUT /:augmentationId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
-                price: 10,
-                legal: true,
-                assettype_id: 1
+                price: 10
             };
 
-            app.put('/assets/' + temporaryId, payload)
+            app.put('/augmentations/' + temporaryId, payload)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -137,8 +132,8 @@ describe('/assets', function() {
                 })
         });
 
-        it('PUT /:assetId/canon should update the asset canon field', function(done) {
-            app.put('/assets/' + temporaryId + '/canon')
+        it('PUT /:augmentationId/canon should update the augmentation canon field', function(done) {
+            app.put('/augmentations/' + temporaryId + '/canon')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -154,14 +149,14 @@ describe('/assets', function() {
 
     });
 
-    describe('/:assetId/comments', function() {
+    describe('/:augmentationId/comments', function() {
 
-        it('POST /:assetId/comments should create a new comment for the asset', function(done) {
+        it('POST /:augmentationId/comments should create a new comment for the augmentation', function(done) {
             var payload = {
                 content: hasher(20)
             };
 
-            app.post('/assets/' + temporaryId + '/comments', payload)
+            app.post('/augmentations/' + temporaryId + '/comments', payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -173,8 +168,8 @@ describe('/assets', function() {
                 });
         });
 
-        it('GET /:assetId/comments should get all available comments for the asset', function(done) {
-            app.get('/assets/' + temporaryId + '/comments')
+        it('GET /:augmentationId/comments should get all available comments for the augmentation', function(done) {
+            app.get('/augmentations/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -197,15 +192,15 @@ describe('/assets', function() {
 
     });
 
-    describe('/:assetId/attributes', function() {
+    describe('/:augmentationId/attributes', function() {
 
-        it('POST should add an attribute to the asset', function(done) {
+        it('POST should add an attribute to the augmentation', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
             };
 
-            app.post('/assets/' + temporaryId + '/attributes', payload)
+            app.post('/augmentations/' + temporaryId + '/attributes', payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -216,12 +211,12 @@ describe('/assets', function() {
                 });
         });
 
-        it('PUT should change the attribute value for the asset', function(done) {
+        it('PUT should change the attribute value for the augmentation', function(done) {
             var payload = {
                 value: 8
             };
 
-            app.put('/assets/' + temporaryId + '/attributes/1', payload)
+            app.put('/augmentations/' + temporaryId + '/attributes/1', payload)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -233,7 +228,7 @@ describe('/assets', function() {
         });
 
         it('GET should return a list of attributes', function(done) {
-            app.get('/assets/' + temporaryId + '/attributes')
+            app.get('/augmentations/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -242,7 +237,7 @@ describe('/assets', function() {
                     assert.isArray(res.body.results);
 
                     _.each(res.body.results, function(item) {
-                        assert.isNumber(item.asset_id);
+                        assert.isNumber(item.augmentation_id);
                         assert.isNumber(item.attribute_id);
                         assert.isNumber(item.value);
 
@@ -264,15 +259,15 @@ describe('/assets', function() {
 
     });
 
-    describe('/:assetId/doctrines', function() {
+    describe('/:augmentationId/skills', function() {
 
-        it('POST should add an doctrine to the asset', function(done) {
+        it('POST should add an skill to the augmentation', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
             };
 
-            app.post('/assets/' + temporaryId + '/doctrines', payload)
+            app.post('/augmentations/' + temporaryId + '/skills', payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -283,150 +278,12 @@ describe('/assets', function() {
                 });
         });
 
-        it('PUT should change the doctrine value for the asset', function(done) {
+        it('PUT should change the skill value for the augmentation', function(done) {
             var payload = {
                 value: 8
             };
 
-            app.put('/assets/' + temporaryId + '/doctrines/1', payload)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-
-                    done();
-                });
-        });
-
-        it('GET should return a list of doctrines', function(done) {
-            app.get('/assets/' + temporaryId + '/doctrines')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        assert.isNumber(item.asset_id);
-                        assert.isNumber(item.doctrine_id);
-                        assert.isNumber(item.value);
-
-                        assert.isNumber(item.id);
-                        assert.isBoolean(item.canon);
-                        assert.isNumber(item.popularity);
-                        assert.isString(item.name);
-                        if(item.description) assert.isString(item.description);
-                        assert.isNumber(item.manifestation_id);
-                        assert.isNumber(item.expertise_id);
-                        if(item.icon) assert.equal(validator.isURL(item.icon), true);
-
-                        assert.isString(item.created);
-                        if(item.deleted) assert.isNumber(item.deleted);
-                        if(item.updated) assert.isNumber(item.updated);
-                    });
-
-                    done();
-                });
-        });
-
-    });
-
-    describe('/:assetId/expertises', function() {
-
-        it('POST should add an expertise to the asset', function(done) {
-            var payload = {
-                insert_id: 1,
-                value: 10
-            };
-
-            app.post('/assets/' + temporaryId + '/expertises', payload)
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
-        });
-
-        it('PUT should change the expertise value for the asset', function(done) {
-            var payload = {
-                value: 8
-            };
-
-            app.put('/assets/' + temporaryId + '/expertises/1', payload)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-
-                    done();
-                });
-        });
-
-        it('GET should return a list of expertises', function(done) {
-            app.get('/assets/' + temporaryId + '/expertises')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        assert.isNumber(item.asset_id);
-                        assert.isNumber(item.expertise_id);
-                        assert.isNumber(item.value);
-
-                        assert.isNumber(item.id);
-                        assert.isBoolean(item.canon);
-                        assert.isNumber(item.popularity);
-                        assert.isString(item.name);
-                        if(item.description) assert.isString(item.description);
-                        assert.isNumber(item.skill_id);
-                        if(item.species_id) assert.isNumber(item.species_id);
-                        if(item.species_id) assert.isNumber(item.manifestation_id);
-
-                        assert.isString(item.created);
-                        if(item.deleted) assert.isNumber(item.deleted);
-                        if(item.updated) assert.isNumber(item.updated);
-                    });
-
-                    done();
-                });
-        });
-
-    });
-
-    describe('/:assetId/skills', function() {
-
-        it('POST should add an skill to the asset', function(done) {
-            var payload = {
-                insert_id: 1,
-                value: 10
-            };
-
-            app.post('/assets/' + temporaryId + '/skills', payload)
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
-        });
-
-        it('PUT should change the skill value for the asset', function(done) {
-            var payload = {
-                value: 8
-            };
-
-            app.put('/assets/' + temporaryId + '/skills/1', payload)
+            app.put('/augmentations/' + temporaryId + '/skills/1', payload)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -438,7 +295,7 @@ describe('/assets', function() {
         });
 
         it('GET should return a list of skills', function(done) {
-            app.get('/assets/' + temporaryId + '/skills')
+            app.get('/augmentations/' + temporaryId + '/skills')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -447,7 +304,7 @@ describe('/assets', function() {
                     assert.isArray(res.body.results);
 
                     _.each(res.body.results, function(item) {
-                        assert.isNumber(item.asset_id);
+                        assert.isNumber(item.augmentation_id);
                         assert.isNumber(item.skill_id);
                         assert.isNumber(item.value);
 
@@ -473,8 +330,8 @@ describe('/assets', function() {
 
     describe('END', function() {
 
-        it('POST /:assetId/clone should create a copy of the asset', function(done) {
-            app.post('/assets/' + temporaryId + '/clone')
+        it('POST /:augmentationId/clone should create a copy of the augmentation', function(done) {
+            app.post('/augmentations/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -486,8 +343,8 @@ describe('/assets', function() {
                 });
         });
 
-        it('DELETE /:assetId/attributes should remove the attribute from the asset', function(done) {
-            app.delete('/assets/' + temporaryId + '/attributes/1')
+        it('DELETE /:augmentationId/attributes should remove the attribute from the augmentation', function(done) {
+            app.delete('/augmentations/' + temporaryId + '/attributes/1')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -498,8 +355,8 @@ describe('/assets', function() {
                 });
         });
 
-        it('DELETE /:assetId/doctrines should remove the doctrine from the asset', function(done) {
-            app.delete('/assets/' + temporaryId + '/doctrines/1')
+        it('DELETE /:augmentationId/skills should remove the skill from the augmentation', function(done) {
+            app.delete('/augmentations/' + temporaryId + '/skills/1')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -510,32 +367,8 @@ describe('/assets', function() {
                 });
         });
 
-        it('DELETE /:assetId/expertises should remove the expertise from the asset', function(done) {
-            app.delete('/assets/' + temporaryId + '/expertises/1')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
-        });
-
-        it('DELETE /:assetId/skills should remove the skill from the asset', function(done) {
-            app.delete('/assets/' + temporaryId + '/skills/1')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
-        });
-
-        it('DELETE /:assetId should update the asset deleted field', function(done) {
-            app.delete('/assets/' + temporaryId)
+        it('DELETE /:augmentationId should update the augmentation deleted field', function(done) {
+            app.delete('/augmentations/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);

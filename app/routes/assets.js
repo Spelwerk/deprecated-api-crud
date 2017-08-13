@@ -57,7 +57,7 @@ module.exports = function(router) {
 
     router.route('/:assetId')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE asset.id = ?';
+            var call = sql + ' WHERE asset.id = ? AND asset.deleted IS NULL';
 
             sequel.get(req, res, next, call, [req.params.assetId]);
         })
@@ -87,7 +87,7 @@ module.exports = function(router) {
         });
 
     router.route('/:assetId/ownership')
-        .get(function(req, res, next) {
+        .get(function(req, res) {
             ownership(req, tableName, req.params.assetId, adminRestriction, function(err) {
                 var ownership = true;
 

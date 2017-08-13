@@ -24,11 +24,23 @@ module.exports = function(router) {
             sequel.post(req, res, next, tableName, adminRestriction, userContent);
         });
 
+    // Group
+
+    router.route('/group/:groupId')
+        .get(function(req, res, next) {
+            var call = sql + ' WHERE ' +
+                'assettype.canon = 1 AND ' +
+                'assettype.assetgroup_id = ? AND ' +
+                'assettype.deleted IS NULL';
+
+            sequel.get(req, res, next, call, [req.params.groupId]);
+        });
+
     // Asset ID
 
     router.route('/:assetTypeId')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE assettype.id = ?';
+            var call = sql + ' WHERE assettype.id = ? AND assettype.deleted IS NULL';
 
             sequel.get(req, res, next, call, [req.params.assetTypeId]);
         })

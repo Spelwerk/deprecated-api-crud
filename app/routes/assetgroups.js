@@ -28,7 +28,7 @@ module.exports = function(router) {
 
     router.route('/:assetGroupId')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE assetgroup.id = ?';
+            var call = sql + ' WHERE assetgroup.id = ? AND assetgroup.id IS NULL';
 
             sequel.get(req, res, next, call, [req.params.assetGroupId]);
         })

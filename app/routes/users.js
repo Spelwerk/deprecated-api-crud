@@ -182,7 +182,7 @@ module.exports = function(router) {
             async.series([
                 function(callback) {
                     query('SELECT id,password FROM user WHERE email = ? AND deleted IS NULL', [insert.email], function(err, result) {
-                        if(!result[0]) return callback({message: 'Missing Email'});
+                        if(result.length === 0) return callback({message: 'Missing Email'});
 
                         user.id = result[0].id;
                         user.password = result[0].password;
@@ -537,7 +537,7 @@ module.exports = function(router) {
 
     router.route('/:userId')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE user.id = ?';
+            var call = sql + ' WHERE user.id = ? AND user.deleted IS NULL';
 
             sequel.get(req, res, next, call, [req.params.userId]);
         })
@@ -566,10 +566,17 @@ module.exports = function(router) {
 
             if(!req.user.admin && req.user.id !== insert.id) return next({status: 403, message: 'Forbidden', error: 'User is not administrator and may not remove other users'});
 
-            query('DELETE FROM user WHERE id = ?', [insert.id], function(err, result) {
+            insert.email = 'DELETED' + insert.id;
+            insert.displayname = 'DELETED' + insert.id;
+            insert.password = hasher(128);
+
+            var sql = 'UPDATE user SET email = ?, displayname = ?, password = ?, firstname = NULL, surname = NULL, deleted = CURRENT_TIMESTAMP WHERE id = ?',
+                array = [insert.email, insert.displayname, insert.password, insert.id];
+
+            query(sql, array, function(err, result) {
                 if(err) return next(err);
 
-                res.status(200).send({success: true, message: '', affected: result.affectedRows});
+                res.status(200).send({success: true, message: 'The user information has been successfully obscured.', affected: result.affectedRows});
             });
         });
 
