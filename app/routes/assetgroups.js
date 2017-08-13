@@ -24,7 +24,7 @@ module.exports = function(router) {
             sequel.post(req, res, next, tableName, adminRestriction, userContent);
         });
 
-    // Asset ID
+    // ID
 
     router.route('/:assetGroupId')
         .get(function(req, res, next) {
@@ -45,7 +45,7 @@ module.exports = function(router) {
         });
 
     router.route('/:assetGroupId/ownership')
-        .get(function(req, res, next) {
+        .get(function(req, res) {
             ownership(req, tableName, req.params.assetGroupId, adminRestriction, function(err) {
                 var ownership = true;
 

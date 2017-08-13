@@ -42,7 +42,7 @@ describe('/assettypes', function() {
         assert.isObject(body.fields);
     }
 
-    describe('SETUP', function() {
+    describe('/', function() {
 
         it('POST / should create a new asset type', function(done) {
             var payload = {

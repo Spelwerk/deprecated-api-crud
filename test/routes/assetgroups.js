@@ -25,23 +25,23 @@ describe('/assetgroups', function() {
         assert.lengthOf(body.results, body.length);
 
         if(body.length > 0) {
-            _.each(body.results, function(result) {
-                assert.isBoolean(result.canon);
-                assert.isNumber(result.popularity);
+            _.each(body.results, function(item) {
+                assert.isBoolean(item.canon);
+                assert.isNumber(item.popularity);
 
-                assert.isString(result.name);
-                assert.isBoolean(result.equippable);
+                assert.isString(item.name);
+                assert.isBoolean(item.equippable);
 
-                assert.isString(result.created);
-                if(result.updated) assert.isString(result.updated);
-                if(result.deleted) assert.isString(result.deleted);
+                assert.isString(item.created);
+                if(item.updated) assert.isString(item.updated);
+                if(item.deleted) assert.isString(item.deleted);
             });
         }
 
         assert.isObject(body.fields);
     }
 
-    describe('SETUP', function() {
+    describe('/', function() {
 
         it('POST / should create a new asset group', function(done) {
             var payload = {
@@ -64,7 +64,7 @@ describe('/assetgroups', function() {
                 });
         });
 
-        it('GET / should return a list of assetgroups', function(done) {
+        it('GET / should return a list of asset groups', function(done) {
             app.get('/assetgroups')
                 .expect(200)
                 .end(function(err, res) {
@@ -92,7 +92,7 @@ describe('/assetgroups', function() {
                 })
         });
 
-        it('GET /:assetGroupId/ownership should return ownership status of the asset if user is logged in', function(done) {
+        it('GET /:assetGroupId/ownership should return ownership status of the asset group if user is logged in', function(done) {
             app.get('/assetgroups/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -123,7 +123,7 @@ describe('/assetgroups', function() {
                 })
         });
 
-        it('PUT /:assetGroupId/canon should update the asset canon field', function(done) {
+        it('PUT /:assetGroupId/canon should update the asset group canon field', function(done) {
             app.put('/assetgroups/' + temporaryId + '/canon')
                 .expect(200)
                 .end(function(err, res) {
@@ -142,7 +142,7 @@ describe('/assetgroups', function() {
 
     describe('END', function() {
 
-        it('DELETE /:assetGroupId should update the asset deleted field', function(done) {
+        it('DELETE /:assetGroupId should update the asset group deleted field', function(done) {
             app.delete('/assetgroups/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {

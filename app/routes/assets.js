@@ -41,7 +41,7 @@ module.exports = function(router) {
             sequel.post(req, res, next, tableName, adminRestriction, userContent);
         });
 
-    // Type
+    // Types
 
     router.route('/type/:typeId')
         .get(function(req, res, next) {

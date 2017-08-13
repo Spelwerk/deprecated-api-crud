@@ -6,6 +6,11 @@ require('./routes/augmentations');
 require('./routes/bodyparts');
 require('./routes/bionics');
 
-require('./routes/protections');
+require('./routes/protection');
+require('./routes/software');
+
+require('./routes/weapongroups');
+require('./routes/weapontypes');
+require('./routes/weapons');
 
 //require('./routes/users');

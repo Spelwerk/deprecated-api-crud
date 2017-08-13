@@ -10,7 +10,7 @@ var should = chai.should(),
 var app = require('./../app'),
     hasher = require('./../../lib/hasher');
 
-describe('/protections', function() {
+describe('/protection', function() {
 
     before(function(done) {
         app.login(done);
@@ -44,7 +44,7 @@ describe('/protections', function() {
         assert.isObject(body.fields);
     }
 
-    describe('SETUP', function() {
+    describe('/', function() {
 
         it('POST / should create a new protection', function(done) {
             var payload = {
@@ -54,7 +54,7 @@ describe('/protections', function() {
                 bodypart_id: 1
             };
 
-            app.post('/protections', payload)
+            app.post('/protection', payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -70,8 +70,8 @@ describe('/protections', function() {
                 });
         });
 
-        it('GET / should return a list of protections', function(done) {
-            app.get('/protections')
+        it('GET / should return a list of protection', function(done) {
+            app.get('/protection')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -82,8 +82,8 @@ describe('/protections', function() {
                 });
         });
 
-        it('GET /bodypart/:bodyPartId should return a list of protections', function(done) {
-            app.get('/protections/bodypart/1')
+        it('GET /bodypart/:bodyPartId should return a list of protection', function(done) {
+            app.get('/protection/bodypart/1')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -99,7 +99,7 @@ describe('/protections', function() {
     describe('/:protectionId', function() {
 
         it('GET /:protectionId should return a list with one protection', function(done) {
-            app.get('/protections/' + temporaryId)
+            app.get('/protection/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -111,7 +111,7 @@ describe('/protections', function() {
         });
 
         it('GET /:protectionId/ownership should return ownership status of the protection if user is logged in', function(done) {
-            app.get('/protections/' + temporaryId + '/ownership')
+            app.get('/protection/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -129,7 +129,7 @@ describe('/protections', function() {
                 price: 10
             };
 
-            app.put('/protections/' + temporaryId, payload)
+            app.put('/protection/' + temporaryId, payload)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -144,7 +144,7 @@ describe('/protections', function() {
         });
 
         it('PUT /:protectionId/canon should update the protection canon field', function(done) {
-            app.put('/protections/' + temporaryId + '/canon')
+            app.put('/protection/' + temporaryId + '/canon')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -167,7 +167,7 @@ describe('/protections', function() {
                 content: hasher(20)
             };
 
-            app.post('/protections/' + temporaryId + '/comments', payload)
+            app.post('/protection/' + temporaryId + '/comments', payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -180,7 +180,7 @@ describe('/protections', function() {
         });
 
         it('GET /:protectionId/comments should get all available comments for the protection', function(done) {
-            app.get('/protections/' + temporaryId + '/comments')
+            app.get('/protection/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -211,7 +211,7 @@ describe('/protections', function() {
                 value: 10
             };
 
-            app.post('/protections/' + temporaryId + '/attributes', payload)
+            app.post('/protection/' + temporaryId + '/attributes', payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -227,7 +227,7 @@ describe('/protections', function() {
                 value: 8
             };
 
-            app.put('/protections/' + temporaryId + '/attributes/1', payload)
+            app.put('/protection/' + temporaryId + '/attributes/1', payload)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -239,7 +239,7 @@ describe('/protections', function() {
         });
 
         it('GET should return a list of attributes', function(done) {
-            app.get('/protections/' + temporaryId + '/attributes')
+            app.get('/protection/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -273,7 +273,7 @@ describe('/protections', function() {
     describe('END', function() {
 
         it('POST /:protectionId/clone should create a copy of the protection', function(done) {
-            app.post('/protections/' + temporaryId + '/clone')
+            app.post('/protection/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -286,7 +286,7 @@ describe('/protections', function() {
         });
 
         it('DELETE /:protectionId/attributes should remove the attribute from the protection', function(done) {
-            app.delete('/protections/' + temporaryId + '/attributes/1')
+            app.delete('/protection/' + temporaryId + '/attributes/1')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -298,7 +298,7 @@ describe('/protections', function() {
         });
 
         it('DELETE /:protectionId should update the protection deleted field', function(done) {
-            app.delete('/protections/' + temporaryId)
+            app.delete('/protection/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);

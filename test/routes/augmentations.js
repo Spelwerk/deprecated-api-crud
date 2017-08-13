@@ -44,7 +44,7 @@ describe('/augmentations', function() {
         assert.isObject(body.fields);
     }
 
-    describe('SETUP', function() {
+    describe('/', function() {
 
         it('POST / should create a new augmentation', function(done) {
             var payload = {

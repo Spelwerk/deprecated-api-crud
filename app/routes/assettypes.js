@@ -36,7 +36,7 @@ module.exports = function(router) {
             sequel.get(req, res, next, call, [req.params.groupId]);
         });
 
-    // Asset ID
+    // ID
 
     router.route('/:assetTypeId')
         .get(function(req, res, next) {
@@ -57,7 +57,7 @@ module.exports = function(router) {
         });
 
     router.route('/:assetTypeId/ownership')
-        .get(function(req, res, next) {
+        .get(function(req, res) {
             ownership(req, tableName, req.params.assetTypeId, adminRestriction, function(err) {
                 var ownership = true;
 
