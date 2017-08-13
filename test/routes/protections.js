@@ -10,7 +10,7 @@ var should = chai.should(),
 var app = require('./../app'),
     hasher = require('./../../lib/hasher');
 
-describe('/bionics', function() {
+describe('/protections', function() {
 
     before(function(done) {
         app.login(done);
@@ -32,8 +32,8 @@ describe('/bionics', function() {
                 assert.isString(item.name);
                 if(item.description) assert.isString(item.description);
                 assert.isNumber(item.price);
-                assert.isBoolean(item.legal);
                 assert.isNumber(item.bodypart_id);
+                if(item.icon) assert.equal(validator.isURL(item.icon), true);
 
                 assert.isString(item.created);
                 if(item.updated) assert.isString(item.updated);
@@ -46,16 +46,15 @@ describe('/bionics', function() {
 
     describe('SETUP', function() {
 
-        it('POST / should create a new bionic', function(done) {
+        it('POST / should create a new protection', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
                 price: 10,
-                legal: true,
                 bodypart_id: 1
             };
 
-            app.post('/bionics', payload)
+            app.post('/protections', payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -71,8 +70,8 @@ describe('/bionics', function() {
                 });
         });
 
-        it('GET / should return a list of bionics', function(done) {
-            app.get('/bionics')
+        it('GET / should return a list of protections', function(done) {
+            app.get('/protections')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -83,8 +82,8 @@ describe('/bionics', function() {
                 });
         });
 
-        it('GET /bodypart/:bodyPartId should return a list of bionics', function(done) {
-            app.get('/bionics/bodypart/1')
+        it('GET /bodypart/:bodyPartId should return a list of protections', function(done) {
+            app.get('/protections/bodypart/1')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -97,10 +96,10 @@ describe('/bionics', function() {
 
     });
 
-    describe('/:bionicId', function() {
+    describe('/:protectionId', function() {
 
-        it('GET /:bionicId should return a list with one bionic', function(done) {
-            app.get('/bionics/' + temporaryId)
+        it('GET /:protectionId should return a list with one protection', function(done) {
+            app.get('/protections/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -111,8 +110,8 @@ describe('/bionics', function() {
                 })
         });
 
-        it('GET /:bionicId/ownership should return ownership status of the bionic if user is logged in', function(done) {
-            app.get('/bionics/' + temporaryId + '/ownership')
+        it('GET /:protectionId/ownership should return ownership status of the protection if user is logged in', function(done) {
+            app.get('/protections/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -123,14 +122,14 @@ describe('/bionics', function() {
                 });
         });
 
-        it('PUT /:bionicId should update the item with new values', function(done) {
+        it('PUT /:protectionId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
                 price: 10
             };
 
-            app.put('/bionics/' + temporaryId, payload)
+            app.put('/protections/' + temporaryId, payload)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -144,8 +143,8 @@ describe('/bionics', function() {
                 })
         });
 
-        it('PUT /:bionicId/canon should update the bionic canon field', function(done) {
-            app.put('/bionics/' + temporaryId + '/canon')
+        it('PUT /:protectionId/canon should update the protection canon field', function(done) {
+            app.put('/protections/' + temporaryId + '/canon')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -161,14 +160,14 @@ describe('/bionics', function() {
 
     });
 
-    describe('/:bionicId/comments', function() {
+    describe('/:protectionId/comments', function() {
 
-        it('POST /:bionicId/comments should create a new comment for the bionic', function(done) {
+        it('POST /:protectionId/comments should create a new comment for the protection', function(done) {
             var payload = {
                 content: hasher(20)
             };
 
-            app.post('/bionics/' + temporaryId + '/comments', payload)
+            app.post('/protections/' + temporaryId + '/comments', payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -180,8 +179,8 @@ describe('/bionics', function() {
                 });
         });
 
-        it('GET /:bionicId/comments should get all available comments for the bionic', function(done) {
-            app.get('/bionics/' + temporaryId + '/comments')
+        it('GET /:protectionId/comments should get all available comments for the protection', function(done) {
+            app.get('/protections/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -204,15 +203,15 @@ describe('/bionics', function() {
 
     });
 
-    describe('/:bionicId/attributes', function() {
+    describe('/:protectionId/attributes', function() {
 
-        it('POST should add an attribute to the bionic', function(done) {
+        it('POST should add an attribute to the protection', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
             };
 
-            app.post('/bionics/' + temporaryId + '/attributes', payload)
+            app.post('/protections/' + temporaryId + '/attributes', payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -223,12 +222,12 @@ describe('/bionics', function() {
                 });
         });
 
-        it('PUT should change the attribute value for the bionic', function(done) {
+        it('PUT should change the attribute value for the protection', function(done) {
             var payload = {
                 value: 8
             };
 
-            app.put('/bionics/' + temporaryId + '/attributes/1', payload)
+            app.put('/protections/' + temporaryId + '/attributes/1', payload)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -240,7 +239,7 @@ describe('/bionics', function() {
         });
 
         it('GET should return a list of attributes', function(done) {
-            app.get('/bionics/' + temporaryId + '/attributes')
+            app.get('/protections/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -249,7 +248,7 @@ describe('/bionics', function() {
                     assert.isArray(res.body.results);
 
                     _.each(res.body.results, function(item) {
-                        assert.isNumber(item.bionic_id);
+                        assert.isNumber(item.protection_id);
                         assert.isNumber(item.attribute_id);
                         assert.isNumber(item.value);
 
@@ -271,61 +270,10 @@ describe('/bionics', function() {
 
     });
 
-    describe('/:bionicId/augmentations', function() {
-
-        it('POST should add an augmentation to the bionic', function(done) {
-            var payload = {
-                insert_id: 1
-            };
-
-            app.post('/bionics/' + temporaryId + '/augmentations', payload)
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
-        });
-
-        it('GET should return a list of augmentations', function(done) {
-            app.get('/bionics/' + temporaryId + '/augmentations')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        assert.isNumber(item.bionic_id);
-                        assert.isNumber(item.augmentation_id);
-
-                        assert.isNumber(item.id);
-                        assert.isBoolean(item.canon);
-                        assert.isNumber(item.popularity);
-                        assert.isString(item.name);
-                        if(item.description) assert.isString(item.description);
-                        assert.isNumber(item.price);
-                        assert.isBoolean(item.legal);
-                        if(item.weapon_id) assert.isNumber(item.weapon_id);
-
-                        assert.isString(item.created);
-                        if(item.deleted) assert.isNumber(item.deleted);
-                        if(item.updated) assert.isNumber(item.updated);
-                    });
-
-                    done();
-                });
-        });
-
-    });
-
     describe('END', function() {
 
-        it('POST /:bionicId/clone should create a copy of the bionic', function(done) {
-            app.post('/bionics/' + temporaryId + '/clone')
+        it('POST /:protectionId/clone should create a copy of the protection', function(done) {
+            app.post('/protections/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -337,8 +285,8 @@ describe('/bionics', function() {
                 });
         });
 
-        it('DELETE /:bionicId/attributes should remove the attribute from the bionic', function(done) {
-            app.delete('/bionics/' + temporaryId + '/attributes/1')
+        it('DELETE /:protectionId/attributes should remove the attribute from the protection', function(done) {
+            app.delete('/protections/' + temporaryId + '/attributes/1')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -349,20 +297,8 @@ describe('/bionics', function() {
                 });
         });
 
-        it('DELETE /:bionicId/augmentations should remove the augmentation from the bionic', function(done) {
-            app.delete('/bionics/' + temporaryId + '/augmentations/1')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
-        });
-
-        it('DELETE /:bionicId should update the bionic deleted field', function(done) {
-            app.delete('/bionics/' + temporaryId)
+        it('DELETE /:protectionId should update the protection deleted field', function(done) {
+            app.delete('/protections/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);

@@ -36,7 +36,7 @@ module.exports = function(router) {
             sequel.get(req, res, next, call, [req.params.bodyPartId]);
         });
 
-    // Bionic ID
+    // ID
 
     router.route('/:bionicId')
         .get(function(req, res, next) {

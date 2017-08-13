@@ -86,6 +86,18 @@ describe('/assets', function() {
                 });
         });
 
+        it('GET /type/:typeId should return a list of assets', function(done) {
+            app.get('/assets/type/1')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyGET(res.body);
+
+                    done();
+                });
+        });
+
     });
 
     describe('/:assetId', function() {

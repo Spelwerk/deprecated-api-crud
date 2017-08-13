@@ -10,7 +10,7 @@ var should = chai.should(),
 var app = require('./../app'),
     hasher = require('./../../lib/hasher');
 
-describe('/assettypes', function() {
+describe('/bodyparts', function() {
 
     before(function(done) {
         app.login(done);
@@ -26,12 +26,8 @@ describe('/assettypes', function() {
 
         if(body.length > 0) {
             _.each(body.results, function(item) {
-                assert.isBoolean(item.canon);
-                assert.isNumber(item.popularity);
-
                 assert.isString(item.name);
-                assert.isNumber(item.assetgroup_id);
-                if(item.icon) assert.equal(validator.isURL(item.icon), true);
+                if(item.description) assert.isString(item.description);
 
                 assert.isString(item.created);
                 if(item.updated) assert.isString(item.updated);
@@ -44,14 +40,13 @@ describe('/assettypes', function() {
 
     describe('SETUP', function() {
 
-        it('POST / should create a new asset type', function(done) {
+        it('POST / should create a new bodypart', function(done) {
             var payload = {
                 name: hasher(20),
-                assetgroup_id: 1,
-                icon: 'http://fakeicon.com/' + hasher(20) + '.png'
+                description: hasher(20)
             };
 
-            app.post('/assettypes', payload)
+            app.post('/bodyparts', payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -67,20 +62,8 @@ describe('/assettypes', function() {
                 });
         });
 
-        it('GET / should return a list of assettypes', function(done) {
-            app.get('/assettypes')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyGET(res.body);
-
-                    done();
-                });
-        });
-
-        it('GET /group/:assetGroupId should return a list of assettypes', function(done) {
-            app.get('/assettypes/1')
+        it('GET / should return a list of bodyparts', function(done) {
+            app.get('/bodyparts')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -93,10 +76,10 @@ describe('/assettypes', function() {
 
     });
 
-    describe('/assetTypeId', function() {
+    describe('/:bodyPartId', function() {
 
-        it('GET /:assetTypeId should return a list with one asset type', function(done) {
-            app.get('/assettypes/' + temporaryId)
+        it('GET /:bodyPartId should return a list with one bodypart', function(done) {
+            app.get('/bodyparts/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -107,8 +90,8 @@ describe('/assettypes', function() {
                 })
         });
 
-        it('GET /:assetTypeId/ownership should return ownership status of the asset if user is logged in', function(done) {
-            app.get('/assettypes/' + temporaryId + '/ownership')
+        it('GET /:bodyPartId/ownership should return ownership status of the bodypart if user is logged in', function(done) {
+            app.get('/bodyparts/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -119,14 +102,13 @@ describe('/assettypes', function() {
                 });
         });
 
-        it('PUT /:assetTypeId should update the item with new values', function(done) {
+        it('PUT /:bodyPartId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
-                assetgroup_id: 1,
-                icon: 'http://fakeicon.com/' + hasher(20) + '.png'
+                description: hasher(20)
             };
 
-            app.put('/assettypes/' + temporaryId, payload)
+            app.put('/bodyparts/' + temporaryId, payload)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -140,27 +122,25 @@ describe('/assettypes', function() {
                 })
         });
 
-        it('PUT /:assetTypeId/canon should update the asset canon field', function(done) {
-            app.put('/assettypes/' + temporaryId + '/canon')
-                .expect(200)
+    });
+
+    describe('END', function() {
+
+        it('POST /:bodyPartId/clone should create a copy of the bodypart', function(done) {
+            app.post('/bodyparts/' + temporaryId + '/clone')
+                .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
+                    assert.isNumber(res.body.affected);
                     assert.isNumber(res.body.id);
 
                     done();
                 });
         });
 
-    });
-
-    describe('END', function() {
-
-        it('DELETE /:assetTypeId should update the asset deleted field', function(done) {
-            app.delete('/assettypes/' + temporaryId)
+        it('DELETE /:bodyPartId should update the bodypart deleted field', function(done) {
+            app.delete('/bodyparts/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);

@@ -24,7 +24,7 @@ module.exports = function(router) {
             sequel.post(req, res, next, tableName, adminRestriction, userContent);
         });
 
-    // Augmentation ID
+    // ID
 
     router.route('/:augmentationId')
         .get(function(req, res, next) {

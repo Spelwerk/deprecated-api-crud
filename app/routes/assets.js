@@ -53,7 +53,7 @@ module.exports = function(router) {
             sequel.get(req, res, next, call, [req.params.typeId]);
         });
 
-    // Asset ID
+    // ID
 
     router.route('/:assetId')
         .get(function(req, res, next) {
