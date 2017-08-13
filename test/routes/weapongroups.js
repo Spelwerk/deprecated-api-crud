@@ -32,14 +32,6 @@ describe('/weapongroups', function() {
                 assert.isString(item.name);
                 if(item.description) assert.isString(item.description);
 
-                assert.isNumber(item.damage_dice);
-                assert.isNumber(item.critical_dice);
-                assert.isNumber(item.hand);
-                assert.isNumber(item.initiative);
-                assert.isNumber(item.hit);
-                assert.isNumber(item.distance);
-                assert.isNumber(item.weapongroup_id);
-                
                 assert.isBoolean(item.special);
                 assert.isNumber(item.skill_id);
                 assert.isNumber(item.expertise_id);
