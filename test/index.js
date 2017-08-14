@@ -14,4 +14,6 @@ require('./routes/weapontypes');
 require('./routes/weapons');
 require('./routes/weaponmods');
 
+require('./routes/attributes');
+
 //require('./routes/users');

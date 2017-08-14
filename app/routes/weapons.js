@@ -98,9 +98,7 @@ module.exports = function(router) {
 
     router.route('/:weaponId')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE ' +
-                'weapon.id = ? AND ' +
-                'weapon.deleted IS NULL';
+            var call = sql + ' WHERE weapon.id = ? AND weapon.deleted IS NULL';
 
             sequel.get(req, res, next, call, [req.params.weaponId]);
         })
