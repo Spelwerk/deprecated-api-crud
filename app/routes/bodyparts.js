@@ -8,7 +8,8 @@ module.exports = function(router) {
 
     var tableName = 'bodypart',
         userContent = false,
-        adminRestriction = true;
+        adminRestriction = true,
+        useUpdateColumn = true;
 
     var sql = 'SELECT * FROM bodypart';
 
@@ -32,7 +33,7 @@ module.exports = function(router) {
             sequel.get(req, res, next, call, [req.params.bodyPartId]);
         })
         .put(function(req, res, next) {
-            sequel.put(req, res, next, tableName, req.params.bodyPartId, adminRestriction);
+            sequel.put(req, res, next, tableName, req.params.bodyPartId, adminRestriction, useUpdateColumn);
         })
         .delete(function(req, res, next) {
             sequel.delete(req, res, next, tableName, req.params.bodyPartId, adminRestriction);

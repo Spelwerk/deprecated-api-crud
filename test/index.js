@@ -12,5 +12,6 @@ require('./routes/software');
 require('./routes/weapongroups');
 require('./routes/weapontypes');
 require('./routes/weapons');
+require('./routes/weaponmods');
 
 //require('./routes/users');

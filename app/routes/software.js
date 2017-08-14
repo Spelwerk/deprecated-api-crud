@@ -8,7 +8,8 @@ module.exports = function(router) {
 
     var tableName = 'software',
         userContent = true,
-        adminRestriction = false;
+        adminRestriction = false,
+        useUpdateColumn = true;
 
     var sql = 'SELECT * FROM software';
 
@@ -33,7 +34,7 @@ module.exports = function(router) {
             sequel.get(req, res, next, call, [req.params.softwareId]);
         })
         .put(function(req, res, next) {
-            sequel.put(req, res, next, tableName, req.params.softwareId, adminRestriction);
+            sequel.put(req, res, next, tableName, req.params.softwareId, adminRestriction, useUpdateColumn);
         })
         .delete(function(req, res, next) {
             sequel.delete(req, res, next, tableName, req.params.softwareId, adminRestriction);
@@ -41,7 +42,7 @@ module.exports = function(router) {
 
     router.route('/:softwareId/canon')
         .put(function(req, res, next) {
-            sequel.canon(req, res, next, tableName, req.params.softwareId);
+            sequel.canon(req, res, next, tableName, req.params.softwareId, useUpdateColumn);
         });
 
     router.route('/:softwareId/clone')

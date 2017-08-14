@@ -11,7 +11,8 @@ module.exports = function(router) {
 
     var tableName = 'weapongroup',
         userContent = true,
-        adminRestriction = false;
+        adminRestriction = false,
+        useUpdateColumn = true;
 
     var sql = 'SELECT * FROM weapongroup';
 
@@ -117,7 +118,7 @@ module.exports = function(router) {
             sequel.get(req, res, next, call, [req.params.weaponGroupId]);
         })
         .put(function(req, res, next) {
-            sequel.put(req, res, next, tableName, req.params.weaponGroupId, adminRestriction);
+            sequel.put(req, res, next, tableName, req.params.weaponGroupId, adminRestriction, useUpdateColumn);
         })
         .delete(function(req, res, next) {
             sequel.delete(req, res, next, tableName, req.params.weaponGroupId, adminRestriction);
@@ -125,7 +126,7 @@ module.exports = function(router) {
 
     router.route('/:weaponGroupId/canon')
         .put(function(req, res, next) {
-            sequel.canon(req, res, next, tableName, req.params.weaponGroupId);
+            sequel.canon(req, res, next, tableName, req.params.weaponGroupId, useUpdateColumn);
         });
 
     router.route('/:weaponGroupId/comments')

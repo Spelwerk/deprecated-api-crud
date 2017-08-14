@@ -8,7 +8,8 @@ module.exports = function(router) {
 
     var tableName = 'asset',
         userContent = true,
-        adminRestriction = false;
+        adminRestriction = false,
+        useUpdateColumn = true;
 
     var sql = 'SELECT ' +
         'asset.id, ' +
@@ -62,7 +63,7 @@ module.exports = function(router) {
             sequel.get(req, res, next, call, [req.params.assetId]);
         })
         .put(function(req, res, next) {
-            sequel.put(req, res, next, tableName, req.params.assetId, adminRestriction);
+            sequel.put(req, res, next, tableName, req.params.assetId, adminRestriction, useUpdateColumn);
         })
         .delete(function(req, res, next) {
             sequel.delete(req, res, next, tableName, req.params.assetId, adminRestriction);
@@ -70,7 +71,7 @@ module.exports = function(router) {
 
     router.route('/:assetId/canon')
         .put(function(req, res, next) {
-            sequel.canon(req, res, next, tableName, req.params.assetId);
+            sequel.canon(req, res, next, tableName, req.params.assetId, useUpdateColumn);
         });
 
     router.route('/:assetId/clone')

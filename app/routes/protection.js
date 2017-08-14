@@ -8,7 +8,8 @@ module.exports = function(router) {
 
     var tableName = 'protection',
         userContent = true,
-        adminRestriction = false;
+        adminRestriction = false,
+        useUpdateColumn = true;
 
     var sql = 'SELECT * FROM protection';
 
@@ -45,7 +46,7 @@ module.exports = function(router) {
             sequel.get(req, res, next, call, [req.params.protectionId]);
         })
         .put(function(req, res, next) {
-            sequel.put(req, res, next, tableName, req.params.protectionId, adminRestriction);
+            sequel.put(req, res, next, tableName, req.params.protectionId, adminRestriction, useUpdateColumn);
         })
         .delete(function(req, res, next) {
             sequel.delete(req, res, next, tableName, req.params.protectionId, adminRestriction);
@@ -53,7 +54,7 @@ module.exports = function(router) {
 
     router.route('/:protectionId/canon')
         .put(function(req, res, next) {
-            sequel.canon(req, res, next, tableName, req.params.protectionId);
+            sequel.canon(req, res, next, tableName, req.params.protectionId, useUpdateColumn);
         });
 
     router.route('/:protectionId/clone')

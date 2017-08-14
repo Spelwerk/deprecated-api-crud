@@ -8,7 +8,8 @@ module.exports = function(router) {
 
     var tableName = 'bionic',
         userContent = true,
-        adminRestriction = false;
+        adminRestriction = false,
+        useUpdateColumn = true;
 
     var sql = 'SELECT * FROM bionic';
 
@@ -45,7 +46,7 @@ module.exports = function(router) {
             sequel.get(req, res, next, call, [req.params.bionicId]);
         })
         .put(function(req, res, next) {
-            sequel.put(req, res, next, tableName, req.params.bionicId, adminRestriction);
+            sequel.put(req, res, next, tableName, req.params.bionicId, adminRestriction, useUpdateColumn);
         })
         .delete(function(req, res, next) {
             sequel.delete(req, res, next, tableName, req.params.bionicId, adminRestriction);
@@ -53,7 +54,7 @@ module.exports = function(router) {
 
     router.route('/:bionicId/canon')
         .put(function(req, res, next) {
-            sequel.canon(req, res, next, tableName, req.params.bionicId);
+            sequel.canon(req, res, next, tableName, req.params.bionicId, useUpdateColumn);
         });
 
     router.route('/:bionicId/clone')

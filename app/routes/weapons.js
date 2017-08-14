@@ -8,7 +8,8 @@ module.exports = function(router) {
 
     var tableName = 'weapon',
         userContent = true,
-        adminRestriction = false;
+        adminRestriction = false,
+        useUpdateColumn = true;
 
     var sql = 'SELECT ' +
         'weapon.id, ' +
@@ -84,6 +85,7 @@ module.exports = function(router) {
     router.route('/type/:typeId')
         .get(function(req, res, next) {
             var call = sql + ' WHERE ' +
+                'weapon.canon = 1 AND ' +
                 'weapon.species = 1 AND ' +
                 'weapon.augmentation = 0 AND ' +
                 'weapon.weapontype_id = ? AND ' +
@@ -98,14 +100,12 @@ module.exports = function(router) {
         .get(function(req, res, next) {
             var call = sql + ' WHERE ' +
                 'weapon.id = ? AND ' +
-                'weapon.species = 0 AND ' +
-                'weapon.augmentation = 0 AND ' +
                 'weapon.deleted IS NULL';
 
             sequel.get(req, res, next, call, [req.params.weaponId]);
         })
         .put(function(req, res, next) {
-            sequel.put(req, res, next, tableName, req.params.weaponId, adminRestriction);
+            sequel.put(req, res, next, tableName, req.params.weaponId, adminRestriction, useUpdateColumn);
         })
         .delete(function(req, res, next) {
             sequel.delete(req, res, next, tableName, req.params.weaponId, adminRestriction);
@@ -113,7 +113,7 @@ module.exports = function(router) {
 
     router.route('/:weaponId/canon')
         .put(function(req, res, next) {
-            sequel.canon(req, res, next, tableName, req.params.weaponId);
+            sequel.canon(req, res, next, tableName, req.params.weaponId, useUpdateColumn);
         });
 
     router.route('/:weaponId/clone')

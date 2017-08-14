@@ -10,7 +10,7 @@ var should = chai.should(),
 var app = require('./../app'),
     hasher = require('./../../lib/hasher');
 
-describe('/weapontypes', function() {
+describe('/weaponmods', function() {
 
     before(function(done) {
         app.login(done);
@@ -32,19 +32,15 @@ describe('/weapontypes', function() {
                 assert.isString(item.name);
                 if(item.description) assert.isString(item.description);
 
+                assert.isString(item.short);
+                assert.isNumber(item.price);
                 assert.isNumber(item.damage_dice);
+                assert.isNumber(item.damage_bonus);
                 assert.isNumber(item.critical_dice);
-                assert.isNumber(item.hand);
                 assert.isNumber(item.initiative);
                 assert.isNumber(item.hit);
                 assert.isNumber(item.distance);
-                assert.isNumber(item.weapongroup_id);
-
-                assert.isBoolean(item.special);
-                assert.isNumber(item.skill_id);
-                assert.isNumber(item.expertise_id);
-                assert.isNumber(item.damage_id);
-                if(item.icon) assert.equal(validator.isURL(item.icon), true);
+                assert.isNumber(item.weapontype_id);
 
                 assert.isString(item.created);
                 if(item.updated) assert.isString(item.updated);
@@ -57,20 +53,22 @@ describe('/weapontypes', function() {
 
     describe('/', function() {
 
-        it('POST / should create a new weapon type', function(done) {
+        it('POST / should create a new weapon mod', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
+                short: hasher(1),
+                price: 10,
                 damage_dice: 10,
+                damage_bonus: 10,
                 critical_dice: 10,
-                hand: 1,
                 initiative: 10,
                 hit: 10,
                 distance: 10,
-                weapongroup_id: 1
+                weapontype_id: 1
             };
 
-            app.post('/weapontypes', payload)
+            app.post('/weaponmods', payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -86,8 +84,8 @@ describe('/weapontypes', function() {
                 });
         });
 
-        it('GET / should return a list of weapon types', function(done) {
-            app.get('/weapontypes')
+        it('GET / should return a list of weapon mods', function(done) {
+            app.get('/weaponmods')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -98,20 +96,8 @@ describe('/weapontypes', function() {
                 });
         });
 
-        it('GET /special should return a list of weapon types', function(done) {
-            app.get('/weapontypes/special')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyGET(res.body);
-
-                    done();
-                });
-        });
-
-        it('GET /group/:groupId should return a list of weapon types', function(done) {
-            app.get('/weapontypes/group/1')
+        it('GET /type/:typeId should return a list of weapon mods', function(done) {
+            app.get('/weaponmods/type/1')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -124,10 +110,10 @@ describe('/weapontypes', function() {
 
     });
 
-    describe('/:weaponTypeId', function() {
+    describe('/:weaponModId', function() {
 
-        it('GET /:weaponTypeId should return a list with one weapon type', function(done) {
-            app.get('/weapontypes/' + temporaryId)
+        it('GET /:weaponModId should return a list with one weapon mod', function(done) {
+            app.get('/weaponmods/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -138,8 +124,8 @@ describe('/weapontypes', function() {
                 })
         });
 
-        it('GET /:weaponTypeId/ownership should return ownership status of the weapon type if user is logged in', function(done) {
-            app.get('/weapontypes/' + temporaryId + '/ownership')
+        it('GET /:weaponModId/ownership should return ownership status of the weapon mod if user is logged in', function(done) {
+            app.get('/weaponmods/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -150,13 +136,18 @@ describe('/weapontypes', function() {
                 });
         });
 
-        it('PUT /:weaponTypeId should update the item with new values', function(done) {
+        it('PUT /:weaponModId should update the item with new values', function(done) {
             var payload = {
-                name: hasher(20),
-                description: hasher(20)
+                price: 8,
+                damage_dice: 8,
+                damage_bonus: 8,
+                critical_dice: 8,
+                initiative: 8,
+                hit: 8,
+                distance: 8
             };
 
-            app.put('/weapontypes/' + temporaryId, payload)
+            app.put('/weaponmods/' + temporaryId, payload)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -170,8 +161,8 @@ describe('/weapontypes', function() {
                 })
         });
 
-        it('PUT /:weaponTypeId/canon should update the weapon type canon field', function(done) {
-            app.put('/weapontypes/' + temporaryId + '/canon')
+        it('PUT /:weaponModId/canon should update the weapon mod canon field', function(done) {
+            app.put('/weaponmods/' + temporaryId + '/canon')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -187,14 +178,14 @@ describe('/weapontypes', function() {
 
     });
 
-    describe('/:weaponTypeId/comments', function() {
+    describe('/:weaponModId/comments', function() {
 
-        it('POST /:weaponTypeId/comments should create a new comment for the asset', function(done) {
+        it('POST /:weaponModId/comments should create a new comment for the asset', function(done) {
             var payload = {
                 content: hasher(20)
             };
 
-            app.post('/weapontypes/' + temporaryId + '/comments', payload)
+            app.post('/weaponmods/' + temporaryId + '/comments', payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -206,8 +197,8 @@ describe('/weapontypes', function() {
                 });
         });
 
-        it('GET /:weaponTypeId/comments should get all available comments for the asset', function(done) {
-            app.get('/weapontypes/' + temporaryId + '/comments')
+        it('GET /:weaponModId/comments should get all available comments for the asset', function(done) {
+            app.get('/weaponmods/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -232,8 +223,8 @@ describe('/weapontypes', function() {
 
     describe('END', function() {
 
-        it('DELETE /:weaponTypeId should update the weapon deleted field', function(done) {
-            app.delete('/weapontypes/' + temporaryId)
+        it('DELETE /:weaponModId should update the weapon deleted field', function(done) {
+            app.delete('/weaponmods/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);

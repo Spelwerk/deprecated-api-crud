@@ -7,7 +7,8 @@ module.exports = function(router) {
 
     var tableName = 'weapontype',
         userContent = true,
-        adminRestriction = false;
+        adminRestriction = false,
+        useUpdateColumn = true;
 
     var sql = 'SELECT ' +
         'weapontype.id, ' +
@@ -77,7 +78,7 @@ module.exports = function(router) {
             sequel.get(req, res, next, call, [req.params.weaponTypeId]);
         })
         .put(function(req, res, next) {
-            sequel.put(req, res, next, tableName, req.params.weaponTypeId, adminRestriction);
+            sequel.put(req, res, next, tableName, req.params.weaponTypeId, adminRestriction, useUpdateColumn);
         })
         .delete(function(req, res, next) {
             sequel.delete(req, res, next, tableName, req.params.weaponTypeId, adminRestriction);
@@ -85,7 +86,7 @@ module.exports = function(router) {
 
     router.route('/:weaponTypeId/canon')
         .put(function(req, res, next) {
-            sequel.canon(req, res, next, tableName, req.params.weaponTypeId);
+            sequel.canon(req, res, next, tableName, req.params.weaponTypeId, useUpdateColumn);
         });
 
     router.route('/:weaponTypeId/comments')
