@@ -75,7 +75,7 @@ describe('/focuses', function() {
                 });
         });
 
-        xit('POST /:focusId/comments should create a new comment for the asset', function(done) {
+        it('POST /:focusId/comments should create a new comment for the asset', function(done) {
             var payload = {
                 content: hasher(20)
             };
@@ -171,7 +171,7 @@ describe('/focuses', function() {
                 });
         });
 
-        xit('GET /:focusId/comments should get all available comments for the asset', function(done) {
+        it('GET /:focusId/comments should get all available comments for the asset', function(done) {
             app.get('/focuses/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {

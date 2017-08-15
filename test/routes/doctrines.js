@@ -76,7 +76,7 @@ describe('/doctrine', function() {
                 });
         });
 
-        xit('POST /:doctrineId/comments should create a new comment for the asset', function(done) {
+        it('POST /:doctrineId/comments should create a new comment for the asset', function(done) {
             var payload = {
                 content: hasher(20)
             };
@@ -172,7 +172,7 @@ describe('/doctrine', function() {
                 });
         });
 
-        xit('GET /:doctrineId/comments should get all available comments for the asset', function(done) {
+        it('GET /:doctrineId/comments should get all available comments for the asset', function(done) {
             app.get('/doctrines/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {

@@ -291,8 +291,8 @@ describe('/bionics', function() {
                         if(item.icon) assert.equal(validator.isURL(item.icon), true);
 
                         assert.isString(item.created);
-                        if(item.deleted) assert.isNumber(item.deleted);
-                        if(item.updated) assert.isNumber(item.updated);
+                        if(item.deleted) assert.isString(item.deleted);
+                        if(item.updated) assert.isString(item.updated);
                     });
 
                     done();
@@ -322,8 +322,8 @@ describe('/bionics', function() {
                         if(item.weapon_id) assert.isNumber(item.weapon_id);
 
                         assert.isString(item.created);
-                        if(item.deleted) assert.isNumber(item.deleted);
-                        if(item.updated) assert.isNumber(item.updated);
+                        if(item.deleted) assert.isString(item.deleted);
+                        if(item.updated) assert.isString(item.updated);
                     });
 
                     done();

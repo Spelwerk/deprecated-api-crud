@@ -21,6 +21,12 @@ require('./routes/expertises');
 
 require('./routes/focuses');
 
+require('./routes/gifts');
+
+require('./routes/identities');
+
+require('./routes/natures');
+
 require('./routes/protection');
 
 require('./routes/software');

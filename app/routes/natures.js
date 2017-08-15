@@ -6,18 +6,18 @@ var comment = require('./../../lib/sql/comment'),
 module.exports = function(router) {
     'use strict';
 
-    var tableName = 'weaponmod',
+    var tableName = 'nature',
         userContent = true,
         adminRestriction = false,
         useUpdateColumn = true;
 
-    var sql = 'SELECT * FROM weaponmod';
+    var sql = 'SELECT * FROM nature';
 
     router.route('/')
         .get(function(req, res, next) {
             var call = sql + ' WHERE ' +
-                'weaponmod.canon = 1 AND ' +
-                'weaponmod.deleted IS NULL';
+                'nature.canon = 1 AND ' +
+                'nature.deleted IS NULL';
 
             sequel.get(req, res, next, call);
         })
@@ -27,40 +27,40 @@ module.exports = function(router) {
 
     // ID
 
-    router.route('/:weaponModId')
+    router.route('/:natureId')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE weaponmod.id = ? AND weaponmod.deleted IS NULL';
+            var call = sql + ' WHERE nature.id = ? AND nature.deleted IS NULL';
 
-            sequel.get(req, res, next, call, [req.params.weaponModId], true);
+            sequel.get(req, res, next, call, [req.params.natureId], true);
         })
         .put(function(req, res, next) {
-            sequel.put(req, res, next, tableName, req.params.weaponModId, adminRestriction, useUpdateColumn);
+            sequel.put(req, res, next, tableName, req.params.natureId, adminRestriction, useUpdateColumn);
         })
         .delete(function(req, res, next) {
-            sequel.delete(req, res, next, tableName, req.params.weaponModId, adminRestriction);
+            sequel.delete(req, res, next, tableName, req.params.natureId, adminRestriction);
         });
 
-    router.route('/:weaponModId/canon')
+    router.route('/:natureId/canon')
         .put(function(req, res, next) {
-            sequel.canon(req, res, next, tableName, req.params.weaponModId, useUpdateColumn);
+            sequel.canon(req, res, next, tableName, req.params.natureId, useUpdateColumn);
         });
 
-    router.route('/:weaponModId/clone')
+    router.route('/:natureId/clone')
         .post(function(req, res, next) {
-            sequel.clone(req, res, next, tableName, req.params.weaponModId, adminRestriction, userContent);
+            sequel.clone(req, res, next, tableName, req.params.natureId, adminRestriction, userContent);
         });
 
-    router.route('/:weaponModId/comments')
+    router.route('/:natureId/comments')
         .get(function(req, res, next) {
-            comment.get(req, res, next, tableName, req.params.weaponModId);
+            comment.get(req, res, next, tableName, req.params.natureId);
         })
         .post(function(req, res, next) {
-            comment.post(req, res, next, tableName, req.params.weaponModId);
+            comment.post(req, res, next, tableName, req.params.natureId);
         });
 
-    router.route('/:weaponModId/ownership')
+    router.route('/:natureId/ownership')
         .get(function(req, res) {
-            ownership(req, tableName, req.params.weaponModId, adminRestriction, function(err) {
+            ownership(req, tableName, req.params.natureId, adminRestriction, function(err) {
                 var ownership = true;
 
                 if(err) ownership = false;

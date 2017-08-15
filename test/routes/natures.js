@@ -10,7 +10,7 @@ var should = chai.should(),
 var app = require('./../app'),
     hasher = require('./../../lib/hasher');
 
-describe('/weaponmods', function() {
+describe('/natures', function() {
 
     before(function(done) {
         app.login(done);
@@ -40,15 +40,7 @@ describe('/weaponmods', function() {
 
         assert.isString(item.name);
         if(item.description) assert.isString(item.description);
-
-        assert.isString(item.short);
-        assert.isNumber(item.price);
-        assert.isNumber(item.damage_dice);
-        assert.isNumber(item.damage_bonus);
-        assert.isNumber(item.critical_dice);
-        assert.isNumber(item.initiative);
-        assert.isNumber(item.hit);
-        assert.isNumber(item.distance);
+        if(item.icon) assert.equal(validator.isURL(item.icon), true);
 
         assert.isString(item.created);
         if(item.updated) assert.isString(item.updated);
@@ -58,21 +50,14 @@ describe('/weaponmods', function() {
 
     describe('POST', function() {
 
-        it('POST / should create a new weapon mod', function(done) {
+        it('POST / should create a new asset', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
-                short: hasher(1),
-                price: 10,
-                damage_dice: 10,
-                damage_bonus: 10,
-                critical_dice: 10,
-                initiative: 10,
-                hit: 10,
-                distance: 10
+                icon: 'http://fakeicon.com/' + hasher(20) + '.png'
             };
 
-            app.post('/weaponmods', payload)
+            app.post('/natures', payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -88,12 +73,25 @@ describe('/weaponmods', function() {
                 });
         });
 
-        it('POST /:weaponModId/comments should create a new comment for the asset', function(done) {
+        it('POST /:natureId/clone should create a copy of the asset', function(done) {
+            app.post('/natures/' + temporaryId + '/clone')
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
+                    assert.isNumber(res.body.id);
+
+                    done();
+                });
+        });
+
+        it('POST /:natureId/comments should create a new comment for the asset', function(done) {
             var payload = {
                 content: hasher(20)
             };
 
-            app.post('/weaponmods/' + temporaryId + '/comments', payload)
+            app.post('/natures/' + temporaryId + '/comments', payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -109,18 +107,13 @@ describe('/weaponmods', function() {
 
     describe('PUT', function() {
 
-        it('PUT /:weaponModId should update the item with new values', function(done) {
+        it('PUT /:natureId should update the item with new values', function(done) {
             var payload = {
-                price: 8,
-                damage_dice: 8,
-                damage_bonus: 8,
-                critical_dice: 8,
-                initiative: 8,
-                hit: 8,
-                distance: 8
+                name: hasher(20),
+                description: hasher(20)
             };
 
-            app.put('/weaponmods/' + temporaryId, payload)
+            app.put('/natures/' + temporaryId, payload)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -134,8 +127,8 @@ describe('/weaponmods', function() {
                 })
         });
 
-        it('PUT /:weaponModId/canon should update the weapon mod canon field', function(done) {
-            app.put('/weaponmods/' + temporaryId + '/canon')
+        it('PUT /:natureId/canon should update the asset canon field', function(done) {
+            app.put('/natures/' + temporaryId + '/canon')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -153,8 +146,8 @@ describe('/weaponmods', function() {
 
     describe('GET', function() {
 
-        it('GET / should return a list of weapon mods', function(done) {
-            app.get('/weaponmods')
+        it('GET / should return a list of natures', function(done) {
+            app.get('/natures')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -165,8 +158,8 @@ describe('/weaponmods', function() {
                 });
         });
 
-        it('GET /:weaponModId should return one weapon mod', function(done) {
-            app.get('/weaponmods/' + temporaryId)
+        it('GET /:natureId should return one asset', function(done) {
+            app.get('/natures/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -177,8 +170,8 @@ describe('/weaponmods', function() {
                 })
         });
 
-        it('GET /:weaponModId/ownership should return ownership status of the weapon mod if user is logged in', function(done) {
-            app.get('/weaponmods/' + temporaryId + '/ownership')
+        it('GET /:natureId/ownership should return ownership status of the asset if user is logged in', function(done) {
+            app.get('/natures/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -189,8 +182,8 @@ describe('/weaponmods', function() {
                 });
         });
 
-        it('GET /:weaponModId/comments should get all available comments for the asset', function(done) {
-            app.get('/weaponmods/' + temporaryId + '/comments')
+        it('GET /:natureId/comments should get all available comments for the asset', function(done) {
+            app.get('/natures/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -215,8 +208,8 @@ describe('/weaponmods', function() {
 
     describe('DELETE', function() {
 
-        it('DELETE /:weaponModId should update the weapon deleted field', function(done) {
-            app.delete('/weaponmods/' + temporaryId)
+        it('DELETE /:natureId should update the asset deleted field', function(done) {
+            app.delete('/natures/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
