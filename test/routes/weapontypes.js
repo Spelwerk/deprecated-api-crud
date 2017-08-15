@@ -109,6 +109,22 @@ describe('/weapontypes', function() {
                 });
         });
 
+        it('POST /:weaponTypeId/mods should add an attribute to the asset', function(done) {
+            var payload = {
+                insert_id: 1
+            };
+
+            app.post('/weapontypes/' + temporaryId + '/mods', payload)
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
+
+                    done();
+                });
+        });
+
     });
 
     describe('PUT', function() {
@@ -234,10 +250,58 @@ describe('/weapontypes', function() {
                 })
         });
 
+        it('GET /:weaponTypeId/mods should return a list of mods', function(done) {
+            app.get('/weapontypes/' + temporaryId + '/mods')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.length);
+                    assert.isArray(res.body.results);
+
+                    _.each(res.body.results, function(item) {
+                        assert.isNumber(item.weapontype_id);
+                        assert.isNumber(item.weaponmod_id);
+
+                        assert.isNumber(item.id);
+                        assert.isBoolean(item.canon);
+                        assert.isNumber(item.popularity);
+                        assert.isString(item.name);
+                        if(item.description) assert.isString(item.description);
+                        assert.isString(item.short);
+                        assert.isNumber(item.price);
+                        assert.isNumber(item.damage_dice);
+                        assert.isNumber(item.damage_bonus);
+                        assert.isNumber(item.critical_dice);
+                        assert.isNumber(item.initiative);
+                        assert.isNumber(item.hit);
+                        assert.isNumber(item.distance);
+
+                        assert.isString(item.created);
+                        if(item.updated) assert.isString(item.updated);
+                        if(item.deleted) assert.isString(item.deleted);
+                    });
+
+                    done();
+                });
+        });
+
     });
 
     describe('DELETE', function() {
 
+        it('DELETE /:weaponTypeId/mods should remove the attribute from the asset', function(done) {
+            app.delete('/weapontypes/' + temporaryId + '/mods/1')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
+
+                    done();
+                });
+        });
+        
         it('DELETE /:weaponGroupId should update the weapon deleted field', function(done) {
             app.delete('/weapontypes/' + temporaryId)
                 .expect(200)

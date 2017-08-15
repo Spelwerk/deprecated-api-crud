@@ -1,6 +1,7 @@
 var comment = require('./../../lib/sql/comment'),
     ownership = require('./../../lib/sql/ownership'),
-    sequel = require('./../../lib/sql/sequel');
+    sequel = require('./../../lib/sql/sequel'),
+    relation = require('./../../lib/sql/relation');
 
 module.exports = function(router) {
     'use strict';
@@ -106,6 +107,29 @@ module.exports = function(router) {
 
                 res.status(200).send({success: true, message: 'Ownership verified', ownership: ownership});
             })
+        });
+
+    // Mod List
+
+    router.route('/:weaponTypeId/mods')
+        .get(function(req, res, next) {
+            var call = 'SELECT * FROM weapontype_has_weaponmod ' +
+                'LEFT JOIN weaponmod ON weaponmod.id = weapontype_has_weaponmod.weaponmod_id ' +
+                'WHERE ' +
+                'weapontype_has_weaponmod.weapontype_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.weaponTypeId]);
+        })
+        .post(function(req, res, next) {
+            relation.post(req, res, next, tableName, req.params.weaponTypeId, 'weaponmod', req.body.insert_id);
+        });
+
+    router.route('/:weaponTypeId/mods/:weaponModId')
+        .put(function(req, res, next) {
+            relation.put(req, res, next, tableName, req.params.weaponTypeId, 'weaponmod', req.params.weaponModId);
+        })
+        .delete(function(req, res, next) {
+            relation.delete(req, res, next, tableName, req.params.weaponTypeId, 'weaponmod', req.params.weaponModId);
         });
 
 };
