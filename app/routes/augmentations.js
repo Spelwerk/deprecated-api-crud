@@ -31,7 +31,7 @@ module.exports = function(router) {
         .get(function(req, res, next) {
             var call = sql + ' WHERE augmentation.id = ? AND augmentation.deleted IS NULL';
 
-            sequel.get(req, res, next, call, [req.params.augmentationId]);
+            sequel.get(req, res, next, call, [req.params.augmentationId], true);
         })
         .put(function(req, res, next) {
             sequel.put(req, res, next, tableName, req.params.augmentationId, adminRestriction, useUpdateColumn);

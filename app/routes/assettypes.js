@@ -43,7 +43,7 @@ module.exports = function(router) {
         .get(function(req, res, next) {
             var call = sql + ' WHERE assettype.id = ? AND assettype.deleted IS NULL';
 
-            sequel.get(req, res, next, call, [req.params.assetTypeId]);
+            sequel.get(req, res, next, call, [req.params.assetTypeId], true);
         })
         .put(function(req, res, next) {
             sequel.put(req, res, next, tableName, req.params.assetTypeId, adminRestriction, useUpdateColumn);

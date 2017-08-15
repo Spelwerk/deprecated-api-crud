@@ -43,7 +43,7 @@ module.exports = function(router) {
         .get(function(req, res, next) {
             var call = sql + ' WHERE bionic.id = ? AND bionic.deleted IS NULL';
 
-            sequel.get(req, res, next, call, [req.params.bionicId]);
+            sequel.get(req, res, next, call, [req.params.bionicId], true);
         })
         .put(function(req, res, next) {
             sequel.put(req, res, next, tableName, req.params.bionicId, adminRestriction, useUpdateColumn);

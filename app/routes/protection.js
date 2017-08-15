@@ -43,7 +43,7 @@ module.exports = function(router) {
         .get(function(req, res, next) {
             var call = sql + ' WHERE protection.id = ? AND protection.deleted IS NULL';
 
-            sequel.get(req, res, next, call, [req.params.protectionId]);
+            sequel.get(req, res, next, call, [req.params.protectionId], true);
         })
         .put(function(req, res, next) {
             sequel.put(req, res, next, tableName, req.params.protectionId, adminRestriction, useUpdateColumn);

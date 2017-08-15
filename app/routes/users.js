@@ -539,7 +539,7 @@ module.exports = function(router) {
         .get(function(req, res, next) {
             var call = sql + ' WHERE user.id = ? AND user.deleted IS NULL';
 
-            sequel.get(req, res, next, call, [req.params.userId]);
+            sequel.get(req, res, next, call, [req.params.userId], true);
         })
         .put(function(req, res, next) {
             var insert = {};

@@ -31,7 +31,7 @@ module.exports = function(router) {
         .get(function(req, res, next) {
             var call = sql + ' WHERE software.id = ? AND software.deleted IS NULL';
 
-            sequel.get(req, res, next, call, [req.params.softwareId]);
+            sequel.get(req, res, next, call, [req.params.softwareId], true);
         })
         .put(function(req, res, next) {
             sequel.put(req, res, next, tableName, req.params.softwareId, adminRestriction, useUpdateColumn);

@@ -69,7 +69,7 @@ module.exports = function(router) {
         .get(function(req, res, next) {
             var call = sql + ' WHERE attribute.id = ? AND attribute.deleted IS NULL';
 
-            sequel.get(req, res, next, call, [req.params.attributeId]);
+            sequel.get(req, res, next, call, [req.params.attributeId], true);
         })
         .put(function(req, res, next) {
             sequel.put(req, res, next, tableName, req.params.attributeId, adminRestriction, useUpdateColumn);

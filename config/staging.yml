@@ -31,8 +31,6 @@ links:
     login: /post/login.php?s=
 
 timeouts:
-  tokens: 30 # days
-
   user:
     verify:
       amount: 7

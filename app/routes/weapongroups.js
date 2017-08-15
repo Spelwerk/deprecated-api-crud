@@ -115,7 +115,7 @@ module.exports = function(router) {
         .get(function(req, res, next) {
             var call = sql + ' WHERE weapongroup.id = ? AND weapongroup.deleted IS NULL';
 
-            sequel.get(req, res, next, call, [req.params.weaponGroupId]);
+            sequel.get(req, res, next, call, [req.params.weaponGroupId], true);
         })
         .put(function(req, res, next) {
             sequel.put(req, res, next, tableName, req.params.weaponGroupId, adminRestriction, useUpdateColumn);
