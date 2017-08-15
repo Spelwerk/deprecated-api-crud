@@ -10,7 +10,7 @@ var should = chai.should(),
 var app = require('./../app'),
     hasher = require('./../../lib/hasher');
 
-describe('/assets', function() {
+describe('/gifts', function() {
 
     before(function(done) {
         app.login(done);
@@ -40,12 +40,8 @@ describe('/assets', function() {
 
         assert.isString(item.name);
         if(item.description) assert.isString(item.description);
-        assert.isNumber(item.price);
-        assert.isBoolean(item.legal);
-        assert.isNumber(item.assettype_id);
-        if(item.icon) assert.equal(validator.isURL(item.icon), true);
-        assert.isNumber(item.assetgroup_id);
-        assert.isBoolean(item.equippable);
+        if(item.species_id) assert.isNumber(item.species_id);
+        if(item.manifestation_id) assert.isNumber(item.manifestation_id);
 
         assert.isString(item.created);
         if(item.updated) assert.isString(item.updated);
@@ -55,16 +51,15 @@ describe('/assets', function() {
 
     describe('POST', function() {
 
-        it('POST / should create a new asset', function(done) {
+        it('POST / should create a new gift', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
-                price: 10,
-                legal: true,
-                assettype_id: 1
+                species_id: 1,
+                manifestation_id: 1
             };
 
-            app.post('/assets', payload)
+            app.post('/gifts', payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -80,8 +75,8 @@ describe('/assets', function() {
                 });
         });
 
-        it('POST /:assetId/clone should create a copy of the asset', function(done) {
-            app.post('/assets/' + temporaryId + '/clone')
+        it('POST /:giftId/clone should create a copy of the gift', function(done) {
+            app.post('/gifts/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -93,12 +88,12 @@ describe('/assets', function() {
                 });
         });
 
-        it('POST /:assetId/comments should create a new comment for the asset', function(done) {
+        it('POST /:giftId/comments should create a new comment for the gift', function(done) {
             var payload = {
                 content: hasher(20)
             };
 
-            app.post('/assets/' + temporaryId + '/comments', payload)
+            app.post('/gifts/' + temporaryId + '/comments', payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -110,13 +105,13 @@ describe('/assets', function() {
                 });
         });
 
-        it('POST /:assetId/attributes should add an attribute to the asset', function(done) {
+        it('POST /:giftId/attributes should add an attribute to the gift', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
             };
 
-            app.post('/assets/' + temporaryId + '/attributes', payload)
+            app.post('/gifts/' + temporaryId + '/attributes', payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -127,47 +122,13 @@ describe('/assets', function() {
                 });
         });
 
-        it('POST /:assetId/doctrines should add an doctrine to the asset', function(done) {
+        it('POST /:giftId/skills should add an skill to the gift', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
             };
 
-            app.post('/assets/' + temporaryId + '/doctrines', payload)
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
-        });
-
-        it('POST /:assetId/expertises should add an expertise to the asset', function(done) {
-            var payload = {
-                insert_id: 1,
-                value: 10
-            };
-
-            app.post('/assets/' + temporaryId + '/expertises', payload)
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
-        });
-
-        it('POST /:assetId/skills should add an skill to the asset', function(done) {
-            var payload = {
-                insert_id: 1,
-                value: 10
-            };
-
-            app.post('/assets/' + temporaryId + '/skills', payload)
+            app.post('/gifts/' + temporaryId + '/skills', payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -182,13 +143,13 @@ describe('/assets', function() {
 
     describe('PUT', function() {
 
-        it('PUT /:assetId should update the item with new values', function(done) {
+        it('PUT /:giftId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
             };
 
-            app.put('/assets/' + temporaryId, payload)
+            app.put('/gifts/' + temporaryId, payload)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -202,8 +163,8 @@ describe('/assets', function() {
                 })
         });
 
-        it('PUT /:assetId/canon should update the asset canon field', function(done) {
-            app.put('/assets/' + temporaryId + '/canon')
+        it('PUT /:giftId/canon should update the gift canon field', function(done) {
+            app.put('/gifts/' + temporaryId + '/canon')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -217,12 +178,12 @@ describe('/assets', function() {
                 });
         });
 
-        it('PUT /:assetId/attributes should change the attribute value for the asset', function(done) {
+        it('PUT /:giftId/attributes should change the attribute value for the gift', function(done) {
             var payload = {
                 value: 8
             };
 
-            app.put('/assets/' + temporaryId + '/attributes/1', payload)
+            app.put('/gifts/' + temporaryId + '/attributes/1', payload)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -233,44 +194,12 @@ describe('/assets', function() {
                 });
         });
 
-        it('PUT /:assetId/doctrines should change the doctrine value for the asset', function(done) {
+        it('PUT /:giftId/skills should change the skill value for the gift', function(done) {
             var payload = {
                 value: 8
             };
 
-            app.put('/assets/' + temporaryId + '/doctrines/1', payload)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-
-                    done();
-                });
-        });
-
-        it('PUT /:assetId/expertises should change the expertise value for the asset', function(done) {
-            var payload = {
-                value: 8
-            };
-
-            app.put('/assets/' + temporaryId + '/expertises/1', payload)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-
-                    done();
-                });
-        });
-
-        it('PUT /:assetId/skills should change the skill value for the asset', function(done) {
-            var payload = {
-                value: 8
-            };
-
-            app.put('/assets/' + temporaryId + '/skills/1', payload)
+            app.put('/gifts/' + temporaryId + '/skills/1', payload)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -285,8 +214,8 @@ describe('/assets', function() {
 
     describe('GET', function() {
 
-        it('GET / should return a list of assets', function(done) {
-            app.get('/assets')
+        it('GET / should return a list of gifts', function(done) {
+            app.get('/gifts')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -297,8 +226,8 @@ describe('/assets', function() {
                 });
         });
 
-        it('GET /type/:typeId should return a list of assets', function(done) {
-            app.get('/assets/type/1')
+        it('GET /manifestation/:manifestationId should return a list of gifts', function(done) {
+            app.get('/gifts/manifestation/1')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -309,8 +238,20 @@ describe('/assets', function() {
                 });
         });
 
-        it('GET /:assetId should return one asset', function(done) {
-            app.get('/assets/' + temporaryId)
+        it('GET /species/:speciesId should return a list of gifts', function(done) {
+            app.get('/gifts/species/1')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('GET /:giftId should return one gift', function(done) {
+            app.get('/gifts/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -321,8 +262,8 @@ describe('/assets', function() {
                 })
         });
 
-        it('GET /:assetId/ownership should return ownership status of the asset if user is logged in', function(done) {
-            app.get('/assets/' + temporaryId + '/ownership')
+        it('GET /:giftId/ownership should return ownership status of the gift if user is logged in', function(done) {
+            app.get('/gifts/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -333,8 +274,8 @@ describe('/assets', function() {
                 });
         });
 
-        it('GET /:assetId/comments should get all available comments for the asset', function(done) {
-            app.get('/assets/' + temporaryId + '/comments')
+        it('GET /:giftId/comments should get all available comments for the gift', function(done) {
+            app.get('/gifts/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -355,8 +296,8 @@ describe('/assets', function() {
                 })
         });
 
-        it('GET /:assetId/attributes should return a list of attributes', function(done) {
-            app.get('/assets/' + temporaryId + '/attributes')
+        it('GET /:giftId/attributes should return a list of attributes', function(done) {
+            app.get('/gifts/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -365,7 +306,7 @@ describe('/assets', function() {
                     assert.isArray(res.body.results);
 
                     _.each(res.body.results, function(item) {
-                        assert.isNumber(item.asset_id);
+                        assert.isNumber(item.gift_id);
                         assert.isNumber(item.attribute_id);
                         assert.isNumber(item.value);
 
@@ -385,8 +326,8 @@ describe('/assets', function() {
                 });
         });
 
-        it('GET /:assetId/doctrines should return a list of doctrines', function(done) {
-            app.get('/assets/' + temporaryId + '/doctrines')
+        it('GET /:giftId/skills should return a list of skills', function(done) {
+            app.get('/gifts/' + temporaryId + '/skills')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -395,71 +336,7 @@ describe('/assets', function() {
                     assert.isArray(res.body.results);
 
                     _.each(res.body.results, function(item) {
-                        assert.isNumber(item.asset_id);
-                        assert.isNumber(item.doctrine_id);
-                        assert.isNumber(item.value);
-
-                        assert.isNumber(item.id);
-                        assert.isBoolean(item.canon);
-                        assert.isNumber(item.popularity);
-                        assert.isString(item.name);
-                        if(item.description) assert.isString(item.description);
-                        assert.isNumber(item.manifestation_id);
-                        assert.isNumber(item.expertise_id);
-                        if(item.icon) assert.equal(validator.isURL(item.icon), true);
-
-                        assert.isString(item.created);
-                        if(item.deleted) assert.isNumber(item.deleted);
-                        if(item.updated) assert.isNumber(item.updated);
-                    });
-
-                    done();
-                });
-        });
-
-        it('GET /:assetId/expertises should return a list of expertises', function(done) {
-            app.get('/assets/' + temporaryId + '/expertises')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        assert.isNumber(item.asset_id);
-                        assert.isNumber(item.expertise_id);
-                        assert.isNumber(item.value);
-
-                        assert.isNumber(item.id);
-                        assert.isBoolean(item.canon);
-                        assert.isNumber(item.popularity);
-                        assert.isString(item.name);
-                        if(item.description) assert.isString(item.description);
-                        assert.isNumber(item.skill_id);
-                        if(item.species_id) assert.isNumber(item.species_id);
-                        if(item.species_id) assert.isNumber(item.manifestation_id);
-
-                        assert.isString(item.created);
-                        if(item.deleted) assert.isNumber(item.deleted);
-                        if(item.updated) assert.isNumber(item.updated);
-                    });
-
-                    done();
-                });
-        });
-
-        it('GET /:assetId/skills should return a list of skills', function(done) {
-            app.get('/assets/' + temporaryId + '/skills')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        assert.isNumber(item.asset_id);
+                        assert.isNumber(item.gift_id);
                         assert.isNumber(item.skill_id);
                         assert.isNumber(item.value);
 
@@ -485,8 +362,8 @@ describe('/assets', function() {
 
     describe('DELETE', function() {
 
-        it('DELETE /:assetId/attributes should remove the attribute from the asset', function(done) {
-            app.delete('/assets/' + temporaryId + '/attributes/1')
+        it('DELETE /:giftId/attributes should remove the attribute from the gift', function(done) {
+            app.delete('/gifts/' + temporaryId + '/attributes/1')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -497,8 +374,8 @@ describe('/assets', function() {
                 });
         });
 
-        it('DELETE /:assetId/doctrines should remove the doctrine from the asset', function(done) {
-            app.delete('/assets/' + temporaryId + '/doctrines/1')
+        it('DELETE /:giftId/skills should remove the skill from the gift', function(done) {
+            app.delete('/gifts/' + temporaryId + '/skills/1')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -509,32 +386,8 @@ describe('/assets', function() {
                 });
         });
 
-        it('DELETE /:assetId/expertises should remove the expertise from the asset', function(done) {
-            app.delete('/assets/' + temporaryId + '/expertises/1')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
-        });
-
-        it('DELETE /:assetId/skills should remove the skill from the asset', function(done) {
-            app.delete('/assets/' + temporaryId + '/skills/1')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
-        });
-
-        it('DELETE /:assetId should update the asset deleted field', function(done) {
-            app.delete('/assets/' + temporaryId)
+        it('DELETE /:giftId should update the gift deleted field', function(done) {
+            app.delete('/gifts/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);

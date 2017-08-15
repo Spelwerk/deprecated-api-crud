@@ -75,9 +75,7 @@ describe('/attributetypes', function() {
 
         it('PUT /:attributeTypeId should update the item with new values', function(done) {
             var payload = {
-                name: hasher(20),
-                maximum: 8,
-                special: false
+                name: hasher(20)
             };
 
             app.put('/attributetypes/' + temporaryId, payload)

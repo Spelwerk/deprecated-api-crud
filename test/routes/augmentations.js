@@ -148,8 +148,7 @@ describe('/augmentations', function() {
         it('PUT /:augmentationId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
-                description: hasher(20),
-                price: 10
+                description: hasher(20)
             };
 
             app.put('/augmentations/' + temporaryId, payload)
