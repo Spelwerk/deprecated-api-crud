@@ -18,7 +18,7 @@ describe('/assettypes', function() {
 
     var temporaryId;
 
-    function verifyGET(body) {
+    function verifyList(body) {
         assert.isNumber(body.length);
 
         assert.isArray(body.results);
@@ -26,20 +26,24 @@ describe('/assettypes', function() {
 
         if(body.length > 0) {
             _.each(body.results, function(item) {
-                assert.isBoolean(item.canon);
-                assert.isNumber(item.popularity);
-
-                assert.isString(item.name);
-                assert.isNumber(item.assetgroup_id);
-                if(item.icon) assert.equal(validator.isURL(item.icon), true);
-
-                assert.isString(item.created);
-                if(item.updated) assert.isString(item.updated);
-                if(item.deleted) assert.isString(item.deleted);
+                verifyItem(item);
             });
         }
 
         assert.isObject(body.fields);
+    }
+
+    function verifyItem(item) {
+        assert.isBoolean(item.canon);
+        assert.isNumber(item.popularity);
+
+        assert.isString(item.name);
+        assert.isNumber(item.assetgroup_id);
+        if(item.icon) assert.equal(validator.isURL(item.icon), true);
+
+        assert.isString(item.created);
+        if(item.updated) assert.isString(item.updated);
+        if(item.deleted) assert.isString(item.deleted);
     }
 
     describe('/', function() {
@@ -73,19 +77,19 @@ describe('/assettypes', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyGET(res.body);
+                    verifyList(res.body);
 
                     done();
                 });
         });
 
         it('GET /group/:assetGroupId should return a list of assettypes', function(done) {
-            app.get('/assettypes/1')
+            app.get('/assettypes/group/1')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyGET(res.body);
+                    verifyList(res.body);
 
                     done();
                 });
@@ -101,7 +105,7 @@ describe('/assettypes', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyGET(res.body);
+                    verifyItem(res.body.result);
 
                     done();
                 })
@@ -121,9 +125,7 @@ describe('/assettypes', function() {
 
         it('PUT /:assetTypeId should update the item with new values', function(done) {
             var payload = {
-                name: hasher(20),
-                assetgroup_id: 1,
-                icon: 'http://fakeicon.com/' + hasher(20) + '.png'
+                name: hasher(20)
             };
 
             app.put('/assettypes/' + temporaryId, payload)

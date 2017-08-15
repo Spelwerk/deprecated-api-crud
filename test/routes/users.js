@@ -15,30 +15,34 @@ describe('/users', function() {
         email = hasher(20) + '@fakemail.com',
         password = hasher(20);
 
-    function verifyGET(body) {
+    function verifyList(body) {
         assert.isNumber(body.length);
 
         assert.isArray(body.results);
         assert.lengthOf(body.results, body.length);
 
-        _.each(body.results, function(user) {
-            assert.isNumber(user.id);
-
-            assert.isString(user.displayname);
-            assert.isString(user.email);
-
-            assert.isBoolean(user.verify);
-            assert.isBoolean(user.admin);
-
-            if(user.firstname) assert.isString(user.firstname);
-            if(user.surname) assert.isString(user.surname);
-
-            assert.isString(user.created);
-            if(user.updated) assert.isString(user.updated);
-            if(user.deleted) assert.isString(user.deleted);
+        _.each(body.results, function(item) {
+            verifyItem(item);
         });
 
         assert.isObject(body.fields);
+    }
+
+    function verifyItem(item) {
+        assert.isNumber(item.id);
+
+        assert.isString(item.displayname);
+        assert.isString(item.email);
+
+        assert.isBoolean(item.verify);
+        assert.isBoolean(item.admin);
+
+        if(item.firstname) assert.isString(item.firstname);
+        if(item.surname) assert.isString(item.surname);
+
+        assert.isString(item.created);
+        if(item.updated) assert.isString(item.updated);
+        if(item.deleted) assert.isString(item.deleted);
     }
 
     it('POST / should create a new user', function(done) {
@@ -130,7 +134,7 @@ describe('/users', function() {
                 assert.isTrue(res.body.success);
                 assert.isString(res.body.message);
 
-                verifyGET(res.body);
+                verifyList(res.body);
 
                 done();
             });
@@ -145,7 +149,7 @@ describe('/users', function() {
                 assert.isTrue(res.body.success);
                 assert.isString(res.body.message);
 
-                verifyGET(res.body);
+                verifyItem(res.body.result);
 
                 done();
             });

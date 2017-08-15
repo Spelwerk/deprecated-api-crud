@@ -18,7 +18,7 @@ describe('/weapongroups', function() {
 
     var temporaryId;
 
-    function verifyGET(body) {
+    function verifyList(body) {
         assert.isNumber(body.length);
 
         assert.isArray(body.results);
@@ -26,25 +26,29 @@ describe('/weapongroups', function() {
 
         if(body.length > 0) {
             _.each(body.results, function(item) {
-                assert.isBoolean(item.canon);
-                assert.isNumber(item.popularity);
-
-                assert.isString(item.name);
-                if(item.description) assert.isString(item.description);
-
-                assert.isBoolean(item.special);
-                assert.isNumber(item.skill_id);
-                assert.isNumber(item.expertise_id);
-                assert.isNumber(item.damage_id);
-                if(item.icon) assert.equal(validator.isURL(item.icon), true);
-
-                assert.isString(item.created);
-                if(item.updated) assert.isString(item.updated);
-                if(item.deleted) assert.isString(item.deleted);
+                verifyItem(item);
             });
         }
 
         assert.isObject(body.fields);
+    }
+
+    function verifyItem(item) {
+        assert.isBoolean(item.canon);
+        assert.isNumber(item.popularity);
+
+        assert.isString(item.name);
+        if(item.description) assert.isString(item.description);
+
+        assert.isBoolean(item.special);
+        assert.isNumber(item.skill_id);
+        assert.isNumber(item.expertise_id);
+        assert.isNumber(item.damage_id);
+        if(item.icon) assert.equal(validator.isURL(item.icon), true);
+
+        assert.isString(item.created);
+        if(item.updated) assert.isString(item.updated);
+        if(item.deleted) assert.isString(item.deleted);
     }
 
     describe('/', function() {
@@ -81,7 +85,7 @@ describe('/weapongroups', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyGET(res.body);
+                    verifyList(res.body);
 
                     done();
                 });
@@ -93,7 +97,7 @@ describe('/weapongroups', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyGET(res.body);
+                    verifyList(res.body);
 
                     done();
                 });
@@ -105,7 +109,7 @@ describe('/weapongroups', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyGET(res.body);
+                    verifyList(res.body);
 
                     done();
                 });
@@ -117,7 +121,7 @@ describe('/weapongroups', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyGET(res.body);
+                    verifyList(res.body);
 
                     done();
                 });
@@ -133,7 +137,7 @@ describe('/weapongroups', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyGET(res.body);
+                    verifyItem(res.body.result);
 
                     done();
                 })

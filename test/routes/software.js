@@ -18,7 +18,7 @@ describe('/software', function() {
 
     var temporaryId;
 
-    function verifyGET(body) {
+    function verifyList(body) {
         assert.isNumber(body.length);
 
         assert.isArray(body.results);
@@ -26,23 +26,27 @@ describe('/software', function() {
 
         if(body.length > 0) {
             _.each(body.results, function(item) {
-                assert.isBoolean(item.canon);
-                assert.isNumber(item.popularity);
-
-                assert.isString(item.name);
-                if(item.description) assert.isString(item.description);
-                assert.isNumber(item.price);
-                assert.isNumber(item.hacking);
-                assert.isNumber(item.hacking_bonus);
-                assert.isBoolean(item.legal);
-
-                assert.isString(item.created);
-                if(item.updated) assert.isString(item.updated);
-                if(item.deleted) assert.isString(item.deleted);
+                verifyItem(item);
             });
         }
 
         assert.isObject(body.fields);
+    }
+
+    function verifyItem(item) {
+        assert.isBoolean(item.canon);
+        assert.isNumber(item.popularity);
+
+        assert.isString(item.name);
+        if(item.description) assert.isString(item.description);
+        assert.isNumber(item.price);
+        assert.isNumber(item.hacking);
+        assert.isNumber(item.hacking_bonus);
+        assert.isBoolean(item.legal);
+
+        assert.isString(item.created);
+        if(item.updated) assert.isString(item.updated);
+        if(item.deleted) assert.isString(item.deleted);
     }
 
     describe('/', function() {
@@ -79,7 +83,7 @@ describe('/software', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyGET(res.body);
+                    verifyList(res.body);
 
                     done();
                 });
@@ -95,7 +99,7 @@ describe('/software', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyGET(res.body);
+                    verifyItem(res.body.result);
 
                     done();
                 })

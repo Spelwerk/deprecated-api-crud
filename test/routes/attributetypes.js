@@ -10,7 +10,7 @@ var should = chai.should(),
 var app = require('./../app'),
     hasher = require('./../../lib/hasher');
 
-describe('/assetgroups', function() {
+describe('/attributetypes', function() {
 
     before(function(done) {
         app.login(done);
@@ -34,11 +34,9 @@ describe('/assetgroups', function() {
     }
 
     function verifyItem(item) {
-        assert.isBoolean(item.canon);
-        assert.isNumber(item.popularity);
-
         assert.isString(item.name);
-        assert.isBoolean(item.equippable);
+        assert.isNumber(item.maximum);
+        assert.isBoolean(item.special);
 
         assert.isString(item.created);
         if(item.updated) assert.isString(item.updated);
@@ -47,12 +45,14 @@ describe('/assetgroups', function() {
 
     describe('/', function() {
 
-        it('POST / should create a new asset group', function(done) {
+        it('POST / should create a new attribute type', function(done) {
             var payload = {
-                name: hasher(20)
+                name: hasher(20),
+                maximum: 10,
+                special: true
             };
 
-            app.post('/assetgroups', payload)
+            app.post('/attributetypes', payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -68,8 +68,8 @@ describe('/assetgroups', function() {
                 });
         });
 
-        it('GET / should return a list of asset groups', function(done) {
-            app.get('/assetgroups')
+        it('GET / should return a list of attributetypes', function(done) {
+            app.get('/attributetypes')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -82,10 +82,10 @@ describe('/assetgroups', function() {
 
     });
 
-    describe('/:assetGroupId', function() {
+    describe('/attributeTypeId', function() {
 
-        it('GET /:assetGroupId should return a list with one asset group', function(done) {
-            app.get('/assetgroups/' + temporaryId)
+        it('GET /:attributeTypeId should return a list with one attribute type', function(done) {
+            app.get('/attributetypes/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -96,8 +96,8 @@ describe('/assetgroups', function() {
                 })
         });
 
-        it('GET /:assetGroupId/ownership should return ownership status of the asset group if user is logged in', function(done) {
-            app.get('/assetgroups/' + temporaryId + '/ownership')
+        it('GET /:attributeTypeId/ownership should return ownership status of the attribute if user is logged in', function(done) {
+            app.get('/attributetypes/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -108,12 +108,14 @@ describe('/assetgroups', function() {
                 });
         });
 
-        it('PUT /:assetGroupId should update the item with new values', function(done) {
+        it('PUT /:attributeTypeId should update the item with new values', function(done) {
             var payload = {
-                name: hasher(20)
+                name: hasher(20),
+                maximum: 8,
+                special: false
             };
 
-            app.put('/assetgroups/' + temporaryId, payload)
+            app.put('/attributetypes/' + temporaryId, payload)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -127,27 +129,12 @@ describe('/assetgroups', function() {
                 })
         });
 
-        it('PUT /:assetGroupId/canon should update the asset group canon field', function(done) {
-            app.put('/assetgroups/' + temporaryId + '/canon')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
-        });
-
     });
 
     describe('END', function() {
 
-        it('DELETE /:assetGroupId should update the asset group deleted field', function(done) {
-            app.delete('/assetgroups/' + temporaryId)
+        it('DELETE /:attributeTypeId should update the attribute deleted field', function(done) {
+            app.delete('/attributetypes/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
