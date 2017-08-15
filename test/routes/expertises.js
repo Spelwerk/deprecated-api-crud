@@ -78,6 +78,19 @@ describe('/expertise', function() {
                 });
         });
 
+        it('POST /:expertiseId/clone should create a copy of the asset', function(done) {
+            app.post('/expertises/' + temporaryId + '/clone')
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
+                    assert.isNumber(res.body.id);
+
+                    done();
+                });
+        });
+
         it('POST /:expertiseId/comments should create a new comment for the asset', function(done) {
             var payload = {
                 content: hasher(20)

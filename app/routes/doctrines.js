@@ -130,6 +130,14 @@ module.exports = function(router) {
             sequel.canon(req, res, next, tableName, req.params.doctrineId, useUpdateColumn);
         });
 
+    router.route('/:doctrineId/comments')
+        .get(function(req, res, next) {
+            comment.get(req, res, next, tableName, req.params.doctrineId);
+        })
+        .post(function(req, res, next) {
+            comment.post(req, res, next, tableName, req.params.doctrineId);
+        });
+
     router.route('/:doctrineId/ownership')
         .get(function(req, res) {
             ownership(req, tableName, req.params.doctrineId, adminRestriction, function(err) {

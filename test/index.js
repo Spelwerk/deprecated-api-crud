@@ -17,6 +17,10 @@ require('./routes/diseases');
 
 require('./routes/doctrines');
 
+require('./routes/expertises');
+
+require('./routes/focuses');
+
 require('./routes/protection');
 
 require('./routes/software');

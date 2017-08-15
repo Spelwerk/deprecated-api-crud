@@ -10,7 +10,7 @@ var should = chai.should(),
 var app = require('./../app'),
     hasher = require('./../../lib/hasher');
 
-describe('/software', function() {
+describe('/focuses', function() {
 
     before(function(done) {
         app.login(done);
@@ -40,10 +40,8 @@ describe('/software', function() {
 
         assert.isString(item.name);
         if(item.description) assert.isString(item.description);
-        assert.isNumber(item.price);
-        assert.isNumber(item.hacking);
-        assert.isNumber(item.hacking_bonus);
-        assert.isBoolean(item.legal);
+        assert.isNumber(item.manifestation_id);
+        if(item.icon) assert.equal(validator.isURL(item.icon), true);
 
         assert.isString(item.created);
         if(item.updated) assert.isString(item.updated);
@@ -57,13 +55,11 @@ describe('/software', function() {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
-                price: 10,
-                hacking: 10,
-                hacking_bonus: 10,
-                legal: true
+                manifestation_id: 1,
+                icon: 'http://fakeicon.com/' + hasher(20) + '.png'
             };
 
-            app.post('/software', payload)
+            app.post('/focuses', payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -79,25 +75,12 @@ describe('/software', function() {
                 });
         });
 
-        it('POST /:softwareId/clone should create a copy of the asset', function(done) {
-            app.post('/software/' + temporaryId + '/clone')
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
-        });
-
-        it('POST /:softwareId/comments should create a new comment for the asset', function(done) {
+        xit('POST /:focusId/comments should create a new comment for the asset', function(done) {
             var payload = {
                 content: hasher(20)
             };
 
-            app.post('/software/' + temporaryId + '/comments', payload)
+            app.post('/focuses/' + temporaryId + '/comments', payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -113,13 +96,13 @@ describe('/software', function() {
 
     describe('PUT', function() {
 
-        it('PUT /:softwareId should update the item with new values', function(done) {
+        it('PUT /:focusId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
             };
 
-            app.put('/software/' + temporaryId, payload)
+            app.put('/focuses/' + temporaryId, payload)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -133,8 +116,8 @@ describe('/software', function() {
                 })
         });
 
-        it('PUT /:softwareId/canon should update the asset canon field', function(done) {
-            app.put('/software/' + temporaryId + '/canon')
+        it('PUT /:focusId/canon should update the asset canon field', function(done) {
+            app.put('/focuses/' + temporaryId + '/canon')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -152,8 +135,8 @@ describe('/software', function() {
 
     describe('GET', function() {
 
-        it('GET / should return a list of software', function(done) {
-            app.get('/software')
+        it('GET / should return a list of focuses', function(done) {
+            app.get('/focuses')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -164,8 +147,8 @@ describe('/software', function() {
                 });
         });
 
-        it('GET /:softwareId should return one asset', function(done) {
-            app.get('/software/' + temporaryId)
+        it('GET /:focusId should return one asset', function(done) {
+            app.get('/focuses/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -176,8 +159,8 @@ describe('/software', function() {
                 })
         });
 
-        it('GET /:softwareId/ownership should return ownership status of the asset if user is logged in', function(done) {
-            app.get('/software/' + temporaryId + '/ownership')
+        it('GET /:focusId/ownership should return ownership status of the asset if user is logged in', function(done) {
+            app.get('/focuses/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -188,8 +171,8 @@ describe('/software', function() {
                 });
         });
 
-        it('GET /:softwareId/comments should get all available comments for the asset', function(done) {
-            app.get('/software/' + temporaryId + '/comments')
+        xit('GET /:focusId/comments should get all available comments for the asset', function(done) {
+            app.get('/focuses/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -214,8 +197,8 @@ describe('/software', function() {
 
     describe('DELETE', function() {
 
-        it('DELETE /:softwareId should update the asset deleted field', function(done) {
-            app.delete('/software/' + temporaryId)
+        it('DELETE /:focusId should update the asset deleted field', function(done) {
+            app.delete('/focuses/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
