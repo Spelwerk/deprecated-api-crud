@@ -2,7 +2,6 @@ var async = require('async');
 
 var comment = require('./../../lib/sql/comment'),
     ownership = require('./../../lib/sql/ownership'),
-    relation = require('./../../lib/sql/relation'),
     query = require('./../../lib/sql/query'),
     sequel = require('./../../lib/sql/sequel');
 
