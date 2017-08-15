@@ -59,7 +59,8 @@ describe('/weapontypes', function() {
         if(item.deleted) assert.isString(item.deleted);
     }
 
-    describe('/', function() {
+
+    describe('POST', function() {
 
         it('POST / should create a new weapon type', function(done) {
             var payload = {
@@ -90,37 +91,18 @@ describe('/weapontypes', function() {
                 });
         });
 
-        it('GET / should return a list of weapon types', function(done) {
-            app.get('/weapontypes')
-                .expect(200)
+        it('POST /:weaponGroupId/comments should create a new comment for the asset', function(done) {
+            var payload = {
+                content: hasher(20)
+            };
+
+            app.post('/weapontypes/' + temporaryId + '/comments', payload)
+                .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
-
-                    done();
-                });
-        });
-
-        it('GET /special should return a list of weapon types', function(done) {
-            app.get('/weapontypes/special')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyList(res.body);
-
-                    done();
-                });
-        });
-
-        it('GET /group/:groupId should return a list of weapon types', function(done) {
-            app.get('/weapontypes/group/1')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyList(res.body);
+                    assert.isNumber(res.body.affected);
+                    assert.isNumber(res.body.id);
 
                     done();
                 });
@@ -128,31 +110,7 @@ describe('/weapontypes', function() {
 
     });
 
-    describe('/:weaponGroupId', function() {
-
-        it('GET /:weaponGroupId should return a list with one weapon type', function(done) {
-            app.get('/weapontypes/' + temporaryId)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyItem(res.body.result);
-
-                    done();
-                })
-        });
-
-        it('GET /:weaponGroupId/ownership should return ownership status of the weapon type if user is logged in', function(done) {
-            app.get('/weapontypes/' + temporaryId + '/ownership')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isBoolean(res.body.ownership);
-
-                    done();
-                });
-        });
+    describe('PUT', function() {
 
         it('PUT /:weaponGroupId should update the item with new values', function(done) {
             var payload = {
@@ -191,20 +149,63 @@ describe('/weapontypes', function() {
 
     });
 
-    describe('/:weaponGroupId/comments', function() {
+    describe('GET', function() {
 
-        it('POST /:weaponGroupId/comments should create a new comment for the asset', function(done) {
-            var payload = {
-                content: hasher(20)
-            };
-
-            app.post('/weapontypes/' + temporaryId + '/comments', payload)
-                .expect(201)
+        it('GET / should return a list of weapon types', function(done) {
+            app.get('/weapontypes')
+                .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
-                    assert.isNumber(res.body.id);
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('GET /special should return a list of weapon types', function(done) {
+            app.get('/weapontypes/special')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('GET /group/:groupId should return a list of weapon types', function(done) {
+            app.get('/weapontypes/group/1')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('GET /:weaponGroupId should return one weapon type', function(done) {
+            app.get('/weapontypes/' + temporaryId)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyItem(res.body.result);
+
+                    done();
+                })
+        });
+
+        it('GET /:weaponGroupId/ownership should return ownership status of the weapon type if user is logged in', function(done) {
+            app.get('/weapontypes/' + temporaryId + '/ownership')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isBoolean(res.body.ownership);
 
                     done();
                 });
@@ -234,7 +235,7 @@ describe('/weapontypes', function() {
 
     });
 
-    describe('END', function() {
+    describe('DELETE', function() {
 
         it('DELETE /:weaponGroupId should update the weapon deleted field', function(done) {
             app.delete('/weapontypes/' + temporaryId)

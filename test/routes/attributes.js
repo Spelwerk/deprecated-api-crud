@@ -47,7 +47,8 @@ describe('/attributes', function() {
         if(item.deleted) assert.isString(item.deleted);
     }
 
-    describe('/', function() {
+
+    describe('POST', function() {
 
         it('POST / should create a new attribute', function(done) {
             var payload = {
@@ -73,69 +74,9 @@ describe('/attributes', function() {
                 });
         });
 
-        it('GET / should return a list of attributes', function(done) {
-            app.get('/attributes')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyList(res.body);
-
-                    done();
-                });
-        });
-
-        it('GET /special should return a list of attributes', function(done) {
-            app.get('/attributes/special')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyList(res.body);
-
-                    done();
-                });
-        });
-
-        it('GET /type/:typeId should return a list of attributes', function(done) {
-            app.get('/attributes/type/1')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyList(res.body);
-
-                    done();
-                });
-        });
-
     });
 
-    describe('/:attributeId', function() {
-
-        it('GET /:attributeId should return a list with one attribute', function(done) {
-            app.get('/attributes/' + temporaryId)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyItem(res.body.result);
-
-                    done();
-                })
-        });
-
-        it('GET /:attributeId/ownership should return ownership status of the attribute if user is logged in', function(done) {
-            app.get('/attributes/' + temporaryId + '/ownership')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isBoolean(res.body.ownership);
-
-                    done();
-                });
-        });
+    describe('PUT', function() {
 
         it('PUT /:attributeId should update the item with new values', function(done) {
             var payload = {
@@ -174,7 +115,71 @@ describe('/attributes', function() {
 
     });
 
-    describe('END', function() {
+    describe('GET', function() {
+
+        it('GET / should return a list of attributes', function(done) {
+            app.get('/attributes')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('GET /special should return a list of attributes', function(done) {
+            app.get('/attributes/special')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('GET /type/:typeId should return a list of attributes', function(done) {
+            app.get('/attributes/type/1')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('GET /:attributeId should return one attribute', function(done) {
+            app.get('/attributes/' + temporaryId)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyItem(res.body.result);
+
+                    done();
+                })
+        });
+
+        it('GET /:attributeId/ownership should return ownership status of the attribute if user is logged in', function(done) {
+            app.get('/attributes/' + temporaryId + '/ownership')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isBoolean(res.body.ownership);
+
+                    done();
+                });
+        });
+
+    });
+
+    describe('DELETE', function() {
 
         it('DELETE /:attributeId should update the weapon deleted field', function(done) {
             app.delete('/attributes/' + temporaryId)

@@ -45,7 +45,8 @@ describe('/assetgroups', function() {
         if(item.deleted) assert.isString(item.deleted);
     }
 
-    describe('/', function() {
+
+    describe('POST', function() {
 
         it('POST / should create a new asset group', function(done) {
             var payload = {
@@ -68,45 +69,9 @@ describe('/assetgroups', function() {
                 });
         });
 
-        it('GET / should return a list of asset groups', function(done) {
-            app.get('/assetgroups')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyList(res.body);
-
-                    done();
-                });
-        });
-
     });
 
-    describe('/:assetGroupId', function() {
-
-        it('GET /:assetGroupId should return a list with one asset group', function(done) {
-            app.get('/assetgroups/' + temporaryId)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyItem(res.body.result);
-
-                    done();
-                })
-        });
-
-        it('GET /:assetGroupId/ownership should return ownership status of the asset group if user is logged in', function(done) {
-            app.get('/assetgroups/' + temporaryId + '/ownership')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isBoolean(res.body.ownership);
-
-                    done();
-                });
-        });
+    describe('PUT', function() {
 
         it('PUT /:assetGroupId should update the item with new values', function(done) {
             var payload = {
@@ -144,7 +109,47 @@ describe('/assetgroups', function() {
 
     });
 
-    describe('END', function() {
+    describe('GET', function() {
+
+        it('GET / should return a list of asset groups', function(done) {
+            app.get('/assetgroups')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('GET /:assetGroupId should return one asset group', function(done) {
+            app.get('/assetgroups/' + temporaryId)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyItem(res.body.result);
+
+                    done();
+                })
+        });
+
+        it('GET /:assetGroupId/ownership should return ownership status of the asset group if user is logged in', function(done) {
+            app.get('/assetgroups/' + temporaryId + '/ownership')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isBoolean(res.body.ownership);
+
+                    done();
+                });
+        });
+
+    });
+
+    describe('DELETE', function() {
 
         it('DELETE /:assetGroupId should update the asset group deleted field', function(done) {
             app.delete('/assetgroups/' + temporaryId)

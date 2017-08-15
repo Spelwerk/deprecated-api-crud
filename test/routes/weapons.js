@@ -66,7 +66,8 @@ describe('/weapons', function() {
         if(item.deleted) assert.isString(item.deleted);
     }
 
-    describe('/', function() {
+
+    describe('POST', function() {
 
         it('POST / should create a new weapon', function(done) {
             var payload = {
@@ -95,6 +96,79 @@ describe('/weapons', function() {
                     done();
                 });
         });
+
+        it('POST /:weaponId/clone should create a copy of the weapon', function(done) {
+            app.post('/weapons/' + temporaryId + '/clone')
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
+                    assert.isNumber(res.body.id);
+
+                    done();
+                });
+        });
+
+        it('POST /:weaponId/comments should create a new comment for the weapon', function(done) {
+            var payload = {
+                content: hasher(20)
+            };
+
+            app.post('/weapons/' + temporaryId + '/comments', payload)
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
+                    assert.isNumber(res.body.id);
+
+                    done();
+                });
+        });
+
+    });
+
+    describe('PUT', function() {
+
+        it('PUT /:weaponId should update the item with new values', function(done) {
+            var payload = {
+                name: hasher(20),
+                description: hasher(20)
+            };
+
+            app.put('/weapons/' + temporaryId, payload)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.changed);
+                    assert.notEqual(res.body.changed, 0);
+
+                    assert.isNumber(res.body.id);
+
+                    done();
+                })
+        });
+
+        it('PUT /:weaponId/canon should update the weapon canon field', function(done) {
+            app.put('/weapons/' + temporaryId + '/canon')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.changed);
+                    assert.notEqual(res.body.changed, 0);
+
+                    assert.isNumber(res.body.id);
+
+                    done();
+                });
+        });
+
+    });
+
+    describe('GET', function() {
 
         it('GET / should return a list of weapons', function(done) {
             app.get('/weapons')
@@ -144,11 +218,7 @@ describe('/weapons', function() {
                 });
         });
 
-    });
-
-    describe('/:weaponId', function() {
-
-        it('GET /:weaponId should return a list with one weapon', function(done) {
+        it('GET /:weaponId should return one weapon', function(done) {
             app.get('/weapons/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
@@ -167,62 +237,6 @@ describe('/weapons', function() {
                     if(err) return done(err);
 
                     assert.isBoolean(res.body.ownership);
-
-                    done();
-                });
-        });
-
-        it('PUT /:weaponId should update the item with new values', function(done) {
-            var payload = {
-                name: hasher(20),
-                description: hasher(20)
-            };
-
-            app.put('/weapons/' + temporaryId, payload)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                })
-        });
-
-        it('PUT /:weaponId/canon should update the weapon canon field', function(done) {
-            app.put('/weapons/' + temporaryId + '/canon')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
-        });
-
-    });
-
-    describe('/:weaponId/comments', function() {
-
-        it('POST /:weaponId/comments should create a new comment for the weapon', function(done) {
-            var payload = {
-                content: hasher(20)
-            };
-
-            app.post('/weapons/' + temporaryId + '/comments', payload)
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.isNumber(res.body.id);
 
                     done();
                 });
@@ -252,20 +266,7 @@ describe('/weapons', function() {
 
     });
 
-    describe('END', function() {
-
-        it('POST /:weaponId/clone should create a copy of the weapon', function(done) {
-            app.post('/weapons/' + temporaryId + '/clone')
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
-        });
+    describe('DELETE', function() {
 
         it('DELETE /:weaponId should update the weapon deleted field', function(done) {
             app.delete('/weapons/' + temporaryId)

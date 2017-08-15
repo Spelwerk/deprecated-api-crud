@@ -43,7 +43,8 @@ describe('/attributetypes', function() {
         if(item.deleted) assert.isString(item.deleted);
     }
 
-    describe('/', function() {
+
+    describe('POST', function() {
 
         it('POST / should create a new attribute type', function(done) {
             var payload = {
@@ -68,45 +69,9 @@ describe('/attributetypes', function() {
                 });
         });
 
-        it('GET / should return a list of attributetypes', function(done) {
-            app.get('/attributetypes')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyList(res.body);
-
-                    done();
-                });
-        });
-
     });
 
-    describe('/attributeTypeId', function() {
-
-        it('GET /:attributeTypeId should return a list with one attribute type', function(done) {
-            app.get('/attributetypes/' + temporaryId)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyItem(res.body.result);
-
-                    done();
-                })
-        });
-
-        it('GET /:attributeTypeId/ownership should return ownership status of the attribute if user is logged in', function(done) {
-            app.get('/attributetypes/' + temporaryId + '/ownership')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isBoolean(res.body.ownership);
-
-                    done();
-                });
-        });
+    describe('PUT', function() {
 
         it('PUT /:attributeTypeId should update the item with new values', function(done) {
             var payload = {
@@ -131,7 +96,47 @@ describe('/attributetypes', function() {
 
     });
 
-    describe('END', function() {
+    describe('GET', function() {
+
+        it('GET / should return a list of attributetypes', function(done) {
+            app.get('/attributetypes')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('GET /:attributeTypeId should return one attribute type', function(done) {
+            app.get('/attributetypes/' + temporaryId)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyItem(res.body.result);
+
+                    done();
+                })
+        });
+
+        it('GET /:attributeTypeId/ownership should return ownership status of the attribute if user is logged in', function(done) {
+            app.get('/attributetypes/' + temporaryId + '/ownership')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isBoolean(res.body.ownership);
+
+                    done();
+                });
+        });
+
+    });
+
+    describe('DELETE', function() {
 
         it('DELETE /:attributeTypeId should update the attribute deleted field', function(done) {
             app.delete('/attributetypes/' + temporaryId)

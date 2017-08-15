@@ -49,7 +49,8 @@ describe('/backgrounds', function() {
         if(item.deleted) assert.isString(item.deleted);
     }
 
-    describe('/', function() {
+
+    describe('POST', function() {
 
         it('POST / should create a new background', function(done) {
             var payload = {
@@ -75,6 +76,178 @@ describe('/backgrounds', function() {
                     done();
                 });
         });
+
+        it('POST /:backgroundId/clone should create a copy of the background', function(done) {
+            app.post('/backgrounds/' + temporaryId + '/clone')
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
+                    assert.isNumber(res.body.id);
+
+                    done();
+                });
+        });
+
+        it('POST /:backgroundId/comments should create a new comment for the background', function(done) {
+            var payload = {
+                content: hasher(20)
+            };
+
+            app.post('/backgrounds/' + temporaryId + '/comments', payload)
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
+                    assert.isNumber(res.body.id);
+
+                    done();
+                });
+        });
+
+        it('POST /:backgroundId/assets should add an asset to the background', function(done) {
+            var payload = {
+                insert_id: 1,
+                value: 10
+            };
+
+            app.post('/backgrounds/' + temporaryId + '/assets', payload)
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
+
+                    done();
+                });
+        });
+
+        it('POST /:backgroundId/attributes should add an attribute to the background', function(done) {
+            var payload = {
+                insert_id: 1,
+                value: 10
+            };
+
+            app.post('/backgrounds/' + temporaryId + '/attributes', payload)
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
+
+                    done();
+                });
+        });
+
+        it('POST /:backgroundId/skills should add an skill to the background', function(done) {
+            var payload = {
+                insert_id: 1,
+                value: 10
+            };
+
+            app.post('/backgrounds/' + temporaryId + '/skills', payload)
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
+
+                    done();
+                });
+        });
+
+    });
+
+    describe('PUT', function() {
+
+        it('PUT /:backgroundId should update the item with new values', function(done) {
+            var payload = {
+                name: hasher(20),
+                description: hasher(20)
+            };
+
+            app.put('/backgrounds/' + temporaryId, payload)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.changed);
+                    assert.notEqual(res.body.changed, 0);
+
+                    assert.isNumber(res.body.id);
+
+                    done();
+                })
+        });
+
+        it('PUT /:backgroundId/canon should update the background canon field', function(done) {
+            app.put('/backgrounds/' + temporaryId + '/canon')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.changed);
+                    assert.notEqual(res.body.changed, 0);
+
+                    assert.isNumber(res.body.id);
+
+                    done();
+                });
+        });
+
+        it('PUT /:backgroundId/assets should change the asset value for the background', function(done) {
+            var payload = {
+                value: 8
+            };
+
+            app.put('/backgrounds/' + temporaryId + '/assets/1', payload)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.changed);
+
+                    done();
+                });
+        });
+
+        it('PUT /:backgroundId/attributes should change the attribute value for the background', function(done) {
+            var payload = {
+                value: 8
+            };
+
+            app.put('/backgrounds/' + temporaryId + '/attributes/1', payload)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.changed);
+
+                    done();
+                });
+        });
+
+        it('PUT /:backgroundId/skills should change the skill value for the background', function(done) {
+            var payload = {
+                value: 8
+            };
+
+            app.put('/backgrounds/' + temporaryId + '/skills/1', payload)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.changed);
+
+                    done();
+                });
+        });
+
+    });
+
+    describe('GET', function() {
 
         it('GET / should return a list of backgrounds', function(done) {
             app.get('/backgrounds')
@@ -112,10 +285,6 @@ describe('/backgrounds', function() {
                 });
         });
 
-    });
-
-    describe('/:backgroundId', function() {
-
         it('GET /:backgroundId should return one background', function(done) {
             app.get('/backgrounds/' + temporaryId)
                 .expect(200)
@@ -135,62 +304,6 @@ describe('/backgrounds', function() {
                     if(err) return done(err);
 
                     assert.isBoolean(res.body.ownership);
-
-                    done();
-                });
-        });
-
-        it('PUT /:backgroundId should update the item with new values', function(done) {
-            var payload = {
-                name: hasher(20),
-                description: hasher(20)
-            };
-
-            app.put('/backgrounds/' + temporaryId, payload)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                })
-        });
-
-        it('PUT /:backgroundId/canon should update the background canon field', function(done) {
-            app.put('/backgrounds/' + temporaryId + '/canon')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
-        });
-
-    });
-
-    describe('/:backgroundId/comments', function() {
-
-        it('POST /:backgroundId/comments should create a new comment for the background', function(done) {
-            var payload = {
-                content: hasher(20)
-            };
-
-            app.post('/backgrounds/' + temporaryId + '/comments', payload)
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.isNumber(res.body.id);
 
                     done();
                 });
@@ -218,44 +331,7 @@ describe('/backgrounds', function() {
                 })
         });
 
-    });
-
-    describe('/:backgroundId/assets', function() {
-
-        it('POST should add an asset to the background', function(done) {
-            var payload = {
-                insert_id: 1,
-                value: 10
-            };
-
-            app.post('/backgrounds/' + temporaryId + '/assets', payload)
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
-        });
-
-        it('PUT should change the asset value for the background', function(done) {
-            var payload = {
-                value: 8
-            };
-
-            app.put('/backgrounds/' + temporaryId + '/assets/1', payload)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-
-                    done();
-                });
-        });
-
-        it('GET should return a list of assets', function(done) {
+        it('GET /:backgroundId/assets should return a list of assets', function(done) {
             app.get('/backgrounds/' + temporaryId + '/assets')
                 .expect(200)
                 .end(function(err, res) {
@@ -286,44 +362,7 @@ describe('/backgrounds', function() {
                 });
         });
 
-    });
-
-    describe('/:backgroundId/attributes', function() {
-
-        it('POST should add an attribute to the background', function(done) {
-            var payload = {
-                insert_id: 1,
-                value: 10
-            };
-
-            app.post('/backgrounds/' + temporaryId + '/attributes', payload)
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
-        });
-
-        it('PUT should change the attribute value for the background', function(done) {
-            var payload = {
-                value: 8
-            };
-
-            app.put('/backgrounds/' + temporaryId + '/attributes/1', payload)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-
-                    done();
-                });
-        });
-
-        it('GET should return a list of attributes', function(done) {
+        it('GET /:backgroundId/attributes should return a list of attributes', function(done) {
             app.get('/backgrounds/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
@@ -353,44 +392,7 @@ describe('/backgrounds', function() {
                 });
         });
 
-    });
-
-    describe('/:backgroundId/skills', function() {
-
-        it('POST should add an skill to the background', function(done) {
-            var payload = {
-                insert_id: 1,
-                value: 10
-            };
-
-            app.post('/backgrounds/' + temporaryId + '/skills', payload)
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
-        });
-
-        it('PUT should change the skill value for the background', function(done) {
-            var payload = {
-                value: 8
-            };
-
-            app.put('/backgrounds/' + temporaryId + '/skills/1', payload)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-
-                    done();
-                });
-        });
-
-        it('GET should return a list of skills', function(done) {
+        it('GET /:backgroundId/skills should return a list of skills', function(done) {
             app.get('/backgrounds/' + temporaryId + '/skills')
                 .expect(200)
                 .end(function(err, res) {
@@ -424,20 +426,7 @@ describe('/backgrounds', function() {
 
     });
 
-    describe('END', function() {
-
-        it('POST /:backgroundId/clone should create a copy of the background', function(done) {
-            app.post('/backgrounds/' + temporaryId + '/clone')
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
-        });
+    describe('DELETE', function() {
 
         it('DELETE /:backgroundId/attributes should remove the attribute from the background', function(done) {
             app.delete('/backgrounds/' + temporaryId + '/attributes/1')

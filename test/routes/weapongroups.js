@@ -51,7 +51,8 @@ describe('/weapongroups', function() {
         if(item.deleted) assert.isString(item.deleted);
     }
 
-    describe('/', function() {
+
+    describe('POST', function() {
 
         it('POST / should create a new weapon group', function(done) {
             var payload = {
@@ -78,6 +79,66 @@ describe('/weapongroups', function() {
                     done();
                 });
         });
+
+        it('POST /:weaponGroupId/comments should create a new comment for the asset', function(done) {
+            var payload = {
+                content: hasher(20)
+            };
+
+            app.post('/weapongroups/' + temporaryId + '/comments', payload)
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
+                    assert.isNumber(res.body.id);
+
+                    done();
+                });
+        });
+
+    });
+
+    describe('PUT', function() {
+
+        it('PUT /:weaponGroupId should update the item with new values', function(done) {
+            var payload = {
+                name: hasher(20),
+                description: hasher(20)
+            };
+
+            app.put('/weapongroups/' + temporaryId, payload)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.changed);
+                    assert.notEqual(res.body.changed, 0);
+
+                    assert.isNumber(res.body.id);
+
+                    done();
+                })
+        });
+
+        it('PUT /:weaponGroupId/canon should update the weapon group canon field', function(done) {
+            app.put('/weapongroups/' + temporaryId + '/canon')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.changed);
+                    assert.notEqual(res.body.changed, 0);
+
+                    assert.isNumber(res.body.id);
+
+                    done();
+                });
+        });
+
+    });
+
+    describe('GET', function() {
 
         it('GET / should return a list of weapon groups', function(done) {
             app.get('/weapongroups')
@@ -127,11 +188,7 @@ describe('/weapongroups', function() {
                 });
         });
 
-    });
-
-    describe('/:weaponGroupId', function() {
-
-        it('GET /:weaponGroupId should return a list with one weapon group', function(done) {
+        it('GET /:weaponGroupId should return one weapon group', function(done) {
             app.get('/weapongroups/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
@@ -150,62 +207,6 @@ describe('/weapongroups', function() {
                     if(err) return done(err);
 
                     assert.isBoolean(res.body.ownership);
-
-                    done();
-                });
-        });
-
-        it('PUT /:weaponGroupId should update the item with new values', function(done) {
-            var payload = {
-                name: hasher(20),
-                description: hasher(20)
-            };
-
-            app.put('/weapongroups/' + temporaryId, payload)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                })
-        });
-
-        it('PUT /:weaponGroupId/canon should update the weapon group canon field', function(done) {
-            app.put('/weapongroups/' + temporaryId + '/canon')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
-        });
-
-    });
-
-    describe('/:weaponGroupId/comments', function() {
-
-        it('POST /:weaponGroupId/comments should create a new comment for the asset', function(done) {
-            var payload = {
-                content: hasher(20)
-            };
-
-            app.post('/weapongroups/' + temporaryId + '/comments', payload)
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.isNumber(res.body.id);
 
                     done();
                 });
@@ -235,7 +236,7 @@ describe('/weapongroups', function() {
 
     });
 
-    describe('END', function() {
+    describe('DELETE', function() {
 
         it('DELETE /:weaponGroupId should update the weapon deleted field', function(done) {
             app.delete('/weapongroups/' + temporaryId)

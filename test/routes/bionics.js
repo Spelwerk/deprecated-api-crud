@@ -48,7 +48,8 @@ describe('/bionics', function() {
         if(item.deleted) assert.isString(item.deleted);
     }
 
-    describe('/', function() {
+
+    describe('POST', function() {
 
         it('POST / should create a new bionic', function(done) {
             var payload = {
@@ -75,25 +76,64 @@ describe('/bionics', function() {
                 });
         });
 
-        it('GET / should return a list of bionics', function(done) {
-            app.get('/bionics')
-                .expect(200)
+        it('POST /:bionicId/clone should create a copy of the bionic', function(done) {
+            app.post('/bionics/' + temporaryId + '/clone')
+                .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    assert.isNumber(res.body.affected);
+                    assert.isNumber(res.body.id);
 
                     done();
                 });
         });
 
-        it('GET /bodypart/:bodyPartId should return a list of bionics', function(done) {
-            app.get('/bionics/bodypart/1')
-                .expect(200)
+        it('POST /:bionicId/comments should create a new comment for the bionic', function(done) {
+            var payload = {
+                content: hasher(20)
+            };
+
+            app.post('/bionics/' + temporaryId + '/comments', payload)
+                .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    assert.isNumber(res.body.affected);
+                    assert.isNumber(res.body.id);
+
+                    done();
+                });
+        });
+
+        it('POST /:bionicId/attributes should add an attribute to the bionic', function(done) {
+            var payload = {
+                insert_id: 1,
+                value: 10
+            };
+
+            app.post('/bionics/' + temporaryId + '/attributes', payload)
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
+
+                    done();
+                });
+        });
+
+        it('POST /:bionicId/augmentations should add an augmentation to the bionic', function(done) {
+            var payload = {
+                insert_id: 1
+            };
+
+            app.post('/bionics/' + temporaryId + '/augmentations', payload)
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
 
                     done();
                 });
@@ -101,31 +141,7 @@ describe('/bionics', function() {
 
     });
 
-    describe('/:bionicId', function() {
-
-        it('GET /:bionicId should return a list with one bionic', function(done) {
-            app.get('/bionics/' + temporaryId)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyItem(res.body.result);
-
-                    done();
-                })
-        });
-
-        it('GET /:bionicId/ownership should return ownership status of the bionic if user is logged in', function(done) {
-            app.get('/bionics/' + temporaryId + '/ownership')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isBoolean(res.body.ownership);
-
-                    done();
-                });
-        });
+    describe('PUT', function() {
 
         it('PUT /:bionicId should update the item with new values', function(done) {
             var payload = {
@@ -163,22 +179,69 @@ describe('/bionics', function() {
                 });
         });
 
-    });
-
-    describe('/:bionicId/comments', function() {
-
-        it('POST /:bionicId/comments should create a new comment for the bionic', function(done) {
+        it('PUT /:bionicId/attributes should change the attribute value for the bionic', function(done) {
             var payload = {
-                content: hasher(20)
+                value: 8
             };
 
-            app.post('/bionics/' + temporaryId + '/comments', payload)
-                .expect(201)
+            app.put('/bionics/' + temporaryId + '/attributes/1', payload)
+                .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
-                    assert.isNumber(res.body.id);
+                    assert.isNumber(res.body.changed);
+
+                    done();
+                });
+        });
+
+    });
+
+    describe('GET', function() {
+
+        it('GET / should return a list of bionics', function(done) {
+            app.get('/bionics')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('GET /bodypart/:bodyPartId should return a list of bionics', function(done) {
+            app.get('/bionics/bodypart/1')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('GET /:bionicId should return one bionic', function(done) {
+            app.get('/bionics/' + temporaryId)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyItem(res.body.result);
+
+                    done();
+                })
+        });
+
+        it('GET /:bionicId/ownership should return ownership status of the bionic if user is logged in', function(done) {
+            app.get('/bionics/' + temporaryId + '/ownership')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isBoolean(res.body.ownership);
 
                     done();
                 });
@@ -206,44 +269,7 @@ describe('/bionics', function() {
                 })
         });
 
-    });
-
-    describe('/:bionicId/attributes', function() {
-
-        it('POST should add an attribute to the bionic', function(done) {
-            var payload = {
-                insert_id: 1,
-                value: 10
-            };
-
-            app.post('/bionics/' + temporaryId + '/attributes', payload)
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
-        });
-
-        it('PUT should change the attribute value for the bionic', function(done) {
-            var payload = {
-                value: 8
-            };
-
-            app.put('/bionics/' + temporaryId + '/attributes/1', payload)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-
-                    done();
-                });
-        });
-
-        it('GET should return a list of attributes', function(done) {
+        it('GET /:bionicId/attributes should return a list of attributes', function(done) {
             app.get('/bionics/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
@@ -273,27 +299,7 @@ describe('/bionics', function() {
                 });
         });
 
-    });
-
-    describe('/:bionicId/augmentations', function() {
-
-        it('POST should add an augmentation to the bionic', function(done) {
-            var payload = {
-                insert_id: 1
-            };
-
-            app.post('/bionics/' + temporaryId + '/augmentations', payload)
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
-        });
-
-        it('GET should return a list of augmentations', function(done) {
+        it('GET /:bionicId/augmentations should return a list of augmentations', function(done) {
             app.get('/bionics/' + temporaryId + '/augmentations')
                 .expect(200)
                 .end(function(err, res) {
@@ -326,20 +332,7 @@ describe('/bionics', function() {
 
     });
 
-    describe('END', function() {
-
-        it('POST /:bionicId/clone should create a copy of the bionic', function(done) {
-            app.post('/bionics/' + temporaryId + '/clone')
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
-        });
+    describe('DELETE', function() {
 
         it('DELETE /:bionicId/attributes should remove the attribute from the bionic', function(done) {
             app.delete('/bionics/' + temporaryId + '/attributes/1')

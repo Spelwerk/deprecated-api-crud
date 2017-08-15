@@ -55,7 +55,8 @@ describe('/weaponmods', function() {
         if(item.deleted) assert.isString(item.deleted);
     }
 
-    describe('/', function() {
+
+    describe('POST', function() {
 
         it('POST / should create a new weapon mod', function(done) {
             var payload = {
@@ -88,25 +89,18 @@ describe('/weaponmods', function() {
                 });
         });
 
-        it('GET / should return a list of weapon mods', function(done) {
-            app.get('/weaponmods')
-                .expect(200)
+        it('POST /:weaponModId/comments should create a new comment for the asset', function(done) {
+            var payload = {
+                content: hasher(20)
+            };
+
+            app.post('/weaponmods/' + temporaryId + '/comments', payload)
+                .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
-
-                    done();
-                });
-        });
-
-        it('GET /type/:typeId should return a list of weapon mods', function(done) {
-            app.get('/weaponmods/type/1')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyList(res.body);
+                    assert.isNumber(res.body.affected);
+                    assert.isNumber(res.body.id);
 
                     done();
                 });
@@ -114,31 +108,7 @@ describe('/weaponmods', function() {
 
     });
 
-    describe('/:weaponModId', function() {
-
-        it('GET /:weaponModId should return a list with one weapon mod', function(done) {
-            app.get('/weaponmods/' + temporaryId)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyItem(res.body.result);
-
-                    done();
-                })
-        });
-
-        it('GET /:weaponModId/ownership should return ownership status of the weapon mod if user is logged in', function(done) {
-            app.get('/weaponmods/' + temporaryId + '/ownership')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isBoolean(res.body.ownership);
-
-                    done();
-                });
-        });
+    describe('PUT', function() {
 
         it('PUT /:weaponModId should update the item with new values', function(done) {
             var payload = {
@@ -182,20 +152,51 @@ describe('/weaponmods', function() {
 
     });
 
-    describe('/:weaponModId/comments', function() {
+    describe('GET', function() {
 
-        it('POST /:weaponModId/comments should create a new comment for the asset', function(done) {
-            var payload = {
-                content: hasher(20)
-            };
-
-            app.post('/weaponmods/' + temporaryId + '/comments', payload)
-                .expect(201)
+        it('GET / should return a list of weapon mods', function(done) {
+            app.get('/weaponmods')
+                .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
-                    assert.isNumber(res.body.id);
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('GET /type/:typeId should return a list of weapon mods', function(done) {
+            app.get('/weaponmods/type/1')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('GET /:weaponModId should return one weapon mod', function(done) {
+            app.get('/weaponmods/' + temporaryId)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyItem(res.body.result);
+
+                    done();
+                })
+        });
+
+        it('GET /:weaponModId/ownership should return ownership status of the weapon mod if user is logged in', function(done) {
+            app.get('/weaponmods/' + temporaryId + '/ownership')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isBoolean(res.body.ownership);
 
                     done();
                 });
@@ -225,7 +226,7 @@ describe('/weaponmods', function() {
 
     });
 
-    describe('END', function() {
+    describe('DELETE', function() {
 
         it('DELETE /:weaponModId should update the weapon deleted field', function(done) {
             app.delete('/weaponmods/' + temporaryId)

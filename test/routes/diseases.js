@@ -10,7 +10,7 @@ var should = chai.should(),
 var app = require('./../app'),
     hasher = require('./../../lib/hasher');
 
-describe('/assettypes', function() {
+describe('/diseases', function() {
 
     before(function(done) {
         app.login(done);
@@ -38,8 +38,6 @@ describe('/assettypes', function() {
         assert.isNumber(item.popularity);
 
         assert.isString(item.name);
-        assert.isNumber(item.assetgroup_id);
-        if(item.icon) assert.equal(validator.isURL(item.icon), true);
 
         assert.isString(item.created);
         if(item.updated) assert.isString(item.updated);
@@ -49,14 +47,12 @@ describe('/assettypes', function() {
 
     describe('POST', function() {
 
-        it('POST / should create a new asset type', function(done) {
+        it('POST / should create a new asset', function(done) {
             var payload = {
-                name: hasher(20),
-                assetgroup_id: 1,
-                icon: 'http://fakeicon.com/' + hasher(20) + '.png'
+                name: hasher(20)
             };
 
-            app.post('/assettypes', payload)
+            app.post('/diseases', payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -76,12 +72,12 @@ describe('/assettypes', function() {
 
     describe('PUT', function() {
 
-        it('PUT /:assetTypeId should update the item with new values', function(done) {
+        it('PUT /:diseaseId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20)
             };
 
-            app.put('/assettypes/' + temporaryId, payload)
+            app.put('/diseases/' + temporaryId, payload)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -95,8 +91,8 @@ describe('/assettypes', function() {
                 })
         });
 
-        it('PUT /:assetTypeId/canon should update the asset canon field', function(done) {
-            app.put('/assettypes/' + temporaryId + '/canon')
+        it('PUT /:diseaseId/canon should update the asset canon field', function(done) {
+            app.put('/diseases/' + temporaryId + '/canon')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -114,8 +110,8 @@ describe('/assettypes', function() {
 
     describe('GET', function() {
 
-        it('GET / should return a list of assettypes', function(done) {
-            app.get('/assettypes')
+        it('GET / should return a list of diseases', function(done) {
+            app.get('/diseases')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -126,20 +122,8 @@ describe('/assettypes', function() {
                 });
         });
 
-        it('GET /group/:assetGroupId should return a list of assettypes', function(done) {
-            app.get('/assettypes/group/1')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyList(res.body);
-
-                    done();
-                });
-        });
-
-        it('GET /:assetTypeId should return one asset type', function(done) {
-            app.get('/assettypes/' + temporaryId)
+        it('GET /:diseaseId should return one asset', function(done) {
+            app.get('/diseases/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -150,8 +134,8 @@ describe('/assettypes', function() {
                 })
         });
 
-        it('GET /:assetTypeId/ownership should return ownership status of the asset if user is logged in', function(done) {
-            app.get('/assettypes/' + temporaryId + '/ownership')
+        it('GET /:diseaseId/ownership should return ownership status of the asset if user is logged in', function(done) {
+            app.get('/diseases/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -166,8 +150,8 @@ describe('/assettypes', function() {
 
     describe('DELETE', function() {
 
-        it('DELETE /:assetTypeId should update the asset deleted field', function(done) {
-            app.delete('/assettypes/' + temporaryId)
+        it('DELETE /:diseaseId should update the asset deleted field', function(done) {
+            app.delete('/diseases/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);

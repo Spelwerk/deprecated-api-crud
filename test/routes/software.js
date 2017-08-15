@@ -49,7 +49,8 @@ describe('/software', function() {
         if(item.deleted) assert.isString(item.deleted);
     }
 
-    describe('/', function() {
+
+    describe('POST', function() {
 
         it('POST / should create a new asset', function(done) {
             var payload = {
@@ -77,13 +78,31 @@ describe('/software', function() {
                 });
         });
 
-        it('GET / should return a list of software', function(done) {
-            app.get('/software')
-                .expect(200)
+        it('POST /:softwareId/clone should create a copy of the asset', function(done) {
+            app.post('/software/' + temporaryId + '/clone')
+                .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    assert.isNumber(res.body.affected);
+                    assert.isNumber(res.body.id);
+
+                    done();
+                });
+        });
+
+        it('POST /:softwareId/comments should create a new comment for the asset', function(done) {
+            var payload = {
+                content: hasher(20)
+            };
+
+            app.post('/software/' + temporaryId + '/comments', payload)
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
+                    assert.isNumber(res.body.id);
 
                     done();
                 });
@@ -91,31 +110,7 @@ describe('/software', function() {
 
     });
 
-    describe('/:softwareId', function() {
-
-        it('GET /:softwareId should return a list with one asset', function(done) {
-            app.get('/software/' + temporaryId)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyItem(res.body.result);
-
-                    done();
-                })
-        });
-
-        it('GET /:softwareId/ownership should return ownership status of the asset if user is logged in', function(done) {
-            app.get('/software/' + temporaryId + '/ownership')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isBoolean(res.body.ownership);
-
-                    done();
-                });
-        });
+    describe('PUT', function() {
 
         it('PUT /:softwareId should update the item with new values', function(done) {
             var payload = {
@@ -158,20 +153,39 @@ describe('/software', function() {
 
     });
 
-    describe('/:softwareId/comments', function() {
+    describe('GET', function() {
 
-        it('POST /:softwareId/comments should create a new comment for the asset', function(done) {
-            var payload = {
-                content: hasher(20)
-            };
-
-            app.post('/software/' + temporaryId + '/comments', payload)
-                .expect(201)
+        it('GET / should return a list of software', function(done) {
+            app.get('/software')
+                .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
-                    assert.isNumber(res.body.id);
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('GET /:softwareId should return one asset', function(done) {
+            app.get('/software/' + temporaryId)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyItem(res.body.result);
+
+                    done();
+                })
+        });
+
+        it('GET /:softwareId/ownership should return ownership status of the asset if user is logged in', function(done) {
+            app.get('/software/' + temporaryId + '/ownership')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isBoolean(res.body.ownership);
 
                     done();
                 });
@@ -201,20 +215,7 @@ describe('/software', function() {
 
     });
 
-    describe('END', function() {
-
-        it('POST /:softwareId/clone should create a copy of the asset', function(done) {
-            app.post('/software/' + temporaryId + '/clone')
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
-        });
+    describe('DELETE', function() {
 
         it('DELETE /:softwareId should update the asset deleted field', function(done) {
             app.delete('/software/' + temporaryId)

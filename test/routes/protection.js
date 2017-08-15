@@ -48,7 +48,8 @@ describe('/protection', function() {
         if(item.deleted) assert.isString(item.deleted);
     }
 
-    describe('/', function() {
+
+    describe('POST', function() {
 
         it('POST / should create a new protection', function(done) {
             var payload = {
@@ -74,25 +75,48 @@ describe('/protection', function() {
                 });
         });
 
-        it('GET / should return a list of protection', function(done) {
-            app.get('/protection')
-                .expect(200)
+        it('POST /:protectionId/clone should create a copy of the protection', function(done) {
+            app.post('/protection/' + temporaryId + '/clone')
+                .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    assert.isNumber(res.body.affected);
+                    assert.isNumber(res.body.id);
 
                     done();
                 });
         });
 
-        it('GET /bodypart/:bodyPartId should return a list of protection', function(done) {
-            app.get('/protection/bodypart/1')
-                .expect(200)
+        it('POST /:protectionId/comments should create a new comment for the protection', function(done) {
+            var payload = {
+                content: hasher(20)
+            };
+
+            app.post('/protection/' + temporaryId + '/comments', payload)
+                .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    assert.isNumber(res.body.affected);
+                    assert.isNumber(res.body.id);
+
+                    done();
+                });
+        });
+
+        it('POST /:protectionId/attributes should add an attribute to the protection', function(done) {
+            var payload = {
+                insert_id: 1,
+                value: 10
+            };
+
+            app.post('/protection/' + temporaryId + '/attributes', payload)
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
 
                     done();
                 });
@@ -100,31 +124,7 @@ describe('/protection', function() {
 
     });
 
-    describe('/:protectionId', function() {
-
-        it('GET /:protectionId should return a list with one protection', function(done) {
-            app.get('/protection/' + temporaryId)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyItem(res.body.result);
-
-                    done();
-                })
-        });
-
-        it('GET /:protectionId/ownership should return ownership status of the protection if user is logged in', function(done) {
-            app.get('/protection/' + temporaryId + '/ownership')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isBoolean(res.body.ownership);
-
-                    done();
-                });
-        });
+    describe('PUT', function() {
 
         it('PUT /:protectionId should update the item with new values', function(done) {
             var payload = {
@@ -162,22 +162,69 @@ describe('/protection', function() {
                 });
         });
 
-    });
-
-    describe('/:protectionId/comments', function() {
-
-        it('POST /:protectionId/comments should create a new comment for the protection', function(done) {
+        it('PUT /:protectionId/attributes should change the attribute value for the protection', function(done) {
             var payload = {
-                content: hasher(20)
+                value: 8
             };
 
-            app.post('/protection/' + temporaryId + '/comments', payload)
-                .expect(201)
+            app.put('/protection/' + temporaryId + '/attributes/1', payload)
+                .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
-                    assert.isNumber(res.body.id);
+                    assert.isNumber(res.body.changed);
+
+                    done();
+                });
+        });
+
+    });
+
+    describe('GET', function() {
+
+        it('GET / should return a list of protection', function(done) {
+            app.get('/protection')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('GET /bodypart/:bodyPartId should return a list of protection', function(done) {
+            app.get('/protection/bodypart/1')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('GET /:protectionId should return one protection', function(done) {
+            app.get('/protection/' + temporaryId)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyItem(res.body.result);
+
+                    done();
+                })
+        });
+
+        it('GET /:protectionId/ownership should return ownership status of the protection if user is logged in', function(done) {
+            app.get('/protection/' + temporaryId + '/ownership')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isBoolean(res.body.ownership);
 
                     done();
                 });
@@ -205,44 +252,7 @@ describe('/protection', function() {
                 })
         });
 
-    });
-
-    describe('/:protectionId/attributes', function() {
-
-        it('POST should add an attribute to the protection', function(done) {
-            var payload = {
-                insert_id: 1,
-                value: 10
-            };
-
-            app.post('/protection/' + temporaryId + '/attributes', payload)
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
-        });
-
-        it('PUT should change the attribute value for the protection', function(done) {
-            var payload = {
-                value: 8
-            };
-
-            app.put('/protection/' + temporaryId + '/attributes/1', payload)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-
-                    done();
-                });
-        });
-
-        it('GET should return a list of attributes', function(done) {
+        it('GET /:protectionId/attributes should return a list of attributes', function(done) {
             app.get('/protection/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
@@ -274,20 +284,7 @@ describe('/protection', function() {
 
     });
 
-    describe('END', function() {
-
-        it('POST /:protectionId/clone should create a copy of the protection', function(done) {
-            app.post('/protection/' + temporaryId + '/clone')
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
-        });
+    describe('DELETE', function() {
 
         it('DELETE /:protectionId/attributes should remove the attribute from the protection', function(done) {
             app.delete('/protection/' + temporaryId + '/attributes/1')

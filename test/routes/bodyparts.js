@@ -42,7 +42,8 @@ describe('/bodyparts', function() {
         if(item.deleted) assert.isString(item.deleted);
     }
 
-    describe('/', function() {
+
+    describe('POST', function() {
 
         it('POST / should create a new bodypart', function(done) {
             var payload = {
@@ -66,13 +67,14 @@ describe('/bodyparts', function() {
                 });
         });
 
-        it('GET / should return a list of bodyparts', function(done) {
-            app.get('/bodyparts')
-                .expect(200)
+        it('POST /:bodyPartId/clone should create a copy of the bodypart', function(done) {
+            app.post('/bodyparts/' + temporaryId + '/clone')
+                .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    assert.isNumber(res.body.affected);
+                    assert.isNumber(res.body.id);
 
                     done();
                 });
@@ -80,31 +82,7 @@ describe('/bodyparts', function() {
 
     });
 
-    describe('/:bodyPartId', function() {
-
-        it('GET /:bodyPartId should return a list with one bodypart', function(done) {
-            app.get('/bodyparts/' + temporaryId)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyItem(res.body.result);
-
-                    done();
-                })
-        });
-
-        it('GET /:bodyPartId/ownership should return ownership status of the bodypart if user is logged in', function(done) {
-            app.get('/bodyparts/' + temporaryId + '/ownership')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isBoolean(res.body.ownership);
-
-                    done();
-                });
-        });
+    describe('PUT', function() {
 
         it('PUT /:bodyPartId should update the item with new values', function(done) {
             var payload = {
@@ -128,20 +106,47 @@ describe('/bodyparts', function() {
 
     });
 
-    describe('END', function() {
+    describe('GET', function() {
 
-        it('POST /:bodyPartId/clone should create a copy of the bodypart', function(done) {
-            app.post('/bodyparts/' + temporaryId + '/clone')
-                .expect(201)
+        it('GET / should return a list of bodyparts', function(done) {
+            app.get('/bodyparts')
+                .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
-                    assert.isNumber(res.body.id);
+                    verifyList(res.body);
 
                     done();
                 });
         });
+
+        it('GET /:bodyPartId should return one bodypart', function(done) {
+            app.get('/bodyparts/' + temporaryId)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyItem(res.body.result);
+
+                    done();
+                })
+        });
+
+        it('GET /:bodyPartId/ownership should return ownership status of the bodypart if user is logged in', function(done) {
+            app.get('/bodyparts/' + temporaryId + '/ownership')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isBoolean(res.body.ownership);
+
+                    done();
+                });
+        });
+
+    });
+
+    describe('DELETE', function() {
 
         it('DELETE /:bodyPartId should update the bodypart deleted field', function(done) {
             app.delete('/bodyparts/' + temporaryId)

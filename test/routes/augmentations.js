@@ -48,7 +48,8 @@ describe('/augmentations', function() {
         if(item.deleted) assert.isString(item.deleted);
     }
 
-    describe('/', function() {
+
+    describe('POST', function() {
 
         it('POST / should create a new augmentation', function(done) {
             var payload = {
@@ -75,13 +76,65 @@ describe('/augmentations', function() {
                 });
         });
 
-        it('GET / should return a list of augmentations', function(done) {
-            app.get('/augmentations')
-                .expect(200)
+        it('POST /:augmentationId/clone should create a copy of the augmentation', function(done) {
+            app.post('/augmentations/' + temporaryId + '/clone')
+                .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    assert.isNumber(res.body.affected);
+                    assert.isNumber(res.body.id);
+
+                    done();
+                });
+        });
+
+        it('POST /:augmentationId/comments should create a new comment for the augmentation', function(done) {
+            var payload = {
+                content: hasher(20)
+            };
+
+            app.post('/augmentations/' + temporaryId + '/comments', payload)
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
+                    assert.isNumber(res.body.id);
+
+                    done();
+                });
+        });
+
+        it('POST /:augmentationId/attributes should add an attribute to the augmentation', function(done) {
+            var payload = {
+                insert_id: 1,
+                value: 10
+            };
+
+            app.post('/augmentations/' + temporaryId + '/attributes', payload)
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
+
+                    done();
+                });
+        });
+
+        it('POST /:augmentationId/skills should add an skill to the augmentation', function(done) {
+            var payload = {
+                insert_id: 1,
+                value: 10
+            };
+
+            app.post('/augmentations/' + temporaryId + '/skills', payload)
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.affected);
 
                     done();
                 });
@@ -89,31 +142,7 @@ describe('/augmentations', function() {
 
     });
 
-    describe('/:augmentationId', function() {
-
-        it('GET /:augmentationId should return a list with one augmentation', function(done) {
-            app.get('/augmentations/' + temporaryId)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyItem(res.body.result);
-
-                    done();
-                })
-        });
-
-        it('GET /:augmentationId/ownership should return ownership status of the augmentation if user is logged in', function(done) {
-            app.get('/augmentations/' + temporaryId + '/ownership')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isBoolean(res.body.ownership);
-
-                    done();
-                });
-        });
+    describe('PUT', function() {
 
         it('PUT /:augmentationId should update the item with new values', function(done) {
             var payload = {
@@ -151,22 +180,73 @@ describe('/augmentations', function() {
                 });
         });
 
-    });
-
-    describe('/:augmentationId/comments', function() {
-
-        it('POST /:augmentationId/comments should create a new comment for the augmentation', function(done) {
+        it('PUT /:augmentationId/attributes should change the attribute value for the augmentation', function(done) {
             var payload = {
-                content: hasher(20)
+                value: 8
             };
 
-            app.post('/augmentations/' + temporaryId + '/comments', payload)
-                .expect(201)
+            app.put('/augmentations/' + temporaryId + '/attributes/1', payload)
+                .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
-                    assert.isNumber(res.body.id);
+                    assert.isNumber(res.body.changed);
+
+                    done();
+                });
+        });
+
+        it('PUT /:augmentationId/skills should change the skill value for the augmentation', function(done) {
+            var payload = {
+                value: 8
+            };
+
+            app.put('/augmentations/' + temporaryId + '/skills/1', payload)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.changed);
+
+                    done();
+                });
+        });
+
+    });
+
+    describe('GET', function() {
+
+        it('GET / should return a list of augmentations', function(done) {
+            app.get('/augmentations')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('GET /:augmentationId should return one augmentation', function(done) {
+            app.get('/augmentations/' + temporaryId)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyItem(res.body.result);
+
+                    done();
+                })
+        });
+
+        it('GET /:augmentationId/ownership should return ownership status of the augmentation if user is logged in', function(done) {
+            app.get('/augmentations/' + temporaryId + '/ownership')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isBoolean(res.body.ownership);
 
                     done();
                 });
@@ -194,44 +274,7 @@ describe('/augmentations', function() {
                 })
         });
 
-    });
-
-    describe('/:augmentationId/attributes', function() {
-
-        it('POST should add an attribute to the augmentation', function(done) {
-            var payload = {
-                insert_id: 1,
-                value: 10
-            };
-
-            app.post('/augmentations/' + temporaryId + '/attributes', payload)
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
-        });
-
-        it('PUT should change the attribute value for the augmentation', function(done) {
-            var payload = {
-                value: 8
-            };
-
-            app.put('/augmentations/' + temporaryId + '/attributes/1', payload)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-
-                    done();
-                });
-        });
-
-        it('GET should return a list of attributes', function(done) {
+        it('GET /:augmentationId/attributes should return a list of attributes', function(done) {
             app.get('/augmentations/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
@@ -261,44 +304,7 @@ describe('/augmentations', function() {
                 });
         });
 
-    });
-
-    describe('/:augmentationId/skills', function() {
-
-        it('POST should add an skill to the augmentation', function(done) {
-            var payload = {
-                insert_id: 1,
-                value: 10
-            };
-
-            app.post('/augmentations/' + temporaryId + '/skills', payload)
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
-        });
-
-        it('PUT should change the skill value for the augmentation', function(done) {
-            var payload = {
-                value: 8
-            };
-
-            app.put('/augmentations/' + temporaryId + '/skills/1', payload)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-
-                    done();
-                });
-        });
-
-        it('GET should return a list of skills', function(done) {
+        it('GET /:augmentationId/skills should return a list of skills', function(done) {
             app.get('/augmentations/' + temporaryId + '/skills')
                 .expect(200)
                 .end(function(err, res) {
@@ -332,20 +338,7 @@ describe('/augmentations', function() {
 
     });
 
-    describe('END', function() {
-
-        it('POST /:augmentationId/clone should create a copy of the augmentation', function(done) {
-            app.post('/augmentations/' + temporaryId + '/clone')
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
-        });
+    describe('DELETE', function() {
 
         it('DELETE /:augmentationId/attributes should remove the attribute from the augmentation', function(done) {
             app.delete('/augmentations/' + temporaryId + '/attributes/1')
