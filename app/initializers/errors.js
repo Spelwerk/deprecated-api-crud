@@ -17,7 +17,7 @@ module.exports = function(app, callback) {
 
         res.status(status).send({success: false, message: message, error: error});
 
-        if(environment === 'development') next(err.error);
+        if(environment === 'development') next(error);
     });
 
     callback();

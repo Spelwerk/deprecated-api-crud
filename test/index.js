@@ -15,6 +15,8 @@ require('./routes/bionics');
 
 require('./routes/diseases');
 
+require('./routes/doctrines');
+
 require('./routes/protection');
 
 require('./routes/software');
