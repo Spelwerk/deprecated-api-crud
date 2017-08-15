@@ -10,7 +10,7 @@ var should = chai.should(),
 var app = require('./../app'),
     hasher = require('./../../lib/hasher');
 
-describe('/protection', function() {
+describe('/expertise', function() {
 
     before(function(done) {
         app.login(done);
@@ -40,8 +40,9 @@ describe('/protection', function() {
 
         assert.isString(item.name);
         if(item.description) assert.isString(item.description);
-        assert.isNumber(item.price);
-        assert.isNumber(item.bodypart_id);
+        assert.isNumber(item.skill_id);
+        if(item.species_id) assert.isNumber(item.species_id);
+        if(item.manifestation_id) assert.isNumber(item.manifestation_id);
         if(item.icon) assert.equal(validator.isURL(item.icon), true);
 
         assert.isString(item.created);
@@ -52,15 +53,16 @@ describe('/protection', function() {
 
     describe('POST', function() {
 
-        it('POST / should create a new protection', function(done) {
+        it('POST / should create a new asset', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
-                price: 10,
-                bodypart_id: 1
+                skill_id: 1,
+                species_id: 1,
+                manifestation_id: 1
             };
 
-            app.post('/protection', payload)
+            app.post('/expertises', payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -76,48 +78,18 @@ describe('/protection', function() {
                 });
         });
 
-        it('POST /:protectionId/clone should create a copy of the protection', function(done) {
-            app.post('/protection/' + temporaryId + '/clone')
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
-        });
-
-        it('POST /:protectionId/comments should create a new comment for the protection', function(done) {
+        it('POST /:expertiseId/comments should create a new comment for the asset', function(done) {
             var payload = {
                 content: hasher(20)
             };
 
-            app.post('/protection/' + temporaryId + '/comments', payload)
+            app.post('/expertises/' + temporaryId + '/comments', payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
 
                     assert.isNumber(res.body.affected);
                     assert.isNumber(res.body.id);
-
-                    done();
-                });
-        });
-
-        it('POST /:protectionId/attributes should add an attribute to the protection', function(done) {
-            var payload = {
-                insert_id: 1,
-                value: 10
-            };
-
-            app.post('/protection/' + temporaryId + '/attributes', payload)
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
 
                     done();
                 });
@@ -127,14 +99,13 @@ describe('/protection', function() {
 
     describe('PUT', function() {
 
-        it('PUT /:protectionId should update the item with new values', function(done) {
+        it('PUT /:expertiseId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
-                description: hasher(20),
-                price: 10
+                description: hasher(20)
             };
 
-            app.put('/protection/' + temporaryId, payload)
+            app.put('/expertises/' + temporaryId, payload)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -148,8 +119,8 @@ describe('/protection', function() {
                 })
         });
 
-        it('PUT /:protectionId/canon should update the protection canon field', function(done) {
-            app.put('/protection/' + temporaryId + '/canon')
+        it('PUT /:expertiseId/canon should update the asset canon field', function(done) {
+            app.put('/expertises/' + temporaryId + '/canon')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -163,28 +134,12 @@ describe('/protection', function() {
                 });
         });
 
-        it('PUT /:protectionId/attributes should change the attribute value for the protection', function(done) {
-            var payload = {
-                value: 8
-            };
-
-            app.put('/protection/' + temporaryId + '/attributes/1', payload)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-
-                    done();
-                });
-        });
-
     });
 
     describe('GET', function() {
 
-        it('GET / should return a list of protection', function(done) {
-            app.get('/protection')
+        it('GET / should return a list of expertise', function(done) {
+            app.get('/expertises')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -195,8 +150,8 @@ describe('/protection', function() {
                 });
         });
 
-        it('GET /bodypart/:bodyPartId should return a list of protection', function(done) {
-            app.get('/protection/bodypart/1')
+        it('GET /manifestation/:manifestationId should return a list of expertise', function(done) {
+            app.get('/expertises/manifestation/1')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -207,8 +162,56 @@ describe('/protection', function() {
                 });
         });
 
-        it('GET /:protectionId should return one protection', function(done) {
-            app.get('/protection/' + temporaryId)
+        it('GET /skill/:skillId should return a list of expertise', function(done) {
+            app.get('/expertises/skill/1')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('GET /species/:speciesId should return a list of expertise', function(done) {
+            app.get('/expertises/species/1')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('GET /skill/:skillId/manifestation/:manifestationId should return a list of expertise', function(done) {
+            app.get('/expertises/skill/20/manifestation/1')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('GET /skill/:skillId/species/:speciesId should return a list of expertise', function(done) {
+            app.get('/expertises/skill/19/species/5')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('GET /:expertiseId should return one asset', function(done) {
+            app.get('/expertises/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -219,8 +222,8 @@ describe('/protection', function() {
                 })
         });
 
-        it('GET /:protectionId/ownership should return ownership status of the protection if user is logged in', function(done) {
-            app.get('/protection/' + temporaryId + '/ownership')
+        it('GET /:expertiseId/ownership should return ownership status of the asset if user is logged in', function(done) {
+            app.get('/expertises/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -231,8 +234,8 @@ describe('/protection', function() {
                 });
         });
 
-        it('GET /:protectionId/comments should get all available comments for the protection', function(done) {
-            app.get('/protection/' + temporaryId + '/comments')
+        it('GET /:expertiseId/comments should get all available comments for the asset', function(done) {
+            app.get('/expertises/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -253,54 +256,12 @@ describe('/protection', function() {
                 })
         });
 
-        it('GET /:protectionId/attributes should return a list of attributes', function(done) {
-            app.get('/protection/' + temporaryId + '/attributes')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        assert.isNumber(item.protection_id);
-                        assert.isNumber(item.attribute_id);
-                        assert.isNumber(item.value);
-
-                        assert.isNumber(item.id);
-                        assert.isBoolean(item.canon);
-                        assert.isString(item.name);
-                        if(item.description) assert.isString(item.description);
-                        assert.isNumber(item.attributetype_id);
-                        if(item.icon) assert.equal(validator.isURL(item.icon), true);
-
-                        assert.isString(item.created);
-                        if(item.deleted) assert.isNumber(item.deleted);
-                        if(item.updated) assert.isNumber(item.updated);
-                    });
-
-                    done();
-                });
-        });
-
     });
 
     describe('DELETE', function() {
 
-        it('DELETE /:protectionId/attributes should remove the attribute from the protection', function(done) {
-            app.delete('/protection/' + temporaryId + '/attributes/1')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
-        });
-
-        it('DELETE /:protectionId should update the protection deleted field', function(done) {
-            app.delete('/protection/' + temporaryId)
+        it('DELETE /:expertiseId should update the asset deleted field', function(done) {
+            app.delete('/expertises/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);

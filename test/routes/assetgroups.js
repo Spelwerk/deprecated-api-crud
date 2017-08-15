@@ -34,6 +34,7 @@ describe('/assetgroups', function() {
     }
 
     function verifyItem(item) {
+        assert.isNumber(item.id);
         assert.isBoolean(item.canon);
         assert.isNumber(item.popularity);
 

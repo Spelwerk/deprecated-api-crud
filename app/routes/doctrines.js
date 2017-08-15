@@ -99,7 +99,7 @@ module.exports = function(router) {
             });
         });
 
-    // Manifestation List
+    // Manifestations
 
     router.route('/manifestation/:manifestationId')
         .get(function(req, res, next) {
