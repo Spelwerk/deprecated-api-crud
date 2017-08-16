@@ -5,6 +5,10 @@ require('./routes/assets');
 require('./routes/attributetypes');
 require('./routes/attributes');
 
+require('./routes/manifestations');
+require('./routes/doctrines');
+require('./routes/focuses');
+
 require('./routes/augmentations');
 
 require('./routes/backgrounds');
@@ -15,15 +19,17 @@ require('./routes/bionics');
 
 require('./routes/diseases');
 
-require('./routes/doctrines');
-
 require('./routes/expertises');
-
-require('./routes/focuses');
 
 require('./routes/gifts');
 
 require('./routes/identities');
+
+require('./routes/imperfections');
+
+require('./routes/loyalties');
+
+require('./routes/milestones');
 
 require('./routes/natures');
 
