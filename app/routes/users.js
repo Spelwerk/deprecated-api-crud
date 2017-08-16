@@ -162,10 +162,34 @@ module.exports = function(router) {
 
     router.route('/tokens')
         .get(function(req, res, next) {
-            query('SELECT * FROM usertoken WHERE user_id = ?', [req.user.id], function(err, result) {
+            if(!req.user.id) return next({status: 403, message: 'Forbidden', error: 'User is not logged in'});
+
+            query('SELECT * FROM usertoken WHERE user_id = ?', [req.user.id], function(err, results, fields) {
                 if(err) return next(err);
 
-                res.status(200).send({success: true, message: 'Token query successful', results: result});
+                res.status(200).send({success: true, message: 'Token query successful', results: results, fields: fields});
+            });
+        });
+
+    router.route('/tokens/:tokenId')
+        .get(function(req, res, next) {
+            if(!req.user.id) return next({status: 403, message: 'Forbidden', error: 'User is not logged in'});
+
+            query('SELECT * FROM usertoken WHERE user_id = ? AND id = ?', [req.user.id, req.params.tokenId], function(err, results, fields) {
+                if(err) return next(err);
+
+                if(!results[0]) return next({status: 404, message: 'Not Found', error: 'The requested object was not found.'});
+
+                res.status(200).send({success: true, message: 'Token query successful', result: results[0], fields: fields});
+            })
+        })
+        .delete(function(req, res, next) {
+            if(!req.user.id) return next({status: 403, message: 'Forbidden', error: 'User is not logged in'});
+
+            query('DELETE FROM usertoken WHERE user_id = ? AND id = ?', [req.user.id, req.params.tokenId], function(err, result) {
+                if(err) return next(err);
+
+                res.status(200).send({success: true, message: 'Deleted row from usertoken', affected: result.affectedRows});
             });
         });
 

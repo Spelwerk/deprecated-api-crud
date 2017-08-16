@@ -92,7 +92,7 @@ module.exports = function(router) {
             ],function(err) {
                 if(err) return next(err);
 
-                var message = environment === 'development' ? 'Created new row in doctrine and expertise' : null;
+                var message = 'Created new row in doctrine and expertise';
 
                 res.status(201).send({success: true, message: message, affected: insert.affected, id: insert.id});
             });

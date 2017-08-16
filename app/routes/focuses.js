@@ -56,7 +56,7 @@ module.exports = function(router) {
             ],function(err) {
                 if(err) return next(err);
 
-                var message = environment === 'development' ? 'Created new row in focus' : null;
+                var message = 'Created new row in focus';
 
                 res.status(201).send({success: true, message: message, affected: insert.affected, id: insert.id});
             });
