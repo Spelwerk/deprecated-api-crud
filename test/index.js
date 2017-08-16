@@ -17,8 +17,6 @@ require('./routes/bodyparts');
 
 require('./routes/bionics');
 
-require('./routes/diseases');
-
 require('./routes/expertises');
 
 require('./routes/gifts');
@@ -35,11 +33,19 @@ require('./routes/natures');
 
 require('./routes/protection');
 
+require('./routes/skills');
+
 require('./routes/software');
 
+require('./routes/diseases');
+require('./routes/sanity');
+require('./routes/wounds');
+
 require('./routes/weapongroups');
-require('./routes/weapontypes');
 require('./routes/weaponmods');
+require('./routes/weapontypes');
 require('./routes/weapons');
+
+require('./routes/species');
 
 //require('./routes/users');
