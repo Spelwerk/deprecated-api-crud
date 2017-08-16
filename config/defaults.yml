@@ -1,0 +1,71 @@
+attribute:
+  id:
+    resilience: 1
+    stamina: 2
+    tolerance: 3
+    initiative: 4
+    speed: 5
+    disease: 6
+    sanity: 7
+    trauma: 8
+    ballistic: 9
+    bashing: 10
+    piercing: 11
+    slashing: 12
+    damage: 13
+    honor: 14
+    infamy: 15
+    ammunition: 16
+    money: 17
+    rations: 18
+    experience: 19
+    energy: 20
+
+  type:
+    body: 1
+    combat: 2
+    wound: 3
+    protection: 4
+    damage: 5
+    reputation: 6
+    consumable: 7
+    experience: 8
+    energy: 9
+    power: 10
+
+skill:
+  required: 3
+  increment: 3
+  maximum: 9
+
+expertise:
+  maximum: 3
+
+doctrine:
+  maximum: 18
+
+weapon:
+  default: 51
+
+dice:
+  amount: 2
+  value: 12
+
+icon:
+  augmentation: http://cdn.spelwerk.com/file/773d3d0695e7f5ef448ce7ea0fdcaab14f4e7f1d.png
+  gift: http://cdn.spelwerk.com/file/9224721c30565571fa737c6309630f11285d50d4.png
+  imperfection: http://cdn.spelwerk.com/file/013eb6b688b6f622e1794f5b5422cc089eb8f67d.png
+  milestone: http://cdn.spelwerk.com/file/f0ba5d18c543b0a767832c0be49a96503fc8f75d.png
+  software: http://cdn.spelwerk.com/file/e7a54531e7a664d7ac0b683017b30e46d4d856b0.png
+
+  sanity:
+    icon: http://cdn.spelwerk.com/file/9bc8f45b21ffb3ef3ebd179309e1266a140db646.png
+    heal: http://cdn.spelwerk.com/file/a473858b0c13007cfbbd302e938cebb1648ad234.png
+
+  wound:
+    icon: http://cdn.spelwerk.com/file/40a4cce284ae3b6fd26e9ad69997edb82bcdfd86.png
+    heal: http://cdn.spelwerk.com/file/bf981642d36525ead935fb42755b01e1dc538b77.png
+
+  disease:
+    icon: http://cdn.spelwerk.com/file/cbc688bfcfe3cec3cdf30ea25e29b42ac68262aa.png
+    heal: http://cdn.spelwerk.com/file/b61c98d02352d2329f931296be237fa5a8770d2d.png
