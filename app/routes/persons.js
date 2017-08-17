@@ -4,6 +4,7 @@ var comment = require('./../../lib/sql/comment'),
     ownership = require('./../../lib/sql/ownership'),
     relation = require('./../../lib/sql/relation'),
     query = require('./../../lib/sql/query'),
+    person = require('./../../lib/sql/person'),
     sequel = require('./../../lib/sql/sequel');
 
 module.exports = function(router) {
@@ -11,72 +12,6 @@ module.exports = function(router) {
 
     var tableName = 'person',
         adminRestriction = false;
-
-    // Functions
-
-    function changeValues(tableName, personId, personList, relationList, currentList, callback) {
-        if(!personList[0]) return callback();
-
-        if((relationList === undefined || relationList === null || !relationList[0]) && (currentList === undefined || currentList === null || !currentList[0])) return callback();
-
-        var call = 'INSERT INTO person_has_' + tableName + ' (person_id,' + tableName + '_id,value) VALUES ';
-
-        // Begin by looping through personList, as we want to change existing relations, not add new
-        for(var p in personList) {
-
-            // If the Relation List exists and has at least one value
-            if(relationList && relationList[0]) {
-
-                // Loop through relationList
-                for(var r in relationList) {
-
-                    // If person has the relation-col we wish to update = add the value
-                    if(personList[p].id === relationList[r].id) {
-                        personList[p].value += relationList[r].value;
-                        personList[p].changed = true;
-                    }
-                }
-            }
-
-            // If the Current List exists and has at least one value
-            if(currentList && currentList[0]) {
-
-                // Loop through currentList
-                for(var c in currentList) {
-
-                    // If person has the relation-col we wish to update = remove the value
-                    if(personList[p].id === currentList[c].id) {
-                        personList[p].value -= currentList[c].value;
-                        personList[p].changed = true;
-                    }
-                }
-            }
-
-            // If the attribute has changed = add it to the call
-            if(personList[p].changed === true) {
-                call += '(' + personId + ',' + personList[p].id + ',' + personList[p].value + '),';
-            }
-        }
-
-        call = call.slice(0, -1);
-
-        call += ' ON DUPLICATE KEY UPDATE value = VALUES(value)';
-
-        query(call, null, callback);
-    }
-
-    function customDescription(req, personId, tableName, tableId, tableCustom, callback) {
-        async.series([
-            function(callback) {
-                ownership(req, tableName, personId, adminRestriction, callback);
-            },
-            function(callback) {
-                query('UPDATE person_has_' + tableName + ' SET custom = ? WHERE person_id = ? AND ' + tableName + '_id = ?', [tableCustom, personId, tableId], callback);
-            }
-        ],function(err) {
-            callback(err);
-        });
-    }
 
     // SQL
 
@@ -97,8 +32,7 @@ module.exports = function(router) {
         .post(function(req, res, next) {
             if(!req.user.id) return next({status: 403, message: 'Forbidden', error: 'User is not logged in'});
 
-            var person = {},
-                insert = {},
+            var insert = {},
                 world = {},
                 species = {},
                 points = {};
@@ -243,24 +177,24 @@ module.exports = function(router) {
                     query('INSERT INTO person (playable,nickname,occupation,world_id) VALUES (?,?,?,?)', [insert.playable, insert.nickname, insert.occupation, world.id], function(err, result) {
                         if(err) return callback(err);
 
-                        person.id = result.insertId;
+                        insert.id = result.insertId;
 
                         callback();
                     });
                 },
                 function(callback) {
-                    query('INSERT INTO person_playable (person_id, supernatural, age) VALUES (?,?,?)', [person.id, insert.supernatural, insert.age], callback);
+                    query('INSERT INTO person_playable (person_id, supernatural, age) VALUES (?,?,?)', [insert.id, insert.supernatural, insert.age], callback);
                 },
                 function(callback) {
-                    query('INSERT INTO person_description (person_id) VALUES (?)', [person.id], callback);
+                    query('INSERT INTO person_description (person_id) VALUES (?)', [insert.id], callback);
                 },
                 function(callback) {
-                    query('INSERT INTO person_has_species (person_id, species_id, first) VALUES (?,?,?)', [person.id, species.id, 1], callback);
+                    query('INSERT INTO person_has_species (person_id, species_id, first) VALUES (?,?,?)', [insert.id, species.id, 1], callback);
                 },
                 function(callback) {
                     query('INSERT INTO person_creation (person_id,point_expertise,point_gift,point_imperfection,' +
                         'point_milestone,point_money,point_power,point_relationship,point_skill,point_doctrine) VALUES (?,?,?,?,?,?,?,?,?,?)',
-                        [person.id, points.expertise, points.gift, points.imperfection, points.milestone, points.money, points.power,
+                        [insert.id, points.expertise, points.gift, points.imperfection, points.milestone, points.money, points.power,
                             points.relationship, points.skill, points.doctrine], callback);
                 },
                 function(callback) {
@@ -284,7 +218,7 @@ module.exports = function(router) {
                         }
 
                         // Add the attribute and (perhaps updated) value to the call
-                        call += '(' + person.id + ',' + world.attribute[i].attribute_id + ',' + world.attribute[i].value + '),';
+                        call += '(' + insert.id + ',' + world.attribute[i].attribute_id + ',' + world.attribute[i].value + '),';
                     }
 
                     // If species has a list of attributes
@@ -295,7 +229,7 @@ module.exports = function(router) {
 
                             // If species attribute was not added to world call = it is species specific attribute
                             if (species.attribute[m].updated !== true) {
-                                call += '(' + person.id + ',' + species.attribute[m].attribute_id + ',' + species.attribute[m].value + '),';
+                                call += '(' + insert.id + ',' + species.attribute[m].attribute_id + ',' + species.attribute[m].value + '),';
                             }
                         }
                     }
@@ -311,7 +245,7 @@ module.exports = function(router) {
                     for(var i in world.skill) {
 
                         // Add skill to call
-                        call += '(' + person.id + ',' + world.skill[i].id + ',0),';
+                        call += '(' + insert.id + ',' + world.skill[i].id + ',0),';
                     }
 
                     // If species has a list of skills
@@ -321,7 +255,7 @@ module.exports = function(router) {
                         for (var m in species.skill) {
 
                             // Add skill to call
-                            call += '(' + person.id + ',' + species.skill[m].id + ',0),';
+                            call += '(' + insert.id + ',' + species.skill[m].id + ',0),';
                         }
                     }
 
@@ -339,7 +273,7 @@ module.exports = function(router) {
 
                         console.log(species.weapon[i]);
                         // Add weapon to call
-                        call += '(' + person.id + ',' + species.weapon[i].id + ',1),';
+                        call += '(' + insert.id + ',' + species.weapon[i].id + ',1),';
                     }
 
                     call = call.slice(0, -1);
@@ -347,12 +281,12 @@ module.exports = function(router) {
                     query(call, null, callback);
                 },
                 function(callback) {
-                    query('INSERT INTO user_has_person (user_id,person_id,owner) VALUES (?,?,1)', [req.user.id, person.id], callback);
+                    query('INSERT INTO user_has_person (user_id,person_id,owner) VALUES (?,?,1)', [req.user.id, insert.id], callback);
                 }
             ], function(err) {
                 if(err) return next(err);
 
-                res.status(201).send({id: person.id});
+                res.status(201).send({id: insert.id});
             });
         });
 
@@ -365,12 +299,10 @@ module.exports = function(router) {
             sequel.get(req, res, next, call, [req.params.personId], true);
         })
         .put(function(req, res, next) {
-            if(!req.user.id) return next({status: 403, message: 'Forbidden', error: 'User is not logged in'});
-
-            var person = {},
-                body = res.body;
-
-            person.id = parseInt(req.params.personId);
+            var personId = parseInt(req.params.personId),
+                body = res.body,
+                playable,
+                calculated;
 
             var updatePerson = [
                 'playable',
@@ -417,14 +349,14 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    ownership(req, 'person', person.id, adminRestriction, callback);
+                    ownership(req, 'person', personId, adminRestriction, callback);
                 },
                 function(callback) {
-                    query('SELECT playable,calculated FROM person WHERE id = ?', [person.id], function(err, result) {
+                    query('SELECT playable,calculated FROM person WHERE id = ?', [personId], function(err, result) {
                         if(err) return callback(err);
 
-                        person.playable = !!result[0].playable;
-                        person.calculated = !!result[0].calculated;
+                        playable = !!result[0].playable;
+                        calculated = !!result[0].calculated;
 
                         callback();
                     });
@@ -447,12 +379,12 @@ module.exports = function(router) {
                     if(query_amount === 0) return callback();
 
                     call = call.slice(0, -2) + ', updated = CURRENT_TIMESTAMP WHERE id = ?';
-                    values_array.push(person.id);
+                    values_array.push(personId);
 
                     query(call, values_array, callback);
                 },
                 function(callback) {
-                    if(!person.playable || person.calculated) return callback();
+                    if(!playable || calculated) return callback();
 
                     var call = 'UPDATE person_creation SET ',
                         values_array = [],
@@ -471,12 +403,12 @@ module.exports = function(router) {
                     if(query_amount === 0) return callback();
 
                     call = call.slice(0, -2) + ' WHERE person_id = ?';
-                    values_array.push(person.id);
+                    values_array.push(personId);
 
                     query(call, values_array, callback);
                 },
                 function(callback) {
-                    if(!person.playable) return callback();
+                    if(!playable) return callback();
 
                     var call = 'UPDATE person_playable SET ',
                         values_array = [],
@@ -495,7 +427,7 @@ module.exports = function(router) {
                     if(query_amount === 0) return callback();
 
                     call = call.slice(0, -2) + ' WHERE person_id = ?';
-                    values_array.push(person.id);
+                    values_array.push(personId);
 
                     query(call, values_array, callback);
                 },
@@ -517,127 +449,429 @@ module.exports = function(router) {
                     if(query_amount === 0) return callback();
 
                     call = call.slice(0, -2) + ' WHERE person_id = ?';
-                    values_array.push(person.id);
+                    values_array.push(personId);
 
                     query(call, values_array, callback);
                 }
             ],function(err) {
                 if(err) return next(err);
 
-                res.status(200).send();
+                res.status(204).send();
             });
         })
         .delete(function(req, res, next) {
             sequel.delete(req, res, next, tableName, req.params.personId, adminRestriction);
         });
 
+    // Assets
+
+    router.route('/:personId/assets')
+        .get(function(req, res, next) {
+            var call = 'SELECT ' +
+                'asset.id, ' +
+                'asset.canon, ' +
+                'asset.popularity, ' +
+                'asset.name, ' +
+                'asset.description, ' +
+                'asset.price, ' +
+                'asset.legal, ' +
+                'asset.assettype_id, ' +
+                'assettype.name AS assettype_name, ' +
+                'assettype.icon, ' +
+                'assettype.assetgroup_id, ' +
+                'assetgroup.name, ' +
+                'person_has_asset.value, ' +
+                'person_has_asset.custom, ' +
+                'person_has_asset.equipped ' +
+                'FROM person_has_asset ' +
+                'LEFT JOIN asset ON asset.id = person_has_asset.asset_id ' +
+                'LEFT JOIN assettype ON assettype.id = asset.assettype_id ' +
+                'LEFT JOIN assetgroup ON assetgroup.id = assettype.assetgroup_id ' +
+                'WHERE ' +
+                'person_has_asset.person_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.personId]);
+        })
+        .post(function(req, res, next) {
+            relation.post(req, res, next, tableName, req.params.personId, 'asset', req.body.insert_id, req.body.value);
+        });
+
+    router.route('/:personId/assets/:assetId')
+        .put(function(req, res, next) {
+            relation.put(req, res, next, tableName, req.params.personId, 'asset', req.params.assetId, req.body.value);
+        })
+        .delete(function(req, res, next) {
+            var personId = parseInt(req.params.personId),
+                removeId = parseInt(req.params.assetId);
+
+            async.each([
+                function(callback) {
+                    ownership(req, 'person', personId, adminRestriction, callback);
+                },
+                function(callback) {
+                    person.changeEquip(personId, 'asset', removeId, 0, callback);
+                },
+                function(callback) {
+                    query('DELETE FROM person_has_asset WHERE person_id = ? AND asset_id = ?', [personId, removeId], callback);
+                }
+            ],function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
+        });
+
+    router.route('/:personId/assets/:assetId/equip')
+        .put(function(req, res, next) {
+            person.changeEquip(req.params.personId, 'asset', req.params.assetId, 1, function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
+        });
+
+    router.route('/:personId/assets/:assetId/unequip')
+        .put(function(req, res, next) {
+            person.changeEquip(req.params.personId, 'asset', req.params.assetId, 0, function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
+        });
+
+    // Attributes
+
+    // Augmentations
+
+    router.route('/:personId/augmentations')
+        .get(function(req, res, next) {
+            var call = 'SELECT ' +
+                'augmentation.id, ' +
+                'augmentation.canon, ' +
+                'augmentation.popularity, ' +
+                'augmentation.name, ' +
+                'augmentation.description, ' +
+                'augmentation.price, ' +
+                'augmentation.legal, ' +
+                'augmentation.weapon_id, ' +
+                'person_has_augmentation.active ' +
+                'FROM person_has_augmentation ' +
+                'LEFT JOIN augmentation ON augmentation.id = person_has_augmentation.augmentation_id ' +
+                'WHERE ' +
+                'person_has_augmentation.person_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.personId]);
+        })
+        .post(function(req, res, next) {
+            var personId = parseInt(req.params.personId),
+                augmentationId = parseInt(req.body.insert_id),
+                bionicId = parseInt(req.body.bionic_id);
+
+            async.series([
+                function(callback) {
+                    ownership(req, tableName, personId, adminRestriction, callback);
+                },
+                function(callback) {
+                    query('INSERT INTO person_has_augmentation (person_id,bionic_id,augmentation_id) VALUES (?,?,?)', [personId, bionicId, augmentationId], callback);
+                },
+                function(callback) {
+                    person.changeActivate(personId, augmentationId, bionicId, 1, callback);
+                }
+            ],function(err) {
+                if(err) return next(err);
+
+                res.status(201).send();
+            });
+        });
+
+    router.route('/:personId/augmentations/bionic/:bionicId')
+        .get(function(req, res, next) {
+            var call = 'SELECT ' +
+                'augmentation.id, ' +
+                'augmentation.canon, ' +
+                'augmentation.popularity, ' +
+                'augmentation.name, ' +
+                'augmentation.description, ' +
+                'augmentation.price, ' +
+                'augmentation.legal, ' +
+                'augmentation.weapon_id, ' +
+                'person_has_augmentation.active ' +
+                'FROM person_has_augmentation ' +
+                'LEFT JOIN augmentation ON augmentation.id = person_has_augmentation.augmentation_id ' +
+                'WHERE ' +
+                'person_has_augmentation.person_id = ? AND ' +
+                'person_has_augmentation.bionic_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.personId, req.params.bionicId]);
+        });
+
+    router.route('/:personId/augmentations/:augmentationId/bionic/:bionicId')
+        .delete(function(req, res, next) {
+            var personId = parseInt(req.params.personId),
+                augmentationId = parseInt(req.params.augmentationId),
+                bionicId = parseInt(req.params.bionicId);
+
+            async.series([
+                function(callback) {
+                    ownership(req, tableName, personId, adminRestriction, callback);
+                },
+                function(callback) {
+                    person.changeActivate(personId, augmentationId, bionicId, 0, callback);
+                },
+                function(callback) {
+                    query('DELETE FROM person_has_augmentation WHERE person_id = ? AND augmentation_id = ? AND bionic_id = ?', [personId, augmentationId, bionicId], callback);
+                }
+            ],function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
+        });
+
+    router.route('/:personId/augmentations/:augmentationId/bionic/:bionicId/activate')
+        .put(function(req, res, next) {
+            person.changeActivate(req.params.personId, req.params.augmentationId, req.params.bionicId, function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
+        });
+
+    router.route('/:personId/augmentations/:augmentationId/bionic/:bionicId/deactivate')
+        .put(function(req, res, next) {
+            person.changeActivate(req.params.personId, req.params.augmentationId, req.params.bionicId, function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
+        });
+
     // Background
 
     router.route('/:personId/background')
         .put(function(req, res, next) {
-            var person = {},
-                insert = {},
-                current = {};
+            var personId = parseInt(req.params.personId),
+                backgroundId = parseInt(req.body.insert_id),
+                currentId;
 
-            person.id = parseInt(req.params.personId);
-            insert.id = parseInt(req.body.insert_id);
+            var personArray,
+                backgroundArray,
+                currentArray;
 
             async.series([
                 function(callback) {
-                    ownership(req, tableName, person.id, adminRestriction, callback);
+                    ownership(req, tableName, personId, adminRestriction, callback);
                 },
                 function(callback) {
-                    query('SELECT background_id FROM person_playable WHERE person_id = ?', [person.id], function(err, result) {
+                    query('SELECT background_id FROM person_playable WHERE person_id = ?', [personId], function(err, result) {
                         if(err) return callback(err);
 
-                        current.id = result[0].background_id;
+                        currentId = result[0].background_id;
 
                         callback();
                     });
                 },
                 function(callback) {
-                    if(insert.id === current.id) return callback();
+                    if(backgroundId === currentId) return callback();
 
-                    query('UPDATE person_playable SET background_id = ? WHERE person_id = ?', [insert.id, person.id], callback);
+                    query('UPDATE person_playable SET background_id = ? WHERE person_id = ?', [backgroundId, personId], callback);
                 },
 
                 // ATTRIBUTE
 
                 function(callback) {
-                    query('SELECT attribute_id AS id, value FROM person_has_attribute WHERE person_id = ?', [person.id], function(err, result) {
+                    if(backgroundId === currentId) return callback();
+
+                    query('SELECT attribute_id AS id, value FROM person_has_attribute WHERE person_id = ?', [personId], function(err, result) {
                         if(err) return callback(err);
 
-                        person.attribute = result;
+                        personArray = result;
 
                         callback()
                     });
                 },
                 function(callback) {
-                    query('SELECT attribute_id AS id, value FROM background_has_attribute WHERE background_id = ?', [insert.id], function(err, result) {
+                    if(backgroundId === currentId) return callback();
+
+                    query('SELECT attribute_id AS id, value FROM background_has_attribute WHERE background_id = ?', [backgroundId], function(err, result) {
                         if(err) return callback(err);
 
-                        insert.attribute = result;
+                        backgroundArray = result;
 
                         callback()
                     });
                 },
                 function(callback) {
-                    if(!current.id) return callback();
+                    if(!currentId) return callback();
 
-                    query('SELECT attribute_id AS id, value FROM background_has_attribute WHERE background_id = ?', [current.id], function(err, result) {
+                    query('SELECT attribute_id AS id, value FROM background_has_attribute WHERE background_id = ?', [currentId], function(err, result) {
                         if(err) return callback(err);
 
-                        current.attribute = result;
+                        currentArray = result;
 
                         callback();
                     });
                 },
                 function(callback) {
-                    if(insert.id === current.id) return callback();
+                    if(backgroundId === currentId) return callback();
 
-                    changeValues('attribute', person.id, person.attribute, insert.attribute, current.attribute, callback);
+                    person.changeValues('attribute', personId, personArray, backgroundArray, currentArray, callback);
                 },
 
                 // SKILL
 
                 function(callback) {
-                    query('SELECT skill_id AS id, value FROM person_has_skill WHERE person_id = ?', [person.id], function(err, result) {
+                    if(backgroundId === currentId) return callback();
+
+                    query('SELECT skill_id AS id, value FROM person_has_skill WHERE person_id = ?', [personId], function(err, result) {
                         if(err) return callback(err);
 
-                        person.skill = result;
+                        personArray = result;
 
                         callback()
                     });
                 },
                 function(callback) {
-                    query('SELECT skill_id AS id, value FROM background_has_skill WHERE background_id = ?', [insert.id], function(err, result) {
+                    if(backgroundId === currentId) return callback();
+
+                    query('SELECT skill_id AS id, value FROM background_has_skill WHERE background_id = ?', [backgroundId], function(err, result) {
                         if(err) return callback(err);
 
-                        insert.skill = result;
+                        backgroundArray = result;
 
                         callback()
                     });
                 },
                 function(callback) {
-                    if(!current.id) return callback();
+                    if(!currentId) return callback();
 
-                    query('SELECT skill_id AS id, value FROM background_has_skill WHERE background_id = ?', [current.id], function(err, result) {
+                    query('SELECT skill_id AS id, value FROM background_has_skill WHERE background_id = ?', [currentId], function(err, result) {
                         if(err) return callback(err);
 
-                        current.skill = result;
+                        currentArray = result;
 
                         callback();
                     });
                 },
                 function(callback) {
-                    if(insert.id === current.id) return callback();
+                    if(backgroundId === currentId) return callback();
 
-                    changeValues('skill', person.id, person.skill, insert.skill, current.skill, callback);
+                    person.changeValues('skill', personId, personArray, backgroundArray, currentArray, callback);
                 }
             ],function(err) {
                 if(err) return next(err);
 
-                res.status(200).send();
+                res.status(204).send();
+            });
+        });
+
+    // Bionics
+
+    router.route('/:personId/bionics')
+        .get(function(req, res, next) {
+            var call = 'SELECT ' +
+                'bionic.id, ' +
+                'bionic.canon, ' +
+                'bionic.popularity, ' +
+                'bionic.name, ' +
+                'bionic.description, ' +
+                'bionic.price, ' +
+                'bionic.legal, ' +
+                'bionic.bodypart_id, ' +
+                'bionic.icon, ' +
+                'person_has_bionic.custom ' +
+                'FROM person_has_bionic ' +
+                'LEFT JOIN bionic ON bionic.id = person_has_bionic.bionic_id ' +
+                'WHERE ' +
+                'person_has_bionic.person_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.personId]);
+        })
+        .post(function(req, res, next) {
+            var personId = parseInt(req.params.personId),
+                bionicId = parseInt(req.body.insert_id);
+
+            var personArray,
+                bionicArray;
+
+            async.series([
+                function(callback) {
+                    ownership(req, 'person', personId, adminRestriction, callback);
+                },
+                function(callback) {
+                    query('INSERT INTO person_has_bionic (person_id,bionic_id) VALUES (?,?)', [personId, bionicId], callback);
+                },
+                function(callback) {
+                    query('SELECT attribute_id AS id, value FROM person_has_attribute WHERE person_id = ?', [personId], function(err, results) {
+                        if(err) return callback(err);
+
+                        personArray = results;
+
+                        callback(err);
+                    });
+                },
+                function(callback) {
+                    query('SELECT attribute_id AS id, value FROM bionic_has_attribute WHERE bionic_id = ?', [bionicId], function(err, results) {
+                        if(err) return callback(err);
+
+                        bionicArray = results;
+
+                        callback(err);
+                    });
+                },
+                function(callback) {
+                    person.changeValues('attribute', personId, personArray, bionicArray, null, callback);
+                }
+            ],function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
+        });
+
+    router.route('/:personId/bionics/:bionicId')
+        .delete(function(req, res, next) {
+            var personId = parseInt(req.params.personId),
+                bionicId = parseInt(req.params.bionicId);
+
+            var personArray,
+                bionicArray;
+
+            async.series([
+                function(callback) {
+                    ownership(req, 'person', personId, adminRestriction, callback);
+                },
+                function(callback) {
+                    //todo remove all augmentations and deactivate them
+                },
+                function(callback) {
+                    query('SELECT attribute_id AS id, value FROM person_has_attribute WHERE person_id = ?', [personId], function(err, results) {
+                        if(err) return callback(err);
+
+                        personArray = results;
+
+                        callback(err);
+                    });
+                },
+                function(callback) {
+                    query('SELECT attribute_id AS id, value FROM bionic_has_attribute WHERE bionic_id = ?', [bionicId], function(err, results) {
+                        if(err) return callback(err);
+
+                        bionicArray = results;
+
+                        callback(err);
+                    });
+                },
+                function(callback) {
+                    person.changeValues('attribute', personId, personArray, null, bionicArray, callback);
+                },
+                function(callback) {
+                    query('DELETE FROM person_has_bionic WHERE person_id = ? AND bionic_id = ?', [personId, bionicId], callback);
+                }
+            ],function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
             });
         });
 
@@ -645,29 +879,29 @@ module.exports = function(router) {
 
     router.route('/:personId/cheat')
         .put(function(req, res, next) {
-            var person = {};
-
-            person.id = parseInt(req.params.personId);
+            var personId = parseInt(req.params.personId),
+                playable,
+                calculated;
 
             async.series([
                 function(callback) {
-                    ownership(req, tableName, person.id, adminRestriction, callback);
+                    ownership(req, tableName, personId, adminRestriction, callback);
                 },
                 function(callback) {
-                    query('SELECT playable,calculated FROM person WHERE id = ?', [person.id], function(err, result) {
+                    query('SELECT playable,calculated FROM person WHERE id = ?', [personId], function(err, result) {
                         if(err) return callback(err);
 
-                        person.playable = !!result[0];
-                        person.calculated = !!result[0];
+                        playable = !!result[0];
+                        calculated = !!result[0];
 
                         callback();
                     });
                 },
                 function(callback) {
-                    query('UPDATE person SET popularity = 0 WHERE id = ?', [person.id], callback);
+                    query('UPDATE person SET popularity = 0 WHERE id = ?', [personId], callback);
                 },
                 function(callback) {
-                    query('UPDATE person_playable SET cheated = 1 WHERE person_id = ?', [person.id], callback);
+                    query('UPDATE person_playable SET cheated = 1 WHERE person_id = ?', [personId], callback);
                 }
             ],function(err) {
                 if(err) return next(err);
@@ -686,41 +920,47 @@ module.exports = function(router) {
             comment.post(req, res, next, tableName, req.params.personId);
         });
 
+    // Diseases
+
+    // Doctrines
+
+    // Expertises
+
+    // Gifts
+
+    // Imperfections
+
     // Manifestation
 
     router.route('/:personId/manifestation')
         .post(function(req, res, next) {
-            if(!req.user.id) return next({status: 403, message: 'Forbidden', error: 'User is not logged in'});
-
-            var person = {},
-                manifestation = {},
-                insert = {};
-
-            person.id = parseInt(req.params.personId);
-            insert.id = parseInt(req.body.insert_id);
+            var personId = parseInt(req.params.personId),
+                manifestationId = parseInt(req.body.insert_id),
+                powerId,
+                skillId;
 
             async.series([
                 function(callback) {
-                    ownership(req, tableName, person.id, adminRestriction, callback);
+                    ownership(req, tableName, personId, adminRestriction, callback);
                 },
                 function(callback) {
-                    query('UPDATE person_playable SET manifestation_id = ? WHERE person_id = ?', [insert.id, person.id], callback);
+                    query('UPDATE person_playable SET manifestation_id = ? WHERE person_id = ?', [manifestationId, personId], callback);
                 },
                 function(callback) {
-                    query('SELECT power_id, skill_id FROM manifestation WHERE id = ?', [insert.id], function(err, result) {
+                    query('SELECT power_id, skill_id FROM manifestation WHERE id = ?', [manifestationId], function(err, result) {
                         if(err) return callback(err);
 
-                        manifestation.power = result[0].power_id;
-                        manifestation.skill = result[0].skill_id;
+                        powerId = result[0].power_id;
+                        skillId = result[0].skill_id;
 
                         callback();
                     });
                 },
                 function(callback) {
-                    query('INSERT INTO person_has_attribute (person_id,attribute_id,value) VALUES (?,?,0) ON DUPLICATE KEY UPDATE value = VALUES(value)', [person.id, manifestation.power], callback)
+                    query('INSERT INTO person_has_attribute (person_id,attribute_id,value) VALUES (?,?,0) ON DUPLICATE KEY UPDATE value = VALUES(value)', [personId, powerId], callback)
                 },
                 function(callback) {
-                    query('INSERT INTO person_has_skill (person_id,skill_id,value) VALUES (?,?,0) ON DUPLICATE KEY UPDATE value = VALUES(value)', [person.id, manifestation.skill], callback)
+                    query('INSERT INTO person_has_skill (person_id,skill_id,value) VALUES (?,?,0) ON DUPLICATE KEY UPDATE value = VALUES(value)', [personId, skillId], callback)
                 }
             ],function(err) {
                 if(err) return next(err);
@@ -728,6 +968,8 @@ module.exports = function(router) {
                 res.status(200).send();
             });
         });
+
+    // Milestones
 
     // Ownership
 
@@ -741,4 +983,93 @@ module.exports = function(router) {
                 res.status(200).send({ownership: ownership});
             })
         });
+
+    // Protection
+
+    router.route('/:personId/protection')
+        .get(function(req, res, next) {
+            var call = 'SELECT ' +
+                'protection.id, ' +
+                'protection.canon, ' +
+                'protection.popularity, ' +
+                'protection.name, ' +
+                'protection.description, ' +
+                'protection.price, ' +
+                'protection.bodypart_id, ' +
+                'protection.icon, ' +
+                'person_has_protection.protectionquality_id AS quality_id, ' +
+                'protectionquality.price AS quality_price, ' +
+                'protectionquality.bonus, ' +
+                'person_has_protection.equipped, ' +
+                'person_has_protection.custom ' +
+                'FROM person_has_protection ' +
+                'LEFT JOIN protection ON protection.id = person_has_protection.protection_id ' +
+                'LEFT JOIN protectionquality ON protectionquality.id = person_has_protection.protectionquality_id ' +
+                'WHERE ' +
+                'person_has_protection.person_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.personId]);
+        })
+        .post(function(req, res, next) {
+            relation.post(req, res, next, tableName, req.params.personId, 'protection', req.body.insert_id, req.body.value);
+        });
+
+    router.route('/:personId/protection/:protectionId')
+        .put(function(req, res, next) {
+            relation.put(req, res, next, tableName, req.params.personId, 'protection', req.params.protectionId, req.body.value);
+        })
+        .delete(function(req, res, next) {
+            var personId = parseInt(req.params.personId),
+                removeId = parseInt(req.params.protectionId);
+
+            async.each([
+                function(callback) {
+                    ownership(req, 'person', personId, adminRestriction, callback);
+                },
+                function(callback) {
+                    person.changeEquip(personId, 'protection', removeId, 0, callback);
+                },
+                function(callback) {
+                    query('DELETE FROM person_has_protection WHERE person_id = ? AND protection_id = ?', [personId, removeId], callback);
+                }
+            ],function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
+        });
+
+    router.route('/:personId/protection/:protectionId/equip')
+        .put(function(req, res, next) {
+            person.changeEquip(req.params.personId, 'protection', req.params.protectionId, 1, function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
+        });
+
+    router.route('/:personId/protection/:protectionId/unequip')
+        .put(function(req, res, next) {
+            person.changeEquip(req.params.personId, 'protection', req.params.protectionId, 0, function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
+        });
+
+    // Sanity
+
+    // Skills
+
+    // Software
+
+    // Species
+
+    // Weapons
+
+    // Weapon Mods
+
+    // Wounds
+
+
 };
