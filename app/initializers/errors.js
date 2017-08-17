@@ -15,7 +15,7 @@ module.exports = function(app, callback) {
 
         logger.error(error);
 
-        res.status(status).send({success: false, message: message, error: error});
+        res.status(status).send({message: message, error: error});
 
         if(environment === 'development') console.error(error);
     });

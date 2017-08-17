@@ -46,7 +46,7 @@ describe('/attributetypes', function() {
 
     describe('POST', function() {
 
-        it('POST / should create a new attribute type', function(done) {
+        it('/ should create a new attribute type', function(done) {
             var payload = {
                 name: hasher(20),
                 maximum: 10,
@@ -57,9 +57,6 @@ describe('/attributetypes', function() {
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
 
                     assert.isNumber(res.body.id);
 
@@ -73,30 +70,21 @@ describe('/attributetypes', function() {
 
     describe('PUT', function() {
 
-        it('PUT /:attributeTypeId should update the item with new values', function(done) {
+        it('/:attributeTypeId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20)
             };
 
             app.put('/attributetypes/' + temporaryId, payload)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                })
+                .end(done);
         });
 
     });
 
     describe('GET', function() {
 
-        it('GET / should return a list of attributetypes', function(done) {
+        it('/ should return a list of attributetypes', function(done) {
             app.get('/attributetypes')
                 .expect(200)
                 .end(function(err, res) {
@@ -108,7 +96,7 @@ describe('/attributetypes', function() {
                 });
         });
 
-        it('GET /:attributeTypeId should return one attribute type', function(done) {
+        it('/:attributeTypeId should return one attribute type', function(done) {
             app.get('/attributetypes/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
@@ -120,7 +108,7 @@ describe('/attributetypes', function() {
                 })
         });
 
-        it('GET /:attributeTypeId/ownership should return ownership status of the attribute if user is logged in', function(done) {
+        it('/:attributeTypeId/ownership should return ownership status of the attribute if user is logged in', function(done) {
             app.get('/attributetypes/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -136,17 +124,10 @@ describe('/attributetypes', function() {
 
     describe('DELETE', function() {
 
-        it('DELETE /:attributeTypeId should update the attribute deleted field', function(done) {
+        it('/:attributeTypeId should update the attribute deleted field', function(done) {
             app.delete('/attributetypes/' + temporaryId)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
-                    done();
-                })
+                .end(done);
         });
 
     });

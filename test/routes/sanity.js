@@ -48,7 +48,7 @@ describe('/sanity', function() {
 
     describe('POST', function() {
 
-        it('POST / should create a new asset', function(done) {
+        it('/ should create a new asset', function(done) {
             var payload = {
                 name: hasher(20)
             };
@@ -57,9 +57,6 @@ describe('/sanity', function() {
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
 
                     assert.isNumber(res.body.id);
 
@@ -73,45 +70,27 @@ describe('/sanity', function() {
 
     describe('PUT', function() {
 
-        it('PUT /:sanityId should update the item with new values', function(done) {
+        it('/:sanityId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20)
             };
 
             app.put('/sanity/' + temporaryId, payload)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                })
+                .end(done);
         });
 
-        it('PUT /:sanityId/canon should update the asset canon field', function(done) {
+        it('/:sanityId/canon should update the asset canon field', function(done) {
             app.put('/sanity/' + temporaryId + '/canon')
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
+                .end(done);
         });
 
     });
 
     describe('GET', function() {
 
-        it('GET / should return a list of sanity', function(done) {
+        it('/ should return a list of sanity', function(done) {
             app.get('/sanity')
                 .expect(200)
                 .end(function(err, res) {
@@ -123,7 +102,7 @@ describe('/sanity', function() {
                 });
         });
 
-        it('GET /:sanityId should return one asset', function(done) {
+        it('/:sanityId should return one asset', function(done) {
             app.get('/sanity/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
@@ -135,7 +114,7 @@ describe('/sanity', function() {
                 })
         });
 
-        it('GET /:sanityId/ownership should return ownership status of the asset if user is logged in', function(done) {
+        it('/:sanityId/ownership should return ownership status of the asset if user is logged in', function(done) {
             app.get('/sanity/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -151,17 +130,10 @@ describe('/sanity', function() {
 
     describe('DELETE', function() {
 
-        it('DELETE /:sanityId should update the asset deleted field', function(done) {
+        it('/:sanityId should update the asset deleted field', function(done) {
             app.delete('/sanity/' + temporaryId)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
-                    done();
-                })
+                .end(done);
         });
 
     });

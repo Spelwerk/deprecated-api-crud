@@ -49,7 +49,7 @@ describe('/assetgroups', function() {
 
     describe('POST', function() {
 
-        it('POST / should create a new asset group', function(done) {
+        it('/ should create a new asset group', function(done) {
             var payload = {
                 name: hasher(20)
             };
@@ -58,9 +58,6 @@ describe('/assetgroups', function() {
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
 
                     assert.isNumber(res.body.id);
 
@@ -74,45 +71,27 @@ describe('/assetgroups', function() {
 
     describe('PUT', function() {
 
-        it('PUT /:assetGroupId should update the item with new values', function(done) {
+        it('/:assetGroupId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20)
             };
 
             app.put('/assetgroups/' + temporaryId, payload)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                })
+                .end(done);
         });
 
-        it('PUT /:assetGroupId/canon should update the asset group canon field', function(done) {
+        it('/:assetGroupId/canon should update the asset group canon field', function(done) {
             app.put('/assetgroups/' + temporaryId + '/canon')
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
+                .end(done);
         });
 
     });
 
     describe('GET', function() {
 
-        it('GET / should return a list of asset groups', function(done) {
+        it('/ should return a list of asset groups', function(done) {
             app.get('/assetgroups')
                 .expect(200)
                 .end(function(err, res) {
@@ -124,7 +103,7 @@ describe('/assetgroups', function() {
                 });
         });
 
-        it('GET /:assetGroupId should return one asset group', function(done) {
+        it('/:assetGroupId should return one asset group', function(done) {
             app.get('/assetgroups/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
@@ -136,7 +115,7 @@ describe('/assetgroups', function() {
                 })
         });
 
-        it('GET /:assetGroupId/ownership should return ownership status of the asset group if user is logged in', function(done) {
+        it('/:assetGroupId/ownership should return ownership status of the asset group if user is logged in', function(done) {
             app.get('/assetgroups/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -152,17 +131,10 @@ describe('/assetgroups', function() {
 
     describe('DELETE', function() {
 
-        it('DELETE /:assetGroupId should update the asset group deleted field', function(done) {
+        it('/:assetGroupId should update the asset group deleted field', function(done) {
             app.delete('/assetgroups/' + temporaryId)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
-                    done();
-                })
+                .end(done);
         });
 
     });

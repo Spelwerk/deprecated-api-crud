@@ -53,7 +53,7 @@ describe('/software', function() {
 
     describe('POST', function() {
 
-        it('POST / should create a new asset', function(done) {
+        it('/ should create a new asset', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
@@ -68,9 +68,6 @@ describe('/software', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
                     assert.isNumber(res.body.id);
 
                     temporaryId = res.body.id;
@@ -79,20 +76,19 @@ describe('/software', function() {
                 });
         });
 
-        it('POST /:softwareId/clone should create a copy of the asset', function(done) {
+        it('/:softwareId/clone should create a copy of the asset', function(done) {
             app.post('/software/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
                     assert.isNumber(res.body.id);
 
                     done();
                 });
         });
 
-        it('POST /:softwareId/comments should create a new comment for the asset', function(done) {
+        it('/:softwareId/comments should create a new comment for the asset', function(done) {
             var payload = {
                 content: hasher(20)
             };
@@ -102,7 +98,6 @@ describe('/software', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
                     assert.isNumber(res.body.id);
 
                     done();
@@ -113,7 +108,7 @@ describe('/software', function() {
 
     describe('PUT', function() {
 
-        it('PUT /:softwareId should update the item with new values', function(done) {
+        it('/:softwareId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
@@ -121,38 +116,20 @@ describe('/software', function() {
 
             app.put('/software/' + temporaryId, payload)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                })
+                .end(done);
         });
 
-        it('PUT /:softwareId/canon should update the asset canon field', function(done) {
+        it('/:softwareId/canon should update the asset canon field', function(done) {
             app.put('/software/' + temporaryId + '/canon')
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
+                .end(done);
         });
 
     });
 
     describe('GET', function() {
 
-        it('GET / should return a list of software', function(done) {
+        it('/ should return a list of software', function(done) {
             app.get('/software')
                 .expect(200)
                 .end(function(err, res) {
@@ -164,7 +141,7 @@ describe('/software', function() {
                 });
         });
 
-        it('GET /:softwareId should return one asset', function(done) {
+        it('/:softwareId should return one asset', function(done) {
             app.get('/software/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
@@ -176,7 +153,7 @@ describe('/software', function() {
                 })
         });
 
-        it('GET /:softwareId/ownership should return ownership status of the asset if user is logged in', function(done) {
+        it('/:softwareId/ownership should return ownership status of the asset if user is logged in', function(done) {
             app.get('/software/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -188,7 +165,7 @@ describe('/software', function() {
                 });
         });
 
-        it('GET /:softwareId/comments should get all available comments for the asset', function(done) {
+        it('/:softwareId/comments should get all available comments for the asset', function(done) {
             app.get('/software/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
@@ -214,17 +191,10 @@ describe('/software', function() {
 
     describe('DELETE', function() {
 
-        it('DELETE /:softwareId should update the asset deleted field', function(done) {
+        it('/:softwareId should update the asset deleted field', function(done) {
             app.delete('/software/' + temporaryId)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
-                    done();
-                })
+                .end(done);
         });
 
     });

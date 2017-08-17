@@ -51,7 +51,7 @@ describe('/gifts', function() {
 
     describe('POST', function() {
 
-        it('POST / should create a new gift', function(done) {
+        it('/ should create a new gift', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
@@ -64,9 +64,6 @@ describe('/gifts', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
                     assert.isNumber(res.body.id);
 
                     temporaryId = res.body.id;
@@ -75,20 +72,19 @@ describe('/gifts', function() {
                 });
         });
 
-        it('POST /:giftId/clone should create a copy of the gift', function(done) {
+        it('/:giftId/clone should create a copy of the gift', function(done) {
             app.post('/gifts/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
                     assert.isNumber(res.body.id);
 
                     done();
                 });
         });
 
-        it('POST /:giftId/comments should create a new comment for the gift', function(done) {
+        it('/:giftId/comments should create a new comment for the gift', function(done) {
             var payload = {
                 content: hasher(20)
             };
@@ -98,14 +94,13 @@ describe('/gifts', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
                     assert.isNumber(res.body.id);
 
                     done();
                 });
         });
 
-        it('POST /:giftId/attributes should add an attribute to the gift', function(done) {
+        it('/:giftId/attributes should add an attribute to the gift', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
@@ -113,16 +108,10 @@ describe('/gifts', function() {
 
             app.post('/gifts/' + temporaryId + '/attributes', payload)
                 .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
+                .end(done);
         });
 
-        it('POST /:giftId/skills should add an skill to the gift', function(done) {
+        it('/:giftId/skills should add an skill to the gift', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
@@ -130,20 +119,14 @@ describe('/gifts', function() {
 
             app.post('/gifts/' + temporaryId + '/skills', payload)
                 .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
+                .end(done);
         });
 
     });
 
     describe('PUT', function() {
 
-        it('PUT /:giftId should update the item with new values', function(done) {
+        it('/:giftId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
@@ -151,70 +134,40 @@ describe('/gifts', function() {
 
             app.put('/gifts/' + temporaryId, payload)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                })
+                .end(done);
         });
 
-        it('PUT /:giftId/canon should update the gift canon field', function(done) {
+        it('/:giftId/canon should update the gift canon field', function(done) {
             app.put('/gifts/' + temporaryId + '/canon')
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
+                .end(done);
         });
 
-        it('PUT /:giftId/attributes should change the attribute value for the gift', function(done) {
+        it('/:giftId/attributes should change the attribute value for the gift', function(done) {
             var payload = {
                 value: 8
             };
 
             app.put('/gifts/' + temporaryId + '/attributes/1', payload)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-
-                    done();
-                });
+                .end(done);
         });
 
-        it('PUT /:giftId/skills should change the skill value for the gift', function(done) {
+        it('/:giftId/skills should change the skill value for the gift', function(done) {
             var payload = {
                 value: 8
             };
 
             app.put('/gifts/' + temporaryId + '/skills/1', payload)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-
-                    done();
-                });
+                .end(done);
         });
 
     });
 
     describe('GET', function() {
 
-        it('GET / should return a list of gifts', function(done) {
+        it('/ should return a list of gifts', function(done) {
             app.get('/gifts')
                 .expect(200)
                 .end(function(err, res) {
@@ -226,7 +179,7 @@ describe('/gifts', function() {
                 });
         });
 
-        it('GET /manifestation/:manifestationId should return a list of gifts', function(done) {
+        it('/manifestation/:manifestationId should return a list of gifts', function(done) {
             app.get('/gifts/manifestation/1')
                 .expect(200)
                 .end(function(err, res) {
@@ -238,7 +191,7 @@ describe('/gifts', function() {
                 });
         });
 
-        it('GET /species/:speciesId should return a list of gifts', function(done) {
+        it('/species/:speciesId should return a list of gifts', function(done) {
             app.get('/gifts/species/1')
                 .expect(200)
                 .end(function(err, res) {
@@ -250,7 +203,7 @@ describe('/gifts', function() {
                 });
         });
 
-        it('GET /:giftId should return one gift', function(done) {
+        it('/:giftId should return one gift', function(done) {
             app.get('/gifts/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
@@ -262,7 +215,7 @@ describe('/gifts', function() {
                 })
         });
 
-        it('GET /:giftId/ownership should return ownership status of the gift if user is logged in', function(done) {
+        it('/:giftId/ownership should return ownership status of the gift if user is logged in', function(done) {
             app.get('/gifts/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -274,7 +227,7 @@ describe('/gifts', function() {
                 });
         });
 
-        it('GET /:giftId/comments should get all available comments for the gift', function(done) {
+        it('/:giftId/comments should get all available comments for the gift', function(done) {
             app.get('/gifts/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
@@ -296,7 +249,7 @@ describe('/gifts', function() {
                 })
         });
 
-        it('GET /:giftId/attributes should return a list of attributes', function(done) {
+        it('/:giftId/attributes should return a list of attributes', function(done) {
             app.get('/gifts/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
@@ -326,7 +279,7 @@ describe('/gifts', function() {
                 });
         });
 
-        it('GET /:giftId/skills should return a list of skills', function(done) {
+        it('/:giftId/skills should return a list of skills', function(done) {
             app.get('/gifts/' + temporaryId + '/skills')
                 .expect(200)
                 .end(function(err, res) {
@@ -362,41 +315,22 @@ describe('/gifts', function() {
 
     describe('DELETE', function() {
 
-        it('DELETE /:giftId/attributes should remove the attribute from the gift', function(done) {
+        it('/:giftId/attributes should remove the attribute from the gift', function(done) {
             app.delete('/gifts/' + temporaryId + '/attributes/1')
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
+                .end(done);
         });
 
-        it('DELETE /:giftId/skills should remove the skill from the gift', function(done) {
+        it('/:giftId/skills should remove the skill from the gift', function(done) {
             app.delete('/gifts/' + temporaryId + '/skills/1')
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
+                .end(done);
         });
 
-        it('DELETE /:giftId should update the gift deleted field', function(done) {
+        it('/:giftId should update the gift deleted field', function(done) {
             app.delete('/gifts/' + temporaryId)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
-                    done();
-                })
+                .end(done);
         });
 
     });

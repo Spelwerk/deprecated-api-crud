@@ -44,7 +44,7 @@ module.exports = function(router) {
 
                 if(err) ownership = false;
 
-                res.status(200).send({success: true, message: 'Ownership verified', ownership: ownership});
+                res.status(200).send({ownership: ownership});
             })
         });
 

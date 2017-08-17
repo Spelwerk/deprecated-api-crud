@@ -45,7 +45,7 @@ describe('/bodyparts', function() {
 
     describe('POST', function() {
 
-        it('POST / should create a new bodypart', function(done) {
+        it('/ should create a new bodypart', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
@@ -56,9 +56,6 @@ describe('/bodyparts', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
                     assert.isNumber(res.body.id);
 
                     temporaryId = res.body.id;
@@ -67,13 +64,12 @@ describe('/bodyparts', function() {
                 });
         });
 
-        it('POST /:bodyPartId/clone should create a copy of the bodypart', function(done) {
+        it('/:bodyPartId/clone should create a copy of the bodypart', function(done) {
             app.post('/bodyparts/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
                     assert.isNumber(res.body.id);
 
                     done();
@@ -84,7 +80,7 @@ describe('/bodyparts', function() {
 
     describe('PUT', function() {
 
-        it('PUT /:bodyPartId should update the item with new values', function(done) {
+        it('/:bodyPartId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
@@ -92,23 +88,14 @@ describe('/bodyparts', function() {
 
             app.put('/bodyparts/' + temporaryId, payload)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                })
+                .end(done);
         });
 
     });
 
     describe('GET', function() {
 
-        it('GET / should return a list of bodyparts', function(done) {
+        it('/ should return a list of bodyparts', function(done) {
             app.get('/bodyparts')
                 .expect(200)
                 .end(function(err, res) {
@@ -120,7 +107,7 @@ describe('/bodyparts', function() {
                 });
         });
 
-        it('GET /:bodyPartId should return one bodypart', function(done) {
+        it('/:bodyPartId should return one bodypart', function(done) {
             app.get('/bodyparts/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
@@ -132,7 +119,7 @@ describe('/bodyparts', function() {
                 })
         });
 
-        it('GET /:bodyPartId/ownership should return ownership status of the bodypart if user is logged in', function(done) {
+        it('/:bodyPartId/ownership should return ownership status of the bodypart if user is logged in', function(done) {
             app.get('/bodyparts/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -148,17 +135,10 @@ describe('/bodyparts', function() {
 
     describe('DELETE', function() {
 
-        it('DELETE /:bodyPartId should update the bodypart deleted field', function(done) {
+        it('/:bodyPartId should update the bodypart deleted field', function(done) {
             app.delete('/bodyparts/' + temporaryId)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
-                    done();
-                })
+                .end(done);
         });
 
     });

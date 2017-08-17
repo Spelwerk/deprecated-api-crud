@@ -55,7 +55,7 @@ describe('/weapongroups', function() {
 
     describe('POST', function() {
 
-        it('POST / should create a new weapon group', function(done) {
+        it('/ should create a new weapon group', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
@@ -70,9 +70,6 @@ describe('/weapongroups', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
                     assert.isNumber(res.body.id);
 
                     temporaryId = res.body.id;
@@ -81,7 +78,7 @@ describe('/weapongroups', function() {
                 });
         });
 
-        it('POST /:weaponGroupId/comments should create a new comment for the asset', function(done) {
+        it('/:weaponGroupId/comments should create a new comment for the asset', function(done) {
             var payload = {
                 content: hasher(20)
             };
@@ -91,7 +88,6 @@ describe('/weapongroups', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
                     assert.isNumber(res.body.id);
 
                     done();
@@ -102,7 +98,7 @@ describe('/weapongroups', function() {
 
     describe('PUT', function() {
 
-        it('PUT /:weaponGroupId should update the item with new values', function(done) {
+        it('/:weaponGroupId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
@@ -110,38 +106,20 @@ describe('/weapongroups', function() {
 
             app.put('/weapongroups/' + temporaryId, payload)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                })
+                .end(done);
         });
 
-        it('PUT /:weaponGroupId/canon should update the weapon group canon field', function(done) {
+        it('/:weaponGroupId/canon should update the weapon group canon field', function(done) {
             app.put('/weapongroups/' + temporaryId + '/canon')
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
+                .end(done);
         });
 
     });
 
     describe('GET', function() {
 
-        it('GET / should return a list of weapon groups', function(done) {
+        it('/ should return a list of weapon groups', function(done) {
             app.get('/weapongroups')
                 .expect(200)
                 .end(function(err, res) {
@@ -153,7 +131,7 @@ describe('/weapongroups', function() {
                 });
         });
 
-        it('GET /special should return a list of weapon groups', function(done) {
+        it('/special should return a list of weapon groups', function(done) {
             app.get('/weapongroups/special')
                 .expect(200)
                 .end(function(err, res) {
@@ -165,7 +143,7 @@ describe('/weapongroups', function() {
                 });
         });
 
-        it('GET /damage/:damageId should return a list of weapon groups', function(done) {
+        it('/damage/:damageId should return a list of weapon groups', function(done) {
             app.get('/weapongroups/damage/1')
                 .expect(200)
                 .end(function(err, res) {
@@ -177,7 +155,7 @@ describe('/weapongroups', function() {
                 });
         });
 
-        it('GET /skill/:skillId should return a list of weapon groups', function(done) {
+        it('/skill/:skillId should return a list of weapon groups', function(done) {
             app.get('/weapongroups/skill/1')
                 .expect(200)
                 .end(function(err, res) {
@@ -189,7 +167,7 @@ describe('/weapongroups', function() {
                 });
         });
 
-        it('GET /:weaponGroupId should return one weapon group', function(done) {
+        it('/:weaponGroupId should return one weapon group', function(done) {
             app.get('/weapongroups/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
@@ -201,7 +179,7 @@ describe('/weapongroups', function() {
                 })
         });
 
-        it('GET /:weaponGroupId/ownership should return ownership status of the weapon group if user is logged in', function(done) {
+        it('/:weaponGroupId/ownership should return ownership status of the weapon group if user is logged in', function(done) {
             app.get('/weapongroups/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -213,7 +191,7 @@ describe('/weapongroups', function() {
                 });
         });
 
-        it('GET /:weaponGroupId/comments should get all available comments for the asset', function(done) {
+        it('/:weaponGroupId/comments should get all available comments for the asset', function(done) {
             app.get('/weapongroups/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
@@ -239,17 +217,10 @@ describe('/weapongroups', function() {
 
     describe('DELETE', function() {
 
-        it('DELETE /:weaponGroupId should update the weapon deleted field', function(done) {
+        it('/:weaponGroupId should update the weapon deleted field', function(done) {
             app.delete('/weapongroups/' + temporaryId)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
-                    done();
-                })
+                .end(done);
         });
 
     });

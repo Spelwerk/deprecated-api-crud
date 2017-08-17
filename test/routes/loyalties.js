@@ -51,7 +51,7 @@ describe('/loyalties', function() {
 
     describe('POST', function() {
 
-        it('POST / should create a new asset', function(done) {
+        it('/ should create a new asset', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
@@ -64,9 +64,6 @@ describe('/loyalties', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
                     assert.isNumber(res.body.id);
 
                     temporaryId = res.body.id;
@@ -75,20 +72,19 @@ describe('/loyalties', function() {
                 });
         });
 
-        it('POST /:loyaltyId/clone should create a copy of the asset', function(done) {
+        it('/:loyaltyId/clone should create a copy of the asset', function(done) {
             app.post('/loyalties/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
                     assert.isNumber(res.body.id);
 
                     done();
                 });
         });
 
-        it('POST /:loyaltyId/comments should create a new comment for the asset', function(done) {
+        it('/:loyaltyId/comments should create a new comment for the asset', function(done) {
             var payload = {
                 content: hasher(20)
             };
@@ -98,7 +94,6 @@ describe('/loyalties', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
                     assert.isNumber(res.body.id);
 
                     done();
@@ -109,7 +104,7 @@ describe('/loyalties', function() {
 
     describe('PUT', function() {
 
-        it('PUT /:loyaltyId should update the item with new values', function(done) {
+        it('/:loyaltyId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
@@ -117,38 +112,20 @@ describe('/loyalties', function() {
 
             app.put('/loyalties/' + temporaryId, payload)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                })
+                .end(done);
         });
 
-        it('PUT /:loyaltyId/canon should update the asset canon field', function(done) {
+        it('/:loyaltyId/canon should update the asset canon field', function(done) {
             app.put('/loyalties/' + temporaryId + '/canon')
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
+                .end(done);
         });
 
     });
 
     describe('GET', function() {
 
-        it('GET / should return a list of loyalties', function(done) {
+        it('/ should return a list of loyalties', function(done) {
             app.get('/loyalties')
                 .expect(200)
                 .end(function(err, res) {
@@ -160,7 +137,7 @@ describe('/loyalties', function() {
                 });
         });
 
-        it('GET /:loyaltyId should return one asset', function(done) {
+        it('/:loyaltyId should return one asset', function(done) {
             app.get('/loyalties/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
@@ -172,7 +149,7 @@ describe('/loyalties', function() {
                 })
         });
 
-        it('GET /:loyaltyId/ownership should return ownership status of the asset if user is logged in', function(done) {
+        it('/:loyaltyId/ownership should return ownership status of the asset if user is logged in', function(done) {
             app.get('/loyalties/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -184,7 +161,7 @@ describe('/loyalties', function() {
                 });
         });
 
-        it('GET /:loyaltyId/comments should get all available comments for the asset', function(done) {
+        it('/:loyaltyId/comments should get all available comments for the asset', function(done) {
             app.get('/loyalties/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
@@ -210,17 +187,10 @@ describe('/loyalties', function() {
 
     describe('DELETE', function() {
 
-        it('DELETE /:loyaltyId should update the asset deleted field', function(done) {
+        it('/:loyaltyId should update the asset deleted field', function(done) {
             app.delete('/loyalties/' + temporaryId)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
-                    done();
-                })
+                .end(done);
         });
 
     });

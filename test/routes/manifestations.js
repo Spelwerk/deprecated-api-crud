@@ -52,7 +52,7 @@ describe('/manifestations', function() {
 
     describe('POST', function() {
 
-        it('POST / should create a new asset', function(done) {
+        it('/ should create a new asset', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
@@ -66,9 +66,6 @@ describe('/manifestations', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
                     assert.isNumber(res.body.id);
 
                     temporaryId = res.body.id;
@@ -77,7 +74,7 @@ describe('/manifestations', function() {
                 });
         });
 
-        it('POST /:manifestationId/comments should create a new comment for the asset', function(done) {
+        it('/:manifestationId/comments should create a new comment for the asset', function(done) {
             var payload = {
                 content: hasher(20)
             };
@@ -87,7 +84,6 @@ describe('/manifestations', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
                     assert.isNumber(res.body.id);
 
                     done();
@@ -98,7 +94,7 @@ describe('/manifestations', function() {
 
     describe('PUT', function() {
 
-        it('PUT /:manifestationId should update the item with new values', function(done) {
+        it('/:manifestationId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
@@ -106,38 +102,20 @@ describe('/manifestations', function() {
 
             app.put('/manifestations/' + temporaryId, payload)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                })
+                .end(done);
         });
 
-        it('PUT /:manifestationId/canon should update the asset canon field', function(done) {
+        it('/:manifestationId/canon should update the asset canon field', function(done) {
             app.put('/manifestations/' + temporaryId + '/canon')
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
+                .end(done);
         });
 
     });
 
     describe('GET', function() {
 
-        it('GET / should return a list of manifestations', function(done) {
+        it('/ should return a list of manifestations', function(done) {
             app.get('/manifestations')
                 .expect(200)
                 .end(function(err, res) {
@@ -149,7 +127,7 @@ describe('/manifestations', function() {
                 });
         });
 
-        it('GET /:manifestationId should return one asset', function(done) {
+        it('/:manifestationId should return one asset', function(done) {
             app.get('/manifestations/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
@@ -161,7 +139,7 @@ describe('/manifestations', function() {
                 })
         });
 
-        it('GET /:manifestationId/ownership should return ownership status of the asset if user is logged in', function(done) {
+        it('/:manifestationId/ownership should return ownership status of the asset if user is logged in', function(done) {
             app.get('/manifestations/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -173,7 +151,7 @@ describe('/manifestations', function() {
                 });
         });
 
-        it('GET /:manifestationId/comments should get all available comments for the asset', function(done) {
+        it('/:manifestationId/comments should get all available comments for the asset', function(done) {
             app.get('/manifestations/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
@@ -199,17 +177,10 @@ describe('/manifestations', function() {
 
     describe('DELETE', function() {
 
-        it('DELETE /:manifestationId should update the asset deleted field', function(done) {
+        it('/:manifestationId should update the asset deleted field', function(done) {
             app.delete('/manifestations/' + temporaryId)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
-                    done();
-                })
+                .end(done);
         });
 
     });

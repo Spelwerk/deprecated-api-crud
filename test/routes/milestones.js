@@ -52,7 +52,7 @@ describe('/milestones', function() {
 
     describe('POST', function() {
 
-        it('POST / should create a new milestone', function(done) {
+        it('/ should create a new milestone', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
@@ -66,9 +66,6 @@ describe('/milestones', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
                     assert.isNumber(res.body.id);
 
                     temporaryId = res.body.id;
@@ -77,20 +74,19 @@ describe('/milestones', function() {
                 });
         });
 
-        it('POST /:milestoneId/clone should create a copy of the milestone', function(done) {
+        it('/:milestoneId/clone should create a copy of the milestone', function(done) {
             app.post('/milestones/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
                     assert.isNumber(res.body.id);
 
                     done();
                 });
         });
 
-        it('POST /:milestoneId/comments should create a new comment for the milestone', function(done) {
+        it('/:milestoneId/comments should create a new comment for the milestone', function(done) {
             var payload = {
                 content: hasher(20)
             };
@@ -100,14 +96,13 @@ describe('/milestones', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
                     assert.isNumber(res.body.id);
 
                     done();
                 });
         });
 
-        it('POST /:milestoneId/assets should add an asset to the milestone', function(done) {
+        it('/:milestoneId/assets should add an asset to the milestone', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
@@ -115,16 +110,10 @@ describe('/milestones', function() {
 
             app.post('/milestones/' + temporaryId + '/assets', payload)
                 .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
+                .end(done);
         });
 
-        it('POST /:milestoneId/attributes should add an attribute to the milestone', function(done) {
+        it('/:milestoneId/attributes should add an attribute to the milestone', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
@@ -132,16 +121,10 @@ describe('/milestones', function() {
 
             app.post('/milestones/' + temporaryId + '/attributes', payload)
                 .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
+                .end(done);
         });
 
-        xit('POST /:milestoneId/loyalties should add an loyalty to the milestone', function(done) {
+        xit('/:milestoneId/loyalties should add an loyalty to the milestone', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
@@ -149,16 +132,10 @@ describe('/milestones', function() {
 
             app.post('/milestones/' + temporaryId + '/loyalties', payload)
                 .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
+                .end(done);
         });
 
-        it('POST /:milestoneId/skills should add an skill to the milestone', function(done) {
+        it('/:milestoneId/skills should add an skill to the milestone', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
@@ -166,20 +143,14 @@ describe('/milestones', function() {
 
             app.post('/milestones/' + temporaryId + '/skills', payload)
                 .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
+                .end(done);
         });
 
     });
 
     describe('PUT', function() {
 
-        it('PUT /:milestoneId should update the item with new values', function(done) {
+        it('/:milestoneId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
@@ -187,102 +158,60 @@ describe('/milestones', function() {
 
             app.put('/milestones/' + temporaryId, payload)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                })
+                .end(done);
         });
 
-        it('PUT /:milestoneId/canon should update the milestone canon field', function(done) {
+        it('/:milestoneId/canon should update the milestone canon field', function(done) {
             app.put('/milestones/' + temporaryId + '/canon')
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
+                .end(done);
         });
 
-        it('PUT /:milestoneId/assets should change the asset value for the milestone', function(done) {
+        it('/:milestoneId/assets should change the asset value for the milestone', function(done) {
             var payload = {
                 value: 8
             };
 
             app.put('/milestones/' + temporaryId + '/assets/1', payload)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-
-                    done();
-                });
+                .end(done);
         });
 
-        it('PUT /:milestoneId/attributes should change the attribute value for the milestone', function(done) {
+        it('/:milestoneId/attributes should change the attribute value for the milestone', function(done) {
             var payload = {
                 value: 8
             };
 
             app.put('/milestones/' + temporaryId + '/attributes/1', payload)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-
-                    done();
-                });
+                .end(done);
         });
 
-        xit('PUT /:milestoneId/loyalties should change the loyalty value for the milestone', function(done) {
+        xit('/:milestoneId/loyalties should change the loyalty value for the milestone', function(done) {
             var payload = {
                 value: 8
             };
 
             app.put('/milestones/' + temporaryId + '/loyalties/1', payload)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-
-                    done();
-                });
+                .end(done);
         });
 
-        it('PUT /:milestoneId/skills should change the skill value for the milestone', function(done) {
+        it('/:milestoneId/skills should change the skill value for the milestone', function(done) {
             var payload = {
                 value: 8
             };
 
             app.put('/milestones/' + temporaryId + '/skills/1', payload)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-
-                    done();
-                });
+                .end(done);
         });
 
     });
 
     describe('GET', function() {
 
-        it('GET / should return a list of milestones', function(done) {
+        it('/ should return a list of milestones', function(done) {
             app.get('/milestones')
                 .expect(200)
                 .end(function(err, res) {
@@ -294,7 +223,7 @@ describe('/milestones', function() {
                 });
         });
 
-        it('GET /background/:backgroundId should return a list of milestones', function(done) {
+        it('/background/:backgroundId should return a list of milestones', function(done) {
             app.get('/milestones/background/1')
                 .expect(200)
                 .end(function(err, res) {
@@ -306,7 +235,7 @@ describe('/milestones', function() {
                 });
         });
 
-        it('GET /manifestation/:manifestationId should return a list of milestones', function(done) {
+        it('/manifestation/:manifestationId should return a list of milestones', function(done) {
             app.get('/milestones/manifestation/1')
                 .expect(200)
                 .end(function(err, res) {
@@ -318,7 +247,7 @@ describe('/milestones', function() {
                 });
         });
 
-        it('GET /species/:speciesId should return a list of milestones', function(done) {
+        it('/species/:speciesId should return a list of milestones', function(done) {
             app.get('/milestones/species/1')
                 .expect(200)
                 .end(function(err, res) {
@@ -330,7 +259,7 @@ describe('/milestones', function() {
                 });
         });
 
-        it('GET /:milestoneId should return one milestone', function(done) {
+        it('/:milestoneId should return one milestone', function(done) {
             app.get('/milestones/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
@@ -342,7 +271,7 @@ describe('/milestones', function() {
                 })
         });
 
-        it('GET /:milestoneId/ownership should return ownership status of the milestone if user is logged in', function(done) {
+        it('/:milestoneId/ownership should return ownership status of the milestone if user is logged in', function(done) {
             app.get('/milestones/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -354,7 +283,7 @@ describe('/milestones', function() {
                 });
         });
 
-        it('GET /:milestoneId/comments should get all available comments for the milestone', function(done) {
+        it('/:milestoneId/comments should get all available comments for the milestone', function(done) {
             app.get('/milestones/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
@@ -376,7 +305,7 @@ describe('/milestones', function() {
                 })
         });
 
-        it('GET /:milestoneId/assets should return a list of assets', function(done) {
+        it('/:milestoneId/assets should return a list of assets', function(done) {
             app.get('/milestones/' + temporaryId + '/assets')
                 .expect(200)
                 .end(function(err, res) {
@@ -408,7 +337,7 @@ describe('/milestones', function() {
                 });
         });
 
-        it('GET /:milestoneId/attributes should return a list of attributes', function(done) {
+        it('/:milestoneId/attributes should return a list of attributes', function(done) {
             app.get('/milestones/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
@@ -438,7 +367,7 @@ describe('/milestones', function() {
                 });
         });
 
-        xit('GET /:milestoneId/loyalties should return a list of loyalties', function(done) {
+        xit('/:milestoneId/loyalties should return a list of loyalties', function(done) {
             app.get('/milestones/' + temporaryId + '/loyalties')
                 .expect(200)
                 .end(function(err, res) {
@@ -469,7 +398,7 @@ describe('/milestones', function() {
                 });
         });
 
-        it('GET /:milestoneId/skills should return a list of skills', function(done) {
+        it('/:milestoneId/skills should return a list of skills', function(done) {
             app.get('/milestones/' + temporaryId + '/skills')
                 .expect(200)
                 .end(function(err, res) {
@@ -505,65 +434,34 @@ describe('/milestones', function() {
 
     describe('DELETE', function() {
 
-        it('DELETE /:milestoneId/assets should remove the asset from the milestone', function(done) {
+        it('/:milestoneId/assets should remove the asset from the milestone', function(done) {
             app.delete('/milestones/' + temporaryId + '/assets/1')
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
+                .end(done);
         });
 
-        it('DELETE /:milestoneId/attributes should remove the attribute from the milestone', function(done) {
+        it('/:milestoneId/attributes should remove the attribute from the milestone', function(done) {
             app.delete('/milestones/' + temporaryId + '/attributes/1')
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
+                .end(done);
         });
 
-        xit('DELETE /:milestoneId/loyalties should remove the loyalty from the milestone', function(done) {
+        xit('/:milestoneId/loyalties should remove the loyalty from the milestone', function(done) {
             app.delete('/milestones/' + temporaryId + '/loyalties/1')
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
+                .end(done);
         });
 
-        it('DELETE /:milestoneId/skills should remove the skill from the milestone', function(done) {
+        it('/:milestoneId/skills should remove the skill from the milestone', function(done) {
             app.delete('/milestones/' + temporaryId + '/skills/1')
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
+                .end(done);
         });
 
-        it('DELETE /:milestoneId should update the milestone deleted field', function(done) {
+        it('/:milestoneId should update the milestone deleted field', function(done) {
             app.delete('/milestones/' + temporaryId)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
-                    done();
-                })
+                .end(done);
         });
 
     });

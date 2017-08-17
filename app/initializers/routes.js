@@ -8,7 +8,7 @@ var logger = require(appRoot + '/lib/logger');
 
 module.exports = function(app, folderName, callback) {
     fs.readdir(folderName, function(err, files) {
-        if(err) callback(err);
+        if(err) return callback(err);
 
         files
             .map(function(file) {

@@ -26,26 +26,26 @@ module.exports = function(router) {
         'FROM user';
 
     function relationPost(req, res, next, userId, relationName, relationId) {
-        if(!req.user.id) return next({status: 403, message: 'Forbidden', error: 'User ID missing.'});
+        if(!req.user.id) return next({status: 403, message: 'Forbidden', error: 'User is not logged in'});
 
         if(req.user.id !== userId && !req.user.admin) return next({status: 403, message: 'Forbidden', error: 'User is not administrator and may not edit other users.'});
 
         query('INSERT INTO user_has_' + relationName + ' (user_id,' + relationName + '_id) VALUES (?,?)', [userId, relationId], function(err) {
             if(err) return next(err);
 
-            res.status(200).send({success: true, message: 'Successfully added the table row to the current user'});
+            res.status(200).send();
         });
     }
 
     function relationDelete(req, res, next, userId, relationName, relationId) {
-        if(!req.user.id) return next({status: 403, message: 'Forbidden', error: 'User ID missing.'});
+        if(!req.user.id) return next({status: 403, message: 'Forbidden', error: 'User is not logged in'});
 
         if(req.user.id !== userId && !req.user.admin) return next({status: 403, message: 'Forbidden', error: 'User is not administrator and may not edit other users.'});
 
         query('DELETE FROM user_has_' + relationName + ' WHERE user_id = ? AND ' + relationName + '_id = ?', [userId, relationId], function(err) {
             if(err) return next(err);
 
-            res.status(200).send({success: true, message: 'Successfully removed the table row from the current user'});
+            res.status(200).send();
         });
     }
 
@@ -101,9 +101,11 @@ module.exports = function(router) {
             async.series([
                 function(callback) {
                     onion.encrypt(insert.password, function(err, result) {
+                        if(err) return callback(err);
+
                         insert.encrypted = result;
 
-                        callback(err);
+                        callback();
                     });
                 },
                 function(callback) {
@@ -112,9 +114,11 @@ module.exports = function(router) {
                     insert.verify.timeout = moment().add(nconf.get('timeouts:users:verify:amount'), nconf.get('timeouts:users:verify:time')).format("YYYY-MM-DD HH:mm:ss");
 
                     query('INSERT INTO user (email,password,displayname,verify_secret,verify_timeout) VALUES (?,?,?,?,?)', [insert.email, insert.encrypted, insert.displayname, insert.verify.secret, insert.verify.timeout], function(err, result) {
+                        if(err) return callback(err);
+
                         user.id = result.insertId;
 
-                        callback(err);
+                        callback();
                     });
                 },
                 function(callback) {
@@ -130,15 +134,17 @@ module.exports = function(router) {
                 },
                 function(callback) {
                     loginToken(req, user.id, function(err, result) {
+                        if(err) return callback(err);
+
                         user.token = result;
 
-                        callback(err);
+                        callback();
                     });
                 }
             ],function(err) {
                 if(err) return next(err);
 
-                res.status(201).send({success: true, message: 'User successfully created. The verification code has been sent to the provided email.', id: user.id, token: user.token});
+                res.status(201).send({id: user.id, token: user.token});
             });
         });
 
@@ -155,7 +161,7 @@ module.exports = function(router) {
                 admin: req.user.admin
             };
 
-            res.status(200).send({success: true, message: 'User query successful', user: user});
+            res.status(200).send({user: user});
         });
 
     // Tokens belonging to current user
@@ -167,7 +173,7 @@ module.exports = function(router) {
             query('SELECT * FROM usertoken WHERE user_id = ?', [req.user.id], function(err, results, fields) {
                 if(err) return next(err);
 
-                res.status(200).send({success: true, message: 'Token query successful', results: results, fields: fields});
+                res.status(200).send({results: results, fields: fields});
             });
         });
 
@@ -180,7 +186,7 @@ module.exports = function(router) {
 
                 if(!results[0]) return next({status: 404, message: 'Not Found', error: 'The requested object was not found.'});
 
-                res.status(200).send({success: true, message: 'Token query successful', result: results[0], fields: fields});
+                res.status(200).send({result: results[0], fields: fields});
             })
         })
         .delete(function(req, res, next) {
@@ -189,7 +195,7 @@ module.exports = function(router) {
             query('DELETE FROM usertoken WHERE user_id = ? AND id = ?', [req.user.id, req.params.tokenId], function(err, result) {
                 if(err) return next(err);
 
-                res.status(200).send({success: true, message: 'Deleted row from usertoken', affected: result.affectedRows});
+                res.status(200).send();
             });
         });
 
@@ -206,32 +212,38 @@ module.exports = function(router) {
             async.series([
                 function(callback) {
                     query('SELECT id,password FROM user WHERE email = ? AND deleted IS NULL', [insert.email], function(err, result) {
+                        if(err) return callback(err);
+
                         if(result.length === 0) return callback({message: 'Missing Email'});
 
                         user.id = result[0].id;
                         user.password = result[0].password;
 
-                        callback(err);
+                        callback();
                     });
                 },
                 function(callback) {
                     onion.decrypt(insert.password, user.password, function(err, result) {
+                        if(err) return callback(err);
+
                         if(!result) return callback({message: 'Wrong Password'});
 
-                        callback(err);
+                        callback();
                     });
                 },
                 function(callback) {
                     loginToken(req, user.id, function(err, result) {
+                        if(err) return callback(err);
+
                         user.token = result;
 
-                        callback(err);
+                        callback();
                     });
                 }
             ],function(err) {
                 if(err) return next(err);
 
-                res.status(200).send({success: true, message: '', id: user.id, token: user.token});
+                res.status(200).send({id: user.id, token: user.token});
             });
         });
 
@@ -264,7 +276,7 @@ module.exports = function(router) {
             ],function(err) {
                 if(err) return next(err);
 
-                res.status(200).send({success: true, message: ''});
+                res.status(200).send();
             });
         });
 
@@ -298,9 +310,11 @@ module.exports = function(router) {
                 },
                 function(callback) {
                     loginToken(req, user.id, function(err, result) {
+                        if(err) return callback(err);
+
                         user.token = result;
 
-                        callback(err);
+                        callback();
                     });
                 },
                 function(callback) {
@@ -309,7 +323,7 @@ module.exports = function(router) {
             ],function(err) {
                 if(err) return next(err);
 
-                res.status(200).send({success: true, message: '', id: user.id, token: user.token});
+                res.status(200).send({id: user.id, token: user.token});
             });
         });
 
@@ -380,24 +394,20 @@ module.exports = function(router) {
                 },
                 function(callback) {
                     onion.encrypt(insert.password, function(err, result) {
-                        insert.encrypted = result;
-
-                        callback(err);
-                    });
-                },
-                function(callback) {
-                    query('UPDATE user SET password = ?, displayname = ?, firstname = ?, surname = ?, verify = 1, verify_secret = NULL, verify_timeout = NULL WHERE id = ?', [insert.encrypted, insert.displayname, insert.firstname, insert.surname, user.id], function(err, result) {
                         if(err) return callback(err);
 
-                        insert.affected = result.affectedRows;
+                        insert.encrypted = result;
 
                         callback();
                     });
+                },
+                function(callback) {
+                    query('UPDATE user SET password = ?, displayname = ?, firstname = ?, surname = ?, verify = 1, verify_secret = NULL, verify_timeout = NULL WHERE id = ?', [insert.encrypted, insert.displayname, insert.firstname, insert.surname, user.id], callback);
                 }
             ],function(err) {
                 if(err) return next(err);
 
-                res.status(200).send({success: true, message: 'User successfully verified.', affected: insert.affected});
+                res.status(200).send();
             });
         });
 
@@ -432,7 +442,7 @@ module.exports = function(router) {
             ],function(err) {
                 if(err) return next(err);
 
-                res.status(200).send({success: true, message: ''});
+                res.status(200).send();
             });
         });
 
@@ -467,15 +477,17 @@ module.exports = function(router) {
                 },
                 function(callback) {
                     loginToken(req, user.id, function(err, result) {
+                        if(err) return callback(err);
+
                         user.token = result;
 
-                        callback(err);
+                        callback();
                     });
                 }
             ],function(err) {
                 if(err) return next(err);
 
-                res.status(200).send({success: true, message: '', id: user.id, token: user.token});
+                res.status(200).send({id: user.id, token: user.token});
             });
         });
 
@@ -510,7 +522,7 @@ module.exports = function(router) {
             ],function(err) {
                 if(err) return next(err);
 
-                res.status(200).send({success: true, message: ''});
+                res.status(200).send();
             });
         });
 
@@ -542,9 +554,11 @@ module.exports = function(router) {
                 },
                 function(callback) {
                     onion.encrypt(insert.password, function(err, result) {
+                        if(err) return callback(err);
+
                         insert.encrypted = result;
 
-                        callback(err);
+                        callback();
                     });
                 },
                 function(callback) {
@@ -553,7 +567,7 @@ module.exports = function(router) {
             ],function(err) {
                 if(err) return next(err);
 
-                res.status(200).send({success: true, message: ''});
+                res.status(200).send();
             });
         });
 
@@ -580,7 +594,7 @@ module.exports = function(router) {
             query('UPDATE user SET displayname = ?, firstname = ?, surname = ? WHERE id = ?', [insert.displayname, insert.firstname, insert.surname, insert.id], function(err, result) {
                 if(err) return next(err);
 
-                res.status(200).send({success: true, message: 'Change successful', changed: result.changedRows});
+                res.status(200).send();
             });
         })
         .delete(function(req, res, next) {
@@ -600,7 +614,7 @@ module.exports = function(router) {
             query(sql, array, function(err, result) {
                 if(err) return next(err);
 
-                res.status(200).send({success: true, message: 'The user information has been successfully obscured.', affected: result.affectedRows});
+                res.status(200).send();
             });
         });
 
@@ -616,7 +630,7 @@ module.exports = function(router) {
             query('UPDATE user SET admin = ? WHERE id = ?', [insert.admin, insert.id], function(err) {
                 if(err) return next(err);
 
-                res.status(200).send({success: true, message: ''});
+                res.status(200).send();
             });
         });
 

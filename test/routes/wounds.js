@@ -48,7 +48,7 @@ describe('/wounds', function() {
 
     describe('POST', function() {
 
-        it('POST / should create a new asset', function(done) {
+        it('/ should create a new asset', function(done) {
             var payload = {
                 name: hasher(20)
             };
@@ -57,9 +57,6 @@ describe('/wounds', function() {
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
 
                     assert.isNumber(res.body.id);
 
@@ -73,45 +70,27 @@ describe('/wounds', function() {
 
     describe('PUT', function() {
 
-        it('PUT /:woundId should update the item with new values', function(done) {
+        it('/:woundId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20)
             };
 
             app.put('/wounds/' + temporaryId, payload)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                })
+                .end(done);
         });
 
-        it('PUT /:woundId/canon should update the asset canon field', function(done) {
+        it('/:woundId/canon should update the asset canon field', function(done) {
             app.put('/wounds/' + temporaryId + '/canon')
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
+                .end(done);
         });
 
     });
 
     describe('GET', function() {
 
-        it('GET / should return a list of wounds', function(done) {
+        it('/ should return a list of wounds', function(done) {
             app.get('/wounds')
                 .expect(200)
                 .end(function(err, res) {
@@ -123,7 +102,7 @@ describe('/wounds', function() {
                 });
         });
 
-        it('GET /:woundId should return one asset', function(done) {
+        it('/:woundId should return one asset', function(done) {
             app.get('/wounds/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
@@ -135,7 +114,7 @@ describe('/wounds', function() {
                 })
         });
 
-        it('GET /:woundId/ownership should return ownership status of the asset if user is logged in', function(done) {
+        it('/:woundId/ownership should return ownership status of the asset if user is logged in', function(done) {
             app.get('/wounds/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -151,17 +130,10 @@ describe('/wounds', function() {
 
     describe('DELETE', function() {
 
-        it('DELETE /:woundId should update the asset deleted field', function(done) {
+        it('/:woundId should update the asset deleted field', function(done) {
             app.delete('/wounds/' + temporaryId)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
-                    done();
-                })
+                .end(done);
         });
 
     });

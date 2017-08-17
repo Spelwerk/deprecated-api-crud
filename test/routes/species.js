@@ -54,7 +54,7 @@ describe('/species', function() {
 
     describe('POST', function() {
 
-        it('POST / should create a new species', function(done) {
+        it('/ should create a new species', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
@@ -70,9 +70,6 @@ describe('/species', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
                     assert.isNumber(res.body.id);
 
                     temporaryId = res.body.id;
@@ -81,20 +78,19 @@ describe('/species', function() {
                 });
         });
 
-        it('POST /:speciesId/clone should create a copy of the species', function(done) {
+        it('/:speciesId/clone should create a copy of the species', function(done) {
             app.post('/species/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
                     assert.isNumber(res.body.id);
 
                     done();
                 });
         });
 
-        it('POST /:speciesId/comments should create a new comment for the species', function(done) {
+        it('/:speciesId/comments should create a new comment for the species', function(done) {
             var payload = {
                 content: hasher(20)
             };
@@ -104,14 +100,13 @@ describe('/species', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
                     assert.isNumber(res.body.id);
 
                     done();
                 });
         });
 
-        it('POST /:speciesId/attributes should add an attribute to the species', function(done) {
+        it('/:speciesId/attributes should add an attribute to the species', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
@@ -119,36 +114,24 @@ describe('/species', function() {
 
             app.post('/species/' + temporaryId + '/attributes', payload)
                 .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
+                .end(done);
         });
 
-        it('POST /:speciesId/weapons should add an weapon to the species', function(done) {
+        it('/:speciesId/weapons should add an weapon to the species', function(done) {
             var payload = {
                 insert_id: 1
             };
 
             app.post('/species/' + temporaryId + '/weapons', payload)
                 .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
+                .end(done);
         });
 
     });
 
     describe('PUT', function() {
 
-        it('PUT /:speciesId should update the item with new values', function(done) {
+        it('/:speciesId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
@@ -156,54 +139,30 @@ describe('/species', function() {
 
             app.put('/species/' + temporaryId, payload)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                })
+                .end(done);
         });
 
-        it('PUT /:speciesId/canon should update the species canon field', function(done) {
+        it('/:speciesId/canon should update the species canon field', function(done) {
             app.put('/species/' + temporaryId + '/canon')
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
+                .end(done);
         });
 
-        it('PUT /:speciesId/attributes should change the attribute value for the species', function(done) {
+        it('/:speciesId/attributes should change the attribute value for the species', function(done) {
             var payload = {
                 value: 8
             };
 
             app.put('/species/' + temporaryId + '/attributes/1', payload)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-
-                    done();
-                });
+                .end(done);
         });
 
     });
 
     describe('GET', function() {
 
-        it('GET / should return a list of species', function(done) {
+        it('/ should return a list of species', function(done) {
             app.get('/species')
                 .expect(200)
                 .end(function(err, res) {
@@ -215,7 +174,7 @@ describe('/species', function() {
                 });
         });
 
-        it('GET /creature should return a list of species', function(done) {
+        it('/creature should return a list of species', function(done) {
             app.get('/species/creature')
                 .expect(200)
                 .end(function(err, res) {
@@ -227,7 +186,7 @@ describe('/species', function() {
                 });
         });
 
-        it('GET /playable should return a list of species', function(done) {
+        it('/playable should return a list of species', function(done) {
             app.get('/species/playable')
                 .expect(200)
                 .end(function(err, res) {
@@ -239,7 +198,7 @@ describe('/species', function() {
                 });
         });
 
-        it('GET /:speciesId should return one species', function(done) {
+        it('/:speciesId should return one species', function(done) {
             app.get('/species/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
@@ -251,7 +210,7 @@ describe('/species', function() {
                 })
         });
 
-        it('GET /:speciesId/ownership should return ownership status of the species if user is logged in', function(done) {
+        it('/:speciesId/ownership should return ownership status of the species if user is logged in', function(done) {
             app.get('/species/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -263,7 +222,7 @@ describe('/species', function() {
                 });
         });
 
-        it('GET /:speciesId/comments should get all available comments for the species', function(done) {
+        it('/:speciesId/comments should get all available comments for the species', function(done) {
             app.get('/species/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
@@ -285,7 +244,7 @@ describe('/species', function() {
                 })
         });
 
-        it('GET /:speciesId/attributes should return a list of attributes', function(done) {
+        it('/:speciesId/attributes should return a list of attributes', function(done) {
             app.get('/species/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
@@ -315,7 +274,7 @@ describe('/species', function() {
                 });
         });
 
-        it('GET /:speciesId/weapons should return a list of weapons', function(done) {
+        it('/:speciesId/weapons should return a list of weapons', function(done) {
             app.get('/species/' + temporaryId + '/weapons')
                 .expect(200)
                 .end(function(err, res) {
@@ -346,41 +305,22 @@ describe('/species', function() {
 
     describe('DELETE', function() {
 
-        it('DELETE /:speciesId/attributes should remove the attribute from the species', function(done) {
+        it('/:speciesId/attributes should remove the attribute from the species', function(done) {
             app.delete('/species/' + temporaryId + '/attributes/1')
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
+                .end(done);
         });
 
-        it('DELETE /:speciesId/weapons should remove the weapon from the species', function(done) {
+        it('/:speciesId/weapons should remove the weapon from the species', function(done) {
             app.delete('/species/' + temporaryId + '/weapons/1')
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
+                .end(done);
         });
 
-        it('DELETE /:speciesId should update the species deleted field', function(done) {
+        it('/:speciesId should update the species deleted field', function(done) {
             app.delete('/species/' + temporaryId)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
-                    done();
-                })
+                .end(done);
         });
 
     });

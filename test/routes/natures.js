@@ -50,7 +50,7 @@ describe('/natures', function() {
 
     describe('POST', function() {
 
-        it('POST / should create a new asset', function(done) {
+        it('/ should create a new asset', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
@@ -62,9 +62,6 @@ describe('/natures', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
                     assert.isNumber(res.body.id);
 
                     temporaryId = res.body.id;
@@ -73,20 +70,19 @@ describe('/natures', function() {
                 });
         });
 
-        it('POST /:natureId/clone should create a copy of the asset', function(done) {
+        it('/:natureId/clone should create a copy of the asset', function(done) {
             app.post('/natures/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
                     assert.isNumber(res.body.id);
 
                     done();
                 });
         });
 
-        it('POST /:natureId/comments should create a new comment for the asset', function(done) {
+        it('/:natureId/comments should create a new comment for the asset', function(done) {
             var payload = {
                 content: hasher(20)
             };
@@ -96,7 +92,6 @@ describe('/natures', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
                     assert.isNumber(res.body.id);
 
                     done();
@@ -107,7 +102,7 @@ describe('/natures', function() {
 
     describe('PUT', function() {
 
-        it('PUT /:natureId should update the item with new values', function(done) {
+        it('/:natureId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
@@ -115,38 +110,20 @@ describe('/natures', function() {
 
             app.put('/natures/' + temporaryId, payload)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                })
+                .end(done);
         });
 
-        it('PUT /:natureId/canon should update the asset canon field', function(done) {
+        it('/:natureId/canon should update the asset canon field', function(done) {
             app.put('/natures/' + temporaryId + '/canon')
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
+                .end(done);
         });
 
     });
 
     describe('GET', function() {
 
-        it('GET / should return a list of natures', function(done) {
+        it('/ should return a list of natures', function(done) {
             app.get('/natures')
                 .expect(200)
                 .end(function(err, res) {
@@ -158,7 +135,7 @@ describe('/natures', function() {
                 });
         });
 
-        it('GET /:natureId should return one asset', function(done) {
+        it('/:natureId should return one asset', function(done) {
             app.get('/natures/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
@@ -170,7 +147,7 @@ describe('/natures', function() {
                 })
         });
 
-        it('GET /:natureId/ownership should return ownership status of the asset if user is logged in', function(done) {
+        it('/:natureId/ownership should return ownership status of the asset if user is logged in', function(done) {
             app.get('/natures/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -182,7 +159,7 @@ describe('/natures', function() {
                 });
         });
 
-        it('GET /:natureId/comments should get all available comments for the asset', function(done) {
+        it('/:natureId/comments should get all available comments for the asset', function(done) {
             app.get('/natures/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
@@ -208,17 +185,10 @@ describe('/natures', function() {
 
     describe('DELETE', function() {
 
-        it('DELETE /:natureId should update the asset deleted field', function(done) {
+        it('/:natureId should update the asset deleted field', function(done) {
             app.delete('/natures/' + temporaryId)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
-                    done();
-                })
+                .end(done);
         });
 
     });

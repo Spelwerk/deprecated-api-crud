@@ -1,5 +1,4 @@
-var supertest = require('supertest'),
-    chai = require('chai');
+var supertest = require('supertest');
 
 var base = 'http://localhost:4000',
     key = 'key';
@@ -22,7 +21,7 @@ exports.login = function(callback) {
         })
         .expect(200)
         .end(function(err, res) {
-            if(err) callback(err);
+            if(err) return callback(err);
 
             adminToken = res.body.token;
 

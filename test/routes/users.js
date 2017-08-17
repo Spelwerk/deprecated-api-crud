@@ -48,7 +48,7 @@ describe('/users', function() {
 
     describe('POST', function() {
 
-        it('POST / should create a new user', function(done) {
+        it('/ should create a new user', function(done) {
             this.timeout = 6000;
 
             var payload = {
@@ -71,7 +71,7 @@ describe('/users', function() {
                 });
         });
 
-        it('POST /login/password should return a token', function(done) {
+        it('/login/password should return a token', function(done) {
             var payload = {
                 email: email,
                 password: password
@@ -91,25 +91,25 @@ describe('/users', function() {
                 });
         });
 
-        it('POST /login/email should return a success message', function(done) {
+        it('/login/email should return a success message', function(done) {
             app.post('/users/login/email', {email: email})
                 .expect(200)
                 .end(done);
         });
 
-        it('POST /verify/email should return a success message', function(done) {
+        it('/verify/email should return a success message', function(done) {
             app.post('/users/verify/email', {email: email})
                 .expect(200)
                 .end(done);
         });
 
-        it('POST /email/email should return a success message', function(done) {
+        it('/email/email should return a success message', function(done) {
             app.post('/users/email/email', {email: email})
                 .expect(200)
                 .end(done);
         });
 
-        it('POST /password/email should return a success message', function(done) {
+        it('/password/email should return a success message', function(done) {
             app.post('/users/password/email', {email: email})
                 .expect(200)
                 .end(done);
@@ -123,7 +123,7 @@ describe('/users', function() {
             app.login(done);
         });
 
-        it('PUT /:userId/admin should make the user administrator', function(done) {
+        it('/:userId/admin should make the user administrator', function(done) {
             app.put('/users/' + id + '/admin', {admin: 1})
                 .expect(200)
                 .end(done);
@@ -133,7 +133,7 @@ describe('/users', function() {
 
     describe('PUT', function() {
 
-        it('PUT /:userId should change the user information', function(done) {
+        it('/:userId should change the user information', function(done) {
             var payload = {
                 displayname: hasher(20),
                 firstname: hasher(20),
@@ -142,20 +142,14 @@ describe('/users', function() {
 
             app.put('/users/' + id, payload, token)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-
-                    done();
-                });
+                .end(done);
         });
 
     });
 
     describe('GET', function() {
 
-        it('GET /info should return information about current user', function(done) {
+        it('/info should return information about current user', function(done) {
             app.get('/users/info', token)
                 .expect(200)
                 .end(function(err, res) {
@@ -171,7 +165,7 @@ describe('/users', function() {
                 });
         });
 
-        it('GET /tokens should return a list of all current tokens for the user', function(done) {
+        it('/tokens should return a list of all current tokens for the user', function(done) {
             app.get('/users/tokens', token)
                 .expect(200)
                 .end(function(err, res) {
@@ -194,14 +188,11 @@ describe('/users', function() {
 
         });
 
-        it('GET / should return a list of users', function(done) {
+        it('/ should return a list of users', function(done) {
             app.get('/users')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
-
-                    assert.isTrue(res.body.success);
-                    assert.isString(res.body.message);
 
                     verifyList(res.body);
 
@@ -209,14 +200,11 @@ describe('/users', function() {
                 });
         });
 
-        it('GET /:userId should return information about the user', function(done) {
+        it('/:userId should return information about the user', function(done) {
             app.get('/users/' + id)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
-
-                    assert.isTrue(res.body.success);
-                    assert.isString(res.body.message);
 
                     verifyItem(res.body.result);
 
@@ -228,7 +216,7 @@ describe('/users', function() {
 
     describe('DELETE', function() {
 
-        it('DELETE /:userId should delete the user', function(done) {
+        it('/:userId should delete the user', function(done) {
             app.delete('/users/' + id, token)
                 .expect(200)
                 .end(done);

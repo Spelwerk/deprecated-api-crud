@@ -45,7 +45,6 @@ module.exports = function(router) {
                         if(err) return callback(err);
 
                         insert.id = result.insertId;
-                        insert.affected = result.affectedRows;
 
                         callback();
                     });
@@ -56,9 +55,7 @@ module.exports = function(router) {
             ],function(err) {
                 if(err) return next(err);
 
-                var message = 'Created new row in focus';
-
-                res.status(201).send({success: true, message: message, affected: insert.affected, id: insert.id});
+                res.status(201).send({id: insert.id});
             });
         });
 
@@ -108,7 +105,7 @@ module.exports = function(router) {
 
                 if(err) ownership = false;
 
-                res.status(200).send({success: true, message: 'Ownership verified', ownership: ownership});
+                res.status(200).send({ownership: ownership});
             })
         });
 };

@@ -51,7 +51,7 @@ describe('/focuses', function() {
 
     describe('POST', function() {
 
-        it('POST / should create a new asset', function(done) {
+        it('/ should create a new asset', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
@@ -64,9 +64,6 @@ describe('/focuses', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
                     assert.isNumber(res.body.id);
 
                     temporaryId = res.body.id;
@@ -75,7 +72,7 @@ describe('/focuses', function() {
                 });
         });
 
-        it('POST /:focusId/comments should create a new comment for the asset', function(done) {
+        it('/:focusId/comments should create a new comment for the asset', function(done) {
             var payload = {
                 content: hasher(20)
             };
@@ -85,7 +82,6 @@ describe('/focuses', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
                     assert.isNumber(res.body.id);
 
                     done();
@@ -96,7 +92,7 @@ describe('/focuses', function() {
 
     describe('PUT', function() {
 
-        it('PUT /:focusId should update the item with new values', function(done) {
+        it('/:focusId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
@@ -104,38 +100,20 @@ describe('/focuses', function() {
 
             app.put('/focuses/' + temporaryId, payload)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                })
+                .end(done);
         });
 
-        it('PUT /:focusId/canon should update the asset canon field', function(done) {
+        it('/:focusId/canon should update the asset canon field', function(done) {
             app.put('/focuses/' + temporaryId + '/canon')
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
+                .end(done);
         });
 
     });
 
     describe('GET', function() {
 
-        it('GET / should return a list of focuses', function(done) {
+        it('/ should return a list of focuses', function(done) {
             app.get('/focuses')
                 .expect(200)
                 .end(function(err, res) {
@@ -147,7 +125,7 @@ describe('/focuses', function() {
                 });
         });
 
-        it('GET /:focusId should return one asset', function(done) {
+        it('/:focusId should return one asset', function(done) {
             app.get('/focuses/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
@@ -159,7 +137,7 @@ describe('/focuses', function() {
                 })
         });
 
-        it('GET /:focusId/ownership should return ownership status of the asset if user is logged in', function(done) {
+        it('/:focusId/ownership should return ownership status of the asset if user is logged in', function(done) {
             app.get('/focuses/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -171,7 +149,7 @@ describe('/focuses', function() {
                 });
         });
 
-        it('GET /:focusId/comments should get all available comments for the asset', function(done) {
+        it('/:focusId/comments should get all available comments for the asset', function(done) {
             app.get('/focuses/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
@@ -197,17 +175,10 @@ describe('/focuses', function() {
 
     describe('DELETE', function() {
 
-        it('DELETE /:focusId should update the asset deleted field', function(done) {
+        it('/:focusId should update the asset deleted field', function(done) {
             app.delete('/focuses/' + temporaryId)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
-                    done();
-                })
+                .end(done);
         });
 
     });

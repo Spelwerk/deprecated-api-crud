@@ -52,7 +52,7 @@ describe('/augmentations', function() {
 
     describe('POST', function() {
 
-        it('POST / should create a new augmentation', function(done) {
+        it('/ should create a new augmentation', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
@@ -66,9 +66,6 @@ describe('/augmentations', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
                     assert.isNumber(res.body.id);
 
                     temporaryId = res.body.id;
@@ -77,20 +74,19 @@ describe('/augmentations', function() {
                 });
         });
 
-        it('POST /:augmentationId/clone should create a copy of the augmentation', function(done) {
+        it('/:augmentationId/clone should create a copy of the augmentation', function(done) {
             app.post('/augmentations/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
                     assert.isNumber(res.body.id);
 
                     done();
                 });
         });
 
-        it('POST /:augmentationId/comments should create a new comment for the augmentation', function(done) {
+        it('/:augmentationId/comments should create a new comment for the augmentation', function(done) {
             var payload = {
                 content: hasher(20)
             };
@@ -100,14 +96,13 @@ describe('/augmentations', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
                     assert.isNumber(res.body.id);
 
                     done();
                 });
         });
 
-        it('POST /:augmentationId/attributes should add an attribute to the augmentation', function(done) {
+        it('/:augmentationId/attributes should add an attribute to the augmentation', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
@@ -115,16 +110,10 @@ describe('/augmentations', function() {
 
             app.post('/augmentations/' + temporaryId + '/attributes', payload)
                 .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
+                .end(done);
         });
 
-        it('POST /:augmentationId/skills should add an skill to the augmentation', function(done) {
+        it('/:augmentationId/skills should add an skill to the augmentation', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
@@ -132,20 +121,14 @@ describe('/augmentations', function() {
 
             app.post('/augmentations/' + temporaryId + '/skills', payload)
                 .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
+                .end(done);
         });
 
     });
 
     describe('PUT', function() {
 
-        it('PUT /:augmentationId should update the item with new values', function(done) {
+        it('/:augmentationId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
@@ -153,70 +136,40 @@ describe('/augmentations', function() {
 
             app.put('/augmentations/' + temporaryId, payload)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                })
+                .end(done);
         });
 
-        it('PUT /:augmentationId/canon should update the augmentation canon field', function(done) {
+        it('/:augmentationId/canon should update the augmentation canon field', function(done) {
             app.put('/augmentations/' + temporaryId + '/canon')
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
+                .end(done);
         });
 
-        it('PUT /:augmentationId/attributes should change the attribute value for the augmentation', function(done) {
+        it('/:augmentationId/attributes should change the attribute value for the augmentation', function(done) {
             var payload = {
                 value: 8
             };
 
             app.put('/augmentations/' + temporaryId + '/attributes/1', payload)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-
-                    done();
-                });
+                .end(done);
         });
 
-        it('PUT /:augmentationId/skills should change the skill value for the augmentation', function(done) {
+        it('/:augmentationId/skills should change the skill value for the augmentation', function(done) {
             var payload = {
                 value: 8
             };
 
             app.put('/augmentations/' + temporaryId + '/skills/1', payload)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-
-                    done();
-                });
+                .end(done);
         });
 
     });
 
     describe('GET', function() {
 
-        it('GET / should return a list of augmentations', function(done) {
+        it('/ should return a list of augmentations', function(done) {
             app.get('/augmentations')
                 .expect(200)
                 .end(function(err, res) {
@@ -228,7 +181,7 @@ describe('/augmentations', function() {
                 });
         });
 
-        it('GET /:augmentationId should return one augmentation', function(done) {
+        it('/:augmentationId should return one augmentation', function(done) {
             app.get('/augmentations/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
@@ -240,7 +193,7 @@ describe('/augmentations', function() {
                 })
         });
 
-        it('GET /:augmentationId/ownership should return ownership status of the augmentation if user is logged in', function(done) {
+        it('/:augmentationId/ownership should return ownership status of the augmentation if user is logged in', function(done) {
             app.get('/augmentations/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -252,7 +205,7 @@ describe('/augmentations', function() {
                 });
         });
 
-        it('GET /:augmentationId/comments should get all available comments for the augmentation', function(done) {
+        it('/:augmentationId/comments should get all available comments for the augmentation', function(done) {
             app.get('/augmentations/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
@@ -274,7 +227,7 @@ describe('/augmentations', function() {
                 })
         });
 
-        it('GET /:augmentationId/attributes should return a list of attributes', function(done) {
+        it('/:augmentationId/attributes should return a list of attributes', function(done) {
             app.get('/augmentations/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
@@ -304,7 +257,7 @@ describe('/augmentations', function() {
                 });
         });
 
-        it('GET /:augmentationId/skills should return a list of skills', function(done) {
+        it('/:augmentationId/skills should return a list of skills', function(done) {
             app.get('/augmentations/' + temporaryId + '/skills')
                 .expect(200)
                 .end(function(err, res) {
@@ -340,41 +293,22 @@ describe('/augmentations', function() {
 
     describe('DELETE', function() {
 
-        it('DELETE /:augmentationId/attributes should remove the attribute from the augmentation', function(done) {
+        it('/:augmentationId/attributes should remove the attribute from the augmentation', function(done) {
             app.delete('/augmentations/' + temporaryId + '/attributes/1')
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
+                .end(done);
         });
 
-        it('DELETE /:augmentationId/skills should remove the skill from the augmentation', function(done) {
+        it('/:augmentationId/skills should remove the skill from the augmentation', function(done) {
             app.delete('/augmentations/' + temporaryId + '/skills/1')
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
+                .end(done);
         });
 
-        it('DELETE /:augmentationId should update the augmentation deleted field', function(done) {
+        it('/:augmentationId should update the augmentation deleted field', function(done) {
             app.delete('/augmentations/' + temporaryId)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
-                    done();
-                })
+                .end(done);
         });
 
     });

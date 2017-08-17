@@ -52,7 +52,7 @@ describe('/skills', function() {
 
     describe('POST', function() {
 
-        it('POST / should create a new asset', function(done) {
+        it('/ should create a new asset', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
@@ -65,9 +65,6 @@ describe('/skills', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
                     assert.isNumber(res.body.id);
 
                     temporaryId = res.body.id;
@@ -76,20 +73,19 @@ describe('/skills', function() {
                 });
         });
 
-        it('POST /:skillId/clone should create a copy of the asset', function(done) {
+        it('/:skillId/clone should create a copy of the asset', function(done) {
             app.post('/skills/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
                     assert.isNumber(res.body.id);
 
                     done();
                 });
         });
 
-        it('POST /:skillId/comments should create a new comment for the asset', function(done) {
+        it('/:skillId/comments should create a new comment for the asset', function(done) {
             var payload = {
                 content: hasher(20)
             };
@@ -99,7 +95,6 @@ describe('/skills', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
                     assert.isNumber(res.body.id);
 
                     done();
@@ -110,7 +105,7 @@ describe('/skills', function() {
 
     describe('PUT', function() {
 
-        it('PUT /:skillId should update the item with new values', function(done) {
+        it('/:skillId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
@@ -118,38 +113,20 @@ describe('/skills', function() {
 
             app.put('/skills/' + temporaryId, payload)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                })
+                .end(done);
         });
 
-        it('PUT /:skillId/canon should update the asset canon field', function(done) {
+        it('/:skillId/canon should update the asset canon field', function(done) {
             app.put('/skills/' + temporaryId + '/canon')
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
+                .end(done);
         });
 
     });
 
     describe('GET', function() {
 
-        it('GET / should return a list of skills', function(done) {
+        it('/ should return a list of skills', function(done) {
             app.get('/skills')
                 .expect(200)
                 .end(function(err, res) {
@@ -161,7 +138,7 @@ describe('/skills', function() {
                 });
         });
 
-        it('GET /species/:speciesId should return a list of assets', function(done) {
+        it('/species/:speciesId should return a list of assets', function(done) {
             app.get('/skills/species/1')
                 .expect(200)
                 .end(function(err, res) {
@@ -173,7 +150,7 @@ describe('/skills', function() {
                 });
         });
 
-        it('GET /:skillId should return one asset', function(done) {
+        it('/:skillId should return one asset', function(done) {
             app.get('/skills/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
@@ -185,7 +162,7 @@ describe('/skills', function() {
                 })
         });
 
-        it('GET /:skillId/ownership should return ownership status of the asset if user is logged in', function(done) {
+        it('/:skillId/ownership should return ownership status of the asset if user is logged in', function(done) {
             app.get('/skills/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -197,7 +174,7 @@ describe('/skills', function() {
                 });
         });
 
-        it('GET /:skillId/comments should get all available comments for the asset', function(done) {
+        it('/:skillId/comments should get all available comments for the asset', function(done) {
             app.get('/skills/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
@@ -223,17 +200,10 @@ describe('/skills', function() {
 
     describe('DELETE', function() {
 
-        it('DELETE /:skillId should update the asset deleted field', function(done) {
+        it('/:skillId should update the asset deleted field', function(done) {
             app.delete('/skills/' + temporaryId)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
-                    done();
-                })
+                .end(done);
         });
 
     });

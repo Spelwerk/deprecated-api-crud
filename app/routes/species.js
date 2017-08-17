@@ -28,7 +28,7 @@ module.exports = function(router) {
             sequel.get(req, res, next, call);
         })
         .post(function(req, res, next) {
-            if(!req.user.id) return next({status: 403, message: 'Forbidden', error: 'User ID missing.'});
+            if(!req.user.id) return next({status: 403, message: 'Forbidden', error: 'User is not logged in'});
 
             var insert = {};
 
@@ -47,19 +47,12 @@ module.exports = function(router) {
                         if(err) return callback(err);
 
                         insert.id = result.insertId;
-                        insert.affected += result.affectedRows;
 
                         callback();
                     });
                 },
                 function(callback) {
-                    query('INSERT INTO species_has_weapon (species_id,weapon_id) VALUES (?,?)', [insert.id, defaults.weapon.default], function(err, result) {
-                        if(err) return callback(err);
-
-                        insert.affected += result.affectedRows;
-
-                        callback();
-                    });
+                    query('INSERT INTO species_has_weapon (species_id,weapon_id) VALUES (?,?)', [insert.id, defaults.weapon.default], callback);
                 },
                 function(callback) {
                     query('INSERT INTO user_has_species (user_id,species_id,owner) VALUES (?,?,1)', [req.user.id, insert.id], callback);
@@ -67,9 +60,7 @@ module.exports = function(router) {
             ],function(err) {
                 if(err) return next(err);
 
-                var message = 'Created new row in species';
-
-                res.status(201).send({success: true, message: message, affected: insert.affected, id: insert.id});
+                res.status(201).send({id: insert.id});
             });
         });
 
@@ -137,7 +128,7 @@ module.exports = function(router) {
 
                 if(err) ownership = false;
 
-                res.status(200).send({success: true, message: 'Ownership verified', ownership: ownership});
+                res.status(200).send({ownership: ownership});
             })
         });
 

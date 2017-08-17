@@ -24,21 +24,25 @@ module.exports = function(app, callback) {
         async.series([
             function(callback) {
                 query('SELECT user_id AS id FROM usertoken WHERE token = ?', [req.user.token], function(err, results) {
+                    if(err) return callback(err);
+
                     if(results.length === 0) return callback({status: 403, message: 'Missing token', error: 'Token could not be found in table'});
 
                     req.user.id = parseInt(results[0].id);
 
-                    callback(err);
+                    callback();
                 });
             },
             function(callback) {
                 query('SELECT id,admin,verify FROM user WHERE id = ?', [req.user.id], function(err, results) {
+                    if(err) return callback(err);
+
                     if(!results[0]) return callback({status: 404, message: 'Missing user', error: 'User missing from database'});
 
                     req.user.admin = results[0].admin;
                     req.user.verify = results[0].verify;
 
-                    callback(err);
+                    callback();
                 });
             }
         ],function(err) {

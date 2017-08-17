@@ -52,7 +52,7 @@ describe('/protection', function() {
 
     describe('POST', function() {
 
-        it('POST / should create a new protection', function(done) {
+        it('/ should create a new protection', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
@@ -65,9 +65,6 @@ describe('/protection', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
                     assert.isNumber(res.body.id);
 
                     temporaryId = res.body.id;
@@ -76,20 +73,19 @@ describe('/protection', function() {
                 });
         });
 
-        it('POST /:protectionId/clone should create a copy of the protection', function(done) {
+        it('/:protectionId/clone should create a copy of the protection', function(done) {
             app.post('/protection/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
                     assert.isNumber(res.body.id);
 
                     done();
                 });
         });
 
-        it('POST /:protectionId/comments should create a new comment for the protection', function(done) {
+        it('/:protectionId/comments should create a new comment for the protection', function(done) {
             var payload = {
                 content: hasher(20)
             };
@@ -99,14 +95,13 @@ describe('/protection', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
                     assert.isNumber(res.body.id);
 
                     done();
                 });
         });
 
-        it('POST /:protectionId/attributes should add an attribute to the protection', function(done) {
+        it('/:protectionId/attributes should add an attribute to the protection', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
@@ -114,20 +109,14 @@ describe('/protection', function() {
 
             app.post('/protection/' + temporaryId + '/attributes', payload)
                 .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
+                .end(done);
         });
 
     });
 
     describe('PUT', function() {
 
-        it('PUT /:protectionId should update the item with new values', function(done) {
+        it('/:protectionId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
@@ -135,54 +124,30 @@ describe('/protection', function() {
 
             app.put('/protection/' + temporaryId, payload)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                })
+                .end(done);
         });
 
-        it('PUT /:protectionId/canon should update the protection canon field', function(done) {
+        it('/:protectionId/canon should update the protection canon field', function(done) {
             app.put('/protection/' + temporaryId + '/canon')
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
+                .end(done);
         });
 
-        it('PUT /:protectionId/attributes should change the attribute value for the protection', function(done) {
+        it('/:protectionId/attributes should change the attribute value for the protection', function(done) {
             var payload = {
                 value: 8
             };
 
             app.put('/protection/' + temporaryId + '/attributes/1', payload)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-
-                    done();
-                });
+                .end(done);
         });
 
     });
 
     describe('GET', function() {
 
-        it('GET / should return a list of protection', function(done) {
+        it('/ should return a list of protection', function(done) {
             app.get('/protection')
                 .expect(200)
                 .end(function(err, res) {
@@ -194,7 +159,7 @@ describe('/protection', function() {
                 });
         });
 
-        it('GET /bodypart/:bodyPartId should return a list of protection', function(done) {
+        it('/bodypart/:bodyPartId should return a list of protection', function(done) {
             app.get('/protection/bodypart/1')
                 .expect(200)
                 .end(function(err, res) {
@@ -206,7 +171,7 @@ describe('/protection', function() {
                 });
         });
 
-        it('GET /:protectionId should return one protection', function(done) {
+        it('/:protectionId should return one protection', function(done) {
             app.get('/protection/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
@@ -218,7 +183,7 @@ describe('/protection', function() {
                 })
         });
 
-        it('GET /:protectionId/ownership should return ownership status of the protection if user is logged in', function(done) {
+        it('/:protectionId/ownership should return ownership status of the protection if user is logged in', function(done) {
             app.get('/protection/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -230,7 +195,7 @@ describe('/protection', function() {
                 });
         });
 
-        it('GET /:protectionId/comments should get all available comments for the protection', function(done) {
+        it('/:protectionId/comments should get all available comments for the protection', function(done) {
             app.get('/protection/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
@@ -252,7 +217,7 @@ describe('/protection', function() {
                 })
         });
 
-        it('GET /:protectionId/attributes should return a list of attributes', function(done) {
+        it('/:protectionId/attributes should return a list of attributes', function(done) {
             app.get('/protection/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
@@ -286,29 +251,16 @@ describe('/protection', function() {
 
     describe('DELETE', function() {
 
-        it('DELETE /:protectionId/attributes should remove the attribute from the protection', function(done) {
+        it('/:protectionId/attributes should remove the attribute from the protection', function(done) {
             app.delete('/protection/' + temporaryId + '/attributes/1')
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-
-                    done();
-                });
+                .end(done);
         });
 
-        it('DELETE /:protectionId should update the protection deleted field', function(done) {
+        it('/:protectionId should update the protection deleted field', function(done) {
             app.delete('/protection/' + temporaryId)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
-                    done();
-                })
+                .end(done);
         });
 
     });

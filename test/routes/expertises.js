@@ -53,7 +53,7 @@ describe('/expertise', function() {
 
     describe('POST', function() {
 
-        it('POST / should create a new asset', function(done) {
+        it('/ should create a new asset', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
@@ -67,9 +67,6 @@ describe('/expertise', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
                     assert.isNumber(res.body.id);
 
                     temporaryId = res.body.id;
@@ -78,20 +75,19 @@ describe('/expertise', function() {
                 });
         });
 
-        it('POST /:expertiseId/clone should create a copy of the asset', function(done) {
+        it('/:expertiseId/clone should create a copy of the asset', function(done) {
             app.post('/expertises/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
                     assert.isNumber(res.body.id);
 
                     done();
                 });
         });
 
-        it('POST /:expertiseId/comments should create a new comment for the asset', function(done) {
+        it('/:expertiseId/comments should create a new comment for the asset', function(done) {
             var payload = {
                 content: hasher(20)
             };
@@ -101,7 +97,6 @@ describe('/expertise', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.affected);
                     assert.isNumber(res.body.id);
 
                     done();
@@ -112,7 +107,7 @@ describe('/expertise', function() {
 
     describe('PUT', function() {
 
-        it('PUT /:expertiseId should update the item with new values', function(done) {
+        it('/:expertiseId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
@@ -120,38 +115,20 @@ describe('/expertise', function() {
 
             app.put('/expertises/' + temporaryId, payload)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                })
+                .end(done);
         });
 
-        it('PUT /:expertiseId/canon should update the asset canon field', function(done) {
+        it('/:expertiseId/canon should update the asset canon field', function(done) {
             app.put('/expertises/' + temporaryId + '/canon')
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
+                .end(done);
         });
 
     });
 
     describe('GET', function() {
 
-        it('GET / should return a list of expertise', function(done) {
+        it('/ should return a list of expertise', function(done) {
             app.get('/expertises')
                 .expect(200)
                 .end(function(err, res) {
@@ -163,7 +140,7 @@ describe('/expertise', function() {
                 });
         });
 
-        it('GET /manifestation/:manifestationId should return a list of expertise', function(done) {
+        it('/manifestation/:manifestationId should return a list of expertise', function(done) {
             app.get('/expertises/manifestation/1')
                 .expect(200)
                 .end(function(err, res) {
@@ -175,7 +152,7 @@ describe('/expertise', function() {
                 });
         });
 
-        it('GET /skill/:skillId should return a list of expertise', function(done) {
+        it('/skill/:skillId should return a list of expertise', function(done) {
             app.get('/expertises/skill/1')
                 .expect(200)
                 .end(function(err, res) {
@@ -187,7 +164,7 @@ describe('/expertise', function() {
                 });
         });
 
-        it('GET /species/:speciesId should return a list of expertise', function(done) {
+        it('/species/:speciesId should return a list of expertise', function(done) {
             app.get('/expertises/species/1')
                 .expect(200)
                 .end(function(err, res) {
@@ -199,7 +176,7 @@ describe('/expertise', function() {
                 });
         });
 
-        it('GET /skill/:skillId/manifestation/:manifestationId should return a list of expertise', function(done) {
+        it('/skill/:skillId/manifestation/:manifestationId should return a list of expertise', function(done) {
             app.get('/expertises/skill/20/manifestation/1')
                 .expect(200)
                 .end(function(err, res) {
@@ -211,7 +188,7 @@ describe('/expertise', function() {
                 });
         });
 
-        it('GET /skill/:skillId/species/:speciesId should return a list of expertise', function(done) {
+        it('/skill/:skillId/species/:speciesId should return a list of expertise', function(done) {
             app.get('/expertises/skill/19/species/5')
                 .expect(200)
                 .end(function(err, res) {
@@ -223,7 +200,7 @@ describe('/expertise', function() {
                 });
         });
 
-        it('GET /:expertiseId should return one asset', function(done) {
+        it('/:expertiseId should return one asset', function(done) {
             app.get('/expertises/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
@@ -235,7 +212,7 @@ describe('/expertise', function() {
                 })
         });
 
-        it('GET /:expertiseId/ownership should return ownership status of the asset if user is logged in', function(done) {
+        it('/:expertiseId/ownership should return ownership status of the asset if user is logged in', function(done) {
             app.get('/expertises/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -247,7 +224,7 @@ describe('/expertise', function() {
                 });
         });
 
-        it('GET /:expertiseId/comments should get all available comments for the asset', function(done) {
+        it('/:expertiseId/comments should get all available comments for the asset', function(done) {
             app.get('/expertises/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
@@ -273,17 +250,10 @@ describe('/expertise', function() {
 
     describe('DELETE', function() {
 
-        it('DELETE /:expertiseId should update the asset deleted field', function(done) {
+        it('/:expertiseId should update the asset deleted field', function(done) {
             app.delete('/expertises/' + temporaryId)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
-                    done();
-                })
+                .end(done);
         });
 
     });

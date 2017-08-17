@@ -51,7 +51,7 @@ describe('/attributes', function() {
 
     describe('POST', function() {
 
-        it('POST / should create a new attribute', function(done) {
+        it('/ should create a new attribute', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
@@ -63,9 +63,6 @@ describe('/attributes', function() {
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
 
                     assert.isNumber(res.body.id);
 
@@ -79,7 +76,7 @@ describe('/attributes', function() {
 
     describe('PUT', function() {
 
-        it('PUT /:attributeId should update the item with new values', function(done) {
+        it('/:attributeId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
@@ -87,38 +84,20 @@ describe('/attributes', function() {
 
             app.put('/attributes/' + temporaryId, payload)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                })
+                .end(done);
         });
 
-        it('PUT /:attributeId/canon should update the attribute canon field', function(done) {
+        it('/:attributeId/canon should update the attribute canon field', function(done) {
             app.put('/attributes/' + temporaryId + '/canon')
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.changed);
-                    assert.notEqual(res.body.changed, 0);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
+                .end(done);
         });
 
     });
 
     describe('GET', function() {
 
-        it('GET / should return a list of attributes', function(done) {
+        it('/ should return a list of attributes', function(done) {
             app.get('/attributes')
                 .expect(200)
                 .end(function(err, res) {
@@ -130,7 +109,7 @@ describe('/attributes', function() {
                 });
         });
 
-        it('GET /special should return a list of attributes', function(done) {
+        it('/special should return a list of attributes', function(done) {
             app.get('/attributes/special')
                 .expect(200)
                 .end(function(err, res) {
@@ -142,7 +121,7 @@ describe('/attributes', function() {
                 });
         });
 
-        it('GET /type/:typeId should return a list of attributes', function(done) {
+        it('/type/:typeId should return a list of attributes', function(done) {
             app.get('/attributes/type/1')
                 .expect(200)
                 .end(function(err, res) {
@@ -154,7 +133,7 @@ describe('/attributes', function() {
                 });
         });
 
-        it('GET /:attributeId should return one attribute', function(done) {
+        it('/:attributeId should return one attribute', function(done) {
             app.get('/attributes/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
@@ -166,7 +145,7 @@ describe('/attributes', function() {
                 })
         });
 
-        it('GET /:attributeId/ownership should return ownership status of the attribute if user is logged in', function(done) {
+        it('/:attributeId/ownership should return ownership status of the attribute if user is logged in', function(done) {
             app.get('/attributes/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -182,17 +161,10 @@ describe('/attributes', function() {
 
     describe('DELETE', function() {
 
-        it('DELETE /:attributeId should update the weapon deleted field', function(done) {
+        it('/:attributeId should update the weapon deleted field', function(done) {
             app.delete('/attributes/' + temporaryId)
                 .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.affected);
-                    assert.notEqual(res.body.affected, 0);
-
-                    done();
-                })
+                .end(done);
         });
 
     });
