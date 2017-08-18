@@ -49,9 +49,7 @@ describe('/diseases', function() {
     describe('POST', function() {
 
         it('/ should create a new asset', function(done) {
-            var payload = {
-                name: hasher(20)
-            };
+            var payload = {name: hasher(20)};
 
             app.post('/diseases', payload)
                 .expect(201)
@@ -71,18 +69,16 @@ describe('/diseases', function() {
     describe('PUT', function() {
 
         it('/:diseaseId should update the item with new values', function(done) {
-            var payload = {
-                name: hasher(20)
-            };
+            var payload = {name: hasher(20)};
 
             app.put('/diseases/' + temporaryId, payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:diseaseId/canon should update the asset canon field', function(done) {
             app.put('/diseases/' + temporaryId + '/canon')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
@@ -132,7 +128,7 @@ describe('/diseases', function() {
 
         it('/:diseaseId should update the asset deleted field', function(done) {
             app.delete('/diseases/' + temporaryId)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 

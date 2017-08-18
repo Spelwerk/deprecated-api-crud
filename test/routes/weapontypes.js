@@ -126,13 +126,13 @@ describe('/weapontypes', function() {
             };
 
             app.put('/weapontypes/' + temporaryId, payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:weaponGroupId/canon should update the weapon type canon field', function(done) {
             app.put('/weapontypes/' + temporaryId + '/canon')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
@@ -264,13 +264,13 @@ describe('/weapontypes', function() {
 
         it('/:weaponTypeId/mods should remove the attribute from the asset', function(done) {
             app.delete('/weapontypes/' + temporaryId + '/mods/1')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
         
         it('/:weaponGroupId should update the weapon deleted field', function(done) {
             app.delete('/weapontypes/' + temporaryId)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 

@@ -157,53 +157,45 @@ describe('/milestones', function() {
             };
 
             app.put('/milestones/' + temporaryId, payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:milestoneId/canon should update the milestone canon field', function(done) {
             app.put('/milestones/' + temporaryId + '/canon')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:milestoneId/assets should change the asset value for the milestone', function(done) {
-            var payload = {
-                value: 8
-            };
+            var payload = {value: 8};
 
             app.put('/milestones/' + temporaryId + '/assets/1', payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:milestoneId/attributes should change the attribute value for the milestone', function(done) {
-            var payload = {
-                value: 8
-            };
+            var payload = {value: 8};
 
             app.put('/milestones/' + temporaryId + '/attributes/1', payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         xit('/:milestoneId/loyalties should change the loyalty value for the milestone', function(done) {
-            var payload = {
-                value: 8
-            };
+            var payload = {value: 8};
 
             app.put('/milestones/' + temporaryId + '/loyalties/1', payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:milestoneId/skills should change the skill value for the milestone', function(done) {
-            var payload = {
-                value: 8
-            };
+            var payload = {value: 8};
 
             app.put('/milestones/' + temporaryId + '/skills/1', payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
@@ -436,31 +428,31 @@ describe('/milestones', function() {
 
         it('/:milestoneId/assets should remove the asset from the milestone', function(done) {
             app.delete('/milestones/' + temporaryId + '/assets/1')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:milestoneId/attributes should remove the attribute from the milestone', function(done) {
             app.delete('/milestones/' + temporaryId + '/attributes/1')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         xit('/:milestoneId/loyalties should remove the loyalty from the milestone', function(done) {
             app.delete('/milestones/' + temporaryId + '/loyalties/1')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:milestoneId/skills should remove the skill from the milestone', function(done) {
             app.delete('/milestones/' + temporaryId + '/skills/1')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:milestoneId should update the milestone deleted field', function(done) {
             app.delete('/milestones/' + temporaryId)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 

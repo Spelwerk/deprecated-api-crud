@@ -123,23 +123,21 @@ describe('/protection', function() {
             };
 
             app.put('/protection/' + temporaryId, payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:protectionId/canon should update the protection canon field', function(done) {
             app.put('/protection/' + temporaryId + '/canon')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:protectionId/attributes should change the attribute value for the protection', function(done) {
-            var payload = {
-                value: 8
-            };
+            var payload = {value: 8};
 
             app.put('/protection/' + temporaryId + '/attributes/1', payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
@@ -253,13 +251,13 @@ describe('/protection', function() {
 
         it('/:protectionId/attributes should remove the attribute from the protection', function(done) {
             app.delete('/protection/' + temporaryId + '/attributes/1')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:protectionId should update the protection deleted field', function(done) {
             app.delete('/protection/' + temporaryId)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 

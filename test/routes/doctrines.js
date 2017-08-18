@@ -100,13 +100,13 @@ describe('/doctrine', function() {
             };
 
             app.put('/doctrines/' + temporaryId, payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:doctrineId/canon should update the asset canon field', function(done) {
             app.put('/doctrines/' + temporaryId + '/canon')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
@@ -178,7 +178,7 @@ describe('/doctrine', function() {
 
         it('/:doctrineId should update the asset deleted field', function(done) {
             app.delete('/doctrines/' + temporaryId)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 

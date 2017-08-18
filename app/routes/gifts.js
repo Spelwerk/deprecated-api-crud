@@ -95,7 +95,7 @@ module.exports = function(router) {
             })
         });
 
-    // Attribute List
+    // Attributes
 
     router.route('/:giftId/attributes')
         .get(function(req, res, next) {
@@ -118,7 +118,7 @@ module.exports = function(router) {
             relation.delete(req, res, next, tableName, req.params.giftId, 'attribute', req.params.attributeId);
         });
 
-    // Skill List
+    // Skills
 
     router.route('/:giftId/skills')
         .get(function(req, res, next) {

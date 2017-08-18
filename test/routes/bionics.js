@@ -134,23 +134,21 @@ describe('/bionics', function() {
             };
 
             app.put('/bionics/' + temporaryId, payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:bionicId/canon should update the bionic canon field', function(done) {
             app.put('/bionics/' + temporaryId + '/canon')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:bionicId/attributes should change the attribute value for the bionic', function(done) {
-            var payload = {
-                value: 8
-            };
+            var payload = {value: 8};
 
             app.put('/bionics/' + temporaryId + '/attributes/1', payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
@@ -295,19 +293,19 @@ describe('/bionics', function() {
 
         it('/:bionicId/attributes should remove the attribute from the bionic', function(done) {
             app.delete('/bionics/' + temporaryId + '/attributes/1')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:bionicId/augmentations should remove the augmentation from the bionic', function(done) {
             app.delete('/bionics/' + temporaryId + '/augmentations/1')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:bionicId should update the bionic deleted field', function(done) {
             app.delete('/bionics/' + temporaryId)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 

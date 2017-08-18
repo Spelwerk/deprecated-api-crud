@@ -1232,36 +1232,420 @@ module.exports = function(router) {
 
     // Expertises
 
+    var sqlExpertises = 'SELECT ' +
+        'expertise.id, ' +
+        'expertise.canon, ' +
+        'expertise.popularity, ' +
+        'expertise.name, ' +
+        'expertise.description, ' +
+        'expertise.skill_id, ' +
+        'expertise.species_id, ' +
+        'expertise.manifestation_id, ' +
+        'skill.icon, ' +
+        'person_has_expertise.value, ' +
+        'person_has_skill.value AS bonus ' +
+        'FROM person_has_expertise ' +
+        'LEFT JOIN expertise ON expertise.id = person_has_expertise.expertise_id ' +
+        'LEFT JOIN skill ON skill.id = expertise.skill_id ' +
+        'LEFT JOIN person_has_skill ON person_has_skill.person_id = ? AND person_has_skill.skill_id = expertise.skill_id';
+
     router.route('/:personId/expertises')
-        .get(function(req, res, next) {})
-        .post(function(req, res, next) {});
+        .get(function(req, res, next) {
+            var call = sqlExpertises + ' WHERE ' +
+                'person_has_expertise.person_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.personId, req.params.personId]); // personId used twice for LEFT JOIN person_has_skill
+        })
+        .post(function(req, res, next) {
+            var personId = parseInt(req.params.personId),
+                expertiseId = parseInt(req.body.insert_id),
+                expertiseValue = parseInt(req.body.value);
+
+            async.series([
+                function(callback) {
+                    if(expertiseValue < 1) return callback();
+
+                    ownership(req, tableName, personId, adminRestriction, callback);
+                },
+                function(callback) {
+                    if(expertiseValue < 1) return callback();
+
+                    query('INSERT INTO person_has_expertise (person_id,expertise_id,value) VALUES (?,?,?) ON DUPLICATE KEY UPDATE value = VALUES(value)', [personId, expertiseId, expertiseValue], callback);
+                }
+            ],function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
+        });
+
+    router.route('/:personId/expertises/manifestation/:manifestationId')
+        .get(function(req, res, next) {
+            var call = sqlExpertises + ' WHERE ' +
+                'person_has_expertise.person_id = ? AND ' +
+                'expertise.manifestation_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.personId, req.params.personId, req.params.manifestationId]); // personId used twice for LEFT JOIN person_has_skill
+        });
 
     router.route('/:personId/expertises/:expertiseId')
-        .get(function(req, res, next) {})
-        .put(function(req, res, next) {})
-        .delete(function(req, res, next) {});
+        .get(function(req, res, next) {
+            var call = sqlExpertises + ' WHERE ' +
+                'person_has_expertise.person_id = ? AND ' +
+                'person_has_expertise.expertise_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.personId, req.params.personId, req.params.expertiseId], true); // personId used twice for LEFT JOIN person_has_skill
+        })
+        .put(function(req, res, next) {
+            var personId = parseInt(req.params.personId),
+                expertiseId = parseInt(req.params.expertiseId),
+                expertiseValue = parseInt(req.body.value);
+
+            async.series([
+                function(callback) {
+                    ownership(req, tableName, personId, adminRestriction, callback);
+                },
+                function(callback) {
+                    query('SELECT value FROM person_has_expertise WHERE person_id = ? AND expertise_id = ?', [personId, expertiseId], function(err, results) {
+                        if(err) return callback(err);
+
+                        if(!results[0].value) return callback({status: 403, message: 'Forbidden', error: 'The person has not added this expertise yet'});
+
+                        expertiseValue = expertiseValue + parseInt(results[0].value);
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    if(expertiseValue < 1) return callback();
+
+                    query('INSERT INTO person_has_expertise (person_id,expertise_id,value) VALUES (?,?,?) ON DUPLICATE KEY UPDATE value = VALUES(value)', [personId, expertiseId, expertiseValue], callback);
+                }
+            ],function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
+        })
+        .delete(function(req, res, next) {
+            relation.delete(req, res, next, tableName, req.params.personId, 'expertise', req.params.expertiseId);
+        });
 
     // Gifts
 
+    var sqlGifts = 'SELECT * FROM person_has_gift ' +
+        'LEFT JOIN gift ON gift.id = person_has_gift.gift_id';
+
     router.route('/:personId/gifts')
-        .get(function(req, res, next) {})
-        .post(function(req, res, next) {});
+        .get(function(req, res, next) {
+            var call = sqlGifts + ' WHERE ' +
+                'person_has_gift.person_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.personId]);
+        })
+        .post(function(req, res, next) {
+            var personId = parseInt(req.params.personId),
+                giftId = parseInt(req.body.insert_id);
+
+            var personArray,
+                giftArray;
+
+            async.series([
+                function(callback) {
+                    ownership(req, tableName, personId, adminRestriction, callback);
+                },
+                function(callback) {
+                    query('INSERT INTO person_has_gift (person_id,gift_id) VALUES (?,?)', [personId, giftId], callback);
+                },
+
+                // ATTRIBUTE
+
+                function(callback) {
+                    query('SELECT attribute_id as id, value FROM person_has_attribute WHERE person_id = ?', [personId], function(err, results) {
+                        if(err) return callback(err);
+
+                        personArray = results;
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    query('SELECT attribute_id as id, value FROM gift_has_attribute WHERE gift_id = ?', [giftId], function(err, results) {
+                        if(err) return callback(err);
+
+                        giftArray = results;
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    person.changeValues('attribute', personId, personArray, giftArray, null, callback);
+                },
+
+                // SKILL
+
+                function(callback) {
+                    query('SELECT skill_id as id, value FROM person_has_skill WHERE person_id = ?', [personId], function(err, results) {
+                        if(err) return callback(err);
+
+                        personArray = results;
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    query('SELECT skill_id as id, value FROM gift_has_skill WHERE gift_id = ?', [giftId], function(err, results) {
+                        if(err) return callback(err);
+
+                        giftArray = results;
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    person.changeValues('skill', personId, personArray, giftArray, null, callback);
+                }
+            ],function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
+        });
 
     router.route('/:personId/gifts/:giftId')
-        .get(function(req, res, next) {})
-        .put(function(req, res, next) {})
-        .delete(function(req, res, next) {});
+        .get(function(req, res, next) {
+            var call = sqlGifts + ' WHERE ' +
+                'person_has_gift.person_id = ? AND ' +
+                'person_has_gift.gift_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.personId, req.params.giftId], true);
+        })
+        .delete(function(req, res, next) {
+            var personId = parseInt(req.params.personId),
+                giftId = parseInt(req.params.giftId);
+
+            var personArray,
+                giftArray;
+
+            async.series([
+                function(callback) {
+                    ownership(req, tableName, personId, adminRestriction, callback);
+                },
+                function(callback) {
+                    query('DELETE FROM person_has_gift WHERE person_id = ? AND gift_id = ?', [personId, giftId], callback);
+                },
+
+                // ATTRIBUTE
+
+                function(callback) {
+                    query('SELECT attribute_id as id, value FROM person_has_attribute WHERE person_id = ?', [personId], function(err, results) {
+                        if(err) return callback(err);
+
+                        personArray = results;
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    query('SELECT attribute_id as id, value FROM gift_has_attribute WHERE gift_id = ?', [giftId], function(err, results) {
+                        if(err) return callback(err);
+
+                        giftArray = results;
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    person.changeValues('attribute', personId, personArray, null, giftArray, callback);
+                },
+
+                // SKILL
+
+                function(callback) {
+                    query('SELECT skill_id as id, value FROM person_has_skill WHERE person_id = ?', [personId], function(err, results) {
+                        if(err) return callback(err);
+
+                        personArray = results;
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    query('SELECT skill_id as id, value FROM gift_has_skill WHERE gift_id = ?', [giftId], function(err, results) {
+                        if(err) return callback(err);
+
+                        giftArray = results;
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    person.changeValues('skill', personId, personArray, null, giftArray, callback);
+                }
+            ],function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
+        });
 
     // Imperfections
 
+    var sqlImperfections = 'SELECT * FROM person_has_imperfection ' +
+        'LEFT JOIN imperfection ON imperfection.id = person_has_imperfection.imperfection_id';
+
     router.route('/:personId/imperfections')
-        .get(function(req, res, next) {})
-        .post(function(req, res, next) {});
+        .get(function(req, res, next) {
+            var call = sqlImperfections + ' WHERE ' +
+                'person_has_imperfection.person_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.personId]);
+        })
+        .post(function(req, res, next) {
+            var personId = parseInt(req.params.personId),
+                imperfectionId = parseInt(req.body.insert_id);
+
+            var personArray,
+                imperfectionArray;
+
+            async.series([
+                function(callback) {
+                    ownership(req, tableName, personId, adminRestriction, callback);
+                },
+                function(callback) {
+                    query('INSERT INTO person_has_imperfection (person_id,imperfection_id) VALUES (?,?)', [personId, imperfectionId], callback);
+                },
+
+                // ATTRIBUTE
+
+                function(callback) {
+                    query('SELECT attribute_id as id, value FROM person_has_attribute WHERE person_id = ?', [personId], function(err, results) {
+                        if(err) return callback(err);
+
+                        personArray = results;
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    query('SELECT attribute_id as id, value FROM imperfection_has_attribute WHERE imperfection_id = ?', [imperfectionId], function(err, results) {
+                        if(err) return callback(err);
+
+                        imperfectionArray = results;
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    person.changeValues('attribute', personId, personArray, imperfectionArray, null, callback);
+                },
+
+                // SKILL
+
+                function(callback) {
+                    query('SELECT skill_id as id, value FROM person_has_skill WHERE person_id = ?', [personId], function(err, results) {
+                        if(err) return callback(err);
+
+                        personArray = results;
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    query('SELECT skill_id as id, value FROM imperfection_has_skill WHERE imperfection_id = ?', [imperfectionId], function(err, results) {
+                        if(err) return callback(err);
+
+                        imperfectionArray = results;
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    person.changeValues('skill', personId, personArray, imperfectionArray, null, callback);
+                }
+            ],function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
+        });
 
     router.route('/:personId/imperfections/:imperfectionId')
-        .get(function(req, res, next) {})
-        .put(function(req, res, next) {})
-        .delete(function(req, res, next) {});
+        .get(function(req, res, next) {
+            var call = sqlImperfections + ' WHERE ' +
+                'person_has_imperfection.person_id = ? AND ' +
+                'person_has_imperfection.imperfection_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.personId, req.params.imperfectionId], true);
+        })
+        .delete(function(req, res, next) {
+            var personId = parseInt(req.params.personId),
+                imperfectionId = parseInt(req.params.imperfectionId);
+
+            var personArray,
+                imperfectionArray;
+
+            async.series([
+                function(callback) {
+                    ownership(req, tableName, personId, adminRestriction, callback);
+                },
+                function(callback) {
+                    query('DELETE FROM person_has_imperfection WHERE person_id = ? AND imperfection_id = ?', [personId, imperfectionId], callback);
+                },
+
+                // ATTRIBUTE
+
+                function(callback) {
+                    query('SELECT attribute_id as id, value FROM person_has_attribute WHERE person_id = ?', [personId], function(err, results) {
+                        if(err) return callback(err);
+
+                        personArray = results;
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    query('SELECT attribute_id as id, value FROM imperfection_has_attribute WHERE imperfection_id = ?', [imperfectionId], function(err, results) {
+                        if(err) return callback(err);
+
+                        imperfectionArray = results;
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    person.changeValues('attribute', personId, personArray, null, imperfectionArray, callback);
+                },
+
+                // SKILL
+
+                function(callback) {
+                    query('SELECT skill_id as id, value FROM person_has_skill WHERE person_id = ?', [personId], function(err, results) {
+                        if(err) return callback(err);
+
+                        personArray = results;
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    query('SELECT skill_id as id, value FROM imperfection_has_skill WHERE imperfection_id = ?', [imperfectionId], function(err, results) {
+                        if(err) return callback(err);
+
+                        imperfectionArray = results;
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    person.changeValues('skill', personId, personArray, null, imperfectionArray, callback);
+                }
+            ],function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
+        });
 
     // Manifestation
 
@@ -1312,6 +1696,162 @@ module.exports = function(router) {
         });
 
     // Milestones
+
+    var sqlMilestones = 'SELECT * FROM person_has_milestone ' +
+        'LEFT JOIN milestone ON milestone.id = person_has_milestone.milestone_id';
+
+    router.route('/:personId/milestones')
+        .get(function(req, res, next) {
+            var call = sqlMilestones + ' WHERE ' +
+                'person_has_milestone.person_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.personId]);
+        })
+        .post(function(req, res, next) {
+            var personId = parseInt(req.params.personId),
+                milestoneId = parseInt(req.body.insert_id);
+
+            var personArray,
+                milestoneArray;
+
+            async.series([
+                function(callback) {
+                    ownership(req, tableName, personId, adminRestriction, callback);
+                },
+                function(callback) {
+                    query('INSERT INTO person_has_milestone (person_id,milestone_id) VALUES (?,?)', [personId, milestoneId], callback);
+                },
+
+                // ATTRIBUTE
+
+                function(callback) {
+                    query('SELECT attribute_id as id, value FROM person_has_attribute WHERE person_id = ?', [personId], function(err, results) {
+                        if(err) return callback(err);
+
+                        personArray = results;
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    query('SELECT attribute_id as id, value FROM milestone_has_attribute WHERE milestone_id = ?', [milestoneId], function(err, results) {
+                        if(err) return callback(err);
+
+                        milestoneArray = results;
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    person.changeValues('attribute', personId, personArray, milestoneArray, null, callback);
+                },
+
+                // SKILL
+
+                function(callback) {
+                    query('SELECT skill_id as id, value FROM person_has_skill WHERE person_id = ?', [personId], function(err, results) {
+                        if(err) return callback(err);
+
+                        personArray = results;
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    query('SELECT skill_id as id, value FROM milestone_has_skill WHERE milestone_id = ?', [milestoneId], function(err, results) {
+                        if(err) return callback(err);
+
+                        milestoneArray = results;
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    person.changeValues('skill', personId, personArray, milestoneArray, null, callback);
+                }
+            ],function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
+        });
+
+    router.route('/:personId/milestones/:milestoneId')
+        .get(function(req, res, next) {
+            var call = sqlMilestones + ' WHERE ' +
+                'person_has_milestone.person_id = ? AND ' +
+                'person_has_milestone.milestone_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.personId, req.params.milestoneId], true);
+        })
+        .delete(function(req, res, next) {
+            var personId = parseInt(req.params.personId),
+                milestoneId = parseInt(req.params.milestoneId);
+
+            var personArray,
+                milestoneArray;
+
+            async.series([
+                function(callback) {
+                    ownership(req, tableName, personId, adminRestriction, callback);
+                },
+                function(callback) {
+                    query('DELETE FROM person_has_milestone WHERE person_id = ? AND milestone_id = ?', [personId, milestoneId], callback);
+                },
+
+                // ATTRIBUTE
+
+                function(callback) {
+                    query('SELECT attribute_id as id, value FROM person_has_attribute WHERE person_id = ?', [personId], function(err, results) {
+                        if(err) return callback(err);
+
+                        personArray = results;
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    query('SELECT attribute_id as id, value FROM milestone_has_attribute WHERE milestone_id = ?', [milestoneId], function(err, results) {
+                        if(err) return callback(err);
+
+                        milestoneArray = results;
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    person.changeValues('attribute', personId, personArray, null, milestoneArray, callback);
+                },
+
+                // SKILL
+
+                function(callback) {
+                    query('SELECT skill_id as id, value FROM person_has_skill WHERE person_id = ?', [personId], function(err, results) {
+                        if(err) return callback(err);
+
+                        personArray = results;
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    query('SELECT skill_id as id, value FROM milestone_has_skill WHERE milestone_id = ?', [milestoneId], function(err, results) {
+                        if(err) return callback(err);
+
+                        milestoneArray = results;
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    person.changeValues('skill', personId, personArray, null, milestoneArray, callback);
+                }
+            ],function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
+        });
 
     // Ownership
 
@@ -1492,15 +2032,60 @@ module.exports = function(router) {
             relation.delete(req, res, next, tableName, req.params.personId, 'sanity', req.params.sanityId);
         });
 
-    // Skills
+    // Skills //todo
 
-    // Software
+    router.route('/:personId/imperfections')
+        .get(function(req, res, next) {})
+        .post(function(req, res, next) {});
 
-    // Species
+    router.route('/:personId/imperfections/:imperfectionId')
+        .get(function(req, res, next) {})
+        .put(function(req, res, next) {})
+        .delete(function(req, res, next) {});
 
-    // Weapons
+    // Software //todo
 
-    // Weapon Mods
+    router.route('/:personId/imperfections')
+        .get(function(req, res, next) {})
+        .post(function(req, res, next) {});
+
+    router.route('/:personId/imperfections/:imperfectionId')
+        .get(function(req, res, next) {})
+        .put(function(req, res, next) {})
+        .delete(function(req, res, next) {});
+
+    // Species //todo
+
+    router.route('/:personId/imperfections')
+        .get(function(req, res, next) {})
+        .post(function(req, res, next) {});
+
+    router.route('/:personId/imperfections/:imperfectionId')
+        .get(function(req, res, next) {})
+        .put(function(req, res, next) {})
+        .delete(function(req, res, next) {});
+
+    // Weapons //todo
+
+    router.route('/:personId/imperfections')
+        .get(function(req, res, next) {})
+        .post(function(req, res, next) {});
+
+    router.route('/:personId/imperfections/:imperfectionId')
+        .get(function(req, res, next) {})
+        .put(function(req, res, next) {})
+        .delete(function(req, res, next) {});
+
+    // Weapon Mods //todo
+
+    router.route('/:personId/imperfections')
+        .get(function(req, res, next) {})
+        .post(function(req, res, next) {});
+
+    router.route('/:personId/imperfections/:imperfectionId')
+        .get(function(req, res, next) {})
+        .put(function(req, res, next) {})
+        .delete(function(req, res, next) {});
 
     // Wounds
 

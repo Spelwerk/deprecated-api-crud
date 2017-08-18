@@ -111,13 +111,13 @@ describe('/loyalties', function() {
             };
 
             app.put('/loyalties/' + temporaryId, payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:loyaltyId/canon should update the asset canon field', function(done) {
             app.put('/loyalties/' + temporaryId + '/canon')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
@@ -189,7 +189,7 @@ describe('/loyalties', function() {
 
         it('/:loyaltyId should update the asset deleted field', function(done) {
             app.delete('/loyalties/' + temporaryId)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 

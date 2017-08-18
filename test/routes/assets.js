@@ -160,53 +160,37 @@ describe('/assets', function() {
             };
 
             app.put('/assets/' + temporaryId, payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:assetId/canon should update the asset canon field', function(done) {
             app.put('/assets/' + temporaryId + '/canon')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:assetId/attributes should change the attribute value for the asset', function(done) {
-            var payload = {
-                value: 8
-            };
-
-            app.put('/assets/' + temporaryId + '/attributes/1', payload)
-                .expect(200)
+            app.put('/assets/' + temporaryId + '/attributes/1', {value: 8})
+                .expect(204)
                 .end(done);
         });
 
         it('/:assetId/doctrines should change the doctrine value for the asset', function(done) {
-            var payload = {
-                value: 8
-            };
-
-            app.put('/assets/' + temporaryId + '/doctrines/1', payload)
-                .expect(200)
+            app.put('/assets/' + temporaryId + '/doctrines/1', {value: 8})
+                .expect(204)
                 .end(done);
         });
 
         it('/:assetId/expertises should change the expertise value for the asset', function(done) {
-            var payload = {
-                value: 8
-            };
-
-            app.put('/assets/' + temporaryId + '/expertises/1', payload)
-                .expect(200)
+            app.put('/assets/' + temporaryId + '/expertises/1', {value: 8})
+                .expect(204)
                 .end(done);
         });
 
         it('/:assetId/skills should change the skill value for the asset', function(done) {
-            var payload = {
-                value: 8
-            };
-
-            app.put('/assets/' + temporaryId + '/skills/1', payload)
-                .expect(200)
+            app.put('/assets/' + temporaryId + '/skills/1', {value: 8})
+                .expect(204)
                 .end(done);
         });
 
@@ -416,31 +400,31 @@ describe('/assets', function() {
 
         it('/:assetId/attributes should remove the attribute from the asset', function(done) {
             app.delete('/assets/' + temporaryId + '/attributes/1')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:assetId/doctrines should remove the doctrine from the asset', function(done) {
             app.delete('/assets/' + temporaryId + '/doctrines/1')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:assetId/expertises should remove the expertise from the asset', function(done) {
             app.delete('/assets/' + temporaryId + '/expertises/1')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:assetId/skills should remove the skill from the asset', function(done) {
             app.delete('/assets/' + temporaryId + '/skills/1')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:assetId should update the asset deleted field', function(done) {
             app.delete('/assets/' + temporaryId)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 

@@ -138,23 +138,21 @@ describe('/species', function() {
             };
 
             app.put('/species/' + temporaryId, payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:speciesId/canon should update the species canon field', function(done) {
             app.put('/species/' + temporaryId + '/canon')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:speciesId/attributes should change the attribute value for the species', function(done) {
-            var payload = {
-                value: 8
-            };
+            var payload = {value: 8};
 
             app.put('/species/' + temporaryId + '/attributes/1', payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
@@ -307,19 +305,19 @@ describe('/species', function() {
 
         it('/:speciesId/attributes should remove the attribute from the species', function(done) {
             app.delete('/species/' + temporaryId + '/attributes/1')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:speciesId/weapons should remove the weapon from the species', function(done) {
             app.delete('/species/' + temporaryId + '/weapons/1')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:speciesId should update the species deleted field', function(done) {
             app.delete('/species/' + temporaryId)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 

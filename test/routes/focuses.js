@@ -99,13 +99,13 @@ describe('/focuses', function() {
             };
 
             app.put('/focuses/' + temporaryId, payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:focusId/canon should update the asset canon field', function(done) {
             app.put('/focuses/' + temporaryId + '/canon')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
@@ -177,7 +177,7 @@ describe('/focuses', function() {
 
         it('/:focusId should update the asset deleted field', function(done) {
             app.delete('/focuses/' + temporaryId)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 

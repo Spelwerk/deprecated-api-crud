@@ -117,13 +117,13 @@ describe('/weaponmods', function() {
             };
 
             app.put('/weaponmods/' + temporaryId, payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:weaponModId/canon should update the weapon mod canon field', function(done) {
             app.put('/weaponmods/' + temporaryId + '/canon')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
@@ -195,7 +195,7 @@ describe('/weaponmods', function() {
 
         it('/:weaponModId should update the weapon deleted field', function(done) {
             app.delete('/weaponmods/' + temporaryId)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 

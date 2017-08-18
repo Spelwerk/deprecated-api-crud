@@ -135,33 +135,29 @@ describe('/augmentations', function() {
             };
 
             app.put('/augmentations/' + temporaryId, payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:augmentationId/canon should update the augmentation canon field', function(done) {
             app.put('/augmentations/' + temporaryId + '/canon')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:augmentationId/attributes should change the attribute value for the augmentation', function(done) {
-            var payload = {
-                value: 8
-            };
+            var payload = {value: 8};
 
             app.put('/augmentations/' + temporaryId + '/attributes/1', payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:augmentationId/skills should change the skill value for the augmentation', function(done) {
-            var payload = {
-                value: 8
-            };
+            var payload = {value: 8};
 
             app.put('/augmentations/' + temporaryId + '/skills/1', payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
@@ -295,19 +291,19 @@ describe('/augmentations', function() {
 
         it('/:augmentationId/attributes should remove the attribute from the augmentation', function(done) {
             app.delete('/augmentations/' + temporaryId + '/attributes/1')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:augmentationId/skills should remove the skill from the augmentation', function(done) {
             app.delete('/augmentations/' + temporaryId + '/skills/1')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:augmentationId should update the augmentation deleted field', function(done) {
             app.delete('/augmentations/' + temporaryId)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 

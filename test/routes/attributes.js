@@ -83,13 +83,13 @@ describe('/attributes', function() {
             };
 
             app.put('/attributes/' + temporaryId, payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:attributeId/canon should update the attribute canon field', function(done) {
             app.put('/attributes/' + temporaryId + '/canon')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
@@ -163,7 +163,7 @@ describe('/attributes', function() {
 
         it('/:attributeId should update the weapon deleted field', function(done) {
             app.delete('/attributes/' + temporaryId)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 

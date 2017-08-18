@@ -1,5 +1,6 @@
 var comment = require('./../../lib/sql/comment'),
     ownership = require('./../../lib/sql/ownership'),
+    relation = require('./../../lib/sql/relation'),
     sequel = require('./../../lib/sql/sequel');
 
 module.exports = function(router) {
@@ -94,5 +95,51 @@ module.exports = function(router) {
 
                 res.status(200).send({ownership: ownership});
             })
+        });
+
+    // Attributes
+
+    router.route('/:imperfectionId/attributes')
+        .get(function(req, res, next) {
+            var call = 'SELECT * FROM imperfection_has_attribute ' +
+                'LEFT JOIN attribute ON attribute.id = imperfection_has_attribute.attribute_id ' +
+                'WHERE ' +
+                'imperfection_has_attribute.imperfection_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.imperfectionId]);
+        })
+        .post(function(req, res, next) {
+            relation.post(req, res, next, tableName, req.params.imperfectionId, 'attribute', req.body.insert_id, req.body.value);
+        });
+
+    router.route('/:imperfectionId/attributes/:attributeId')
+        .put(function(req, res, next) {
+            relation.put(req, res, next, tableName, req.params.imperfectionId, 'attribute', req.params.attributeId, req.body.value);
+        })
+        .delete(function(req, res, next) {
+            relation.delete(req, res, next, tableName, req.params.imperfectionId, 'attribute', req.params.attributeId);
+        });
+
+    // Skills
+
+    router.route('/:imperfectionId/skills')
+        .get(function(req, res, next) {
+            var call = 'SELECT * FROM imperfection_has_skill ' +
+                'LEFT JOIN skill ON skill.id = imperfection_has_skill.skill_id ' +
+                'WHERE ' +
+                'imperfection_has_skill.imperfection_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.imperfectionId]);
+        })
+        .post(function(req, res, next) {
+            relation.post(req, res, next, tableName, req.params.imperfectionId, 'skill', req.body.insert_id, req.body.value);
+        });
+
+    router.route('/:imperfectionId/skills/:skillId')
+        .put(function(req, res, next) {
+            relation.put(req, res, next, tableName, req.params.imperfectionId, 'skill', req.params.skillId, req.body.value);
+        })
+        .delete(function(req, res, next) {
+            relation.delete(req, res, next, tableName, req.params.imperfectionId, 'skill', req.params.skillId);
         });
 };

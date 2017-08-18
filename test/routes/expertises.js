@@ -114,13 +114,13 @@ describe('/expertise', function() {
             };
 
             app.put('/expertises/' + temporaryId, payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:expertiseId/canon should update the asset canon field', function(done) {
             app.put('/expertises/' + temporaryId + '/canon')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
@@ -252,7 +252,7 @@ describe('/expertise', function() {
 
         it('/:expertiseId should update the asset deleted field', function(done) {
             app.delete('/expertises/' + temporaryId)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 

@@ -87,7 +87,7 @@ describe('/bodyparts', function() {
             };
 
             app.put('/bodyparts/' + temporaryId, payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
@@ -137,7 +137,7 @@ describe('/bodyparts', function() {
 
         it('/:bodyPartId should update the bodypart deleted field', function(done) {
             app.delete('/bodyparts/' + temporaryId)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 

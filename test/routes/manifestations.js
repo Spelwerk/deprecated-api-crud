@@ -101,13 +101,13 @@ describe('/manifestations', function() {
             };
 
             app.put('/manifestations/' + temporaryId, payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:manifestationId/canon should update the asset canon field', function(done) {
             app.put('/manifestations/' + temporaryId + '/canon')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
@@ -179,7 +179,7 @@ describe('/manifestations', function() {
 
         it('/:manifestationId should update the asset deleted field', function(done) {
             app.delete('/manifestations/' + temporaryId)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 

@@ -134,13 +134,13 @@ describe('/weapons', function() {
             };
 
             app.put('/weapons/' + temporaryId, payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:weaponId/canon should update the weapon canon field', function(done) {
             app.put('/weapons/' + temporaryId + '/canon')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
@@ -248,7 +248,7 @@ describe('/weapons', function() {
 
         it('/:weaponId should update the weapon deleted field', function(done) {
             app.delete('/weapons/' + temporaryId)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 

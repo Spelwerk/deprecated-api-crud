@@ -128,6 +128,30 @@ describe('/persons', function() {
                 .end(done);
         });
 
+        it('/:personId/expertises should add a expertise to the person', function(done) {
+            app.post('/persons/' + personId + '/expertises', {insert_id: 1, value: 10})
+                .expect(204)
+                .end(done);
+        });
+
+        it('/:personId/gifts should add a gift to the person', function(done) {
+            app.post('/persons/' + personId + '/gifts', {insert_id: 1})
+                .expect(204)
+                .end(done);
+        });
+
+        it('/:personId/imperfections should add an imperfection to the person', function(done) {
+            app.post('/persons/' + personId + '/imperfections', {insert_id: 1})
+                .expect(204)
+                .end(done);
+        });
+
+        it('/:personId/milestones should add a milestone to the person', function(done) {
+            app.post('/persons/' + personId + '/milestones', {insert_id: 1})
+                .expect(204)
+                .end(done);
+        });
+
         it('/:personId/protection should add a protection to the person', function(done) {
             app.post('/persons/' + personId + '/protection', {insert_id: 1})
                 .expect(201)
@@ -227,14 +251,20 @@ describe('/persons', function() {
                 .end(done);
         });
 
-        it('/:personId/doctrines should update the attribute value with add/subtract', function(done) {
+        it('/:personId/diseases/:diseaseId should update the heal value of the disease', function(done) {
+            app.put('/persons/' + personId + '/diseases/' + diseaseId, {heal: 1})
+                .expect(204)
+                .end(done);
+        });
+
+        it('/:personId/doctrines should update the value with add/subtract', function(done) {
             app.put('/persons/' + personId + '/doctrines/1', {value: 10})
                 .expect(204)
                 .end(done);
         });
 
-        it('/:personId/diseases/:diseaseId should update the heal value of the disease', function(done) {
-            app.put('/persons/' + personId + '/diseases/' + diseaseId, {heal: 1})
+        it('/:personId/expertises should update the value with add/subtract', function(done) {
+            app.put('/persons/' + personId + '/expertises/1', {value: 10})
                 .expect(204)
                 .end(done);
         });
@@ -331,7 +361,7 @@ describe('/persons', function() {
 
         xit('/:personId should update the person deleted field', function(done) {
             app.delete('/persons/' + personId)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 

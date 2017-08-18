@@ -147,43 +147,37 @@ describe('/backgrounds', function() {
             };
 
             app.put('/backgrounds/' + temporaryId, payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:backgroundId/canon should update the background canon field', function(done) {
             app.put('/backgrounds/' + temporaryId + '/canon')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:backgroundId/assets should change the asset value for the background', function(done) {
-            var payload = {
-                value: 8
-            };
+            var payload = {value: 8};
 
             app.put('/backgrounds/' + temporaryId + '/assets/1', payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:backgroundId/attributes should change the attribute value for the background', function(done) {
-            var payload = {
-                value: 8
-            };
+            var payload = {value: 8};
 
             app.put('/backgrounds/' + temporaryId + '/attributes/1', payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:backgroundId/skills should change the skill value for the background', function(done) {
-            var payload = {
-                value: 8
-            };
+            var payload = {value: 8};
 
             app.put('/backgrounds/' + temporaryId + '/skills/1', payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
@@ -372,25 +366,25 @@ describe('/backgrounds', function() {
 
         it('/:backgroundId/attributes should remove the attribute from the background', function(done) {
             app.delete('/backgrounds/' + temporaryId + '/attributes/1')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:backgroundId/assets should remove the asset from the background', function(done) {
             app.delete('/backgrounds/' + temporaryId + '/assets/1')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:backgroundId/skills should remove the skill from the background', function(done) {
             app.delete('/backgrounds/' + temporaryId + '/skills/1')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:backgroundId should update the background deleted field', function(done) {
             app.delete('/backgrounds/' + temporaryId)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 

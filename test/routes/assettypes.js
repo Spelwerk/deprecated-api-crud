@@ -75,18 +75,16 @@ describe('/assettypes', function() {
     describe('PUT', function() {
 
         it('/:assetTypeId should update the item with new values', function(done) {
-            var payload = {
-                name: hasher(20)
-            };
+            var payload = {name: hasher(20)};
 
             app.put('/assettypes/' + temporaryId, payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:assetTypeId/canon should update the asset canon field', function(done) {
             app.put('/assettypes/' + temporaryId + '/canon')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
@@ -148,7 +146,7 @@ describe('/assettypes', function() {
 
         it('/:assetTypeId should update the asset deleted field', function(done) {
             app.delete('/assettypes/' + temporaryId)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 

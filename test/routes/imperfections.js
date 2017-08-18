@@ -100,6 +100,28 @@ describe('/imperfections', function() {
                 });
         });
 
+        it('/:imperfectionId/attributes should add an attribute to the imperfection', function(done) {
+            var payload = {
+                insert_id: 1,
+                value: 10
+            };
+
+            app.post('/imperfections/' + temporaryId + '/attributes', payload)
+                .expect(201)
+                .end(done);
+        });
+
+        it('/:imperfectionId/skills should add an skill to the imperfection', function(done) {
+            var payload = {
+                insert_id: 1,
+                value: 10
+            };
+
+            app.post('/imperfections/' + temporaryId + '/skills', payload)
+                .expect(201)
+                .end(done);
+        });
+
     });
 
     describe('PUT', function() {
@@ -111,13 +133,29 @@ describe('/imperfections', function() {
             };
 
             app.put('/imperfections/' + temporaryId, payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:imperfectionId/canon should update the asset canon field', function(done) {
             app.put('/imperfections/' + temporaryId + '/canon')
-                .expect(200)
+                .expect(204)
+                .end(done);
+        });
+
+        it('/:imperfectionId/attributes should change the attribute value for the imperfection', function(done) {
+            var payload = {value: 8};
+
+            app.put('/imperfections/' + temporaryId + '/attributes/1', payload)
+                .expect(204)
+                .end(done);
+        });
+
+        it('/:imperfectionId/skills should change the skill value for the imperfection', function(done) {
+            var payload = {value: 8};
+
+            app.put('/imperfections/' + temporaryId + '/skills/1', payload)
+                .expect(204)
                 .end(done);
         });
 
@@ -207,13 +245,87 @@ describe('/imperfections', function() {
                 })
         });
 
+        it('/:imperfectionId/attributes should return a list of attributes', function(done) {
+            app.get('/imperfections/' + temporaryId + '/attributes')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.length);
+                    assert.isArray(res.body.results);
+
+                    _.each(res.body.results, function(item) {
+                        assert.isNumber(item.imperfection_id);
+                        assert.isNumber(item.attribute_id);
+                        assert.isNumber(item.value);
+
+                        assert.isNumber(item.id);
+                        assert.isBoolean(item.canon);
+                        assert.isString(item.name);
+                        if(item.description) assert.isString(item.description);
+                        assert.isNumber(item.attributetype_id);
+                        if(item.icon) assert.equal(validator.isURL(item.icon), true);
+
+                        assert.isString(item.created);
+                        if(item.deleted) assert.isString(item.deleted);
+                        if(item.updated) assert.isString(item.updated);
+                    });
+
+                    done();
+                });
+        });
+
+        it('/:imperfectionId/skills should return a list of skills', function(done) {
+            app.get('/imperfections/' + temporaryId + '/skills')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.length);
+                    assert.isArray(res.body.results);
+
+                    _.each(res.body.results, function(item) {
+                        assert.isNumber(item.imperfection_id);
+                        assert.isNumber(item.skill_id);
+                        assert.isNumber(item.value);
+
+                        assert.isNumber(item.id);
+                        assert.isBoolean(item.canon);
+                        assert.isNumber(item.popularity);
+                        assert.isBoolean(item.manifestation);
+                        assert.isString(item.name);
+                        if(item.description) assert.isString(item.description);
+                        if(item.species_id) assert.isNumber(item.species_id);
+                        if(item.icon) assert.equal(validator.isURL(item.icon), true);
+
+                        assert.isString(item.created);
+                        if(item.deleted) assert.isString(item.deleted);
+                        if(item.updated) assert.isString(item.updated);
+                    });
+
+                    done();
+                });
+        });
+
     });
 
     describe('DELETE', function() {
 
+        it('/:imperfectionId/attributes should remove the attribute from the imperfection', function(done) {
+            app.delete('/imperfections/' + temporaryId + '/attributes/1')
+                .expect(204)
+                .end(done);
+        });
+
+        it('/:imperfectionId/skills should remove the skill from the imperfection', function(done) {
+            app.delete('/imperfections/' + temporaryId + '/skills/1')
+                .expect(204)
+                .end(done);
+        });
+
         it('/:imperfectionId should update the asset deleted field', function(done) {
             app.delete('/imperfections/' + temporaryId)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 

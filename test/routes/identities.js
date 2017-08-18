@@ -109,13 +109,13 @@ describe('/identities', function() {
             };
 
             app.put('/identities/' + temporaryId, payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:identityId/canon should update the asset canon field', function(done) {
             app.put('/identities/' + temporaryId + '/canon')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
@@ -187,7 +187,7 @@ describe('/identities', function() {
 
         it('/:identityId should update the asset deleted field', function(done) {
             app.delete('/identities/' + temporaryId)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 

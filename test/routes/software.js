@@ -115,13 +115,13 @@ describe('/software', function() {
             };
 
             app.put('/software/' + temporaryId, payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:softwareId/canon should update the asset canon field', function(done) {
             app.put('/software/' + temporaryId + '/canon')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
@@ -193,7 +193,7 @@ describe('/software', function() {
 
         it('/:softwareId should update the asset deleted field', function(done) {
             app.delete('/software/' + temporaryId)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 

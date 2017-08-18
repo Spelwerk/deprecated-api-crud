@@ -105,13 +105,13 @@ describe('/weapongroups', function() {
             };
 
             app.put('/weapongroups/' + temporaryId, payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:weaponGroupId/canon should update the weapon group canon field', function(done) {
             app.put('/weapongroups/' + temporaryId + '/canon')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
@@ -219,7 +219,7 @@ describe('/weapongroups', function() {
 
         it('/:weaponGroupId should update the weapon deleted field', function(done) {
             app.delete('/weapongroups/' + temporaryId)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 

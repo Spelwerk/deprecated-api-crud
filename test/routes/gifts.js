@@ -133,33 +133,29 @@ describe('/gifts', function() {
             };
 
             app.put('/gifts/' + temporaryId, payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:giftId/canon should update the gift canon field', function(done) {
             app.put('/gifts/' + temporaryId + '/canon')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:giftId/attributes should change the attribute value for the gift', function(done) {
-            var payload = {
-                value: 8
-            };
+            var payload = {value: 8};
 
             app.put('/gifts/' + temporaryId + '/attributes/1', payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:giftId/skills should change the skill value for the gift', function(done) {
-            var payload = {
-                value: 8
-            };
+            var payload = {value: 8};
 
             app.put('/gifts/' + temporaryId + '/skills/1', payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
@@ -317,19 +313,19 @@ describe('/gifts', function() {
 
         it('/:giftId/attributes should remove the attribute from the gift', function(done) {
             app.delete('/gifts/' + temporaryId + '/attributes/1')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:giftId/skills should remove the skill from the gift', function(done) {
             app.delete('/gifts/' + temporaryId + '/skills/1')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:giftId should update the gift deleted field', function(done) {
             app.delete('/gifts/' + temporaryId)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 

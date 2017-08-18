@@ -93,25 +93,25 @@ describe('/users', function() {
 
         it('/login/email should return a success message', function(done) {
             app.post('/users/login/email', {email: email})
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/verify/email should return a success message', function(done) {
             app.post('/users/verify/email', {email: email})
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/email/email should return a success message', function(done) {
             app.post('/users/email/email', {email: email})
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/password/email should return a success message', function(done) {
             app.post('/users/password/email', {email: email})
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
@@ -125,7 +125,7 @@ describe('/users', function() {
 
         it('/:userId/admin should make the user administrator', function(done) {
             app.put('/users/' + id + '/admin', {admin: 1})
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
@@ -141,7 +141,7 @@ describe('/users', function() {
             };
 
             app.put('/users/' + id, payload, token)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
@@ -218,7 +218,7 @@ describe('/users', function() {
 
         it('/:userId should delete the user', function(done) {
             app.delete('/users/' + id, token)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 

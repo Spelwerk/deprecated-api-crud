@@ -71,12 +71,10 @@ describe('/attributetypes', function() {
     describe('PUT', function() {
 
         it('/:attributeTypeId should update the item with new values', function(done) {
-            var payload = {
-                name: hasher(20)
-            };
+            var payload = {name: hasher(20)};
 
             app.put('/attributetypes/' + temporaryId, payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
@@ -126,7 +124,7 @@ describe('/attributetypes', function() {
 
         it('/:attributeTypeId should update the attribute deleted field', function(done) {
             app.delete('/attributetypes/' + temporaryId)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 

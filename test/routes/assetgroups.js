@@ -50,9 +50,7 @@ describe('/assetgroups', function() {
     describe('POST', function() {
 
         it('/ should create a new asset group', function(done) {
-            var payload = {
-                name: hasher(20)
-            };
+            var payload = {name: hasher(20)};
 
             app.post('/assetgroups', payload)
                 .expect(201)
@@ -72,18 +70,16 @@ describe('/assetgroups', function() {
     describe('PUT', function() {
 
         it('/:assetGroupId should update the item with new values', function(done) {
-            var payload = {
-                name: hasher(20)
-            };
+            var payload = {name: hasher(20)};
 
             app.put('/assetgroups/' + temporaryId, payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:assetGroupId/canon should update the asset group canon field', function(done) {
             app.put('/assetgroups/' + temporaryId + '/canon')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
@@ -133,7 +129,7 @@ describe('/assetgroups', function() {
 
         it('/:assetGroupId should update the asset group deleted field', function(done) {
             app.delete('/assetgroups/' + temporaryId)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 

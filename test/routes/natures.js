@@ -109,13 +109,13 @@ describe('/natures', function() {
             };
 
             app.put('/natures/' + temporaryId, payload)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
         it('/:natureId/canon should update the asset canon field', function(done) {
             app.put('/natures/' + temporaryId + '/canon')
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
@@ -187,7 +187,7 @@ describe('/natures', function() {
 
         it('/:natureId should update the asset deleted field', function(done) {
             app.delete('/natures/' + temporaryId)
-                .expect(200)
+                .expect(204)
                 .end(done);
         });
 
