@@ -51,7 +51,7 @@ module.exports = function(router) {
                 function(callback) {
                     query('INSERT INTO user_has_skill (user_id,skill_id,owner) VALUES (?,?,1)', [req.user.id, skill.id], callback);
                 },
-                function (callback) {
+                function(callback) {
                     query('INSERT INTO attribute (name,attributetype_id) VALUES (?,9)', [power.name], function(err, result) {
                         if(err) return callback(err);
 
@@ -63,7 +63,7 @@ module.exports = function(router) {
                 function(callback) {
                     query('INSERT INTO user_has_attribute (user_id,attribute_id,owner) VALUES (?,?,1)', [req.user.id, power.id], callback);
                 },
-                function (callback) {
+                function(callback) {
                     query('INSERT INTO manifestation (name,description,icon,power_id,skill_id) VALUES (?,?,?,?,?)', [insert.name, insert.description, insert.icon, power.id, skill.id], function(err, result) {
                         if(err) return callback(err);
 

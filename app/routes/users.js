@@ -262,7 +262,7 @@ module.exports = function(router) {
                 function(callback) {
                     query('UPDATE user SET login_secret = ?, login_timeout = ? WHERE email = ? AND deleted IS NULL', [insert.login.secret, insert.login.timeout, insert.email], callback);
                 },
-                function (callback) {
+                function(callback) {
                     var subject = 'User Verification';
                     var text =
                         '<b>Hello!</b>' +

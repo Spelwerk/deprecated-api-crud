@@ -16,7 +16,7 @@ describe('/persons', function() {
         app.login(done);
     });
 
-    var temporaryId,
+    var personId,
         diseaseId,
         sanityId,
         woundId;
@@ -60,14 +60,14 @@ describe('/persons', function() {
 
                     assert.isNumber(res.body.id);
 
-                    temporaryId = res.body.id;
+                    personId = res.body.id;
 
                     done();
                 });
         });
 
         it('/:personId/comments should create a new comment for the person', function(done) {
-            app.post('/persons/' + temporaryId + '/comments', {content: hasher(20)})
+            app.post('/persons/' + personId + '/comments', {content: hasher(20)})
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -79,31 +79,31 @@ describe('/persons', function() {
         });
 
         it('/:personId/assets should add an asset to the person', function(done) {
-            app.post('/persons/' + temporaryId + '/assets', {insert_id: 1, value: 10})
+            app.post('/persons/' + personId + '/assets', {insert_id: 1, value: 10})
                 .expect(201)
                 .end(done);
         });
 
         it('/:personId/attributes should add an attribute to the person', function(done) {
-            app.post('/persons/' + temporaryId + '/attributes', {insert_id: 1, value: 10})
+            app.post('/persons/' + personId + '/attributes', {insert_id: 1, value: 10})
                 .expect(201)
                 .end(done);
         });
 
         it('/:personId/bionics should add a bionic to the person', function(done) {
-            app.post('/persons/' + temporaryId + '/bionics', {insert_id: 1})
+            app.post('/persons/' + personId + '/bionics', {insert_id: 1})
                 .expect(201)
                 .end(done);
         });
 
         it('/:personId/augmentations should add an augmentation to the person', function(done) {
-            app.post('/persons/' + temporaryId + '/augmentations', {insert_id: 2, bionic_id: 1})
+            app.post('/persons/' + personId + '/augmentations', {insert_id: 2, bionic_id: 1})
                 .expect(201)
                 .end(done);
         });
 
         it('/:personId/diseases should add a disease to the person', function(done) {
-            app.post('/persons/' + temporaryId + '/diseases', {name: hasher(20), timestwo: 1})
+            app.post('/persons/' + personId + '/diseases', {name: hasher(20), timestwo: 1})
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -116,14 +116,26 @@ describe('/persons', function() {
                 });
         });
 
+        it('/:personId/manifestation (PUT) should add a manifestation to the person', function(done) {
+            app.put('/persons/' + personId + '/manifestation', {insert_id: 1})
+                .expect(204)
+                .end(done);
+        });
+
+        it('/:personId/doctrines should add a doctrine to the person', function(done) {
+            app.post('/persons/' + personId + '/doctrines', {insert_id: 1, value: 10})
+                .expect(204)
+                .end(done);
+        });
+
         it('/:personId/protection should add a protection to the person', function(done) {
-            app.post('/persons/' + temporaryId + '/protection', {insert_id: 1})
+            app.post('/persons/' + personId + '/protection', {insert_id: 1})
                 .expect(201)
                 .end(done);
         });
 
         it('/:personId/sanity should add a disease to the person', function(done) {
-            app.post('/persons/' + temporaryId + '/sanity', {name: hasher(20), timestwo: 1})
+            app.post('/persons/' + personId + '/sanity', {name: hasher(20), timestwo: 1})
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -137,7 +149,7 @@ describe('/persons', function() {
         });
 
         it('/:personId/wounds should add a disease to the person', function(done) {
-            app.post('/persons/' + temporaryId + '/wounds', {name: hasher(20), timestwo: 1})
+            app.post('/persons/' + personId + '/wounds', {name: hasher(20), timestwo: 1})
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -162,79 +174,91 @@ describe('/persons', function() {
                 gender: hasher(20)
             };
 
-            app.put('/persons/' + temporaryId, payload)
+            app.put('/persons/' + personId, payload)
                 .expect(204)
                 .end(done);
         });
 
         it('/:personId/cheat should update the person to be a cheater', function(done) {
-            app.put('/persons/' + temporaryId + '/cheat')
+            app.put('/persons/' + personId + '/cheat')
                 .expect(204)
                 .end(done);
         });
 
         it('/:personId/assets/:assetId should update the value of the asset', function(done) {
-            app.put('/persons/' + temporaryId + '/assets/1', {value: 8})
+            app.put('/persons/' + personId + '/assets/1', {value: 8})
                 .expect(204)
                 .end(done);
         });
 
         it('/:personId/assets/:assetId/equip should update the equipped status of the asset', function(done) {
-            app.put('/persons/' + temporaryId + '/assets/1/equip')
+            app.put('/persons/' + personId + '/assets/1/equip')
                 .expect(204)
                 .end(done);
         });
 
         it('/:personId/assets/:assetId/unequip should update the equipped status of the asset', function(done) {
-            app.put('/persons/' + temporaryId + '/assets/1/unequip')
+            app.put('/persons/' + personId + '/assets/1/unequip')
                 .expect(204)
                 .end(done);
         });
 
-        it('/:personId/attributes/:attributeId should update the attribute value and add/subtract', function(done) {
-            app.put('/persons/' + temporaryId + '/attributes/1', {value: 8})
+        it('/:personId/attributes/:attributeId should update the attribute value with add/subtract', function(done) {
+            app.put('/persons/' + personId + '/attributes/1', {value: 10})
                 .expect(204)
                 .end(done);
         });
 
         it('/:personId/augmentations/:augmentationId/bionic/:bionicId/equip should update the active status of the augmentation', function(done) {
-            app.put('/persons/' + temporaryId + '/augmentations/2/bionic/1/activate')
+            app.put('/persons/' + personId + '/augmentations/2/bionic/1/activate')
                 .expect(204)
                 .end(done);
         });
 
         it('/:personId/augmentations/:augmentationId/bionic/:bionicId/unequip should update the active status of the augmentation', function(done) {
-            app.put('/persons/' + temporaryId + '/augmentations/2/bionic/1/deactivate')
+            app.put('/persons/' + personId + '/augmentations/2/bionic/1/deactivate')
+                .expect(204)
+                .end(done);
+        });
+
+        it('/:personId/background should change background for the person', function(done) {
+            app.put('/persons/' + personId + '/background', {insert_id: 1})
+                .expect(204)
+                .end(done);
+        });
+
+        it('/:personId/doctrines should update the attribute value with add/subtract', function(done) {
+            app.put('/persons/' + personId + '/doctrines/1', {value: 10})
                 .expect(204)
                 .end(done);
         });
 
         it('/:personId/diseases/:diseaseId should update the heal value of the disease', function(done) {
-            app.put('/persons/' + temporaryId + '/diseases/' + diseaseId, {heal: 1})
+            app.put('/persons/' + personId + '/diseases/' + diseaseId, {heal: 1})
                 .expect(204)
                 .end(done);
         });
 
         it('/:personId/protection/:protectionId/equip should update the equipped status of the protection', function(done) {
-            app.put('/persons/' + temporaryId + '/protection/1/equip')
+            app.put('/persons/' + personId + '/protection/1/equip')
                 .expect(204)
                 .end(done);
         });
 
         it('/:personId/protection/:protectionId/unequip should update the equipped status of the protection', function(done) {
-            app.put('/persons/' + temporaryId + '/protection/1/unequip')
+            app.put('/persons/' + personId + '/protection/1/unequip')
                 .expect(204)
                 .end(done);
         });
 
-        it('/:personId/diseases/:diseaseId should update the heal value of the disease', function(done) {
-            app.put('/persons/' + temporaryId + '/sanity/' + sanityId, {heal: 1})
+        it('/:personId/sanity/:diseaseId should update the heal value of the disease', function(done) {
+            app.put('/persons/' + personId + '/sanity/' + sanityId, {heal: 1})
                 .expect(204)
                 .end(done);
         });
 
         it('/:personId/wounds/:diseaseId should update the heal value of the disease', function(done) {
-            app.put('/persons/' + temporaryId + '/wounds/' + woundId, {heal: 1})
+            app.put('/persons/' + personId + '/wounds/' + woundId, {heal: 1})
                 .expect(204)
                 .end(done);
         });
@@ -256,7 +280,7 @@ describe('/persons', function() {
         });
 
         it('/:personId should return one person', function(done) {
-            app.get('/persons/' + temporaryId)
+            app.get('/persons/' + personId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -268,7 +292,7 @@ describe('/persons', function() {
         });
 
         it('/:personId/ownership should return ownership status of the person if user is logged in', function(done) {
-            app.get('/persons/' + temporaryId + '/ownership')
+            app.get('/persons/' + personId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -280,7 +304,7 @@ describe('/persons', function() {
         });
 
         it('/:personId/comments should get all available comments for the person', function(done) {
-            app.get('/persons/' + temporaryId + '/comments')
+            app.get('/persons/' + personId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -306,7 +330,7 @@ describe('/persons', function() {
     describe('DELETE', function() {
 
         xit('/:personId should update the person deleted field', function(done) {
-            app.delete('/persons/' + temporaryId)
+            app.delete('/persons/' + personId)
                 .expect(200)
                 .end(done);
         });

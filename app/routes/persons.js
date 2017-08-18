@@ -1118,16 +1118,155 @@ module.exports = function(router) {
 
     // Doctrines
 
+    var sqlDoctrines = 'SELECT ' +
+        'doctrine.id, ' +
+        'doctrine.canon, ' +
+        'doctrine.popularity, ' +
+        'doctrine.name, ' +
+        'doctrine.description, ' +
+        'doctrine.manifestation_id, ' +
+        'doctrine.expertise_id, ' +
+        'doctrine.icon,  ' +
+        'person_has_doctrine.value ' +
+        'FROM person_has_doctrine ' +
+        'LEFT JOIN doctrine ON doctrine.id = person_has_doctrine.doctrine_id';
+
+    router.route('/:personId/doctrines')
+        .get(function(req, res, next) {
+            var call = sqlDoctrines + ' WHERE ' +
+                'person_has_doctrine.person_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.personId]);
+        })
+        .post(function(req, res, next) {
+            var personId = parseInt(req.params.personId),
+                doctrineId = parseInt(req.body.insert_id),
+                doctrineValue = parseInt(req.body.value);
+
+            var manifestationId;
+
+            async.series([
+                function(callback) {
+                    if(doctrineValue < 1) return callback();
+
+                    ownership(req, tableName, personId, adminRestriction, callback);
+                },
+                function(callback) {
+                    if(doctrineValue < 1) return callback();
+
+                    query('SELECT manifestation_id FROM person_playable WHERE person_id = ?', [personId], function(err, results) {
+                        if(err) return callback(err);
+
+                        if(!results[0].manifestation_id) return callback({status: 403, message: 'Forbidden', error: 'Person does not have a manifestation'});
+
+                        manifestationId = results[0].manifestation_id;
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    if(doctrineValue < 1) return callback();
+
+                    query('SELECT id FROM doctrine WHERE id = ? AND manifestation_id = ?', [doctrineId, manifestationId], function(err, results) {
+                        if(err) return callback(err);
+
+                        if(!results[0].id) return callback({status: 403, message: 'Forbidden', error: 'The doctrine is not included in the person manifestation'});
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    if(doctrineValue < 1) return callback();
+
+                    query('INSERT INTO person_has_doctrine (person_id,doctrine_id,value) VALUES (?,?,?) ON DUPLICATE KEY UPDATE value = VALUES(value)', [personId, doctrineId, doctrineValue], callback);
+                }
+            ],function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
+        });
+
+    router.route('/:personId/doctrines/:doctrineId')
+        .get(function(req, res, next) {
+            var call = sqlDoctrines + ' WHERE ' +
+                'person_has_doctrine.person_id = ? AND ' +
+                'person_has_doctrine.doctrine_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.personId, req.params.doctrineId], true);
+        })
+        .put(function(req, res, next) {
+            var personId = parseInt(req.params.personId),
+                doctrineId = parseInt(req.params.doctrineId),
+                doctrineValue = parseInt(req.body.value);
+
+            async.series([
+                function(callback) {
+                    ownership(req, tableName, personId, adminRestriction, callback);
+                },
+                function(callback) {
+                    query('SELECT value FROM person_has_doctrine WHERE person_id = ? AND doctrine_id = ?', [personId, doctrineId], function(err, results) {
+                        if(err) return callback(err);
+
+                        if(!results[0].value) return callback({status: 403, message: 'Forbidden', error: 'The person has not added this doctrine yet'});
+
+                        doctrineValue = doctrineValue + parseInt(results[0].value);
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    if(doctrineValue < 1) return callback();
+
+                    query('UPDATE person_has_doctrine SET value = ? WHERE person_id = ? AND doctrine_id = ?', [doctrineValue, personId, doctrineId], callback);
+                }
+            ],function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
+        })
+        .delete(function(req, res, next) {
+            relation.delete(req, res, next, tableName, req.params.personId, 'doctrine', req.params.doctrineId);
+        });
+
     // Expertises
+
+    router.route('/:personId/expertises')
+        .get(function(req, res, next) {})
+        .post(function(req, res, next) {});
+
+    router.route('/:personId/expertises/:expertiseId')
+        .get(function(req, res, next) {})
+        .put(function(req, res, next) {})
+        .delete(function(req, res, next) {});
 
     // Gifts
 
+    router.route('/:personId/gifts')
+        .get(function(req, res, next) {})
+        .post(function(req, res, next) {});
+
+    router.route('/:personId/gifts/:giftId')
+        .get(function(req, res, next) {})
+        .put(function(req, res, next) {})
+        .delete(function(req, res, next) {});
+
     // Imperfections
+
+    router.route('/:personId/imperfections')
+        .get(function(req, res, next) {})
+        .post(function(req, res, next) {});
+
+    router.route('/:personId/imperfections/:imperfectionId')
+        .get(function(req, res, next) {})
+        .put(function(req, res, next) {})
+        .delete(function(req, res, next) {});
 
     // Manifestation
 
     router.route('/:personId/manifestation')
-        .post(function(req, res, next) {
+        .put(function(req, res, next) {
             var personId = parseInt(req.params.personId),
                 manifestationId = parseInt(req.body.insert_id),
                 powerId,
@@ -1138,14 +1277,23 @@ module.exports = function(router) {
                     ownership(req, tableName, personId, adminRestriction, callback);
                 },
                 function(callback) {
+                    query('SELECT manifestation_id FROM person_playable WHERE person_id = ?', [personId], function(err, results) {
+                        if(err) return callback(err);
+
+                        if(!!results[0].manifestation_id) return callback({status: 403, message: 'Forbidden', error: 'You may not change the manifestation for persons'});
+
+                        callback();
+                    })
+                },
+                function(callback) {
                     query('UPDATE person_playable SET manifestation_id = ? WHERE person_id = ?', [manifestationId, personId], callback);
                 },
                 function(callback) {
-                    query('SELECT power_id, skill_id FROM manifestation WHERE id = ?', [manifestationId], function(err, result) {
+                    query('SELECT power_id, skill_id FROM manifestation WHERE id = ?', [manifestationId], function(err, results) {
                         if(err) return callback(err);
 
-                        powerId = result[0].power_id;
-                        skillId = result[0].skill_id;
+                        powerId = results[0].power_id;
+                        skillId = results[0].skill_id;
 
                         callback();
                     });
@@ -1159,7 +1307,7 @@ module.exports = function(router) {
             ],function(err) {
                 if(err) return next(err);
 
-                res.status(200).send();
+                res.status(204).send();
             });
         });
 
