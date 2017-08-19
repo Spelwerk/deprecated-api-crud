@@ -1254,7 +1254,8 @@ module.exports = function(router) {
             var call = sqlExpertises + ' WHERE ' +
                 'person_has_expertise.person_id = ?';
 
-            sequel.get(req, res, next, call, [req.params.personId, req.params.personId]); // personId used twice for LEFT JOIN person_has_skill
+// personId used twice for LEFT JOIN person_has_skill
+            sequel.get(req, res, next, call, [req.params.personId, req.params.personId]);
         })
         .post(function(req, res, next) {
             var personId = parseInt(req.params.personId),
@@ -1294,7 +1295,8 @@ module.exports = function(router) {
                 'person_has_expertise.person_id = ? AND ' +
                 'person_has_expertise.expertise_id = ?';
 
-            sequel.get(req, res, next, call, [req.params.personId, req.params.personId, req.params.expertiseId], true); // personId used twice for LEFT JOIN person_has_skill
+            // personId used twice for LEFT JOIN person_has_skill
+            sequel.get(req, res, next, call, [req.params.personId, req.params.personId, req.params.expertiseId], true);
         })
         .put(function(req, res, next) {
             var personId = parseInt(req.params.personId),
@@ -1319,7 +1321,7 @@ module.exports = function(router) {
                 function(callback) {
                     if(expertiseValue < 1) return callback();
 
-                    query('INSERT INTO person_has_expertise (person_id,expertise_id,value) VALUES (?,?,?) ON DUPLICATE KEY UPDATE value = VALUES(value)', [personId, expertiseId, expertiseValue], callback);
+                    query('UPDATE person_has_expertise SET value = ? WHERE person_id = ? AND expertise_id = ?', [expertiseValue, personId, expertiseId], callback);
                 }
             ],function(err) {
                 if(err) return next(err);
@@ -1356,6 +1358,10 @@ module.exports = function(router) {
                 },
                 function(callback) {
                     query('INSERT INTO person_has_gift (person_id,gift_id) VALUES (?,?)', [personId, giftId], callback);
+                },
+
+                function(callback) {
+                    person.changePoint(req, personId, 'gift', -1, callback);
                 },
 
                 // ATTRIBUTE
@@ -1433,6 +1439,10 @@ module.exports = function(router) {
                 },
                 function(callback) {
                     query('DELETE FROM person_has_gift WHERE person_id = ? AND gift_id = ?', [personId, giftId], callback);
+                },
+
+                function(callback) {
+                    person.changePoint(req, personId, 'gift', 1, callback);
                 },
 
                 // ATTRIBUTE
@@ -1516,6 +1526,10 @@ module.exports = function(router) {
                     query('INSERT INTO person_has_imperfection (person_id,imperfection_id) VALUES (?,?)', [personId, imperfectionId], callback);
                 },
 
+                function(callback) {
+                    person.changePoint(req, personId, 'imperfection', -1, callback);
+                },
+
                 // ATTRIBUTE
 
                 function(callback) {
@@ -1591,6 +1605,10 @@ module.exports = function(router) {
                 },
                 function(callback) {
                     query('DELETE FROM person_has_imperfection WHERE person_id = ? AND imperfection_id = ?', [personId, imperfectionId], callback);
+                },
+
+                function(callback) {
+                    person.changePoint(req, personId, 'imperfection', 1, callback);
                 },
 
                 // ATTRIBUTE
@@ -1721,6 +1739,9 @@ module.exports = function(router) {
                 function(callback) {
                     query('INSERT INTO person_has_milestone (person_id,milestone_id) VALUES (?,?)', [personId, milestoneId], callback);
                 },
+                function(callback) {
+                    person.changePoint(req, personId, 'milestone', -1, callback);
+                },
 
                 // ATTRIBUTE
 
@@ -1797,6 +1818,9 @@ module.exports = function(router) {
                 },
                 function(callback) {
                     query('DELETE FROM person_has_milestone WHERE person_id = ? AND milestone_id = ?', [personId, milestoneId], callback);
+                },
+                function(callback) {
+                    person.changePoint(req, personId, 'milestone', 1, callback);
                 },
 
                 // ATTRIBUTE
@@ -2032,59 +2056,304 @@ module.exports = function(router) {
             relation.delete(req, res, next, tableName, req.params.personId, 'sanity', req.params.sanityId);
         });
 
-    // Skills //todo
+    // Skills
 
-    router.route('/:personId/imperfections')
-        .get(function(req, res, next) {})
-        .post(function(req, res, next) {});
+    var sqlSkills = 'SELECT ' +
+        'skill.id, ' +
+        'skill.canon, ' +
+        'skill.popularity, ' +
+        'skill.name, ' +
+        'skill.description, ' +
+        'skill.species_id, ' +
+        'skill.icon, ' +
+        'person_has_skill.value ' +
+        'FROM person_has_skill ' +
+        'LEFT JOIN skill ON skill.id = person_has_skill.skill_id';
 
-    router.route('/:personId/imperfections/:imperfectionId')
-        .get(function(req, res, next) {})
-        .put(function(req, res, next) {})
-        .delete(function(req, res, next) {});
+    router.route('/:personId/skills')
+        .get(function(req, res, next) {
+            var call = sqlSkills + ' WHERE ' +
+                'person_has_skill.person_id = ?';
 
-    // Software //todo
+            sequel.get(req, res, next, call, [req.params.personId]);
+        })
+        .post(function(req, res, next) {
+            var personId = parseInt(req.params.personId),
+                skillId = parseInt(req.body.insert_id),
+                skillValue = parseInt(req.body.value);
 
-    router.route('/:personId/imperfections')
-        .get(function(req, res, next) {})
-        .post(function(req, res, next) {});
+            async.series([
+                function(callback) {
+                    if(skillValue < 1) return callback();
 
-    router.route('/:personId/imperfections/:imperfectionId')
-        .get(function(req, res, next) {})
-        .put(function(req, res, next) {})
-        .delete(function(req, res, next) {});
+                    ownership(req, tableName, personId, adminRestriction, callback);
+                },
+                function(callback) {
+                    if(skillValue < 1) return callback();
 
-    // Species //todo
+                    query('INSERT INTO person_has_skill (person_id,skill_id,value) VALUES (?,?,?) ON DUPLICATE KEY UPDATE value = VALUES(value)', [personId, skillId, skillValue], callback);
+                }
+            ],function(err) {
+                if(err) return next(err);
 
-    router.route('/:personId/imperfections')
-        .get(function(req, res, next) {})
-        .post(function(req, res, next) {});
+                res.status(201).send();
+            });
+        });
 
-    router.route('/:personId/imperfections/:imperfectionId')
-        .get(function(req, res, next) {})
-        .put(function(req, res, next) {})
-        .delete(function(req, res, next) {});
+    router.route('/:personId/skills/:skillId')
+        .get(function(req, res, next) {
+            var call = sqlSkills + ' WHERE ' +
+                'person_has_skill.person_id = ? AND ' +
+                'person_has_skill.skill_id = ?';
 
-    // Weapons //todo
+            sequel.get(req, res, next, call, [req.params.personId, req.params.skillId], true);
+        })
+        .put(function(req, res, next) {
+            var personId = parseInt(req.params.personId),
+                skillId = parseInt(req.params.skillId),
+                skillValue = parseInt(req.body.value);
 
-    router.route('/:personId/imperfections')
-        .get(function(req, res, next) {})
-        .post(function(req, res, next) {});
+            async.series([
+                function(callback) {
+                    ownership(req, tableName, personId, adminRestriction, callback);
+                },
+                function(callback) {
+                    query('SELECT value FROM person_has_skill WHERE person_id = ? AND skill_id = ?', [personId, skillId], function(err, results) {
+                        if(err) return callback(err);
 
-    router.route('/:personId/imperfections/:imperfectionId')
-        .get(function(req, res, next) {})
-        .put(function(req, res, next) {})
-        .delete(function(req, res, next) {});
+                        if(!results[0].value) return callback({status: 403, message: 'Forbidden', error: 'The person has not added this skill yet'});
+
+                        skillValue = skillValue + parseInt(results[0].value);
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    if(skillValue < 1) return callback();
+
+                    query('UPDATE person_has_skill SET value = ? WHERE person_id = ? AND skill_id = ?', [skillValue, personId, skillId], callback);
+                }
+            ],function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
+        })
+        .delete(function(req, res, next) {
+            relation.delete(req, res, next, tableName, req.params.personId, 'skill', req.params.skillId);
+        });
+
+    // Software
+
+    var sqlSoftware = 'SELECT * FROM person_has_software ' +
+        'LEFT JOIN software ON software.id = person_has_software.software_id';
+
+    router.route('/:personId/software')
+        .get(function(req, res, next) {
+            var call = sqlSoftware + ' WHERE ' +
+                'person_has_asset.person_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.personId]);
+        })
+        .post(function(req, res, next) {
+            relation.post(req, res, next, tableName, req.params.personId, 'software', req.body.insert_id);
+        });
+
+    router.route('/:personId/software/:softwareId')
+        .get(function(req, res, next) {
+            var call = sqlSoftware + ' WHERE ' +
+                'person_has_asset.person_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.personId, req.params.softwareId], true);
+        })
+        .delete(function(req, res, next) {
+            relation.delete(req, res, next, tableName, req.params.personId, 'software', req.params.softwareId);
+        });
+
+    // Species
+
+    var sqlSpecies = 'SELECT * FROM person_has_species ' +
+        'LEFT JOIN species ON species.id = person_has_species.species_id';
+
+    router.route('/:personId/species')
+        .get(function(req, res, next) {
+            var call = sqlSpecies + ' WHERE ' +
+                'person_has_species.person_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.personId]);
+        })
+        .post(function(req, res, next) {
+            relation.post(req, res, next, tableName, req.params.personId, 'species', req.body.insert_id);
+        });
+
+    router.route('/:personId/species/:speciesId')
+        .get(function(req, res, next) {
+            var call = sqlSpecies + ' WHERE ' +
+                'person_has_species.person_id = ? AND ' +
+                'person_has_species.species_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.personId, req.params.speciesId], true);
+        })
+        .delete(function(req, res, next) {
+            var personId = parseInt(req.params.personId),
+                speciesId = parseInt(req.params.speciesId);
+
+            var isPrimarySpecies;
+
+            async.series([
+                function(callback) {
+                    ownership(req, tableName, personId, adminRestriction, callback);
+                },
+                function(callback) {
+                    query('SELECT first FROM person_has_species WHERE person_id = ? AND species_id = ? AND first = 1',[personId, speciesId], function(err, results) {
+                        if(err) return callback(err);
+
+                        isPrimarySpecies = !!results[0];
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    if(isPrimarySpecies) return callback({status: 403, message: 'Forbidden', error: 'Primary species cannot be changed or removed.'});
+
+                    query('DELETE FROM person_has_species WHERE person_id = ? AND species_id = ?', [personId, speciesId], callback);
+                }
+            ],function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
+        });
+
+    // Weapons
+
+    var sqlWeapons = 'SELECT ' +
+        'weapon.id, ' +
+        'weapon.canon, ' +
+        'weapon.popularity, ' +
+        'weapon.name, ' +
+        'weapon.description, ' +
+        'weapon.species, ' +
+        'weapon.augmentation, ' +
+        'weapon.damage_bonus, ' +
+        'weapon.price, ' +
+        'weapon.legal, ' +
+        'weapon.weapontype_id, ' +
+        'weapontype.damage_dice, ' +
+        'weapontype.critical_dice, ' +
+        'weapontype.hand, ' +
+        'weapontype.initiative, ' +
+        'weapontype.hit, ' +
+        'weapontype.distance, ' +
+        'weapontype.weapongroup_id, ' +
+        'weapongroup.special, ' +
+        'weapongroup.skill_id, ' +
+        'weapongroup.expertise_id, ' +
+        'weapongroup.damage_id, ' +
+        'weapongroup.icon, ' +
+        'person_has_weapon.custom, ' +
+        'person_has_weapon.equipped, ' +
+        'person_has_skill.value AS skill_value, ' +
+        'person_has_expertise.value AS expertise_value ' +
+        'FROM person_has_weapon ' +
+        'LEFT JOIN weapon ON weapon.id = person_has_weapon.weapon_id ' +
+        'LEFT JOIN weapontype ON weapontype.id = weapon.weapontype_id ' +
+        'LEFT JOIN weapongroup ON weapongroup.id = weapontype.weapongroup_id ' +
+        'LEFT JOIN person_has_skill ON person_has_skill.person_id = ? AND person_has_skill.skill_id = weapongroup.skill_id ' +
+        'LEFT JOIN person_has_expertise ON person_has_expertise.person_id = ? AND person_has_expertise.expertise_id = weapongroup.expertise_id';
+
+    router.route('/:personId/weapons')
+        .get(function(req, res, next) {
+            var call = sqlWeapons + ' WHERE ' +
+                'person_has_weapon.person_id = ? AND ' +
+                'weapongroup.special = 0';
+
+            // personId used thrice for LEFT JOIN person_has_skill and person_has_expertise
+            sequel.get(req, res, next, call, [req.params.personId, req.params.personId, req.params.personId]);
+        })
+        .post(function(req, res, next) {
+            relation.post(req, res, next, tableName, req.params.personId, 'weapon', req.body.insert_id);
+        });
+
+    router.route('/:personId/weapons/equipped')
+        .get(function(req, res, next) {
+            var call = sqlWeapons + ' WHERE ' +
+                'person_has_weapon.person_id = ? AND ' +
+                'person_has_weapon.equipped = 1';
+
+            // personId used thrice for LEFT JOIN person_has_skill and person_has_expertise
+            sequel.get(req, res, next, call, [req.params.personId, req.params.personId, req.params.personId]);
+        });
+
+    router.route('/:personId/weapons/unequipped')
+        .get(function(req, res, next) {
+            var call = sqlWeapons + ' WHERE ' +
+                'person_has_weapon.person_id = ? AND ' +
+                'person_has_weapon.equipped = 0';
+
+            // personId used thrice for LEFT JOIN person_has_skill and person_has_expertise
+            sequel.get(req, res, next, call, [req.params.personId, req.params.personId, req.params.personId]);
+        });
+
+    router.route('/:personId/weapons/:weaponId')
+        .get(function(req, res, next) {
+            var call = sqlWeapons + ' WHERE ' +
+                'person_has_weapon.person_id = ? AND ' +
+                'person_has_weapon.weapon_id = ?';
+
+            // personId used thrice for LEFT JOIN person_has_skill and person_has_expertise
+            sequel.get(req, res, next, call, [req.params.personId, req.params.personId, req.params.personId, req.params.weaponId]);
+        })
+        .delete(function(req, res, next) {
+            relation.delete(req, res, next, tableName, req.params.personId, 'weapon', req.params.weaponId);
+        });
+
+    router.route('/:personId/weapons/:weaponId/equip')
+        .put(function(req, res, next) {
+            var personId = parseInt(req.params.personId),
+                weaponId = parseInt(req.params.weaponId);
+
+            async.series([
+                function(callback) {
+                    ownership(req, tableName, personId, adminRestriction, callback);
+                },
+                function(callback) {
+                    query('UPDATE person_has_weapon SET equipped = 1 WHERE person_id = ? AND weapon_id = ?', [personId, weaponId], callback);
+                }
+            ],function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
+        });
+
+    router.route('/:personId/weapons/:weaponId/unequip')
+        .put(function(req, res, next) {
+            var personId = parseInt(req.params.personId),
+                weaponId = parseInt(req.params.weaponId);
+
+            async.series([
+                function(callback) {
+                    ownership(req, tableName, personId, adminRestriction, callback);
+                },
+                function(callback) {
+                    query('UPDATE person_has_weapon SET equipped = 0 WHERE person_id = ? AND weapon_id = ?', [personId, weaponId], callback);
+                }
+            ],function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
+        });
 
     // Weapon Mods //todo
 
-    router.route('/:personId/imperfections')
+    router.route('/:personId/weaponmods')
         .get(function(req, res, next) {})
         .post(function(req, res, next) {});
 
-    router.route('/:personId/imperfections/:imperfectionId')
+    router.route('/:personId/weaponmods/:weaponModId')
         .get(function(req, res, next) {})
-        .put(function(req, res, next) {})
         .delete(function(req, res, next) {});
 
     // Wounds

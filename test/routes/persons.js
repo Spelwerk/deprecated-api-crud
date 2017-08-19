@@ -172,6 +172,30 @@ describe('/persons', function() {
                 });
         });
 
+        it('/:personId/skills should add a skill to the person', function(done) {
+            app.post('/persons/' + personId + '/skills', {insert_id: 1, value: 10})
+                .expect(201)
+                .end(done);
+        });
+
+        it('/:personId/software should add a software to the person', function(done) {
+            app.post('/persons/' + personId + '/software', {insert_id: 1})
+                .expect(201)
+                .end(done);
+        });
+
+        it('/:personId/species should add a species to the person', function(done) {
+            app.post('/persons/' + personId + '/species', {insert_id: 2})
+                .expect(201)
+                .end(done);
+        });
+
+        it('/:personId/weapons should add a weapons to the person', function(done) {
+            app.post('/persons/' + personId + '/weapons', {insert_id: 1})
+                .expect(201)
+                .end(done);
+        });
+
         it('/:personId/wounds should add a disease to the person', function(done) {
             app.post('/persons/' + personId + '/wounds', {name: hasher(20), timestwo: 1})
                 .expect(201)
@@ -283,6 +307,24 @@ describe('/persons', function() {
 
         it('/:personId/sanity/:diseaseId should update the heal value of the disease', function(done) {
             app.put('/persons/' + personId + '/sanity/' + sanityId, {heal: 1})
+                .expect(204)
+                .end(done);
+        });
+
+        it('/:personId/skills should update the value with add/subtract', function(done) {
+            app.put('/persons/' + personId + '/skills/1', {value: 10})
+                .expect(204)
+                .end(done);
+        });
+
+        it('/:personId/weapons/:weaponId/equip should update the equipped status of the weapon', function(done) {
+            app.put('/persons/' + personId + '/weapons/1/equip')
+                .expect(204)
+                .end(done);
+        });
+
+        it('/:personId/weapons/:weaponId/unequip should update the equipped status of the weapon', function(done) {
+            app.put('/persons/' + personId + '/weapons/1/unequip')
                 .expect(204)
                 .end(done);
         });
