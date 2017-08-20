@@ -450,7 +450,7 @@ module.exports = function(router) {
 
                     query(call, values_array, callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();
@@ -519,7 +519,7 @@ module.exports = function(router) {
                 function(callback) {
                     query('DELETE FROM person_has_asset WHERE person_id = ? AND asset_id = ?', [personId, removeId], callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();
@@ -612,7 +612,7 @@ module.exports = function(router) {
                 function(callback) {
                     query('UPDATE person_has_attribute SET value = ? WHERE person_id = ? AND attribute_id = ?', [attributeValue, personId, attributeId], callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();
@@ -677,7 +677,7 @@ module.exports = function(router) {
                 function(callback) {
                     person.changeActivate(req, personId, augmentationId, bionicId, 1, callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(201).send();
@@ -717,7 +717,7 @@ module.exports = function(router) {
                 function(callback) {
                     query('DELETE FROM person_has_augmentation WHERE person_id = ? AND augmentation_id = ? AND bionic_id = ?', [personId, augmentationId, bionicId], callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();
@@ -854,7 +854,7 @@ module.exports = function(router) {
 
                     person.changeValues('skill', personId, personArray, backgroundArray, currentArray, callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();
@@ -919,7 +919,7 @@ module.exports = function(router) {
                 function(callback) {
                     person.changeValues('attribute', personId, personArray, bionicArray, null, callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(201).send();
@@ -939,14 +939,32 @@ module.exports = function(router) {
                 bionicId = parseInt(req.params.bionicId);
 
             var personArray,
-                bionicArray;
+                bionicArray,
+                augmentationArray = [];
 
             async.series([
                 function(callback) {
                     ownership(req, 'person', personId, adminRestriction, callback);
                 },
                 function(callback) {
-                    //todo remove all augmentations and deactivate them
+                    query('SELECT augmentation_id FROM person_has_augmentation WHERE person_id = ? AND bionic_id = ? AND active = 1', [personId, bionicId], function(err, results) {
+                        if(err) return callback(err);
+
+                        for(var i in results) {
+                            augmentationArray.push(results[i].augmentation_id);
+                        }
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    if(augmentationArray.length === 0) return callback();
+
+                    async.each(augmentationArray, function(augmentationId, next) {
+                        person.changeActivate(req, personId, augmentationId, bionicId, 0, next);
+                    }, function(err) {
+                        callback(err);
+                    });
                 },
                 function(callback) {
                     query('SELECT attribute_id AS id, value FROM person_has_attribute WHERE person_id = ?', [personId], function(err, results) {
@@ -970,9 +988,12 @@ module.exports = function(router) {
                     person.changeValues('attribute', personId, personArray, null, bionicArray, callback);
                 },
                 function(callback) {
+                    query('DELETE FROM person_has_augmentation WHERE person_id = ? AND bionic_id = ?', [personId, bionicId], callback);
+                },
+                function(callback) {
                     query('DELETE FROM person_has_bionic WHERE person_id = ? AND bionic_id = ?', [personId, bionicId], callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();
@@ -1007,7 +1028,7 @@ module.exports = function(router) {
                 function(callback) {
                     query('UPDATE person_playable SET cheated = 1 WHERE person_id = ?', [personId], callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();
@@ -1079,7 +1100,7 @@ module.exports = function(router) {
                 function(callback) {
                     query('INSERT INTO person_has_disease (person_id,disease_id,timestwo) VALUES (?,?,?)', [personId, diseaseId, diseaseTimesTwo], callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(201).send({id: diseaseId});
@@ -1106,7 +1127,7 @@ module.exports = function(router) {
                 function(callback) {
                     query('UPDATE person_has_disease SET heal = ? WHERE person_id = ? AND disease_id = ?', [diseaseHeal, personId, diseaseId], callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();
@@ -1180,7 +1201,7 @@ module.exports = function(router) {
 
                     query('INSERT INTO person_has_doctrine (person_id,doctrine_id,value) VALUES (?,?,?) ON DUPLICATE KEY UPDATE value = VALUES(value)', [personId, doctrineId, doctrineValue], callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();
@@ -1220,7 +1241,7 @@ module.exports = function(router) {
 
                     query('UPDATE person_has_doctrine SET value = ? WHERE person_id = ? AND doctrine_id = ?', [doctrineValue, personId, doctrineId], callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();
@@ -1273,7 +1294,7 @@ module.exports = function(router) {
 
                     query('INSERT INTO person_has_expertise (person_id,expertise_id,value) VALUES (?,?,?) ON DUPLICATE KEY UPDATE value = VALUES(value)', [personId, expertiseId, expertiseValue], callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();
@@ -1323,7 +1344,7 @@ module.exports = function(router) {
 
                     query('UPDATE person_has_expertise SET value = ? WHERE person_id = ? AND expertise_id = ?', [expertiseValue, personId, expertiseId], callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();
@@ -1411,7 +1432,7 @@ module.exports = function(router) {
                 function(callback) {
                     person.changeValues('skill', personId, personArray, giftArray, null, callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();
@@ -1492,7 +1513,7 @@ module.exports = function(router) {
                 function(callback) {
                     person.changeValues('skill', personId, personArray, null, giftArray, callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();
@@ -1577,7 +1598,7 @@ module.exports = function(router) {
                 function(callback) {
                     person.changeValues('skill', personId, personArray, imperfectionArray, null, callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();
@@ -1658,7 +1679,7 @@ module.exports = function(router) {
                 function(callback) {
                     person.changeValues('skill', personId, personArray, null, imperfectionArray, callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();
@@ -1706,7 +1727,7 @@ module.exports = function(router) {
                 function(callback) {
                     query('INSERT INTO person_has_skill (person_id,skill_id,value) VALUES (?,?,0) ON DUPLICATE KEY UPDATE value = VALUES(value)', [personId, skillId], callback)
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();
@@ -1790,7 +1811,7 @@ module.exports = function(router) {
                 function(callback) {
                     person.changeValues('skill', personId, personArray, milestoneArray, null, callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();
@@ -1870,7 +1891,7 @@ module.exports = function(router) {
                 function(callback) {
                     person.changeValues('skill', personId, personArray, null, milestoneArray, callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();
@@ -1939,7 +1960,7 @@ module.exports = function(router) {
                 function(callback) {
                     query('DELETE FROM person_has_protection WHERE person_id = ? AND protection_id = ?', [personId, removeId], callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();
@@ -2019,7 +2040,7 @@ module.exports = function(router) {
                 function(callback) {
                     query('INSERT INTO person_has_sanity (person_id,sanity_id,timestwo) VALUES (?,?,?)', [personId, sanityId, sanityTimesTwo], callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(201).send({id: sanityId});
@@ -2046,7 +2067,7 @@ module.exports = function(router) {
                 function(callback) {
                     query('UPDATE person_has_sanity SET heal = ? WHERE person_id = ? AND sanity_id = ?', [sanityHeal, personId, sanityId], callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();
@@ -2093,7 +2114,7 @@ module.exports = function(router) {
 
                     query('INSERT INTO person_has_skill (person_id,skill_id,value) VALUES (?,?,?) ON DUPLICATE KEY UPDATE value = VALUES(value)', [personId, skillId, skillValue], callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(201).send();
@@ -2133,7 +2154,7 @@ module.exports = function(router) {
 
                     query('UPDATE person_has_skill SET value = ? WHERE person_id = ? AND skill_id = ?', [skillValue, personId, skillId], callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();
@@ -2218,7 +2239,7 @@ module.exports = function(router) {
 
                     query('DELETE FROM person_has_species WHERE person_id = ? AND species_id = ?', [personId, speciesId], callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();
@@ -2320,7 +2341,7 @@ module.exports = function(router) {
                 function(callback) {
                     query('UPDATE person_has_weapon SET equipped = 1 WHERE person_id = ? AND weapon_id = ?', [personId, weaponId], callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();
@@ -2339,22 +2360,107 @@ module.exports = function(router) {
                 function(callback) {
                     query('UPDATE person_has_weapon SET equipped = 0 WHERE person_id = ? AND weapon_id = ?', [personId, weaponId], callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();
             });
         });
 
-    // Weapon Mods //todo
+    // Weapon Mods
+
+    var sqlWeaponMods = 'SELECT ' +
+        'weaponmod.id, ' +
+        'weaponmod.canon, ' +
+        'weaponmod.popularity, ' +
+        'weaponmod.name, ' +
+        'weaponmod.description, ' +
+        'weaponmod.short, ' +
+        'weaponmod.price, ' +
+        'weaponmod.damage_dice, ' +
+        'weaponmod.damage_bonus, ' +
+        'weaponmod.critical_dice, ' +
+        'weaponmod.initiative, ' +
+        'weaponmod.hit, ' +
+        'weaponmod.distance, ' +
+        'weaponmod.created, ' +
+        'weaponmod.updated, ' +
+        'weaponmod.deleted, ' +
+        'person_has_weaponmod.weapon_id ' +
+        'FROM person_has_weaponmod ' +
+        'LEFT JOIN weaponmod ON weaponmod.id = person_has_weaponmod.weaponmod_id';
 
     router.route('/:personId/weaponmods')
-        .get(function(req, res, next) {})
-        .post(function(req, res, next) {});
+        .get(function(req, res, next) {
+            var call = sqlWeaponMods + ' WHERE ' +
+                'person_has_weaponmod.person_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.personId]);
+        })
+        .post(function(req, res, next) {
+            var personId = parseInt(req.params.personId),
+                weaponModId = parseInt(req.body.insert_id),
+                weaponId = parseInt(req.body.weapon_id);
+
+            async.series([
+                function(callback) {
+                    ownership(req, tableName, personId, adminRestriction, callback);
+                },
+                function(callback) {
+                    query('INSERT INTO person_has_weaponmod (person_id,weaponmod_id,weapon_id) VALUES (?,?,?)', [personId, weaponModId, weaponId], callback);
+                }
+            ], function(err) {
+                if(err) return next(err);
+
+                res.status(201).send();
+            });
+        });
+
+    router.route('/:personId/weaponmods/weapon/:weaponId')
+        .get(function(req, res, next) {
+            var call = sqlWeaponMods + ' WHERE ' +
+                'person_has_weaponmod.person_id = ? AND ' +
+                'person_has_weaponmod.weapon_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.personId, req.params.weaponId]);
+        });
 
     router.route('/:personId/weaponmods/:weaponModId')
-        .get(function(req, res, next) {})
-        .delete(function(req, res, next) {});
+        .get(function(req, res, next) {
+            var call = sqlWeaponMods + ' WHERE ' +
+                'person_has_weaponmod.person_id = ? AND ' +
+                'person_has_weaponmod.weaponmod_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.personId, req.params.weaponModId]);
+        });
+
+    router.route('/:personId/weaponmods/:weaponModId/weapon/:weaponId')
+        .get(function(req, res, next) {
+            var call = sqlWeaponMods + ' WHERE ' +
+                'person_has_weaponmod.person_id = ? AND ' +
+                'person_has_weaponmod.weaponmod_id = ? AND ' +
+                'person_has_weaponmod.weapon_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.personId, req.params.weaponModId, req.params.weaponId], true);
+        })
+        .delete(function(req, res, next) {
+            var personId = parseInt(req.params.personId),
+                weaponModId = parseInt(req.params.weaponModId),
+                weaponId = parseInt(req.params.weaponId);
+
+            async.series([
+                function(callback) {
+                    ownership(req, tableName, personId, adminRestriction, callback);
+                },
+                function(callback) {
+                    query('DELETE FROM person_has_weaponmod WHERE person_id = ? AND weaponmod_id = ? AND weapon_id = ?', [personId, weaponModId, weaponId], callback);
+                }
+            ], function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
+        });
 
     // Wounds
 
@@ -2411,7 +2517,7 @@ module.exports = function(router) {
                 function(callback) {
                     query('INSERT INTO person_has_wound (person_id,wound_id,timestwo) VALUES (?,?,?)', [personId, woundId, woundTimesTwo], callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(201).send({id: woundId});
@@ -2438,7 +2544,7 @@ module.exports = function(router) {
                 function(callback) {
                     query('UPDATE person_has_wound SET heal = ? WHERE person_id = ? AND wound_id = ?', [woundHeal, personId, woundId], callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();

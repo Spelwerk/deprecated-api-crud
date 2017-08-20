@@ -55,7 +55,7 @@ async.series([
             callback(err);
         });
     }
-],function(err) {
+], function(err) {
     if(err) throw new Error(err);
 
     console.log("Created Super User account with...\nemail: " + email + "\npassword: " + password);

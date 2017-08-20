@@ -77,7 +77,7 @@ module.exports = function(router) {
             function(callback) {
                 query('INSERT INTO usertoken (user_id,token,os,browser,ip) VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE token = VALUES (token)', [user.id, user.token, user.os, user.browser, user.ip], callback);
             }
-        ],function(err) {
+        ], function(err) {
             callback(err, user.token);
         });
     }
@@ -141,7 +141,7 @@ module.exports = function(router) {
                         callback();
                     });
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(201).send({id: user.id, token: user.token});
@@ -240,7 +240,7 @@ module.exports = function(router) {
                         callback();
                     });
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(200).send({id: user.id, token: user.token});
@@ -273,7 +273,7 @@ module.exports = function(router) {
 
                     mailer(insert.email, subject, text, callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(200).send();
@@ -320,7 +320,7 @@ module.exports = function(router) {
                 function(callback) {
                     query('UPDATE user SET login_secret = NULL, login_timeout = NULL WHERE id = ?', [user.id], callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(200).send({id: user.id, token: user.token});
@@ -355,7 +355,7 @@ module.exports = function(router) {
 
                     mailer(insert.email, subject, text, callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(200).send();
@@ -404,7 +404,7 @@ module.exports = function(router) {
                 function(callback) {
                     query('UPDATE user SET password = ?, displayname = ?, firstname = ?, surname = ?, verify = 1, verify_secret = NULL, verify_timeout = NULL WHERE id = ?', [insert.encrypted, insert.displayname, insert.firstname, insert.surname, user.id], callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(200).send();
@@ -439,7 +439,7 @@ module.exports = function(router) {
 
                     mailer(insert.email, subject, text, callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(200).send();
@@ -484,7 +484,7 @@ module.exports = function(router) {
                         callback();
                     });
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(200).send({id: user.id, token: user.token});
@@ -519,7 +519,7 @@ module.exports = function(router) {
 
                     mailer(insert.email, subject, text, callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(200).send();
@@ -564,7 +564,7 @@ module.exports = function(router) {
                 function(callback) {
                     query('UPDATE user SET password = ?, reset_secret = NULL, reset_timeout = NULL WHERE id = ?', [insert.encrypted, user.id], callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(200).send();

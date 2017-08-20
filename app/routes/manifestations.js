@@ -75,7 +75,7 @@ module.exports = function(router) {
                 function(callback) {
                     query('INSERT INTO user_has_manifestation (user_id,manifestation_id,owner) VALUES (?,?,1)', [req.user.id, insert.id], callback);
                 }
-            ],function(err) {
+            ], function(err) {
                 if(err) return next(err);
 
                 res.status(201).send({id: insert.id});

@@ -43,7 +43,7 @@ async.series([
         // Start Server
         server.start(callback);
     }
-],function(err) {
+], function(err) {
     if (err) {
         console.error('[APP] Initialization failed', err);
         logger.error('[APP] Initialization failed', err);
