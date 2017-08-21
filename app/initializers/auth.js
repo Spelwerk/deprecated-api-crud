@@ -14,6 +14,7 @@ module.exports = function(app, callback) {
         req.user.id = null;
         req.user.token = req.headers['x-user-token'];
         req.user.decoded = tokens.decode(req.user.token);
+        req.user.verifiedOwner = false;
 
         if(!req.user.decoded) return next({status: 403, message: 'Forbidden', error: 'Token is invalid'});
 

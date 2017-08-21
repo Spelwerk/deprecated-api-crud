@@ -116,8 +116,8 @@ describe('/persons', function() {
                 });
         });
 
-        it('/:personId/manifestation (PUT) should add a manifestation to the person', function(done) {
-            app.put('/persons/' + personId + '/manifestation', {insert_id: 1})
+        it('/:personId/manifestations should add a manifestation to the person', function(done) {
+            app.post('/persons/' + personId + '/manifestations', {insert_id: 1})
                 .expect(204)
                 .end(done);
         });
@@ -289,6 +289,12 @@ describe('/persons', function() {
 
         it('/:personId/expertises should update the value with add/subtract', function(done) {
             app.put('/persons/' + personId + '/expertises/1', {value: 10})
+                .expect(204)
+                .end(done);
+        });
+
+        it('/:personId/manifestations should update the focus_id field in the manifestation row', function(done) {
+            app.put('/persons/' + personId + '/manifestations/1', {focus_id: 1})
                 .expect(204)
                 .end(done);
         });
