@@ -2,12 +2,13 @@
 
 var async = require('async');
 
+var tokens = require('./../../../lib/tokens'),
+    query = require('./../../../lib/sql/query');
+
 module.exports = function(app, callback) {
 
     app.use(function(req, res, next) {
         if(!req.headers['x-user-token']) return next();
-
-        var tokens = require('./../../lib/tokens');
 
         req.user = {};
 
@@ -19,8 +20,6 @@ module.exports = function(app, callback) {
         if(!req.user.decoded) return next({status: 403, message: 'Forbidden', error: 'Token is invalid'});
 
         req.user.email = req.user.decoded.email;
-
-        var query = require('./../../lib/sql/query');
 
         async.series([
             function(callback) {

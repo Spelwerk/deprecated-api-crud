@@ -7,6 +7,9 @@ var adminToken = '',
     adminEmail = 'admin@spelwerk.se',
     adminPassword = 'admin';
 
+var apiId = 'id',
+    apiSecret = 'secret';
+
 exports.login = function(callback) {
     var request = supertest(base);
 
@@ -16,9 +19,7 @@ exports.login = function(callback) {
             "email": adminEmail,
             "password": adminPassword
         })
-        .set({
-            "x-api-key": key
-        })
+        .auth(apiId, apiSecret)
         .expect(200)
         .end(function(err, res) {
             if(err) return callback(err);
@@ -36,8 +37,8 @@ exports.get = function(path, token) {
 
     return request
         .get(path)
+        .auth(apiId, apiSecret)
         .set({
-            "x-api-key": key,
             "x-user-token": token
         });
 };
@@ -52,8 +53,8 @@ exports.post = function(path, data, token) {
     return request
         .post(path)
         .send(data)
+        .auth(apiId, apiSecret)
         .set({
-            "x-api-key": key,
             "x-user-token": token
         });
 };
@@ -68,8 +69,8 @@ exports.put = function(path, data, token) {
     return request
         .put(path)
         .send(data)
+        .auth(apiId, apiSecret)
         .set({
-            "x-api-key": key,
             "x-user-token": token
         });
 };
@@ -81,8 +82,8 @@ exports.delete = function(path, token) {
 
     return request
         .delete(path)
+        .auth(apiId, apiSecret)
         .set({
-            "x-api-key": key,
             "x-user-token": token
         });
 };

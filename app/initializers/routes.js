@@ -24,7 +24,7 @@ module.exports = function(app, folderName, callback) {
                 // Parsing filename without ext
                 var fileName = path.parse(file).name;
 
-                logger.info('[APP] Setting up router path for /' + fileName);
+                logger.info('[ROUTES] Setting up router path for /' + fileName);
 
                 // Load express router
                 var router = express.Router();

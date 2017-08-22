@@ -5,35 +5,45 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     async = require('async');
 
+var logger = require(appRoot + '/lib/logger');
+
 var app;
 
 function start(callback) {
-    var logger = require(appRoot + '/lib/logger'),
-        tokens = require(appRoot + '/lib/tokens');
-
-    // Set up express
-    app = express();
-
-    // Use morgan for request logging
-    app.use(require('morgan')('combined', {'stream':logger.stream}));
-
-    // Configure body parser
-    app.use(bodyParser.urlencoded({extended: true}));
-    app.use(bodyParser.json());
-
-    // Protecting with API key
-    app.use(function(req, res, next) {
-        if(req.headers['x-api-key'] !== nconf.get('apikey')) return next('Faulty API Key');
-
-        next();
-    });
-
     async.series([
+        function(callback) {
+            logger.info('[SERVER] Setting up Express');
+
+            app = express();
+
+            callback();
+        },
+        function(callback) {
+            logger.info('[SERVER] Using Morgan for request Logging');
+
+            app.use(require('morgan')('combined', {'stream':logger.stream}));
+
+            callback();
+        },
+        function(callback) {
+            logger.info('[SERVER] Configuring Body Parser');
+
+            app.use(bodyParser.urlencoded({extended: true}));
+            app.use(bodyParser.json());
+
+            callback();
+        },
+        function(callback) {
+            logger.info('[SERVER] Initializing key authorization');
+
+            // API-Key Authorization handler
+            require('./auth/key')(app, callback);
+        },
         function(callback) {
             logger.info('[SERVER] Initializing user authorization');
 
             // User Authorization handler
-            require('./auth')(app, callback);
+            require('./auth/user')(app, callback);
         },
         function(callback) {
             logger.info('[SERVER] Initializing enabled routes');
@@ -48,15 +58,15 @@ function start(callback) {
             require('./errors')(app, callback);
         }
     ], function(err) {
-        if(err && environment === 'development') console.error(err);
+        if(err) console.error(err);
+
+        logger.info('[SERVER] Listening on port: ' + nconf.get('port'));
+
+        // Listening on port
+        app.listen(nconf.get('port'));
+
+        callback();
     });
-
-    logger.info('[SERVER] Listening on port: ' + nconf.get('port'));
-
-    // Listening on port
-    app.listen(nconf.get('port'));
-
-    return callback();
 }
 
 module.exports.start = start;

@@ -1,5 +1,8 @@
-apikey:
-port:
+port: 4000
+
+api-key:
+  id:
+  secret:
 
 database:
   host:

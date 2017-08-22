@@ -5,6 +5,8 @@ module.exports = function(app, callback) {
 
     // Return error information as response
     app.use(function(err, req, res, next) {
+        if(environment === 'development') console.error(err);
+
         var status = err.status || 500;
 
         var message = err.message || 'Server encountered an error';
@@ -16,8 +18,6 @@ module.exports = function(app, callback) {
         logger.error(error);
 
         res.status(status).send({message: message, error: error});
-
-        if(environment === 'development') console.error(error);
     });
 
     callback();

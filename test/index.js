@@ -48,4 +48,6 @@ require('./routes/weapons');
 
 require('./routes/species');
 
+require('./routes/persons');
+
 //require('./routes/users');

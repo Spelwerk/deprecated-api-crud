@@ -9,24 +9,27 @@ var logger = require('./lib/logger');
 global.appRoot = path.resolve(__dirname);
 global.environment = process.env.NODE_ENV || 'development';
 
-// Load Environment variables from .env file
-require('dotenv').load();
-
-// Load configuration from file
-nconf.file({
-    file: appRoot + '/config/' + environment + '.yml',
-    format: require('nconf-yaml')
-});
-
-// Load environment variables
-nconf.env();
-
-// Load command line arguments
-nconf.argv();
-
-logger.info('[APP] Starting server initialization');
-
 async.series([
+    function(callback) {
+        logger.info('[APP] Initializing nconf');
+
+        // Load Environment variables from .env file
+        require('dotenv').load();
+
+        // Load configuration from file
+        nconf.file({
+            file: appRoot + '/config/' + environment + '.yml',
+            format: require('nconf-yaml')
+        });
+
+        // Load environment variables
+        nconf.env();
+
+        // Load command line arguments
+        nconf.argv();
+
+        callback();
+    },
     function(callback) {
         logger.info('[APP] Initializing database configuration');
 

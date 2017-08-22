@@ -1,6 +1,9 @@
+var async = require('async');
+
 var comment = require('./../../lib/sql/comment'),
     ownership = require('./../../lib/sql/ownership'),
     relation = require('./../../lib/sql/relation'),
+    query = require('./../../lib/sql/query'),
     sequel = require('./../../lib/sql/sequel');
 
 module.exports = function(router) {
@@ -172,12 +175,46 @@ module.exports = function(router) {
             sequel.get(req, res, next, call, [req.params.milestoneId]);
         })
         .post(function(req, res, next) {
-            // todo create post relation with occupation, influence_min, influence_max
+            var milestoneId = parseInt(req.params.milestoneId),
+                loyaltyId = parseInt(req.body.insert_id),
+                occupation = req.body.occupation,
+                influenceMin = parseInt(req.body.influence_min),
+                influenceMax = parseInt(req.body.influence_max);
+
+            async.series([
+                function(callback) {
+                    ownership(req, tableName, milestoneId, adminRestriction, callback);
+                },
+                function(callback) {
+                    query('INSERT INTO milestone_has_loyalty (milestone_id,loyalty_id,occupation,influence_min,influence_max) VALUES (?,?,?,?,?)', [milestoneId,loyaltyId,occupation,influenceMin,influenceMax], callback);
+                }
+            ], function(err) {
+                if(err) return next(err);
+
+                res.status(201).send();
+            });
         });
 
     router.route('/:milestoneId/loyalties/:loyaltyId')
         .put(function(req, res, next) {
-            // todo create put relation with occupation, influence_min, influence_max
+            var milestoneId = parseInt(req.params.milestoneId),
+                loyaltyId = parseInt(req.params.loyaltyId),
+                occupation = req.body.occupation,
+                influenceMin = parseInt(req.body.influence_min),
+                influenceMax = parseInt(req.body.influence_max);
+
+            async.series([
+                function(callback) {
+                    ownership(req, tableName, milestoneId, adminRestriction, callback);
+                },
+                function(callback) {
+                    query('UPDATE milestone_has_loyalty SET occupation = ?, influence_min = ?, influence_max = ? WHERE milestone_id = ? AND loyalty_id = ?', [occupation,influenceMin,influenceMax,milestoneId,loyaltyId], callback);
+                }
+            ], function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
         })
         .delete(function(req, res, next) {
             relation.delete(req, res, next, tableName, req.params.milestoneId, 'loyalty', req.params.loyaltyId);
