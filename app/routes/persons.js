@@ -170,7 +170,7 @@ module.exports = function(router) {
                     callback();
                 },
                 function(callback) {
-                    var sql = 'INSERT INTO person (playable, nickname, age, occupation, world_id) VALUES (?,?,?,?)';
+                    var sql = 'INSERT INTO person (playable, nickname, age, occupation, world_id) VALUES (?,?,?,?,?)';
 
                     var values = [insert.playable, insert.nickname, insert.age, insert.occupation, world.id];
 
@@ -187,7 +187,7 @@ module.exports = function(router) {
                         '(person_id, supernatural, ' +
                         ' point_expertise, point_gift, point_imperfection, point_milestone, point_money, point_power, ' +
                         ' point_relationship, point_skill, point_doctrine) ' +
-                        'VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)';
+                        'VALUES (?,?,?,?,?,?,?,?,?,?,?)';
 
                     var values = [insert.id, insert.supernatural,
                                   points.expertise, points.gift, points.imperfection, points.milestone, points.money,
@@ -1039,7 +1039,7 @@ module.exports = function(router) {
                 doctrineId = parseInt(req.body.insert_id),
                 doctrineValue = parseInt(req.body.value);
 
-            var manifestationId,
+            var manifestationsArray = [],
                 currentValue = 0;
 
             async.series([
@@ -1049,12 +1049,14 @@ module.exports = function(router) {
                 function(callback) {
                     if(doctrineValue < 1) return callback();
 
-                    query('SELECT manifestation_id FROM person_playable WHERE person_id = ?', [personId], function(err, results) {
+                    query('SELECT manifestation_id FROM person_has_manifestation WHERE person_id = ?', [personId], function(err, results) {
                         if(err) return callback(err);
 
-                        if(!results[0].manifestation_id) return callback({status: 403, message: 'Forbidden', error: 'Person does not have a manifestation'});
+                        if(results.length === 0) return callback({status: 403, message: 'Forbidden', error: 'Person does not have a manifestation'});
 
-                        manifestationId = results[0].manifestation_id;
+                        for(var i in results) {
+                            manifestationsArray.push(results[i].manifestation_id);
+                        }
 
                         callback();
                     });
@@ -1062,10 +1064,10 @@ module.exports = function(router) {
                 function(callback) {
                     if(doctrineValue < 1) return callback();
 
-                    query('SELECT id FROM doctrine WHERE id = ? AND manifestation_id = ?', [doctrineId, manifestationId], function(err, results) {
+                    query('SELECT manifestation_id FROM doctrine WHERE id = ?', [doctrineId], function(err, results) {
                         if(err) return callback(err);
 
-                        if(!results[0].id) return callback({status: 403, message: 'Forbidden', error: 'The doctrine is not included in the person manifestation'});
+                        if(manifestationsArray.indexOf(results[0].manifestation_id) === -1) return callback({status: 403, message: 'Forbidden', error: 'The doctrine is not included in the person manifestation'});
 
                         callback();
                     });
@@ -1076,7 +1078,9 @@ module.exports = function(router) {
                     query('SELECT value FROM person_has_doctrine WHERE person_id = ? AND doctrine_id = ?', [personId, doctrineId], function(err, results) {
                         if(err) return callback(err);
 
-                        if(results[0].value) currentValue = parseInt(results[0].value);
+                        if(results.length === 0) return callback();
+
+                        currentValue = parseInt(results[0].value);
 
                         callback();
                     });
@@ -1194,7 +1198,9 @@ module.exports = function(router) {
                     query('SELECT value FROM person_has_expertise WHERE person_id = ? AND expertise_id = ?', [personId, expertiseId], function(err, results) {
                         if(err) return callback(err);
 
-                        if(results[0].value) currentValue = parseInt(results[0].value);
+                        if(results.length === 0) return callback();
+
+                        currentValue = parseInt(results[0].value);
 
                         callback();
                     });
@@ -1903,7 +1909,9 @@ module.exports = function(router) {
                     query('SELECT value FROM person_has_skill WHERE person_id = ? AND skill_id = ?', [personId, skillId], function(err, results) {
                         if(err) return callback(err);
 
-                        if(results[0].value) currentValue = parseInt(results[0].value);
+                        if(results.length === 0) return callback();
+
+                        currentValue = parseInt(results[0].value);
 
                         callback();
                     });
