@@ -8,16 +8,16 @@ var should = chai.should(),
     expect = chai.expect;
 
 var app = require('../app'),
-    verifier = require('./../verifier'),
+    verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
 describe('/loyalties', function() {
 
+    var temporaryId;
+
     before(function(done) {
         app.login(done);
     });
-
-    var temporaryId;
 
     function verifyList(body) {
         assert.isNumber(body.length);
@@ -35,17 +35,9 @@ describe('/loyalties', function() {
     }
 
     function verifyItem(item) {
-        assert.isNumber(item.id);
-        assert.isBoolean(item.canon);
+        verifier.generic(item);
 
-        assert.isString(item.name);
-        if(item.description) assert.isString(item.description);
         assert.isNumber(item.value);
-        if(item.icon) assert.equal(validator.isURL(item.icon), true);
-
-        assert.isString(item.created);
-        if(item.updated) assert.isString(item.updated);
-        if(item.deleted) assert.isString(item.deleted);
     }
 
 
@@ -85,10 +77,6 @@ describe('/loyalties', function() {
         });
 
         it('/:loyaltyId/comments should create a new comment for the asset', function(done) {
-            var payload = {
-                content: hasher(20)
-            };
-
             app.post('/loyalties/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
@@ -167,17 +155,7 @@ describe('/loyalties', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    _.each(res.body.results, function(comment) {
-                        assert.isNumber(comment.id);
-                        assert.isString(comment.content);
-
-                        assert.isNumber(comment.user_id);
-                        assert.isString(comment.displayname);
-
-                        assert.isString(comment.created);
-                        if(comment.updated) assert.isString(comment.updated);
-                        assert.isNull(comment.deleted);
-                    });
+                    verifier.comments(res.body.results);
 
                     done();
                 })
@@ -185,7 +163,7 @@ describe('/loyalties', function() {
 
     });
 
-    describe('DELETE', function() {
+    xdescribe('DELETE', function() {
 
         it('/:loyaltyId should update the asset deleted field', function(done) {
             app.delete('/loyalties/' + temporaryId)

@@ -63,7 +63,7 @@ describe('/skills', function() {
     function verifyItem(item) {
         verifier.generic(item);
 
-        assert.isBoolean(item.special);
+        if(item.manifestation_id) assert.isNumber(item.manifestation_id);
         if(item.species_id) assert.isNumber(item.species_id);
     }
 

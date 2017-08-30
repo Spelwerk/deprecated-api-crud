@@ -4,33 +4,33 @@ require('./routes/attributes');
 require('./routes/bodyparts');
 require('./routes/identities');
 require('./routes/natures');
+require('./routes/languages');
+require('./routes/loyalties');
 
 require('./routes/diseases');
 require('./routes/sanity');
 require('./routes/wounds');
 
 require('./routes/manifestations');
-require('./routes/species');
 require('./routes/focuses');
+
+require('./routes/species');
 
 require('./routes/skills');
 require('./routes/expertises');
-//require('./routes/doctrines');
+require('./routes/doctrines');
 
 //require('./routes/backgrounds');
-
-//require('./routes/augmentations');
-//require('./routes/bionics');
+//require('./routes/gifts');
+//require('./routes/imperfections');
+//require('./routes/milestones');
 
 require('./routes/assetgroups');
 require('./routes/assettypes');
 //require('./routes/assets');
 
-//require('./routes/gifts');
-//require('./routes/imperfections');
-
-//require('./routes/loyalties');
-//require('./routes/milestones');
+//require('./routes/augmentations');
+//require('./routes/bionics');
 
 //require('./routes/protection');
 

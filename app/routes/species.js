@@ -78,7 +78,7 @@ module.exports = function(router) {
             })
         });
 
-    // Bodypart
+    // Bodyparts todo generic_has_generic on bodypart
 
     // Attributes
 
@@ -103,8 +103,6 @@ module.exports = function(router) {
         .delete(function(req, res, next) {
             relation.delete(req, res, next, req.params.id, req.params.attributeId);
         });
-
-    // Skills todo list from skill where species_id = ?
 
     // Weapons todo list from weapon where weapongroup.species_id = ?
 };

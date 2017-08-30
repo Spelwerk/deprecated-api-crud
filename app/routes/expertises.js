@@ -55,9 +55,7 @@ module.exports = function(router) {
     router.route('/skill/:skillId')
         .get(function(req, res, next) {
             var call = sql + ' WHERE g1.deleted IS NULL AND ' +
-                'expertise.manifestation_id IS NULL AND ' +
-                'expertise.skill_id = ? AND ' +
-                'expertise.species_id IS NULL';
+                'expertise.skill_id = ?';
 
             sequel.get(req, res, next, call, [req.params.skillId]);
         });
@@ -67,8 +65,6 @@ module.exports = function(router) {
     router.route('/species/:speciesId')
         .get(function(req, res, next) {
             var call = sql + ' WHERE g1.deleted IS NULL AND ' +
-                'expertise.manifestation_id IS NULL AND ' +
-                'expertise.skill_id IS NULL AND ' +
                 'expertise.species_id = ?';
 
             sequel.get(req, res, next, call, [req.params.speciesId]);
@@ -79,9 +75,8 @@ module.exports = function(router) {
     router.route('/skill/:skillId/manifestation/:manifestationId')
         .get(function(req, res, next) {
             var call = sql + ' WHERE g1.deleted IS NULL AND ' +
-                'expertise.manifestation_id = ? AND ' +
                 'expertise.skill_id = ? AND ' +
-                'expertise.species_id IS NULL';
+                'expertise.manifestation_id = ?';
 
             sequel.get(req, res, next, call, [req.params.manifestationId, req.params.skillId]);
         });
@@ -91,7 +86,6 @@ module.exports = function(router) {
     router.route('/skill/:skillId/species/:speciesId')
         .get(function(req, res, next) {
             var call = sql + ' WHERE g1.deleted IS NULL AND ' +
-                'expertise.manifestation_id IS NULL AND ' +
                 'expertise.skill_id = ? AND ' +
                 'expertise.species_id = ?';
 

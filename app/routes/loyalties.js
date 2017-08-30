@@ -8,41 +8,19 @@ var query = require('./../../lib/sql/query'),
 module.exports = function(router) {
     'use strict';
 
-    var tableName = 'asset';
+    var tableName = 'loyalty';
 
-    var sql = 'SELECT * FROM asset ' +
-        'LEFT JOIN generic ON generic.id = asset.generic_id ' +
-        'LEFT JOIN assettype ON assettype.generic_id = asset.assettype_id ' +
-        'LEFT JOIN assetgroup ON assetgroup.generic_id = assettype.assetgroup_id';
+    var sql = 'SELECT * FROM loyalty ' +
+        'LEFT JOIN generic ON generic.id = loyalty.generic_id';
 
     router.route('/')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE canon = 1 AND deleted IS NULL';
+            var call = sql + ' WHERE deleted IS NULL';
 
             sequel.get(req, res, next, call);
         })
         .post(function(req, res, next) {
             generic.post(req, res, next, tableName);
-        });
-
-    // Types
-
-    router.route('/type/:typeId')
-        .get(function(req, res, next) {
-            var call = sql + ' WHERE deleted IS NULL AND ' +
-                'assettype_id = ?';
-
-            sequel.get(req, res, next, call, [req.params.typeId]);
-        });
-
-    // Groups
-
-    router.route('/group/:groupId')
-        .get(function(req, res, next) {
-            var call = sql + ' WHERE deleted IS NULL AND ' +
-                'assetgroup_id = ?';
-
-            sequel.get(req, res, next, call, [req.params.groupId]);
         });
 
     // ID
@@ -63,7 +41,7 @@ module.exports = function(router) {
 
     router.route('/:id/canon')
         .put(function(req, res, next) {
-            sequel.canon(req, res, next, req.params.id);
+            generic.canon(req, res, next, req.params.id);
         });
 
     router.route('/:id/clone')
@@ -89,13 +67,4 @@ module.exports = function(router) {
                 res.status(200).send({ownership: ownership});
             })
         });
-
-    // Attributes todo
-
-    // Doctrines todo
-
-    // Expertises todo
-
-    // Skills todo
-
 };
