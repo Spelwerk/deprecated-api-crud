@@ -91,7 +91,7 @@ describe('/milestones', function() {
                 content: hasher(20)
             };
 
-            app.post('/milestones/' + temporaryId + '/comments', payload)
+            app.post('/milestones/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);

@@ -23,16 +23,6 @@ module.exports = function(router) {
             generic.post(req, res, next, tableName);
         });
 
-    // Special
-
-    router.route('/special/:special')
-        .get(function(req, res, next) {
-            var call = sql + ' WHERE deleted IS NULL AND ' +
-                'special = ?';
-
-            sequel.get(req, res, next, call, [req.params.special]);
-        });
-
     // Species
 
     router.route('/species/:speciesId')
@@ -41,6 +31,16 @@ module.exports = function(router) {
                 'species_id = ?';
 
             sequel.get(req, res, next, call, [req.params.speciesId]);
+        });
+
+    // Manifestation
+
+    router.route('/manifestation/:manifestationId')
+        .get(function(req, res, next) {
+            var call = sql + ' WHERE deleted IS NULL AND ' +
+                'manifestation_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.manifestationId]);
         });
 
     // ID
@@ -79,7 +79,7 @@ module.exports = function(router) {
 
     router.route('/:id/ownership')
         .get(function(req, res) {
-            ownership(req, req.params.id, false, function(err) {
+            ownership(req, req.params.id, function(err) {
                 var ownership = true;
 
                 if(err) ownership = false;

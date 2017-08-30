@@ -1,49 +1,44 @@
-require('./routes/assetgroups');
-require('./routes/assettypes');
-
 require('./routes/attributetypes');
 require('./routes/attributes');
 
 require('./routes/bodyparts');
 require('./routes/identities');
-require('./routes/loyalties');
 require('./routes/natures');
 
 require('./routes/diseases');
 require('./routes/sanity');
 require('./routes/wounds');
 
+require('./routes/species');
+//require('./routes/manifestations');
+//require('./routes/focuses');
+
 require('./routes/skills');
 require('./routes/expertises');
+//require('./routes/doctrines');
 
-require('./routes/manifestations');
-require('./routes/doctrines');
-require('./routes/focuses');
+//require('./routes/backgrounds');
 
-require('./routes/augmentations');
+//require('./routes/augmentations');
+//require('./routes/bionics');
 
-require('./routes/backgrounds');
+require('./routes/assetgroups');
+require('./routes/assettypes');
+//require('./routes/assets');
 
-require('./routes/bionics');
+//require('./routes/gifts');
+//require('./routes/imperfections');
 
-require('./routes/assets');
+//require('./routes/loyalties');
+//require('./routes/milestones');
 
-require('./routes/gifts');
-require('./routes/imperfections');
+//require('./routes/protection');
 
-require('./routes/milestones');
+//require('./routes/software');
 
-require('./routes/protection');
-
-require('./routes/software');
-
-require('./routes/weapongroups');
-require('./routes/weaponmods');
-require('./routes/weapontypes');
-require('./routes/weapons');
-
-require('./routes/species');
-
-require('./routes/persons');
+//require('./routes/weapongroups');
+//require('./routes/weaponmods');
+//require('./routes/weapontypes');
+//require('./routes/weapons');
 
 //require('./routes/users');

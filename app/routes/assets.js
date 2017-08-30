@@ -81,7 +81,7 @@ module.exports = function(router) {
 
     router.route('/:id/ownership')
         .get(function(req, res) {
-            ownership(req, tableName, req.params.id, false, function(err) {
+            ownership(req, req.params.id, function(err) {
                 var ownership = true;
 
                 if(err) ownership = false;
@@ -90,7 +90,7 @@ module.exports = function(router) {
             })
         });
 
-    // Attribute List
+    // Attributes todo
 
     router.route('/:id/attributes')
         .get(function(req, res, next) {
@@ -114,7 +114,7 @@ module.exports = function(router) {
             relation.delete(req, res, next, 'generic', req.params.id, 'generic', req.params.attributeId);
         });
 
-    // Doctrine List
+    // Doctrines todo
 
     router.route('/:id/doctrines')
         .get(function(req, res, next) {
@@ -138,7 +138,7 @@ module.exports = function(router) {
             relation.delete(req, res, next, 'generic', req.params.id, 'generic', req.params.doctrineId);
         });
 
-    // Expertise List
+    // Expertises todo
 
     router.route('/:id/expertises')
         .get(function(req, res, next) {
@@ -162,7 +162,7 @@ module.exports = function(router) {
             relation.delete(req, res, next, 'generic', req.params.id, 'generic', req.params.expertiseId);
         });
 
-    // Skill List
+    // Skills todo
 
     router.route('/:id/skills')
         .get(function(req, res, next) {

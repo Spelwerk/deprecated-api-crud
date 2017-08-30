@@ -78,7 +78,7 @@ describe('/doctrine', function() {
                 content: hasher(20)
             };
 
-            app.post('/doctrines/' + temporaryId + '/comments', payload)
+            app.post('/doctrines/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);

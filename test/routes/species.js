@@ -8,16 +8,29 @@ var should = chai.should(),
     expect = chai.expect;
 
 var app = require('../app'),
-    verifier = require('./../verifier'),
+    verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
 describe('/species', function() {
+
+    var temporaryId,
+        attributeId;
 
     before(function(done) {
         app.login(done);
     });
 
-    var temporaryId;
+    before(function(done) {
+        app.get('/attributes')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                attributeId = res.body.results[0].id;
+
+                done();
+            });
+    });
 
     function verifyList(body) {
         assert.isNumber(body.length);
@@ -59,9 +72,11 @@ describe('/species', function() {
                 name: hasher(20),
                 description: hasher(20),
                 playable: true,
+                manifestation: true,
                 max_age: 10,
-                multiply_skill: 10,
+                multiply_doctrine: 10,
                 multiply_expertise: 10,
+                multiply_skill: 10,
                 icon: 'http://fakeicon.com/' + hasher(20) + '.png'
             };
 
@@ -91,11 +106,7 @@ describe('/species', function() {
         });
 
         it('/:speciesId/comments should create a new comment for the species', function(done) {
-            var payload = {
-                content: hasher(20)
-            };
-
-            app.post('/species/' + temporaryId + '/comments', payload)
+            app.post('/species/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -108,21 +119,11 @@ describe('/species', function() {
 
         it('/:speciesId/attributes should add an attribute to the species', function(done) {
             var payload = {
-                insert_id: 1,
+                insert_id: attributeId,
                 value: 10
             };
 
             app.post('/species/' + temporaryId + '/attributes', payload)
-                .expect(201)
-                .end(done);
-        });
-
-        it('/:speciesId/weapons should add an weapon to the species', function(done) {
-            var payload = {
-                insert_id: 1
-            };
-
-            app.post('/species/' + temporaryId + '/weapons', payload)
                 .expect(201)
                 .end(done);
         });
@@ -149,9 +150,7 @@ describe('/species', function() {
         });
 
         it('/:speciesId/attributes should change the attribute value for the species', function(done) {
-            var payload = {value: 8};
-
-            app.put('/species/' + temporaryId + '/attributes/1', payload)
+            app.put('/species/' + temporaryId + '/attributes/1', { value: 8 })
                 .expect(204)
                 .end(done);
         });
@@ -172,20 +171,8 @@ describe('/species', function() {
                 });
         });
 
-        it('/creature should return a list of species', function(done) {
-            app.get('/species/creature')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyList(res.body);
-
-                    done();
-                });
-        });
-
-        it('/playable should return a list of species', function(done) {
-            app.get('/species/playable')
+        it('/playable/:playable should return a list of species', function(done) {
+            app.get('/species/playable/1')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -226,17 +213,7 @@ describe('/species', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    _.each(res.body.results, function(comment) {
-                        assert.isNumber(comment.id);
-                        assert.isString(comment.content);
-
-                        assert.isNumber(comment.user_id);
-                        assert.isString(comment.displayname);
-
-                        assert.isString(comment.created);
-                        if(comment.updated) assert.isString(comment.updated);
-                        assert.isNull(comment.deleted);
-                    });
+                    verifier.comments(res.body.results);
 
                     done();
                 })
@@ -252,47 +229,11 @@ describe('/species', function() {
                     assert.isArray(res.body.results);
 
                     _.each(res.body.results, function(item) {
-                        assert.isNumber(item.species_id);
-                        assert.isNumber(item.attribute_id);
+                        verifier.generic(item);
+
+                        assert.isNumber(item.generic_id);
+                        assert.isNumber(item.relation_id);
                         assert.isNumber(item.value);
-
-                        assert.isNumber(item.id);
-                        assert.isBoolean(item.canon);
-                        assert.isString(item.name);
-                        if(item.description) assert.isString(item.description);
-                        assert.isNumber(item.attributetype_id);
-                        if(item.icon) assert.equal(validator.isURL(item.icon), true);
-
-                        assert.isString(item.created);
-                        if(item.deleted) assert.isString(item.deleted);
-                        if(item.updated) assert.isString(item.updated);
-                    });
-
-                    done();
-                });
-        });
-
-        it('/:speciesId/weapons should return a list of weapons', function(done) {
-            app.get('/species/' + temporaryId + '/weapons')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        assert.isNumber(item.species_id);
-                        assert.isNumber(item.weapon_id);
-
-                        assert.isNumber(item.id);
-                        assert.isBoolean(item.canon);
-                        assert.isNumber(item.popularity);
-                        assert.isString(item.name);
-
-                        assert.isString(item.created);
-                        if(item.deleted) assert.isString(item.deleted);
-                        if(item.updated) assert.isString(item.updated);
                     });
 
                     done();
@@ -301,7 +242,7 @@ describe('/species', function() {
 
     });
 
-    describe('DELETE', function() {
+    xdescribe('DELETE', function() {
 
         it('/:speciesId/attributes should remove the attribute from the species', function(done) {
             app.delete('/species/' + temporaryId + '/attributes/1')

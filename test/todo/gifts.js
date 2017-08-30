@@ -89,7 +89,7 @@ describe('/gifts', function() {
                 content: hasher(20)
             };
 
-            app.post('/gifts/' + temporaryId + '/comments', payload)
+            app.post('/gifts/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);

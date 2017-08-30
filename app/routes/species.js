@@ -8,10 +8,10 @@ var query = require('./../../lib/sql/query'),
 module.exports = function(router) {
     'use strict';
 
-    var tableName = 'sanity';
+    var tableName = 'species';
 
-    var sql = 'SELECT * FROM sanity ' +
-        'LEFT JOIN generic ON generic.id = sanity.generic_id';
+    var sql = 'SELECT * FROM species ' +
+        'LEFT JOIN generic ON generic.id = species.generic_id';
 
     router.route('/')
         .get(function(req, res, next) {
@@ -21,6 +21,16 @@ module.exports = function(router) {
         })
         .post(function(req, res, next) {
             generic.post(req, res, next, tableName);
+        });
+
+    // Playable
+
+    router.route('/playable/:playable')
+        .get(function(req, res, next) {
+            var call = sql + ' WHERE deleted IS NULL AND ' +
+                'playable = ?';
+
+            sequel.get(req, res, next, call, [req.params.playable]);
         });
 
     // ID
@@ -67,4 +77,34 @@ module.exports = function(router) {
                 res.status(200).send({ownership: ownership});
             })
         });
+
+    // Bodypart
+
+    // Attributes
+
+    router.route('/:id/attributes')
+        .get(function(req, res, next) {
+            var call = 'SELECT * FROM generic_has_generic ' +
+                'LEFT JOIN generic ON generic.id = generic_has_generic.relation_id ' +
+                'LEFT JOIN attribute ON attribute.generic_id = generic_has_generic.relation_id ' +
+                'WHERE ' +
+                'generic_has_generic.generic_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.id]);
+        })
+        .post(function(req, res, next) {
+            relation.post(req, res, next, req.params.id, req.body.insert_id, req.body.value);
+        });
+
+    router.route('/:id/attributes/:attributeId')
+        .put(function(req, res, next) {
+            relation.put(req, res, next, req.params.id, req.params.attributeId, req.body.value);
+        })
+        .delete(function(req, res, next) {
+            relation.delete(req, res, next, req.params.id, req.params.attributeId);
+        });
+
+    // Skills todo list from skill where species_id = ?
+
+    // Weapons todo list from weapon where weapongroup.species_id = ?
 };

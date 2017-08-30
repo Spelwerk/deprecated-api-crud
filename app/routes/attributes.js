@@ -24,14 +24,14 @@ module.exports = function(router) {
             generic.post(req, res, next, tableName);
         });
 
-    // Special
+    // Manifestation
 
-    router.route('/special/:special')
+    router.route('/manifestation/:manifestationId')
         .get(function(req, res, next) {
             var call = sql + ' WHERE deleted IS NULL AND ' +
-                'attributetype.special = ?';
+                'manifestation_id = ?';
 
-            sequel.get(req, res, next, call, [req.params.special]);
+            sequel.get(req, res, next, call, [req.params.manifestationId]);
         });
 
     // Type
@@ -75,7 +75,7 @@ module.exports = function(router) {
 
     router.route('/:id/ownership')
         .get(function(req, res) {
-            ownership(req, req.params.id, false, function(err) {
+            ownership(req, req.params.id, function(err) {
                 var ownership = true;
 
                 if(err) ownership = false;

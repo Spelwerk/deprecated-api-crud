@@ -340,7 +340,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    ownership(req, 'person', personId, adminRestriction, callback);
+                    ownership(req, personId, callback);
                 },
                 function(callback) {
                     var call = 'UPDATE person SET ',
@@ -460,7 +460,7 @@ module.exports = function(router) {
 
             async.each([
                 function(callback) {
-                    ownership(req, 'person', personId, adminRestriction, callback);
+                    ownership(req, personId, callback);
                 },
                 function(callback) {
                     person.changeEquip(personId, 'asset', removeId, 0, callback);
@@ -545,7 +545,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    ownership(req, tableName, personId, adminRestriction, callback);
+                    ownership(req, personId, callback);
                 },
                 function(callback) {
                     query('SELECT value FROM person_has_attribute WHERE person_id = ? AND attribute_id = ?', [personId, attributeId], function(err, result) {
@@ -600,7 +600,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    ownership(req, tableName, personId, adminRestriction, callback);
+                    ownership(req, personId, callback);
                 },
                 function(callback) {
                     query('SELECT bionic_id FROM person_has_bionic WHERE person_id = ? AND bionic_id = ?', [personId, bionicId], function(err, results) {
@@ -658,7 +658,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    ownership(req, tableName, personId, adminRestriction, callback);
+                    ownership(req, personId, callback);
                 },
                 function(callback) {
                     person.changeActivate(personId, augmentationId, bionicId, 0, callback);
@@ -717,7 +717,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    ownership(req, tableName, personId, adminRestriction, callback);
+                    ownership(req, personId, callback);
                 },
                 function(callback) {
                     query('INSERT INTO person_has_background (person_id,background_id) VALUES (?,?)', [personId, backgroundId], callback);
@@ -752,7 +752,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    ownership(req, tableName, personId, adminRestriction, callback);
+                    ownership(req, personId, callback);
                 },
                 function(callback) {
                     query('DELETE FROM person_has_background WHERE person_id = ? AND background_id = ?', [personId, backgroundId], callback);
@@ -802,7 +802,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    ownership(req, 'person', personId, adminRestriction, callback);
+                    ownership(req, personId, callback);
                 },
                 function(callback) {
                     query('INSERT INTO person_has_bionic (person_id,bionic_id) VALUES (?,?)', [personId, bionicId], callback);
@@ -835,7 +835,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    ownership(req, 'person', personId, adminRestriction, callback);
+                    ownership(req, personId, callback);
                 },
                 function(callback) {
                     query('SELECT augmentation_id FROM person_has_augmentation WHERE person_id = ? AND bionic_id = ? AND active = 1', [personId, bionicId], function(err, results) {
@@ -883,7 +883,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    ownership(req, tableName, personId, adminRestriction, callback);
+                    ownership(req, personId, callback);
                 },
                 function(callback) {
                     query('SELECT playable,calculated FROM person WHERE id = ?', [personId], function(err, result) {
@@ -948,7 +948,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    ownership(req, tableName, personId, adminRestriction, callback);
+                    ownership(req, personId, callback);
                 },
                 function(callback) {
                     query('SELECT id FROM disease WHERE UPPER(name) = ?', [diseaseName.toUpperCase()], function(err, result) {
@@ -997,7 +997,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    ownership(req, tableName, personId, adminRestriction, callback);
+                    ownership(req, personId, callback);
                 },
                 function(callback) {
                     query('UPDATE person_has_disease SET heal = ? WHERE person_id = ? AND disease_id = ?', [diseaseHeal, personId, diseaseId], callback);
@@ -1044,7 +1044,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    ownership(req, tableName, personId, adminRestriction, callback);
+                    ownership(req, personId, callback);
                 },
                 function(callback) {
                     if(doctrineValue < 1) return callback();
@@ -1119,7 +1119,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    ownership(req, tableName, personId, adminRestriction, callback);
+                    ownership(req, personId, callback);
                 },
                 function(callback) {
                     query('SELECT value FROM person_has_doctrine WHERE person_id = ? AND doctrine_id = ?', [personId, doctrineId], function(err, results) {

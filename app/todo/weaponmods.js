@@ -59,7 +59,7 @@ module.exports = function(router) {
 
     router.route('/:weaponModId/ownership')
         .get(function(req, res) {
-            ownership(req, tableName, req.params.weaponModId, adminRestriction, function(err) {
+            ownership(req, req.params.id, function(err) {
                 var ownership = true;
 
                 if(err) ownership = false;

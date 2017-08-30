@@ -38,7 +38,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    ownership(req, adminRestriction, 'manifestation', manifestation.id, callback);
+                    ownership(req, manifestation.id, callback);
                 },
                 function(callback) {
                     query('INSERT INTO focus (name,description,icon,manifestation_id) VALUES (?,?,?,?)', [insert.name, insert.description, insert.icon, manifestation.id], function(err, result) {
@@ -100,7 +100,7 @@ module.exports = function(router) {
 
     router.route('/:focusId/ownership')
         .get(function(req, res) {
-            ownership(req, tableName, req.params.focusId, adminRestriction, function(err) {
+            ownership(req, req.params.id, function(err) {
                 var ownership = true;
 
                 if(err) ownership = false;

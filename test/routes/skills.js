@@ -13,10 +13,36 @@ var app = require('./../app'),
 
 describe('/skills', function() {
 
-    var temporaryId;
+    var temporaryId,
+        manifestationId,
+        speciesId;
 
     before(function(done) {
         app.login(done);
+    });
+
+    before(function(done) {
+        app.get('/manifestations')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                manifestationId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/species')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                speciesId = res.body.results[0].id;
+
+                done();
+            });
     });
 
     function verifyList(body) {
@@ -48,6 +74,8 @@ describe('/skills', function() {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
+                manifestation_id: manifestationId,
+                species_id: speciesId,
                 icon: 'http://fakeicon.com/' + hasher(20) + '.png'
             };
 
@@ -125,8 +153,20 @@ describe('/skills', function() {
                 });
         });
 
+        it('/manifestation/:manifestationId should return a list of assets', function(done) {
+            app.get('/skills/manifestation/' + manifestationId)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
         it('/species/:speciesId should return a list of assets', function(done) {
-            app.get('/skills/species/1')
+            app.get('/skills/species/' + speciesId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);

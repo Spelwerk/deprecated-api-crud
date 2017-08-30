@@ -88,7 +88,7 @@ module.exports = function(router) {
 
     router.route('/:imperfectionId/ownership')
         .get(function(req, res) {
-            ownership(req, tableName, req.params.imperfectionId, adminRestriction, function(err) {
+            ownership(req, req.params.id, function(err) {
                 var ownership = true;
 
                 if(err) ownership = false;

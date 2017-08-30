@@ -90,7 +90,7 @@ describe('/weaponmods', function() {
                 content: hasher(20)
             };
 
-            app.post('/weaponmods/' + temporaryId + '/comments', payload)
+            app.post('/weaponmods/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);

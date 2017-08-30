@@ -14,7 +14,8 @@ var app = require('./../app'),
 describe('/attributes', function() {
 
     var temporaryId,
-        typeId;
+        typeId,
+        manifestationId;
 
     before(function(done) {
         app.login(done);
@@ -31,6 +32,20 @@ describe('/attributes', function() {
                 done();
             });
     });
+
+    /*
+    before(function(done) {
+        app.get('/manifestations')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                manifestationId = res.body.results[0].id;
+
+                done();
+            });
+    });
+    */
 
     function verifyList(body) {
         assert.isNumber(body.length);
@@ -128,8 +143,8 @@ describe('/attributes', function() {
                 });
         });
 
-        it('/special should return a list of attributes', function(done) {
-            app.get('/attributes/special')
+        xit('/manifestation/:manifestationId should return a list of attributes', function(done) {
+            app.get('/attributes/manifestation/' + manifestationId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);

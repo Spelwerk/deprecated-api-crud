@@ -108,7 +108,7 @@ module.exports = function(router) {
 
     router.route('/:milestoneId/ownership')
         .get(function(req, res) {
-            ownership(req, tableName, req.params.milestoneId, adminRestriction, function(err) {
+            ownership(req, req.params.id, function(err) {
                 var ownership = true;
 
                 if(err) ownership = false;
@@ -183,7 +183,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    ownership(req, tableName, milestoneId, adminRestriction, callback);
+                    ownership(req, milestoneId, callback);
                 },
                 function(callback) {
                     query('INSERT INTO milestone_has_loyalty (milestone_id,loyalty_id,occupation,influence_min,influence_max) VALUES (?,?,?,?,?)', [milestoneId,loyaltyId,occupation,influenceMin,influenceMax], callback);
@@ -205,7 +205,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    ownership(req, tableName, milestoneId, adminRestriction, callback);
+                    ownership(req, milestoneId, callback);
                 },
                 function(callback) {
                     query('UPDATE milestone_has_loyalty SET occupation = ?, influence_min = ?, influence_max = ? WHERE milestone_id = ? AND loyalty_id = ?', [occupation,influenceMin,influenceMax,milestoneId,loyaltyId], callback);
