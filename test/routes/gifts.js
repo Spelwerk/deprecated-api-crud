@@ -17,8 +17,8 @@ describe('/gifts', function() {
         manifestationId,
         speciesId,
         attributeId,
-        skillId,
-        expertiseId;
+        expertiseId,
+        skillId;
 
     before(function(done) {
         app.login(done);
@@ -61,24 +61,24 @@ describe('/gifts', function() {
     });
 
     before(function(done) {
-        app.get('/skills')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                skillId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
-    before(function(done) {
         app.get('/expertises')
             .expect(200)
             .end(function(err, res) {
                 if(err) return done(err);
 
                 expertiseId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/skills')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                skillId = res.body.results[0].id;
 
                 done();
             });

@@ -8,16 +8,55 @@ var should = chai.should(),
     expect = chai.expect;
 
 var app = require('../app'),
-    verifier = require('./../verifier'),
+    verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
 describe('/augmentations', function() {
+
+    var temporaryId,
+        attributeId,
+        expertiseId,
+        skillId;
 
     before(function(done) {
         app.login(done);
     });
 
-    var temporaryId;
+    before(function(done) {
+        app.get('/attributes')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                attributeId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/expertises')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                expertiseId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/skills')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                skillId = res.body.results[0].id;
+
+                done();
+            });
+    });
 
     function verifyList(body) {
         assert.isNumber(body.length);
@@ -35,18 +74,11 @@ describe('/augmentations', function() {
     }
 
     function verifyItem(item) {
-        assert.isNumber(item.id);
-        assert.isBoolean(item.canon);
+        verifier.generic(item);
 
-        assert.isString(item.name);
-        if(item.description) assert.isString(item.description);
-        assert.isNumber(item.price);
         assert.isBoolean(item.legal);
-        if(item.weapon_id) assert.isNumber(item.weapon_id);
-
-        assert.isString(item.created);
-        if(item.updated) assert.isString(item.updated);
-        if(item.deleted) assert.isString(item.deleted);
+        assert.isNumber(item.price);
+        assert.isNumber(item.hacking);
     }
 
 
@@ -56,9 +88,9 @@ describe('/augmentations', function() {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
-                price: 10,
                 legal: true,
-                weapon_id: 1
+                price: 10,
+                hacking: 10
             };
 
             app.post('/augmentations', payload)
@@ -87,10 +119,6 @@ describe('/augmentations', function() {
         });
 
         it('/:augmentationId/comments should create a new comment for the augmentation', function(done) {
-            var payload = {
-                content: hasher(20)
-            };
-
             app.post('/augmentations/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
@@ -104,7 +132,7 @@ describe('/augmentations', function() {
 
         it('/:augmentationId/attributes should add an attribute to the augmentation', function(done) {
             var payload = {
-                insert_id: 1,
+                insert_id: attributeId,
                 value: 10
             };
 
@@ -113,9 +141,20 @@ describe('/augmentations', function() {
                 .end(done);
         });
 
+        it('/:augmentationId/expertises should add an expertise to the augmentation', function(done) {
+            var payload = {
+                insert_id: expertiseId,
+                value: 10
+            };
+
+            app.post('/augmentations/' + temporaryId + '/expertises', payload)
+                .expect(201)
+                .end(done);
+        });
+
         it('/:augmentationId/skills should add an skill to the augmentation', function(done) {
             var payload = {
-                insert_id: 1,
+                insert_id: skillId,
                 value: 10
             };
 
@@ -148,7 +187,15 @@ describe('/augmentations', function() {
         it('/:augmentationId/attributes should change the attribute value for the augmentation', function(done) {
             var payload = {value: 8};
 
-            app.put('/augmentations/' + temporaryId + '/attributes/1', payload)
+            app.put('/augmentations/' + temporaryId + '/attributes/' + attributeId, payload)
+                .expect(204)
+                .end(done);
+        });
+
+        it('/:augmentationId/expertises should change the expertise value for the augmentation', function(done) {
+            var payload = {value: 8};
+
+            app.put('/augmentations/' + temporaryId + '/expertises/' + expertiseId, payload)
                 .expect(204)
                 .end(done);
         });
@@ -156,7 +203,7 @@ describe('/augmentations', function() {
         it('/:augmentationId/skills should change the skill value for the augmentation', function(done) {
             var payload = {value: 8};
 
-            app.put('/augmentations/' + temporaryId + '/skills/1', payload)
+            app.put('/augmentations/' + temporaryId + '/skills/' + skillId, payload)
                 .expect(204)
                 .end(done);
         });
@@ -207,17 +254,7 @@ describe('/augmentations', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    _.each(res.body.results, function(comment) {
-                        assert.isNumber(comment.id);
-                        assert.isString(comment.content);
-
-                        assert.isNumber(comment.user_id);
-                        assert.isString(comment.displayname);
-
-                        assert.isString(comment.created);
-                        if(comment.updated) assert.isString(comment.updated);
-                        assert.isNull(comment.deleted);
-                    });
+                    verifier.comments(res.body.results);
 
                     done();
                 })
@@ -233,20 +270,24 @@ describe('/augmentations', function() {
                     assert.isArray(res.body.results);
 
                     _.each(res.body.results, function(item) {
-                        assert.isNumber(item.augmentation_id);
-                        assert.isNumber(item.attribute_id);
-                        assert.isNumber(item.value);
+                        verifier.generic(item)
+                    });
 
-                        assert.isNumber(item.id);
-                        assert.isBoolean(item.canon);
-                        assert.isString(item.name);
-                        if(item.description) assert.isString(item.description);
-                        assert.isNumber(item.attributetype_id);
-                        if(item.icon) assert.equal(validator.isURL(item.icon), true);
+                    done();
+                });
+        });
 
-                        assert.isString(item.created);
-                        if(item.deleted) assert.isString(item.deleted);
-                        if(item.updated) assert.isString(item.updated);
+        it('/:augmentationId/expertises should return a list of expertises', function(done) {
+            app.get('/augmentations/' + temporaryId + '/expertises')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.length);
+                    assert.isArray(res.body.results);
+
+                    _.each(res.body.results, function(item) {
+                        verifier.generic(item)
                     });
 
                     done();
@@ -263,22 +304,7 @@ describe('/augmentations', function() {
                     assert.isArray(res.body.results);
 
                     _.each(res.body.results, function(item) {
-                        assert.isNumber(item.augmentation_id);
-                        assert.isNumber(item.skill_id);
-                        assert.isNumber(item.value);
-
-                        assert.isNumber(item.id);
-                        assert.isBoolean(item.canon);
-                        assert.isNumber(item.popularity);
-                        assert.isBoolean(item.manifestation);
-                        assert.isString(item.name);
-                        if(item.description) assert.isString(item.description);
-                        if(item.species_id) assert.isNumber(item.species_id);
-                        if(item.icon) assert.equal(validator.isURL(item.icon), true);
-
-                        assert.isString(item.created);
-                        if(item.deleted) assert.isString(item.deleted);
-                        if(item.updated) assert.isString(item.updated);
+                        verifier.generic(item)
                     });
 
                     done();
@@ -287,7 +313,7 @@ describe('/augmentations', function() {
 
     });
 
-    describe('DELETE', function() {
+    xdescribe('DELETE', function() {
 
         it('/:augmentationId/attributes should remove the attribute from the augmentation', function(done) {
             app.delete('/augmentations/' + temporaryId + '/attributes/1')
