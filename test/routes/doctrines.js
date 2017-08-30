@@ -8,16 +8,29 @@ var should = chai.should(),
     expect = chai.expect;
 
 var app = require('../app'),
-    verifier = require('./../verifier'),
+    verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
-describe('/manifestations', function() {
+describe('/doctrine', function() {
+
+    var temporaryId,
+        manifestationId;
 
     before(function(done) {
         app.login(done);
     });
 
-    var temporaryId;
+    before(function(done) {
+        app.get('/manifestations')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                manifestationId = res.body.results[0].id;
+
+                done();
+            });
+    });
 
     function verifyList(body) {
         assert.isNumber(body.length);
@@ -35,18 +48,10 @@ describe('/manifestations', function() {
     }
 
     function verifyItem(item) {
-        assert.isNumber(item.id);
-        assert.isBoolean(item.canon);
+        verifier.generic(item);
 
-        assert.isString(item.name);
-        if(item.description) assert.isString(item.description);
-        assert.isNumber(item.power_id);
-        assert.isNumber(item.skill_id);
-        if(item.icon) assert.equal(validator.isURL(item.icon), true);
-
-        assert.isString(item.created);
-        if(item.updated) assert.isString(item.updated);
-        if(item.deleted) assert.isString(item.deleted);
+        assert.isNumber(item.manifestation_id);
+        assert.isNumber(item.expertise_id);
     }
 
 
@@ -56,12 +61,11 @@ describe('/manifestations', function() {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
-                power: hasher(20),
-                skill: hasher(20),
+                manifestation_id: manifestationId,
                 icon: 'http://fakeicon.com/' + hasher(20) + '.png'
             };
 
-            app.post('/manifestations', payload)
+            app.post('/doctrines', payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -74,12 +78,8 @@ describe('/manifestations', function() {
                 });
         });
 
-        it('/:manifestationId/comments should create a new comment for the asset', function(done) {
-            var payload = {
-                content: hasher(20)
-            };
-
-            app.post('/manifestations/' + temporaryId + '/comments', { comment: hasher(20) })
+        it('/:doctrineId/comments should create a new comment for the asset', function(done) {
+            app.post('/doctrines/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -94,19 +94,19 @@ describe('/manifestations', function() {
 
     describe('PUT', function() {
 
-        it('/:manifestationId should update the item with new values', function(done) {
+        it('/:doctrineId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
             };
 
-            app.put('/manifestations/' + temporaryId, payload)
+            app.put('/doctrines/' + temporaryId, payload)
                 .expect(204)
                 .end(done);
         });
 
-        it('/:manifestationId/canon should update the asset canon field', function(done) {
-            app.put('/manifestations/' + temporaryId + '/canon')
+        it('/:doctrineId/canon should update the asset canon field', function(done) {
+            app.put('/doctrines/' + temporaryId + '/canon')
                 .expect(204)
                 .end(done);
         });
@@ -115,8 +115,8 @@ describe('/manifestations', function() {
 
     describe('GET', function() {
 
-        it('/ should return a list of manifestations', function(done) {
-            app.get('/manifestations')
+        it('/ should return a list of doctrine', function(done) {
+            app.get('/doctrines')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -127,8 +127,8 @@ describe('/manifestations', function() {
                 });
         });
 
-        it('/:manifestationId should return one asset', function(done) {
-            app.get('/manifestations/' + temporaryId)
+        it('/:doctrineId should return one asset', function(done) {
+            app.get('/doctrines/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -139,8 +139,8 @@ describe('/manifestations', function() {
                 })
         });
 
-        it('/:manifestationId/ownership should return ownership status of the asset if user is logged in', function(done) {
-            app.get('/manifestations/' + temporaryId + '/ownership')
+        it('/:doctrineId/ownership should return ownership status of the asset if user is logged in', function(done) {
+            app.get('/doctrines/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -151,23 +151,13 @@ describe('/manifestations', function() {
                 });
         });
 
-        it('/:manifestationId/comments should get all available comments for the asset', function(done) {
-            app.get('/manifestations/' + temporaryId + '/comments')
+        it('/:doctrineId/comments should get all available comments for the asset', function(done) {
+            app.get('/doctrines/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    _.each(res.body.results, function(comment) {
-                        assert.isNumber(comment.id);
-                        assert.isString(comment.content);
-
-                        assert.isNumber(comment.user_id);
-                        assert.isString(comment.displayname);
-
-                        assert.isString(comment.created);
-                        if(comment.updated) assert.isString(comment.updated);
-                        assert.isNull(comment.deleted);
-                    });
+                    verifier.comments(res.body.results);
 
                     done();
                 })
@@ -175,10 +165,10 @@ describe('/manifestations', function() {
 
     });
 
-    describe('DELETE', function() {
+    xdescribe('DELETE', function() {
 
-        it('/:manifestationId should update the asset deleted field', function(done) {
-            app.delete('/manifestations/' + temporaryId)
+        it('/:doctrineId should update the asset deleted field', function(done) {
+            app.delete('/doctrines/' + temporaryId)
                 .expect(204)
                 .end(done);
         });

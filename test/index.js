@@ -9,9 +9,9 @@ require('./routes/diseases');
 require('./routes/sanity');
 require('./routes/wounds');
 
+require('./routes/manifestations');
 require('./routes/species');
-//require('./routes/manifestations');
-//require('./routes/focuses');
+require('./routes/focuses');
 
 require('./routes/skills');
 require('./routes/expertises');

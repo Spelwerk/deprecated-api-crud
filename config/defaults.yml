@@ -1,37 +1,41 @@
 attributes:
-  id:
-    resilience: 1
+  ids:
+    resilience: 2
     stamina: 2
-    tolerance: 3
-    initiative: 4
-    speed: 5
-    disease: 6
-    sanity: 7
-    trauma: 8
-    ballistic: 9
-    bashing: 10
-    piercing: 11
-    slashing: 12
-    damage: 13
-    honor: 14
-    infamy: 15
-    ammunition: 16
-    money: 17
-    rations: 18
-    experience: 19
-    energy: 20
+    tolerance: 2
+    initiative: 2
+    speed: 2
+    disease: 2
+    sanity: 2
+    trauma: 2
+    ballistic: 2
+    bashing: 2
+    piercing: 2
+    slashing: 2
+    damage: 2
+    honor: 2
+    infamy: 2
+    ammunition: 2
+    money: 2
+    rations: 2
+    experience: 2
+    energy: 2
 
-  type:
+  types:
     body: 1
-    combat: 2
-    wound: 3
-    protection: 4
-    damage: 5
-    reputation: 6
-    consumable: 7
-    experience: 8
-    energy: 9
-    power: 10
+    combat: 1
+    wound: 1
+    protection: 1
+    damage: 1
+    reputation: 1
+    consumable: 1
+    experience: 1
+    energy: 1
+    power: 1
+
+manifestation:
+  power:
+    maximum: 16
 
 skill:
   required: 3

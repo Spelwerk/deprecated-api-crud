@@ -8,16 +8,16 @@ var should = chai.should(),
     expect = chai.expect;
 
 var app = require('../app'),
-    verifier = require('./../verifier'),
+    verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
-describe('/focuses', function() {
+describe('/manifestations', function() {
+
+    var temporaryId;
 
     before(function(done) {
         app.login(done);
     });
-
-    var temporaryId;
 
     function verifyList(body) {
         assert.isNumber(body.length);
@@ -35,17 +35,7 @@ describe('/focuses', function() {
     }
 
     function verifyItem(item) {
-        assert.isNumber(item.id);
-        assert.isBoolean(item.canon);
-
-        assert.isString(item.name);
-        if(item.description) assert.isString(item.description);
-        assert.isNumber(item.manifestation_id);
-        if(item.icon) assert.equal(validator.isURL(item.icon), true);
-
-        assert.isString(item.created);
-        if(item.updated) assert.isString(item.updated);
-        if(item.deleted) assert.isString(item.deleted);
+        verifier.generic(item);
     }
 
 
@@ -55,11 +45,12 @@ describe('/focuses', function() {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
-                manifestation_id: 1,
+                power: hasher(20),
+                skill: hasher(20),
                 icon: 'http://fakeicon.com/' + hasher(20) + '.png'
             };
 
-            app.post('/focuses', payload)
+            app.post('/manifestations', payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -72,12 +63,8 @@ describe('/focuses', function() {
                 });
         });
 
-        it('/:focusId/comments should create a new comment for the asset', function(done) {
-            var payload = {
-                content: hasher(20)
-            };
-
-            app.post('/focuses/' + temporaryId + '/comments', { comment: hasher(20) })
+        it('/:manifestationId/comments should create a new comment for the asset', function(done) {
+            app.post('/manifestations/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -92,19 +79,19 @@ describe('/focuses', function() {
 
     describe('PUT', function() {
 
-        it('/:focusId should update the item with new values', function(done) {
+        it('/:manifestationId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
             };
 
-            app.put('/focuses/' + temporaryId, payload)
+            app.put('/manifestations/' + temporaryId, payload)
                 .expect(204)
                 .end(done);
         });
 
-        it('/:focusId/canon should update the asset canon field', function(done) {
-            app.put('/focuses/' + temporaryId + '/canon')
+        it('/:manifestationId/canon should update the asset canon field', function(done) {
+            app.put('/manifestations/' + temporaryId + '/canon')
                 .expect(204)
                 .end(done);
         });
@@ -113,8 +100,8 @@ describe('/focuses', function() {
 
     describe('GET', function() {
 
-        it('/ should return a list of focuses', function(done) {
-            app.get('/focuses')
+        it('/ should return a list of manifestations', function(done) {
+            app.get('/manifestations')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -125,8 +112,8 @@ describe('/focuses', function() {
                 });
         });
 
-        it('/:focusId should return one asset', function(done) {
-            app.get('/focuses/' + temporaryId)
+        it('/:manifestationId should return one asset', function(done) {
+            app.get('/manifestations/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -137,8 +124,8 @@ describe('/focuses', function() {
                 })
         });
 
-        it('/:focusId/ownership should return ownership status of the asset if user is logged in', function(done) {
-            app.get('/focuses/' + temporaryId + '/ownership')
+        it('/:manifestationId/ownership should return ownership status of the asset if user is logged in', function(done) {
+            app.get('/manifestations/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -149,23 +136,13 @@ describe('/focuses', function() {
                 });
         });
 
-        it('/:focusId/comments should get all available comments for the asset', function(done) {
-            app.get('/focuses/' + temporaryId + '/comments')
+        it('/:manifestationId/comments should get all available comments for the asset', function(done) {
+            app.get('/manifestations/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    _.each(res.body.results, function(comment) {
-                        assert.isNumber(comment.id);
-                        assert.isString(comment.content);
-
-                        assert.isNumber(comment.user_id);
-                        assert.isString(comment.displayname);
-
-                        assert.isString(comment.created);
-                        if(comment.updated) assert.isString(comment.updated);
-                        assert.isNull(comment.deleted);
-                    });
+                    verifier.comments(res.body.results);
 
                     done();
                 })
@@ -173,10 +150,10 @@ describe('/focuses', function() {
 
     });
 
-    describe('DELETE', function() {
+    xdescribe('DELETE', function() {
 
-        it('/:focusId should update the asset deleted field', function(done) {
-            app.delete('/focuses/' + temporaryId)
+        it('/:manifestationId should update the asset deleted field', function(done) {
+            app.delete('/manifestations/' + temporaryId)
                 .expect(204)
                 .end(done);
         });
