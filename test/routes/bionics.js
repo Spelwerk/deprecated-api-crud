@@ -16,7 +16,8 @@ describe('/bionics', function() {
     var temporaryId,
         bodyPartId,
         attributeId,
-        augmentationId;
+        augmentationId,
+        softwareId;
 
     before(function(done) {
         app.login(done);
@@ -53,6 +54,18 @@ describe('/bionics', function() {
                 if(err) return done(err);
 
                 augmentationId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/software')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                softwareId = res.body.results[0].id;
 
                 done();
             });
@@ -149,6 +162,16 @@ describe('/bionics', function() {
             };
 
             app.post('/bionics/' + temporaryId + '/augmentations', payload)
+                .expect(201)
+                .end(done);
+        });
+
+        it('/:bionicId/software should add an software to the bionic', function(done) {
+            var payload = {
+                insert_id: softwareId
+            };
+
+            app.post('/bionics/' + temporaryId + '/software', payload)
                 .expect(201)
                 .end(done);
         });
@@ -263,6 +286,23 @@ describe('/bionics', function() {
 
         it('/:bionicId/augmentations should return a list of augmentations', function(done) {
             app.get('/bionics/' + temporaryId + '/augmentations')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.length);
+                    assert.isArray(res.body.results);
+
+                    _.each(res.body.results, function(item) {
+                        verifier.generic(item);
+                    });
+
+                    done();
+                });
+        });
+
+        it('/:bionicId/software should return a list of software', function(done) {
+            app.get('/bionics/' + temporaryId + '/software')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);

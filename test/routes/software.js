@@ -8,16 +8,16 @@ var should = chai.should(),
     expect = chai.expect;
 
 var app = require('../app'),
-    verifier = require('./../verifier'),
+    verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
 describe('/software', function() {
 
+    var temporaryId;
+
     before(function(done) {
         app.login(done);
     });
-
-    var temporaryId;
 
     function verifyList(body) {
         assert.isNumber(body.length);
@@ -35,19 +35,12 @@ describe('/software', function() {
     }
 
     function verifyItem(item) {
-        assert.isNumber(item.id);
-        assert.isBoolean(item.canon);
+        verifier.generic(item);
 
-        assert.isString(item.name);
-        if(item.description) assert.isString(item.description);
+        assert.isBoolean(item.legal);
         assert.isNumber(item.price);
         assert.isNumber(item.hacking);
         assert.isNumber(item.hacking_bonus);
-        assert.isBoolean(item.legal);
-
-        assert.isString(item.created);
-        if(item.updated) assert.isString(item.updated);
-        if(item.deleted) assert.isString(item.deleted);
     }
 
 
@@ -57,10 +50,10 @@ describe('/software', function() {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
+                legal: true,
                 price: 10,
                 hacking: 10,
-                hacking_bonus: 10,
-                legal: true
+                hacking_bonus: 10
             };
 
             app.post('/software', payload)
@@ -89,10 +82,6 @@ describe('/software', function() {
         });
 
         it('/:softwareId/comments should create a new comment for the asset', function(done) {
-            var payload = {
-                content: hasher(20)
-            };
-
             app.post('/software/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
@@ -171,17 +160,7 @@ describe('/software', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    _.each(res.body.results, function(comment) {
-                        assert.isNumber(comment.id);
-                        assert.isString(comment.content);
-
-                        assert.isNumber(comment.user_id);
-                        assert.isString(comment.displayname);
-
-                        assert.isString(comment.created);
-                        if(comment.updated) assert.isString(comment.updated);
-                        assert.isNull(comment.deleted);
-                    });
+                    verifier.comments(res.body.results);
 
                     done();
                 })
@@ -189,7 +168,7 @@ describe('/software', function() {
 
     });
 
-    describe('DELETE', function() {
+    xdescribe('DELETE', function() {
 
         it('/:softwareId should update the asset deleted field', function(done) {
             app.delete('/software/' + temporaryId)

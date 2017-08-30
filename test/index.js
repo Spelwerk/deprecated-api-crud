@@ -27,9 +27,9 @@ require('./routes/assetgroups');
 require('./routes/assettypes');
 require('./routes/assets');
 
+require('./routes/software');
 require('./routes/augmentations');
-//require('./routes/bionics');
-//require('./routes/software');
+require('./routes/bionics');
 
 //require('./routes/protection');
 

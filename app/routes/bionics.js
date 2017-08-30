@@ -125,4 +125,28 @@ module.exports = function(router) {
         .delete(function(req, res, next) {
             relation.delete(req, res, next, req.params.id, req.params.augmentationId);
         });
+
+    // Software
+
+    router.route('/:id/software')
+        .get(function(req, res, next) {
+            var call = 'SELECT * FROM generic_has_generic ' +
+                'LEFT JOIN generic ON generic.id = generic_has_generic.relation_id ' +
+                'LEFT JOIN software ON software.generic_id = generic_has_generic.relation_id ' +
+                'WHERE ' +
+                'generic_has_generic.generic_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.id]);
+        })
+        .post(function(req, res, next) {
+            relation.post(req, res, next, req.params.id, req.body.insert_id);
+        });
+
+    router.route('/:id/software/:softwareId')
+        .put(function(req, res, next) {
+            relation.put(req, res, next, req.params.id, req.params.softwareId);
+        })
+        .delete(function(req, res, next) {
+            relation.delete(req, res, next, req.params.id, req.params.softwareId);
+        });
 };

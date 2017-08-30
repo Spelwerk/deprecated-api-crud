@@ -16,7 +16,8 @@ describe('/augmentations', function() {
     var temporaryId,
         attributeId,
         expertiseId,
-        skillId;
+        skillId,
+        softwareId;
 
     before(function(done) {
         app.login(done);
@@ -53,6 +54,18 @@ describe('/augmentations', function() {
                 if(err) return done(err);
 
                 skillId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/software')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                softwareId = res.body.results[0].id;
 
                 done();
             });
@@ -163,6 +176,16 @@ describe('/augmentations', function() {
                 .end(done);
         });
 
+        it('/:augmentationId/software should add an software to the augmentation', function(done) {
+            var payload = {
+                insert_id: softwareId
+            };
+
+            app.post('/augmentations/' + temporaryId + '/software', payload)
+                .expect(201)
+                .end(done);
+        });
+
     });
 
     describe('PUT', function() {
@@ -185,25 +208,19 @@ describe('/augmentations', function() {
         });
 
         it('/:augmentationId/attributes should change the attribute value for the augmentation', function(done) {
-            var payload = {value: 8};
-
-            app.put('/augmentations/' + temporaryId + '/attributes/' + attributeId, payload)
+            app.put('/augmentations/' + temporaryId + '/attributes/' + attributeId, {value: 8})
                 .expect(204)
                 .end(done);
         });
 
         it('/:augmentationId/expertises should change the expertise value for the augmentation', function(done) {
-            var payload = {value: 8};
-
-            app.put('/augmentations/' + temporaryId + '/expertises/' + expertiseId, payload)
+            app.put('/augmentations/' + temporaryId + '/expertises/' + expertiseId, {value: 8})
                 .expect(204)
                 .end(done);
         });
 
         it('/:augmentationId/skills should change the skill value for the augmentation', function(done) {
-            var payload = {value: 8};
-
-            app.put('/augmentations/' + temporaryId + '/skills/' + skillId, payload)
+            app.put('/augmentations/' + temporaryId + '/skills/' + skillId, {value: 8})
                 .expect(204)
                 .end(done);
         });
@@ -305,6 +322,23 @@ describe('/augmentations', function() {
 
                     _.each(res.body.results, function(item) {
                         verifier.generic(item)
+                    });
+
+                    done();
+                });
+        });
+
+        it('/:augmentationId/software should return a list of software', function(done) {
+            app.get('/augmentations/' + temporaryId + '/software')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.length);
+                    assert.isArray(res.body.results);
+
+                    _.each(res.body.results, function(item) {
+                        verifier.generic(item);
                     });
 
                     done();
