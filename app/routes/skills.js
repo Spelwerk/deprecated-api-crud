@@ -23,16 +23,6 @@ module.exports = function(router) {
             generic.post(req, res, next, tableName);
         });
 
-    // Species
-
-    router.route('/species/:speciesId')
-        .get(function(req, res, next) {
-            var call = sql + ' WHERE deleted IS NULL AND ' +
-                'species_id = ?';
-
-            sequel.get(req, res, next, call, [req.params.speciesId]);
-        });
-
     // Manifestation
 
     router.route('/manifestation/:manifestationId')
@@ -41,6 +31,16 @@ module.exports = function(router) {
                 'manifestation_id = ?';
 
             sequel.get(req, res, next, call, [req.params.manifestationId]);
+        });
+
+    // Species
+
+    router.route('/species/:speciesId')
+        .get(function(req, res, next) {
+            var call = sql + ' WHERE deleted IS NULL AND ' +
+                'species_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.speciesId]);
         });
 
     // ID

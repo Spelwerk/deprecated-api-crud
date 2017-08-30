@@ -20,25 +20,25 @@ require('./routes/skills');
 require('./routes/expertises');
 require('./routes/doctrines');
 
-//require('./routes/backgrounds');
-//require('./routes/gifts');
-//require('./routes/imperfections');
-//require('./routes/milestones');
+require('./routes/gifts');
+require('./routes/imperfections');
 
 require('./routes/assetgroups');
 require('./routes/assettypes');
-//require('./routes/assets');
+require('./routes/assets');
 
 //require('./routes/augmentations');
 //require('./routes/bionics');
+//require('./routes/software');
 
 //require('./routes/protection');
-
-//require('./routes/software');
 
 //require('./routes/weapongroups');
 //require('./routes/weaponmods');
 //require('./routes/weapontypes');
 //require('./routes/weapons');
+
+//require('./routes/milestones');
+//require('./routes/backgrounds');
 
 //require('./routes/users');

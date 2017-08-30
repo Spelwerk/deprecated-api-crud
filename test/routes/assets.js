@@ -14,10 +14,27 @@ var app = require('./../app'),
 describe('/assets', function() {
 
     var temporaryId,
-        typeId;
+        groupId,
+        typeId,
+        attributeId,
+        doctrineId,
+        expertiseId,
+        skillId;
 
     before(function(done) {
         app.login(done);
+    });
+
+    before(function(done) {
+        app.get('/assetgroups')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                groupId = res.body.results[0].id;
+
+                done();
+            });
     });
 
     before(function(done) {
@@ -27,6 +44,54 @@ describe('/assets', function() {
                 if(err) return done(err);
 
                 typeId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/attributes')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                attributeId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/doctrines')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                doctrineId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/expertises')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                expertiseId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/skills')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                skillId = res.body.results[0].id;
 
                 done();
             });
@@ -64,9 +129,9 @@ describe('/assets', function() {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
-                price: 10,
+                assettype_id: typeId,
                 legal: true,
-                assettype_id: typeId
+                price: 10
             };
 
             app.post('/assets', payload)
@@ -95,10 +160,6 @@ describe('/assets', function() {
         });
 
         it('/:assetId/comments should create a new comment for the asset', function(done) {
-            var payload = {
-                content: hasher(20)
-            };
-
             app.post('/assets/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
@@ -176,25 +237,25 @@ describe('/assets', function() {
         });
 
         it('/:assetId/attributes should change the attribute value for the asset', function(done) {
-            app.put('/assets/' + temporaryId + '/attributes/1', {value: 8})
+            app.put('/assets/' + temporaryId + '/attributes/' + attributeId, {value: 8})
                 .expect(204)
                 .end(done);
         });
 
         it('/:assetId/doctrines should change the doctrine value for the asset', function(done) {
-            app.put('/assets/' + temporaryId + '/doctrines/1', {value: 8})
+            app.put('/assets/' + temporaryId + '/doctrines/' + doctrineId, {value: 8})
                 .expect(204)
                 .end(done);
         });
 
         it('/:assetId/expertises should change the expertise value for the asset', function(done) {
-            app.put('/assets/' + temporaryId + '/expertises/1', {value: 8})
+            app.put('/assets/' + temporaryId + '/expertises/' + expertiseId, {value: 8})
                 .expect(204)
                 .end(done);
         });
 
         it('/:assetId/skills should change the skill value for the asset', function(done) {
-            app.put('/assets/' + temporaryId + '/skills/1', {value: 8})
+            app.put('/assets/' + temporaryId + '/skills/' + skillId, {value: 8})
                 .expect(204)
                 .end(done);
         });
@@ -215,8 +276,20 @@ describe('/assets', function() {
                 });
         });
 
+        it('/group/:groupId should return a list of assets', function(done) {
+            app.get('/assets/group/' + groupId)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
         it('/type/:typeId should return a list of assets', function(done) {
-            app.get('/assets/type/1')
+            app.get('/assets/type/' + typeId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -257,17 +330,7 @@ describe('/assets', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    _.each(res.body.results, function(comment) {
-                        assert.isNumber(comment.id);
-                        assert.isString(comment.content);
-
-                        assert.isNumber(comment.user_id);
-                        assert.isString(comment.displayname);
-
-                        assert.isString(comment.created);
-                        if(comment.updated) assert.isString(comment.updated);
-                        assert.isNull(comment.deleted);
-                    });
+                    verifier.comments(res.body.results);
 
                     done();
                 })
@@ -283,20 +346,7 @@ describe('/assets', function() {
                     assert.isArray(res.body.results);
 
                     _.each(res.body.results, function(item) {
-                        assert.isNumber(item.asset_id);
-                        assert.isNumber(item.attribute_id);
-                        assert.isNumber(item.value);
-
-                        assert.isNumber(item.id);
-                        assert.isBoolean(item.canon);
-                        assert.isString(item.name);
-                        if(item.description) assert.isString(item.description);
-                        assert.isNumber(item.attributetype_id);
-                        if(item.icon) assert.equal(validator.isURL(item.icon), true);
-
-                        assert.isString(item.created);
-                        if(item.deleted) assert.isString(item.deleted);
-                        if(item.updated) assert.isString(item.updated);
+                        verifier.generic(item);
                     });
 
                     done();
@@ -313,22 +363,7 @@ describe('/assets', function() {
                     assert.isArray(res.body.results);
 
                     _.each(res.body.results, function(item) {
-                        assert.isNumber(item.asset_id);
-                        assert.isNumber(item.doctrine_id);
-                        assert.isNumber(item.value);
-
-                        assert.isNumber(item.id);
-                        assert.isBoolean(item.canon);
-                        assert.isNumber(item.popularity);
-                        assert.isString(item.name);
-                        if(item.description) assert.isString(item.description);
-                        assert.isNumber(item.manifestation_id);
-                        assert.isNumber(item.expertise_id);
-                        if(item.icon) assert.equal(validator.isURL(item.icon), true);
-
-                        assert.isString(item.created);
-                        if(item.deleted) assert.isString(item.deleted);
-                        if(item.updated) assert.isString(item.updated);
+                        verifier.generic(item);
                     });
 
                     done();
@@ -345,22 +380,7 @@ describe('/assets', function() {
                     assert.isArray(res.body.results);
 
                     _.each(res.body.results, function(item) {
-                        assert.isNumber(item.asset_id);
-                        assert.isNumber(item.expertise_id);
-                        assert.isNumber(item.value);
-
-                        assert.isNumber(item.id);
-                        assert.isBoolean(item.canon);
-                        assert.isNumber(item.popularity);
-                        assert.isString(item.name);
-                        if(item.description) assert.isString(item.description);
-                        assert.isNumber(item.skill_id);
-                        if(item.species_id) assert.isNumber(item.species_id);
-                        if(item.species_id) assert.isNumber(item.manifestation_id);
-
-                        assert.isString(item.created);
-                        if(item.deleted) assert.isString(item.deleted);
-                        if(item.updated) assert.isString(item.updated);
+                        verifier.generic(item);
                     });
 
                     done();
@@ -377,22 +397,7 @@ describe('/assets', function() {
                     assert.isArray(res.body.results);
 
                     _.each(res.body.results, function(item) {
-                        assert.isNumber(item.asset_id);
-                        assert.isNumber(item.skill_id);
-                        assert.isNumber(item.value);
-
-                        assert.isNumber(item.id);
-                        assert.isBoolean(item.canon);
-                        assert.isNumber(item.popularity);
-                        assert.isBoolean(item.manifestation);
-                        assert.isString(item.name);
-                        if(item.description) assert.isString(item.description);
-                        if(item.species_id) assert.isNumber(item.species_id);
-                        if(item.icon) assert.equal(validator.isURL(item.icon), true);
-
-                        assert.isString(item.created);
-                        if(item.deleted) assert.isString(item.deleted);
-                        if(item.updated) assert.isString(item.updated);
+                        verifier.generic(item);
                     });
 
                     done();

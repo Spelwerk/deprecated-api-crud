@@ -8,16 +8,81 @@ var should = chai.should(),
     expect = chai.expect;
 
 var app = require('../app'),
-    verifier = require('./../verifier'),
+    verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
 describe('/gifts', function() {
+
+    var temporaryId,
+        manifestationId,
+        speciesId,
+        attributeId,
+        skillId,
+        expertiseId;
 
     before(function(done) {
         app.login(done);
     });
 
-    var temporaryId;
+    before(function(done) {
+        app.get('/manifestations')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                manifestationId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/species')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                speciesId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/attributes')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                attributeId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/skills')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                skillId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/expertises')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                expertiseId = res.body.results[0].id;
+
+                done();
+            });
+    });
 
     function verifyList(body) {
         assert.isNumber(body.length);
@@ -35,17 +100,10 @@ describe('/gifts', function() {
     }
 
     function verifyItem(item) {
-        assert.isNumber(item.id);
-        assert.isBoolean(item.canon);
+        verifier.generic(item);
 
-        assert.isString(item.name);
-        if(item.description) assert.isString(item.description);
-        if(item.species_id) assert.isNumber(item.species_id);
         if(item.manifestation_id) assert.isNumber(item.manifestation_id);
-
-        assert.isString(item.created);
-        if(item.updated) assert.isString(item.updated);
-        if(item.deleted) assert.isString(item.deleted);
+        if(item.species_id) assert.isNumber(item.species_id);
     }
 
 
@@ -55,8 +113,8 @@ describe('/gifts', function() {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
-                species_id: 1,
-                manifestation_id: 1
+                manifestation_id: manifestationId,
+                species_id: speciesId
             };
 
             app.post('/gifts', payload)
@@ -85,10 +143,6 @@ describe('/gifts', function() {
         });
 
         it('/:giftId/comments should create a new comment for the gift', function(done) {
-            var payload = {
-                content: hasher(20)
-            };
-
             app.post('/gifts/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
@@ -102,7 +156,7 @@ describe('/gifts', function() {
 
         it('/:giftId/attributes should add an attribute to the gift', function(done) {
             var payload = {
-                insert_id: 1,
+                insert_id: attributeId,
                 value: 10
             };
 
@@ -113,11 +167,22 @@ describe('/gifts', function() {
 
         it('/:giftId/skills should add an skill to the gift', function(done) {
             var payload = {
-                insert_id: 1,
+                insert_id: skillId,
                 value: 10
             };
 
             app.post('/gifts/' + temporaryId + '/skills', payload)
+                .expect(201)
+                .end(done);
+        });
+
+        it('/:giftId/expertises should add an skill to the gift', function(done) {
+            var payload = {
+                insert_id: expertiseId,
+                value: 10
+            };
+
+            app.post('/gifts/' + temporaryId + '/expertises', payload)
                 .expect(201)
                 .end(done);
         });
@@ -144,17 +209,19 @@ describe('/gifts', function() {
         });
 
         it('/:giftId/attributes should change the attribute value for the gift', function(done) {
-            var payload = {value: 8};
-
-            app.put('/gifts/' + temporaryId + '/attributes/1', payload)
+            app.put('/gifts/' + temporaryId + '/attributes/' + attributeId, {value: 8})
                 .expect(204)
                 .end(done);
         });
 
         it('/:giftId/skills should change the skill value for the gift', function(done) {
-            var payload = {value: 8};
+            app.put('/gifts/' + temporaryId + '/skills/' + skillId, {value: 8})
+                .expect(204)
+                .end(done);
+        });
 
-            app.put('/gifts/' + temporaryId + '/skills/1', payload)
+        it('/:giftId/expertises should change the skill value for the gift', function(done) {
+            app.put('/gifts/' + temporaryId + '/expertises/' + expertiseId, {value: 8})
                 .expect(204)
                 .end(done);
         });
@@ -176,7 +243,7 @@ describe('/gifts', function() {
         });
 
         it('/manifestation/:manifestationId should return a list of gifts', function(done) {
-            app.get('/gifts/manifestation/1')
+            app.get('/gifts/manifestation/' + manifestationId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -188,7 +255,7 @@ describe('/gifts', function() {
         });
 
         it('/species/:speciesId should return a list of gifts', function(done) {
-            app.get('/gifts/species/1')
+            app.get('/gifts/species/' + speciesId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -229,17 +296,7 @@ describe('/gifts', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    _.each(res.body.results, function(comment) {
-                        assert.isNumber(comment.id);
-                        assert.isString(comment.content);
-
-                        assert.isNumber(comment.user_id);
-                        assert.isString(comment.displayname);
-
-                        assert.isString(comment.created);
-                        if(comment.updated) assert.isString(comment.updated);
-                        assert.isNull(comment.deleted);
-                    });
+                    verifier.comments(res.body.results);
 
                     done();
                 })
@@ -255,20 +312,7 @@ describe('/gifts', function() {
                     assert.isArray(res.body.results);
 
                     _.each(res.body.results, function(item) {
-                        assert.isNumber(item.gift_id);
-                        assert.isNumber(item.attribute_id);
-                        assert.isNumber(item.value);
-
-                        assert.isNumber(item.id);
-                        assert.isBoolean(item.canon);
-                        assert.isString(item.name);
-                        if(item.description) assert.isString(item.description);
-                        assert.isNumber(item.attributetype_id);
-                        if(item.icon) assert.equal(validator.isURL(item.icon), true);
-
-                        assert.isString(item.created);
-                        if(item.deleted) assert.isString(item.deleted);
-                        if(item.updated) assert.isString(item.updated);
+                        verifier.generic(item);
                     });
 
                     done();
@@ -285,22 +329,24 @@ describe('/gifts', function() {
                     assert.isArray(res.body.results);
 
                     _.each(res.body.results, function(item) {
-                        assert.isNumber(item.gift_id);
-                        assert.isNumber(item.skill_id);
-                        assert.isNumber(item.value);
+                        verifier.generic(item);
+                    });
 
-                        assert.isNumber(item.id);
-                        assert.isBoolean(item.canon);
-                        assert.isNumber(item.popularity);
-                        assert.isBoolean(item.manifestation);
-                        assert.isString(item.name);
-                        if(item.description) assert.isString(item.description);
-                        if(item.species_id) assert.isNumber(item.species_id);
-                        if(item.icon) assert.equal(validator.isURL(item.icon), true);
+                    done();
+                });
+        });
 
-                        assert.isString(item.created);
-                        if(item.deleted) assert.isString(item.deleted);
-                        if(item.updated) assert.isString(item.updated);
+        it('/:giftId/skills should return a list of skills', function(done) {
+            app.get('/gifts/' + temporaryId + '/expertises')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.length);
+                    assert.isArray(res.body.results);
+
+                    _.each(res.body.results, function(item) {
+                        verifier.generic(item);
                     });
 
                     done();
@@ -309,16 +355,22 @@ describe('/gifts', function() {
 
     });
 
-    describe('DELETE', function() {
+    xdescribe('DELETE', function() {
 
         it('/:giftId/attributes should remove the attribute from the gift', function(done) {
-            app.delete('/gifts/' + temporaryId + '/attributes/1')
+            app.delete('/gifts/' + temporaryId + '/attributes/' + attributeId)
                 .expect(204)
                 .end(done);
         });
 
         it('/:giftId/skills should remove the skill from the gift', function(done) {
-            app.delete('/gifts/' + temporaryId + '/skills/1')
+            app.delete('/gifts/' + temporaryId + '/skills/' + skillId)
+                .expect(204)
+                .end(done);
+        });
+
+        it('/:giftId/expertises should remove the expertise from the gift', function(done) {
+            app.delete('/gifts/' + temporaryId + '/expertises/' + skillId)
                 .expect(204)
                 .end(done);
         });
