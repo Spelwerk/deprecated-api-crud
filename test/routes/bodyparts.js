@@ -7,16 +7,17 @@ var should = chai.should(),
     assert = chai.assert,
     expect = chai.expect;
 
-var app = require('./../app'),
-    hasher = require('./../../lib/hasher');
+var app = require('../app'),
+    verifier = require('./../verifier'),
+    hasher = require('../../lib/hasher');
 
 describe('/bodyparts', function() {
+
+    var temporaryId;
 
     before(function(done) {
         app.login(done);
     });
-
-    var temporaryId;
 
     function verifyList(body) {
         assert.isNumber(body.length);
@@ -34,12 +35,7 @@ describe('/bodyparts', function() {
     }
 
     function verifyItem(item) {
-        assert.isString(item.name);
-        if(item.description) assert.isString(item.description);
-
-        assert.isString(item.created);
-        if(item.updated) assert.isString(item.updated);
-        if(item.deleted) assert.isString(item.deleted);
+        verifier.generic(item);
     }
 
 
@@ -76,6 +72,18 @@ describe('/bodyparts', function() {
                 });
         });
 
+        it('/:bodyPartId/comments should create a new comment for the asset', function(done) {
+            app.post('/bodyparts/' + temporaryId + '/comments', { comment: hasher(20) })
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.id);
+
+                    done();
+                });
+        });
+
     });
 
     describe('PUT', function() {
@@ -87,6 +95,12 @@ describe('/bodyparts', function() {
             };
 
             app.put('/bodyparts/' + temporaryId, payload)
+                .expect(204)
+                .end(done);
+        });
+
+        it('/:bodyPartId/canon should update the asset canon field', function(done) {
+            app.put('/bodyparts/' + temporaryId + '/canon')
                 .expect(204)
                 .end(done);
         });
@@ -131,9 +145,21 @@ describe('/bodyparts', function() {
                 });
         });
 
+        it('/:skillId/comments should get all available comments for the asset', function(done) {
+            app.get('/bodyparts/' + temporaryId + '/comments')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifier.comments(res.body.results);
+
+                    done();
+                })
+        });
+
     });
 
-    describe('DELETE', function() {
+    xdescribe('DELETE', function() {
 
         it('/:bodyPartId should update the bodypart deleted field', function(done) {
             app.delete('/bodyparts/' + temporaryId)

@@ -1,89 +1,81 @@
-var ownership = require('./../../lib/sql/ownership'),
-    sequel = require('./../../lib/sql/sequel');
+var query = require('./../../lib/sql/query'),
+    ownership = require('../../lib/sql/ownership'),
+    sequel = require('../../lib/sql/sequel'),
+    generic = require('../../lib/sql/generic'),
+    comment = require('../../lib/sql/comment'),
+    relation = require('./../../lib/sql/relation');
 
 module.exports = function(router) {
     'use strict';
 
-    var tableName = 'attribute',
-        userContent = true,
-        adminRestriction = false,
-        useUpdateColumn = true;
+    var tableName = 'attribute';
 
-    var sql = 'SELECT ' +
-        'attribute.id, ' +
-        'attribute.canon, ' +
-        'attribute.name, ' +
-        'attribute.description, ' +
-        'attribute.attributetype_id, ' +
-        'attributetype.maximum, ' +
-        'attributetype.special, ' +
-        'attribute.icon, ' +
-        'attribute.created, ' +
-        'attribute.updated, ' +
-        'attribute.deleted ' +
-        'FROM attribute ' +
-        'LEFT JOIN attributetype ON attributetype.id = attribute.attributetype_id';
+    var sql = 'SELECT * FROM attribute ' +
+        'LEFT JOIN generic ON generic.id = attribute.generic_id ' +
+        'LEFT JOIN attributetype ON attributetype.generic_id = attribute.attributetype_id';
 
     router.route('/')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE ' +
-                'attribute.canon = 1 AND ' +
-                'attributetype.special = 0 AND ' +
-                'attribute.deleted IS NULL';
+            var call = sql + ' WHERE deleted IS NULL';
 
             sequel.get(req, res, next, call);
         })
         .post(function(req, res, next) {
-            sequel.post(req, res, next, tableName, adminRestriction, userContent);
+            generic.post(req, res, next, tableName);
         });
 
     // Special
 
-    router.route('/special')
+    router.route('/special/:special')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE ' +
-                'attribute.canon = 1 AND ' +
-                'attributetype.special = 1 AND ' +
-                'attribute.deleted IS NULL';
+            var call = sql + ' WHERE deleted IS NULL AND ' +
+                'attributetype.special = ?';
 
-            sequel.get(req, res, next, call);
+            sequel.get(req, res, next, call, [req.params.special]);
         });
 
     // Type
 
     router.route('/type/:typeId')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE ' +
-                'attribute.canon = 1 AND ' +
-                'attribute.attributetype_id = ? AND ' +
-                'attribute.deleted IS NULL';
+            var call = sql + ' WHERE deleted IS NULL AND ' +
+                'attribute.attributetype_id = ?';
 
             sequel.get(req, res, next, call, [req.params.typeId]);
         });
 
     // ID
 
-    router.route('/:attributeId')
+    router.route('/:id')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE attribute.id = ? AND attribute.deleted IS NULL';
+            var call = sql + ' WHERE deleted IS NULL AND ' +
+                'id = ?';
 
-            sequel.get(req, res, next, call, [req.params.attributeId], true);
+            sequel.get(req, res, next, call, [req.params.id], true);
         })
         .put(function(req, res, next) {
-            sequel.put(req, res, next, tableName, req.params.attributeId, adminRestriction, useUpdateColumn);
+            generic.put(req, res, next, tableName, req.params.id);
         })
         .delete(function(req, res, next) {
-            sequel.delete(req, res, next, tableName, req.params.attributeId, adminRestriction);
+            generic.delete(req, res, next, req.params.id);
         });
 
-    router.route('/:attributeId/canon')
+    router.route('/:id/canon')
         .put(function(req, res, next) {
-            sequel.canon(req, res, next, tableName, req.params.attributeId, useUpdateColumn);
+            generic.canon(req, res, next, req.params.id);
         });
 
-    router.route('/:attributeId/ownership')
+    router.route('/:id/comments')
+        .get(function(req, res, next) {
+            comment.get(req, res, next, req.params.id);
+        })
+        .post(function(req, res, next) {
+            comment.post(req, res, next, req.params.id);
+        });
+
+    router.route('/:id/ownership')
         .get(function(req, res) {
-            ownership(req, tableName, req.params.attributeId, adminRestriction, function(err) {
+            ownership(req, req.params.id, false, function(err) {
                 var ownership = true;
 
                 if(err) ownership = false;

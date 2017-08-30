@@ -1,65 +1,65 @@
-var comment = require('./../../lib/sql/comment'),
-    ownership = require('./../../lib/sql/ownership'),
-    sequel = require('./../../lib/sql/sequel');
+var query = require('./../../lib/sql/query'),
+    ownership = require('../../lib/sql/ownership'),
+    sequel = require('../../lib/sql/sequel'),
+    generic = require('../../lib/sql/generic'),
+    comment = require('../../lib/sql/comment'),
+    relation = require('./../../lib/sql/relation');
 
 module.exports = function(router) {
     'use strict';
 
-    var tableName = 'identity',
-        userContent = true,
-        adminRestriction = false,
-        useUpdateColumn = true;
+    var tableName = 'identity';
 
-    var sql = 'SELECT * FROM identity';
+    var sql = 'SELECT * FROM identity ' +
+        'LEFT JOIN generic ON generic.id = identity.generic_id';
 
     router.route('/')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE ' +
-                'identity.canon = 1 AND ' +
-                'identity.deleted IS NULL';
+            var call = sql + ' WHERE deleted IS NULL';
 
             sequel.get(req, res, next, call);
         })
         .post(function(req, res, next) {
-            sequel.post(req, res, next, tableName, adminRestriction, userContent);
+            generic.post(req, res, next, tableName);
         });
 
     // ID
 
-    router.route('/:identityId')
+    router.route('/:id')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE identity.id = ? AND identity.deleted IS NULL';
+            var call = sql + ' WHERE deleted IS NULL AND ' +
+                'id = ?';
 
-            sequel.get(req, res, next, call, [req.params.identityId], true);
+            sequel.get(req, res, next, call, [req.params.id], true);
         })
         .put(function(req, res, next) {
-            sequel.put(req, res, next, tableName, req.params.identityId, adminRestriction, useUpdateColumn);
+            generic.put(req, res, next, tableName, req.params.id);
         })
         .delete(function(req, res, next) {
-            sequel.delete(req, res, next, tableName, req.params.identityId, adminRestriction);
+            generic.delete(req, res, next, req.params.id);
         });
 
-    router.route('/:identityId/canon')
+    router.route('/:id/canon')
         .put(function(req, res, next) {
-            sequel.canon(req, res, next, tableName, req.params.identityId, useUpdateColumn);
+            generic.canon(req, res, next, req.params.id);
         });
 
-    router.route('/:identityId/clone')
+    router.route('/:id/clone')
         .post(function(req, res, next) {
-            sequel.clone(req, res, next, tableName, req.params.identityId, adminRestriction, userContent);
+            generic.clone(req, res, next, tableName, req.params.id);
         });
 
-    router.route('/:identityId/comments')
+    router.route('/:id/comments')
         .get(function(req, res, next) {
-            comment.get(req, res, next, tableName, req.params.identityId);
+            comment.get(req, res, next, req.params.id);
         })
         .post(function(req, res, next) {
-            comment.post(req, res, next, tableName, req.params.identityId);
+            comment.post(req, res, next, req.params.id);
         });
 
-    router.route('/:identityId/ownership')
+    router.route('/:id/ownership')
         .get(function(req, res) {
-            ownership(req, tableName, req.params.identityId, adminRestriction, function(err) {
+            ownership(req, req.params.id, false, function(err) {
                 var ownership = true;
 
                 if(err) ownership = false;

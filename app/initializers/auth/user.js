@@ -8,14 +8,17 @@ var tokens = require('./../../../lib/tokens'),
 module.exports = function(app, callback) {
 
     app.use(function(req, res, next) {
+        req.user = {
+            id: null,
+            admin: false,
+            verified: false,
+            verifiedOwner: false
+        };
+
         if(!req.headers['x-user-token']) return next();
 
-        req.user = {};
-
-        req.user.id = null;
         req.user.token = req.headers['x-user-token'];
         req.user.decoded = tokens.decode(req.user.token);
-        req.user.verifiedOwner = false;
 
         if(!req.user.decoded) return next({status: 403, message: 'Forbidden', error: 'Token is invalid'});
 
@@ -34,13 +37,13 @@ module.exports = function(app, callback) {
                 });
             },
             function(callback) {
-                query('SELECT id,admin,verify FROM user WHERE id = ?', [req.user.id], function(err, results) {
+                query('SELECT id,admin,verified FROM user WHERE id = ?', [req.user.id], function(err, results) {
                     if(err) return callback(err);
 
                     if(!results[0]) return callback({status: 404, message: 'Missing user', error: 'User missing from database'});
 
                     req.user.admin = results[0].admin;
-                    req.user.verify = results[0].verify;
+                    req.user.verified = results[0].verified;
 
                     callback();
                 });

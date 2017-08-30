@@ -7,16 +7,17 @@ var should = chai.should(),
     assert = chai.assert,
     expect = chai.expect;
 
-var app = require('./../app'),
-    hasher = require('./../../lib/hasher');
+var app = require('../app'),
+    verifier = require('./../verifier'),
+    hasher = require('../../lib/hasher');
 
 describe('/natures', function() {
+
+    var temporaryId;
 
     before(function(done) {
         app.login(done);
     });
-
-    var temporaryId;
 
     function verifyList(body) {
         assert.isNumber(body.length);
@@ -34,17 +35,7 @@ describe('/natures', function() {
     }
 
     function verifyItem(item) {
-        assert.isNumber(item.id);
-        assert.isBoolean(item.canon);
-        assert.isNumber(item.popularity);
-
-        assert.isString(item.name);
-        if(item.description) assert.isString(item.description);
-        if(item.icon) assert.equal(validator.isURL(item.icon), true);
-
-        assert.isString(item.created);
-        if(item.updated) assert.isString(item.updated);
-        if(item.deleted) assert.isString(item.deleted);
+        verifier.generic(item);
     }
 
 
@@ -83,11 +74,7 @@ describe('/natures', function() {
         });
 
         it('/:natureId/comments should create a new comment for the asset', function(done) {
-            var payload = {
-                content: hasher(20)
-            };
-
-            app.post('/natures/' + temporaryId + '/comments', payload)
+            app.post('/natures/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -165,17 +152,7 @@ describe('/natures', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    _.each(res.body.results, function(comment) {
-                        assert.isNumber(comment.id);
-                        assert.isString(comment.content);
-
-                        assert.isNumber(comment.user_id);
-                        assert.isString(comment.displayname);
-
-                        assert.isString(comment.created);
-                        if(comment.updated) assert.isString(comment.updated);
-                        assert.isNull(comment.deleted);
-                    });
+                    verifier.comments(res.body.results);
 
                     done();
                 })
@@ -183,7 +160,7 @@ describe('/natures', function() {
 
     });
 
-    describe('DELETE', function() {
+    xdescribe('DELETE', function() {
 
         it('/:natureId should update the asset deleted field', function(done) {
             app.delete('/natures/' + temporaryId)

@@ -34,6 +34,11 @@ function start(callback) {
             callback();
         },
         function(callback) {
+            logger.info('[SERVER] Initializing request log object');
+
+            require('./log')(app, callback);
+        },
+        function(callback) {
             logger.info('[SERVER] Initializing key authorization');
 
             // API-Key Authorization handler

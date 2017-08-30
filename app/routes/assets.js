@@ -1,95 +1,87 @@
-var comment = require('./../../lib/sql/comment'),
-    ownership = require('./../../lib/sql/ownership'),
-    relation = require('./../../lib/sql/relation'),
-    sequel = require('./../../lib/sql/sequel');
+var query = require('./../../lib/sql/query'),
+    ownership = require('../../lib/sql/ownership'),
+    sequel = require('../../lib/sql/sequel'),
+    generic = require('../../lib/sql/generic'),
+    comment = require('../../lib/sql/comment'),
+    relation = require('./../../lib/sql/relation');
 
 module.exports = function(router) {
     'use strict';
 
-    var tableName = 'asset',
-        userContent = true,
-        adminRestriction = false,
-        useUpdateColumn = true;
+    var tableName = 'asset';
 
-    var sql = 'SELECT ' +
-        'asset.id, ' +
-        'asset.canon, ' +
-        'asset.popularity, ' +
-        'asset.name, ' +
-        'asset.description, ' +
-        'asset.price, ' +
-        'asset.legal, ' +
-        'asset.assettype_id, ' +
-        'assettype.icon, ' +
-        'assettype.assetgroup_id, ' +
-        'assetgroup.equippable, ' +
-        'asset.created, ' +
-        'asset.updated, ' +
-        'asset.deleted ' +
-        'FROM asset ' +
-        'LEFT JOIN assettype ON assettype.id = asset.assettype_id ' +
-        'LEFT JOIN assetgroup ON assetgroup.id = assettype.assetgroup_id';
+    var sql = 'SELECT * FROM asset ' +
+        'LEFT JOIN generic ON generic.id = asset.generic_id ' +
+        'LEFT JOIN assettype ON assettype.generic_id = asset.assettype_id ' +
+        'LEFT JOIN assetgroup ON assetgroup.generic_id = assettype.assetgroup_id';
 
     router.route('/')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE ' +
-                'asset.canon = 1 AND ' +
-                'asset.deleted IS NULL';
+            var call = sql + ' WHERE canon = 1 AND deleted IS NULL';
 
             sequel.get(req, res, next, call);
         })
         .post(function(req, res, next) {
-            sequel.post(req, res, next, tableName, adminRestriction, userContent);
+            generic.post(req, res, next, tableName);
         });
 
     // Types
 
     router.route('/type/:typeId')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE ' +
-                'asset.canon = 1 AND ' +
-                'asset.assettype_id = ? AND ' +
-                'asset.deleted IS NULL';
+            var call = sql + ' WHERE deleted IS NULL AND ' +
+                'assettype_id = ?';
 
             sequel.get(req, res, next, call, [req.params.typeId]);
         });
 
+    // Groups
+
+    router.route('/group/:groupId')
+        .get(function(req, res, next) {
+            var call = sql + ' WHERE deleted IS NULL AND ' +
+                'assetgroup_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.groupId]);
+        });
+
     // ID
 
-    router.route('/:assetId')
+    router.route('/:id')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE asset.id = ? AND asset.deleted IS NULL';
+            var call = sql + ' WHERE deleted IS NULL AND ' +
+                'id = ?';
 
-            sequel.get(req, res, next, call, [req.params.assetId], true);
+            sequel.get(req, res, next, call, [req.params.id], true);
         })
         .put(function(req, res, next) {
-            sequel.put(req, res, next, tableName, req.params.assetId, adminRestriction, useUpdateColumn);
+            generic.put(req, res, next, tableName, req.params.id);
         })
         .delete(function(req, res, next) {
-            sequel.delete(req, res, next, tableName, req.params.assetId, adminRestriction);
+            generic.delete(req, res, next, req.params.id);
         });
 
-    router.route('/:assetId/canon')
+    router.route('/:id/canon')
         .put(function(req, res, next) {
-            sequel.canon(req, res, next, tableName, req.params.assetId, useUpdateColumn);
+            sequel.canon(req, res, next, req.params.id);
         });
 
-    router.route('/:assetId/clone')
+    router.route('/:id/clone')
         .post(function(req, res, next) {
-            sequel.clone(req, res, next, tableName, req.params.assetId, adminRestriction, userContent);
+            generic.clone(req, res, next, tableName, req.params.id);
         });
 
-    router.route('/:assetId/comments')
+    router.route('/:id/comments')
         .get(function(req, res, next) {
-            comment.get(req, res, next, tableName, req.params.assetId);
+            comment.get(req, res, next, req.params.id);
         })
         .post(function(req, res, next) {
-            comment.post(req, res, next, tableName, req.params.assetId);
+            comment.post(req, res, next, req.params.id);
         });
 
-    router.route('/:assetId/ownership')
+    router.route('/:id/ownership')
         .get(function(req, res) {
-            ownership(req, tableName, req.params.assetId, adminRestriction, function(err) {
+            ownership(req, tableName, req.params.id, false, function(err) {
                 var ownership = true;
 
                 if(err) ownership = false;
@@ -100,93 +92,97 @@ module.exports = function(router) {
 
     // Attribute List
 
-    router.route('/:assetId/attributes')
+    router.route('/:id/attributes')
         .get(function(req, res, next) {
-            var call = 'SELECT * FROM asset_has_attribute ' +
-                'LEFT JOIN attribute ON attribute.id = asset_has_attribute.attribute_id ' +
+            var call = 'SELECT * FROM generic_has_generic ' +
+                'LEFT JOIN generic ON generic.id = generic_has_generic.relation_id ' +
+                'LEFT JOIN attribute ON attribute.generic_id = generic_has_generic.relation_id ' +
                 'WHERE ' +
-                'asset_has_attribute.asset_id = ?';
+                'generic_has_generic.generic_id = ?';
 
-            sequel.get(req, res, next, call, [req.params.assetId]);
+            sequel.get(req, res, next, call, [req.params.id]);
         })
         .post(function(req, res, next) {
-            relation.post(req, res, next, tableName, req.params.assetId, 'attribute', req.body.insert_id, req.body.value);
+            relation.post(req, res, next, 'generic', req.params.id, 'generic', req.body.insert_id, req.body.value);
         });
 
-    router.route('/:assetId/attributes/:attributeId')
+    router.route('/:id/attributes/:attributeId')
         .put(function(req, res, next) {
-            relation.put(req, res, next, tableName, req.params.assetId, 'attribute', req.params.attributeId, req.body.value);
+            relation.put(req, res, next, 'generic', req.params.id, 'generic', req.params.attributeId, req.body.value);
         })
         .delete(function(req, res, next) {
-            relation.delete(req, res, next, tableName, req.params.assetId, 'attribute', req.params.attributeId);
+            relation.delete(req, res, next, 'generic', req.params.id, 'generic', req.params.attributeId);
         });
 
     // Doctrine List
 
-    router.route('/:assetId/doctrines')
+    router.route('/:id/doctrines')
         .get(function(req, res, next) {
-            var call = 'SELECT * FROM asset_has_doctrine ' +
-                'LEFT JOIN doctrine ON doctrine.id = asset_has_doctrine.doctrine_id ' +
+            var call = 'SELECT * FROM generic_has_generic ' +
+                'LEFT JOIN generic ON generic.id = generic_has_generic.relation_id ' +
+                'LEFT JOIN doctrine ON doctrine.generic_id = generic_has_generic.relation_id ' +
                 'WHERE ' +
-                'asset_has_doctrine.asset_id = ?';
+                'generic_has_generic.generic_id = ?';
 
-            sequel.get(req, res, next, call, [req.params.assetId]);
+            sequel.get(req, res, next, call, [req.params.id]);
         })
         .post(function(req, res, next) {
-            relation.post(req, res, next, tableName, req.params.assetId, 'doctrine', req.body.insert_id, req.body.value);
+            relation.post(req, res, next, 'generic', req.params.id, 'generic', req.body.insert_id, req.body.value);
         });
 
-    router.route('/:assetId/doctrines/:doctrineId')
+    router.route('/:id/doctrines/:doctrineId')
         .put(function(req, res, next) {
-            relation.put(req, res, next, tableName, req.params.assetId, 'doctrine', req.params.doctrineId, req.body.value);
+            relation.put(req, res, next, 'generic', req.params.id, 'generic', req.params.doctrineId, req.body.value);
         })
         .delete(function(req, res, next) {
-            relation.delete(req, res, next, tableName, req.params.assetId, 'doctrine', req.params.doctrineId);
+            relation.delete(req, res, next, 'generic', req.params.id, 'generic', req.params.doctrineId);
         });
 
     // Expertise List
 
-    router.route('/:assetId/expertises')
+    router.route('/:id/expertises')
         .get(function(req, res, next) {
-            var call = 'SELECT * FROM asset_has_expertise ' +
-                'LEFT JOIN expertise ON expertise.id = asset_has_expertise.expertise_id ' +
+            var call = 'SELECT * FROM generic_has_generic ' +
+                'LEFT JOIN generic ON generic.id = generic_has_generic.relation_id ' +
+                'LEFT JOIN expertise ON expertise.generic_id = generic_has_generic.relation_id ' +
                 'WHERE ' +
-                'asset_has_expertise.asset_id = ?';
+                'generic_has_generic.generic_id = ?';
 
-            sequel.get(req, res, next, call, [req.params.assetId]);
+            sequel.get(req, res, next, call, [req.params.id]);
         })
         .post(function(req, res, next) {
-            relation.post(req, res, next, tableName, req.params.assetId, 'expertise', req.body.insert_id, req.body.value);
+            relation.post(req, res, next, 'generic', req.params.id, 'generic', req.body.insert_id, req.body.value);
         });
 
-    router.route('/:assetId/expertises/:expertiseId')
+    router.route('/:id/expertises/:expertiseId')
         .put(function(req, res, next) {
-            relation.put(req, res, next, tableName, req.params.assetId, 'expertise', req.params.expertiseId, req.body.value);
+            relation.put(req, res, next, 'generic', req.params.id, 'generic', req.params.expertiseId, req.body.value);
         })
         .delete(function(req, res, next) {
-            relation.delete(req, res, next, tableName, req.params.assetId, 'expertise', req.params.expertiseId);
+            relation.delete(req, res, next, 'generic', req.params.id, 'generic', req.params.expertiseId);
         });
 
     // Skill List
 
-    router.route('/:assetId/skills')
+    router.route('/:id/skills')
         .get(function(req, res, next) {
-            var call = 'SELECT * FROM asset_has_skill ' +
-                'LEFT JOIN skill ON skill.id = asset_has_skill.skill_id ' +
+            var call = 'SELECT * FROM generic_has_generic ' +
+                'LEFT JOIN generic ON generic.id = generic_has_generic.relation_id ' +
+                'LEFT JOIN skill ON skill.generic_id = generic_has_generic.relation_id ' +
                 'WHERE ' +
-                'asset_has_skill.asset_id = ?';
+                'generic_has_generic.generic_id = ?';
 
-            sequel.get(req, res, next, call, [req.params.assetId]);
+            sequel.get(req, res, next, call, [req.params.id]);
         })
         .post(function(req, res, next) {
-            relation.post(req, res, next, tableName, req.params.assetId, 'skill', req.body.insert_id, req.body.value);
+            relation.post(req, res, next, 'generic', req.params.id, 'generic', req.body.insert_id, req.body.value);
         });
 
-    router.route('/:assetId/skills/:skillId')
+    router.route('/:id/skills/:skillId')
         .put(function(req, res, next) {
-            relation.put(req, res, next, tableName, req.params.assetId, 'skill', req.params.skillId, req.body.value);
+            relation.put(req, res, next, 'generic', req.params.id, 'generic', req.params.skillId, req.body.value);
         })
         .delete(function(req, res, next) {
-            relation.delete(req, res, next, tableName, req.params.assetId, 'skill', req.params.skillId);
+            relation.delete(req, res, next, 'generic', req.params.id, 'generic', req.params.skillId);
         });
 };

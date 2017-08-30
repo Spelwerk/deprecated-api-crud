@@ -1,7 +1,6 @@
 var supertest = require('supertest');
 
-var base = 'http://localhost:4000',
-    key = 'key';
+var base = 'http://localhost:4000';
 
 var adminToken = '',
     adminEmail = 'admin@spelwerk.se',

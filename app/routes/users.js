@@ -4,19 +4,19 @@ var async = require('async'),
     nconf = require('nconf'),
     moment = require('moment');
 
-var query = require('./../../lib/sql/query'),
-    sequel = require('./../../lib/sql/sequel'),
-    hasher = require('./../../lib/hasher'),
-    mailer = require('./../../lib/mailer'),
-    onion = require('./../../lib/onion'),
-    tokens = require('./../../lib/tokens');
+var query = require('../../lib/sql/query'),
+    sequel = require('../../lib/sql/sequel'),
+    hasher = require('../../lib/hasher'),
+    mailer = require('../../lib/mailer'),
+    onion = require('../../lib/onion'),
+    tokens = require('../../lib/tokens');
 
 module.exports = function(router) {
     var sql = 'SELECT ' +
         'id, ' +
         'displayname, ' +
         'email, ' +
-        'verify, ' +
+        'verified, ' +
         'admin, ' +
         'firstname, ' +
         'surname, ' +
@@ -157,7 +157,7 @@ module.exports = function(router) {
             var user = {
                 id: req.user.id,
                 email: req.user.email,
-                verify: req.user.verify,
+                verified: req.user.verified,
                 admin: req.user.admin
             };
 
@@ -249,8 +249,7 @@ module.exports = function(router) {
 
     router.route('/login/email')
         .post(function(req, res, next) {
-            var user = {},
-                insert = {};
+            var insert = {};
 
             insert.email = req.body.email;
 
@@ -402,7 +401,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    query('UPDATE user SET password = ?, displayname = ?, firstname = ?, surname = ?, verify = 1, verify_secret = NULL, verify_timeout = NULL WHERE id = ?', [insert.encrypted, insert.displayname, insert.firstname, insert.surname, user.id], callback);
+                    query('UPDATE user SET password = ?, displayname = ?, firstname = ?, surname = ?, verified = 1, verify_secret = NULL, verify_timeout = NULL WHERE id = ?', [insert.encrypted, insert.displayname, insert.firstname, insert.surname, user.id], callback);
                 }
             ], function(err) {
                 if(err) return next(err);

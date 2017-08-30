@@ -7,16 +7,17 @@ var should = chai.should(),
     assert = chai.assert,
     expect = chai.expect;
 
-var app = require('./../app'),
-    hasher = require('./../../lib/hasher');
+var app = require('../app'),
+    verifier = require('./../verifier'),
+    hasher = require('../../lib/hasher');
 
 describe('/diseases', function() {
+
+    var temporaryId;
 
     before(function(done) {
         app.login(done);
     });
-
-    var temporaryId;
 
     function verifyList(body) {
         assert.isNumber(body.length);
@@ -34,22 +35,18 @@ describe('/diseases', function() {
     }
 
     function verifyItem(item) {
-        assert.isNumber(item.id);
-        assert.isBoolean(item.canon);
-        assert.isNumber(item.popularity);
-
-        assert.isString(item.name);
-
-        assert.isString(item.created);
-        if(item.updated) assert.isString(item.updated);
-        if(item.deleted) assert.isString(item.deleted);
+        verifier.generic(item);
     }
 
 
     describe('POST', function() {
 
         it('/ should create a new asset', function(done) {
-            var payload = {name: hasher(20)};
+            var payload = {
+                name: hasher(20),
+                description: hasher(20),
+                icon: 'http://fakeicon.com/' + hasher(20) + '.png'
+            };
 
             app.post('/diseases', payload)
                 .expect(201)
@@ -64,12 +61,39 @@ describe('/diseases', function() {
                 });
         });
 
+        it('/:diseaseId/clone should create a copy of the asset', function(done) {
+            app.post('/diseases/' + temporaryId + '/clone')
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.id);
+
+                    done();
+                });
+        });
+
+        it('/:diseaseId/comments should create a new comment for the asset', function(done) {
+            app.post('/diseases/' + temporaryId + '/comments', { comment: hasher(20) })
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.id);
+
+                    done();
+                });
+        });
+
     });
 
     describe('PUT', function() {
 
         it('/:diseaseId should update the item with new values', function(done) {
-            var payload = {name: hasher(20)};
+            var payload = {
+                name: hasher(20),
+                description: hasher(20)
+            };
 
             app.put('/diseases/' + temporaryId, payload)
                 .expect(204)
@@ -122,9 +146,21 @@ describe('/diseases', function() {
                 });
         });
 
+        it('/:diseaseId/comments should get all available comments for the asset', function(done) {
+            app.get('/diseases/' + temporaryId + '/comments')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifier.comments(res.body.results);
+
+                    done();
+                })
+        });
+
     });
 
-    describe('DELETE', function() {
+    xdescribe('DELETE', function() {
 
         it('/:diseaseId should update the asset deleted field', function(done) {
             app.delete('/diseases/' + temporaryId)

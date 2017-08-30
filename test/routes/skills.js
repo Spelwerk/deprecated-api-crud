@@ -8,15 +8,16 @@ var should = chai.should(),
     expect = chai.expect;
 
 var app = require('./../app'),
+    verifier = require('./../verifier'),
     hasher = require('./../../lib/hasher');
 
 describe('/skills', function() {
 
+    var temporaryId;
+
     before(function(done) {
         app.login(done);
     });
-
-    var temporaryId;
 
     function verifyList(body) {
         assert.isNumber(body.length);
@@ -34,19 +35,10 @@ describe('/skills', function() {
     }
 
     function verifyItem(item) {
-        assert.isNumber(item.id);
-        assert.isBoolean(item.canon);
-        assert.isNumber(item.popularity);
+        verifier.generic(item);
 
-        assert.isString(item.name);
-        assert.isBoolean(item.manifestation);
-        if(item.description) assert.isString(item.description);
+        assert.isBoolean(item.special);
         if(item.species_id) assert.isNumber(item.species_id);
-        if(item.icon) assert.equal(validator.isURL(item.icon), true);
-
-        assert.isString(item.created);
-        if(item.updated) assert.isString(item.updated);
-        if(item.deleted) assert.isString(item.deleted);
     }
 
 
@@ -56,7 +48,6 @@ describe('/skills', function() {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
-                species_id: 1,
                 icon: 'http://fakeicon.com/' + hasher(20) + '.png'
             };
 
@@ -86,11 +77,7 @@ describe('/skills', function() {
         });
 
         it('/:skillId/comments should create a new comment for the asset', function(done) {
-            var payload = {
-                content: hasher(20)
-            };
-
-            app.post('/skills/' + temporaryId + '/comments', payload)
+            app.post('/skills/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -180,17 +167,7 @@ describe('/skills', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    _.each(res.body.results, function(comment) {
-                        assert.isNumber(comment.id);
-                        assert.isString(comment.content);
-
-                        assert.isNumber(comment.user_id);
-                        assert.isString(comment.displayname);
-
-                        assert.isString(comment.created);
-                        if(comment.updated) assert.isString(comment.updated);
-                        assert.isNull(comment.deleted);
-                    });
+                    verifier.comments(res.body.results);
 
                     done();
                 })
@@ -198,7 +175,7 @@ describe('/skills', function() {
 
     });
 
-    describe('DELETE', function() {
+    xdescribe('DELETE', function() {
 
         it('/:skillId should update the asset deleted field', function(done) {
             app.delete('/skills/' + temporaryId)

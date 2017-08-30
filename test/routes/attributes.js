@@ -8,15 +8,29 @@ var should = chai.should(),
     expect = chai.expect;
 
 var app = require('./../app'),
+    verifier = require('./../verifier'),
     hasher = require('./../../lib/hasher');
 
 describe('/attributes', function() {
+
+    var temporaryId,
+        typeId;
 
     before(function(done) {
         app.login(done);
     });
 
-    var temporaryId;
+    before(function(done) {
+        app.get('/attributetypes')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                typeId = res.body.results[0].id;
+
+                done();
+            });
+    });
 
     function verifyList(body) {
         assert.isNumber(body.length);
@@ -34,18 +48,10 @@ describe('/attributes', function() {
     }
 
     function verifyItem(item) {
-        assert.isNumber(item.id);
-        assert.isBoolean(item.canon);
-
-        assert.isString(item.name);
-        if(item.description) assert.isString(item.description);
+        verifier.generic(item);
 
         assert.isNumber(item.attributetype_id);
-        if(item.icon) assert.equal(validator.isURL(item.icon), true);
-
-        assert.isString(item.created);
-        if(item.updated) assert.isString(item.updated);
-        if(item.deleted) assert.isString(item.deleted);
+        assert.isNumber(item.maximum);
     }
 
 
@@ -55,7 +61,8 @@ describe('/attributes', function() {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
-                attributetype_id: 1,
+                attributetype_id: typeId,
+                maximum: 10,
                 icon: 'http://fakeicon.com/' + hasher(20) + '.png'
             };
 
@@ -67,6 +74,18 @@ describe('/attributes', function() {
                     assert.isNumber(res.body.id);
 
                     temporaryId = res.body.id;
+
+                    done();
+                });
+        });
+
+        it('/:expertiseId/comments should create a new comment for the asset', function(done) {
+            app.post('/expertises/' + temporaryId + '/comments', { comment: hasher(20) })
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.id);
 
                     done();
                 });
@@ -157,9 +176,21 @@ describe('/attributes', function() {
                 });
         });
 
+        it('/:attributeId/comments should get all available comments for the asset', function(done) {
+            app.get('/attributes/' + temporaryId + '/comments')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifier.comments(res.body.results);
+
+                    done();
+                })
+        });
+
     });
 
-    describe('DELETE', function() {
+    xdescribe('DELETE', function() {
 
         it('/:attributeId should update the weapon deleted field', function(done) {
             app.delete('/attributes/' + temporaryId)

@@ -8,15 +8,29 @@ var should = chai.should(),
     expect = chai.expect;
 
 var app = require('./../app'),
+    verifier = require('./../verifier'),
     hasher = require('./../../lib/hasher');
 
 describe('/assettypes', function() {
+
+    var temporaryId,
+        groupId;
 
     before(function(done) {
         app.login(done);
     });
 
-    var temporaryId;
+    before(function(done) {
+        app.get('/assetgroups')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                groupId = res.body.results[0].id;
+
+                done();
+            });
+    });
 
     function verifyList(body) {
         assert.isNumber(body.length);
@@ -34,17 +48,10 @@ describe('/assettypes', function() {
     }
 
     function verifyItem(item) {
-        assert.isNumber(item.id);
-        assert.isBoolean(item.canon);
-        assert.isNumber(item.popularity);
+        verifier.generic(item);
 
-        assert.isString(item.name);
         assert.isNumber(item.assetgroup_id);
-        if(item.icon) assert.equal(validator.isURL(item.icon), true);
-
-        assert.isString(item.created);
-        if(item.updated) assert.isString(item.updated);
-        if(item.deleted) assert.isString(item.deleted);
+        assert.isBoolean(item.equipable);
     }
 
 
@@ -53,7 +60,7 @@ describe('/assettypes', function() {
         it('/ should create a new asset type', function(done) {
             var payload = {
                 name: hasher(20),
-                assetgroup_id: 1,
+                assetgroup_id: groupId,
                 icon: 'http://fakeicon.com/' + hasher(20) + '.png'
             };
 
@@ -142,7 +149,7 @@ describe('/assettypes', function() {
 
     });
 
-    describe('DELETE', function() {
+    xdescribe('DELETE', function() {
 
         it('/:assetTypeId should update the asset deleted field', function(done) {
             app.delete('/assettypes/' + temporaryId)

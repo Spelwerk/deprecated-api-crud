@@ -8,15 +8,29 @@ var should = chai.should(),
     expect = chai.expect;
 
 var app = require('./../app'),
+    verifier = require('./../verifier'),
     hasher = require('./../../lib/hasher');
 
 describe('/assets', function() {
+
+    var temporaryId,
+        typeId;
 
     before(function(done) {
         app.login(done);
     });
 
-    var temporaryId;
+    before(function(done) {
+        app.get('/assettypes')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                typeId = res.body.results[0].id;
+
+                done();
+            });
+    });
 
     function verifyList(body) {
         assert.isNumber(body.length);
@@ -34,22 +48,13 @@ describe('/assets', function() {
     }
 
     function verifyItem(item) {
-        assert.isNumber(item.id);
-        assert.isBoolean(item.canon);
-        assert.isNumber(item.popularity);
+        verifier.generic(item);
 
-        assert.isString(item.name);
-        if(item.description) assert.isString(item.description);
         assert.isNumber(item.price);
         assert.isBoolean(item.legal);
         assert.isNumber(item.assettype_id);
-        if(item.icon) assert.equal(validator.isURL(item.icon), true);
         assert.isNumber(item.assetgroup_id);
-        assert.isBoolean(item.equippable);
-
-        assert.isString(item.created);
-        if(item.updated) assert.isString(item.updated);
-        if(item.deleted) assert.isString(item.deleted);
+        assert.isBoolean(item.equipable);
     }
 
 
@@ -61,7 +66,7 @@ describe('/assets', function() {
                 description: hasher(20),
                 price: 10,
                 legal: true,
-                assettype_id: 1
+                assettype_id: typeId
             };
 
             app.post('/assets', payload)
@@ -396,7 +401,7 @@ describe('/assets', function() {
 
     });
 
-    describe('DELETE', function() {
+    xdescribe('DELETE', function() {
 
         it('/:assetId/attributes should remove the attribute from the asset', function(done) {
             app.delete('/assets/' + temporaryId + '/attributes/1')

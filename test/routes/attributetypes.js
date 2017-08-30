@@ -8,6 +8,7 @@ var should = chai.should(),
     expect = chai.expect;
 
 var app = require('./../app'),
+    verifier = require('./../verifier'),
     hasher = require('./../../lib/hasher');
 
 describe('/attributetypes', function() {
@@ -34,13 +35,9 @@ describe('/attributetypes', function() {
     }
 
     function verifyItem(item) {
-        assert.isString(item.name);
-        assert.isNumber(item.maximum);
-        assert.isBoolean(item.special);
+        verifier.generic(item);
 
-        assert.isString(item.created);
-        if(item.updated) assert.isString(item.updated);
-        if(item.deleted) assert.isString(item.deleted);
+        assert.isBoolean(item.special);
     }
 
 
@@ -49,8 +46,7 @@ describe('/attributetypes', function() {
         it('/ should create a new attribute type', function(done) {
             var payload = {
                 name: hasher(20),
-                maximum: 10,
-                special: true
+                special: false
             };
 
             app.post('/attributetypes', payload)
@@ -120,7 +116,7 @@ describe('/attributetypes', function() {
 
     });
 
-    describe('DELETE', function() {
+    xdescribe('DELETE', function() {
 
         it('/:attributeTypeId should update the attribute deleted field', function(done) {
             app.delete('/attributetypes/' + temporaryId)

@@ -1,51 +1,52 @@
-var ownership = require('./../../lib/sql/ownership'),
-    sequel = require('./../../lib/sql/sequel');
+var query = require('./../../lib/sql/query'),
+    ownership = require('../../lib/sql/ownership'),
+    sequel = require('../../lib/sql/sequel'),
+    generic = require('../../lib/sql/generic'),
+    comment = require('../../lib/sql/comment'),
+    relation = require('./../../lib/sql/relation');
 
 module.exports = function(router) {
     'use strict';
 
-    var tableName = 'assetgroup',
-        userContent = true,
-        adminRestriction = false,
-        useUpdateColumn = true;
+    var tableName = 'assetgroup';
 
-    var sql = 'SELECT * FROM assetgroup';
+    var sql = 'SELECT * FROM assetgroup ' +
+        'LEFT JOIN generic ON generic.id = assetgroup.generic_id';
 
     router.route('/')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE ' +
-                'assetgroup.canon = 1 AND ' +
-                'assetgroup.deleted IS NULL';
+            var call = sql + ' WHERE deleted IS NULL';
 
             sequel.get(req, res, next, call);
         })
         .post(function(req, res, next) {
-            sequel.post(req, res, next, tableName, adminRestriction, userContent);
+            generic.post(req, res, next, tableName);
         });
 
     // ID
 
-    router.route('/:assetGroupId')
+    router.route('/:id')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE assetgroup.id = ? AND assetgroup.deleted IS NULL';
+            var call = sql + ' WHERE deleted IS NULL AND ' +
+                'id = ?';
 
-            sequel.get(req, res, next, call, [req.params.assetGroupId], true);
+            sequel.get(req, res, next, call, [req.params.id], true);
         })
         .put(function(req, res, next) {
-            sequel.put(req, res, next, tableName, req.params.assetGroupId, adminRestriction, useUpdateColumn);
+            generic.put(req, res, next, tableName, req.params.id);
         })
         .delete(function(req, res, next) {
-            sequel.delete(req, res, next, tableName, req.params.assetGroupId, adminRestriction);
+            generic.delete(req, res, next, req.params.id);
         });
 
-    router.route('/:assetGroupId/canon')
+    router.route('/:id/canon')
         .put(function(req, res, next) {
-            sequel.canon(req, res, next, tableName, req.params.assetGroupId, useUpdateColumn);
+            generic.canon(req, res, next, req.params.id);
         });
 
-    router.route('/:assetGroupId/ownership')
+    router.route('/:id/ownership')
         .get(function(req, res) {
-            ownership(req, tableName, req.params.assetGroupId, adminRestriction, function(err) {
+            ownership(req, req.params.id, false, function(err) {
                 var ownership = true;
 
                 if(err) ownership = false;

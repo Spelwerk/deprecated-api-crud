@@ -45,7 +45,7 @@ async.series([
         });
     },
     function(callback) {
-        var query = 'INSERT INTO user (id,email,password,displayname,admin,verify) VALUES (1,?,?,?,1,1) ON DUPLICATE KEY UPDATE id = 1, email = ?, password = ?, displayname = ?, admin = 1, verify = 1';
+        var query = 'INSERT INTO user (id,email,password,displayname,admin,verified) VALUES (1,?,?,?,1,1) ON DUPLICATE KEY UPDATE id = 1, email = ?, password = ?, displayname = ?, admin = 1, verified = 1';
         var array = [email, encrypted, 'administrator'];
 
         query = mysql.format(query, array);

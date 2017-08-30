@@ -8,15 +8,31 @@ var should = chai.should(),
     expect = chai.expect;
 
 var app = require('./../app'),
+    verifier = require('./../verifier'),
     hasher = require('./../../lib/hasher');
 
 describe('/expertise', function() {
+
+    var temporaryId,
+        skillId,
+        speciesId,
+        manifestationId;
 
     before(function(done) {
         app.login(done);
     });
 
-    var temporaryId;
+    before(function(done) {
+        app.get('/skills')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                skillId = res.body.results[0].id;
+
+                done();
+            });
+    });
 
     function verifyList(body) {
         assert.isNumber(body.length);
@@ -34,20 +50,11 @@ describe('/expertise', function() {
     }
 
     function verifyItem(item) {
-        assert.isNumber(item.id);
-        assert.isBoolean(item.canon);
-        assert.isNumber(item.popularity);
+        verifier.generic(item);
 
-        assert.isString(item.name);
-        if(item.description) assert.isString(item.description);
         assert.isNumber(item.skill_id);
         if(item.species_id) assert.isNumber(item.species_id);
         if(item.manifestation_id) assert.isNumber(item.manifestation_id);
-        if(item.icon) assert.equal(validator.isURL(item.icon), true);
-
-        assert.isString(item.created);
-        if(item.updated) assert.isString(item.updated);
-        if(item.deleted) assert.isString(item.deleted);
     }
 
 
@@ -57,9 +64,7 @@ describe('/expertise', function() {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
-                skill_id: 1,
-                species_id: 1,
-                manifestation_id: 1
+                skill_id: skillId
             };
 
             app.post('/expertises', payload)
@@ -88,11 +93,7 @@ describe('/expertise', function() {
         });
 
         it('/:expertiseId/comments should create a new comment for the asset', function(done) {
-            var payload = {
-                content: hasher(20)
-            };
-
-            app.post('/expertises/' + temporaryId + '/comments', payload)
+            app.post('/expertises/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -230,17 +231,7 @@ describe('/expertise', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    _.each(res.body.results, function(comment) {
-                        assert.isNumber(comment.id);
-                        assert.isString(comment.content);
-
-                        assert.isNumber(comment.user_id);
-                        assert.isString(comment.displayname);
-
-                        assert.isString(comment.created);
-                        if(comment.updated) assert.isString(comment.updated);
-                        assert.isNull(comment.deleted);
-                    });
+                    verifier.comments(res.body.results);
 
                     done();
                 })
@@ -248,7 +239,7 @@ describe('/expertise', function() {
 
     });
 
-    describe('DELETE', function() {
+    xdescribe('DELETE', function() {
 
         it('/:expertiseId should update the asset deleted field', function(done) {
             app.delete('/expertises/' + temporaryId)
