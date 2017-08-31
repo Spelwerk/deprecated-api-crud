@@ -15,8 +15,7 @@ module.exports = function(router) {
 
     var tableName = 'manifestation';
 
-    var sql = 'SELECT * FROM manifestation ' +
-        'LEFT JOIN generic ON generic.id = manifestation.generic_id';
+    var sql = 'SELECT * FROM ' + tableName + ' LEFT JOIN generic ON generic.id = ' + tableName + '.generic_id';
 
     router.route('/')
         .get(function(req, res, next) {
@@ -42,6 +41,7 @@ module.exports = function(router) {
             skill.name = req.body.skill;
 
             async.series([
+
                 // MANIFESTATION
 
                 function(callback) {

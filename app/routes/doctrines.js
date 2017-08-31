@@ -12,8 +12,7 @@ module.exports = function(router) {
 
     var tableName = 'doctrine';
 
-    var sql = 'SELECT * FROM doctrine ' +
-        'LEFT JOIN generic ON generic.id = doctrine.generic_id';
+    var sql = 'SELECT * FROM ' + tableName + ' LEFT JOIN generic ON generic.id = ' + tableName + '.generic_id';
 
     router.route('/')
         .get(function(req, res, next) {

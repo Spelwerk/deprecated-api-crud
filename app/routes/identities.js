@@ -10,8 +10,7 @@ module.exports = function(router) {
 
     var tableName = 'identity';
 
-    var sql = 'SELECT * FROM identity ' +
-        'LEFT JOIN generic ON generic.id = identity.generic_id';
+    var sql = 'SELECT * FROM ' + tableName + ' LEFT JOIN generic ON generic.id = ' + tableName + '.generic_id';
 
     router.route('/')
         .get(function(req, res, next) {

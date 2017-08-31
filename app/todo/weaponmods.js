@@ -10,7 +10,7 @@ module.exports = function(router) {
         adminRestriction = false,
         useUpdateColumn = true;
 
-    var sql = 'SELECT * FROM weaponmod';
+    var sql = 'SELECT * FROM ' + tableName + ' LEFT JOIN generic ON generic.id = ' + tableName + '.generic_id';
 
     router.route('/')
         .get(function(req, res, next) {
