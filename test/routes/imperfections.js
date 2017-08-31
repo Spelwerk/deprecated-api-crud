@@ -278,7 +278,7 @@ describe('/imperfections', function() {
                 })
         });
 
-        it('/:imperfectionId/ownership should return ownership status of the imperfection if user is logged in', function(done) {
+        it('/:imperfectionId/ownership should return ownership status', function(done) {
             app.get('/imperfections/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -290,7 +290,7 @@ describe('/imperfections', function() {
                 });
         });
 
-        it('/:imperfectionId/comments should get all available comments for the imperfection', function(done) {
+        it('/:imperfectionId/comments should get all available comments', function(done) {
             app.get('/imperfections/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
@@ -302,7 +302,7 @@ describe('/imperfections', function() {
                 })
         });
 
-        it('/:imperfectionId/attributes should return a list of attributes', function(done) {
+        it('/:imperfectionId/attributes should return a list', function(done) {
             app.get('/imperfections/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
@@ -319,7 +319,7 @@ describe('/imperfections', function() {
                 });
         });
 
-        it('/:imperfectionId/skills should return a list of skills', function(done) {
+        it('/:imperfectionId/skills should return a list', function(done) {
             app.get('/imperfections/' + temporaryId + '/skills')
                 .expect(200)
                 .end(function(err, res) {
@@ -336,7 +336,7 @@ describe('/imperfections', function() {
                 });
         });
 
-        it('/:imperfectionId/skills should return a list of skills', function(done) {
+        it('/:imperfectionId/skills should return a list', function(done) {
             app.get('/imperfections/' + temporaryId + '/expertises')
                 .expect(200)
                 .end(function(err, res) {

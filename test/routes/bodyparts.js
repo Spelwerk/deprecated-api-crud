@@ -133,7 +133,7 @@ describe('/bodyparts', function() {
                 })
         });
 
-        it('/:bodyPartId/ownership should return ownership status of the bodypart if user is logged in', function(done) {
+        it('/:bodyPartId/ownership should return ownership status', function(done) {
             app.get('/bodyparts/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -145,7 +145,7 @@ describe('/bodyparts', function() {
                 });
         });
 
-        it('/:skillId/comments should get all available comments for the asset', function(done) {
+        it('/:skillId/comments should get all available comments, function(done) {
             app.get('/bodyparts/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {

@@ -8,16 +8,120 @@ var should = chai.should(),
     expect = chai.expect;
 
 var app = require('../app'),
-    verifier = require('./../verifier'),
+    verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
 describe('/backgrounds', function() {
+
+    var temporaryId,
+        assetId,
+        attributeId,
+        augmentationId,
+        doctrineId,
+        manifestationId,
+        skillId,
+        speciesId,
+        weaponId;
 
     before(function(done) {
         app.login(done);
     });
 
-    var temporaryId;
+    before(function(done) {
+        app.get('/assets')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                assetId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/attributes')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                attributeId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/augmentations')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                augmentationId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/doctrines')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                doctrineId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/manifestations')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                manifestationId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/skills')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                skillId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/species')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                speciesId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/weapons')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                weaponId = res.body.results[0].id;
+
+                done();
+            });
+    });
 
     function verifyList(body) {
         assert.isNumber(body.length);
@@ -35,19 +139,10 @@ describe('/backgrounds', function() {
     }
 
     function verifyItem(item) {
-        assert.isNumber(item.id);
-        assert.isBoolean(item.canon);
+        verifier.generic(item);
 
-        assert.isString(item.name);
-        if(item.description) assert.isString(item.description);
-
-        if(item.species_id) assert.isNumber(item.species_id);
         if(item.manifestation_id) assert.isNumber(item.manifestation_id);
-        if(item.icon) assert.equal(validator.isURL(item.icon), true);
-
-        assert.isString(item.created);
-        if(item.updated) assert.isString(item.updated);
-        if(item.deleted) assert.isString(item.deleted);
+        if(item.species_id) assert.isNumber(item.species_id);
     }
 
 
@@ -57,9 +152,9 @@ describe('/backgrounds', function() {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
-                species_id: 1,
-                manifestation_id: 1,
-                icon: 'http://fakeicon.com/' + hasher(20) + '.png'
+                icon: 'http://fakeicon.com/' + hasher(20) + '.png',
+                manifestation_id: manifestationId,
+                species_id: speciesId
             };
 
             app.post('/backgrounds', payload)
@@ -88,10 +183,6 @@ describe('/backgrounds', function() {
         });
 
         it('/:backgroundId/comments should create a new comment for the background', function(done) {
-            var payload = {
-                content: hasher(20)
-            };
-
             app.post('/backgrounds/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
@@ -125,6 +216,27 @@ describe('/backgrounds', function() {
                 .end(done);
         });
 
+        it('/:backgroundId/augmentations should add an augmentation to the background', function(done) {
+            var payload = {
+                insert_id: 1
+            };
+
+            app.post('/backgrounds/' + temporaryId + '/augmentations', payload)
+                .expect(201)
+                .end(done);
+        });
+
+        it('/:backgroundId/doctrines should add an doctrine to the background', function(done) {
+            var payload = {
+                insert_id: 1,
+                value: 10
+            };
+
+            app.post('/backgrounds/' + temporaryId + '/doctrines', payload)
+                .expect(201)
+                .end(done);
+        });
+
         it('/:backgroundId/skills should add an skill to the background', function(done) {
             var payload = {
                 insert_id: 1,
@@ -132,6 +244,16 @@ describe('/backgrounds', function() {
             };
 
             app.post('/backgrounds/' + temporaryId + '/skills', payload)
+                .expect(201)
+                .end(done);
+        });
+
+        it('/:backgroundId/weapons should add an weapon to the background', function(done) {
+            var payload = {
+                insert_id: 1
+            };
+
+            app.post('/backgrounds/' + temporaryId + '/weapons', payload)
                 .expect(201)
                 .end(done);
         });
@@ -158,25 +280,25 @@ describe('/backgrounds', function() {
         });
 
         it('/:backgroundId/assets should change the asset value for the background', function(done) {
-            var payload = {value: 8};
-
-            app.put('/backgrounds/' + temporaryId + '/assets/1', payload)
+            app.put('/backgrounds/' + temporaryId + '/assets/1', { value: 8 })
                 .expect(204)
                 .end(done);
         });
 
         it('/:backgroundId/attributes should change the attribute value for the background', function(done) {
-            var payload = {value: 8};
+            app.put('/backgrounds/' + temporaryId + '/attributes/1', { value: 8 })
+                .expect(204)
+                .end(done);
+        });
 
-            app.put('/backgrounds/' + temporaryId + '/attributes/1', payload)
+        it('/:backgroundId/doctrines should change the doctrine value for the background', function(done) {
+            app.put('/backgrounds/' + temporaryId + '/doctrines/1', { value: 8 })
                 .expect(204)
                 .end(done);
         });
 
         it('/:backgroundId/skills should change the skill value for the background', function(done) {
-            var payload = {value: 8};
-
-            app.put('/backgrounds/' + temporaryId + '/skills/1', payload)
+            app.put('/backgrounds/' + temporaryId + '/skills/1', { value: 8 })
                 .expect(204)
                 .end(done);
         });
@@ -197,8 +319,8 @@ describe('/backgrounds', function() {
                 });
         });
 
-        it('/species/:typeId should return a list of backgrounds', function(done) {
-            app.get('/backgrounds/species/1')
+        it('/manifestation/:typeId should return a list of backgrounds', function(done) {
+            app.get('/backgrounds/manifestation/' + manifestationId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -209,8 +331,8 @@ describe('/backgrounds', function() {
                 });
         });
 
-        it('/manifestation/:typeId should return a list of backgrounds', function(done) {
-            app.get('/backgrounds/manifestation/1')
+        it('/species/:typeId should return a list of backgrounds', function(done) {
+            app.get('/backgrounds/species/' + speciesId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -233,7 +355,7 @@ describe('/backgrounds', function() {
                 })
         });
 
-        it('/:backgroundId/ownership should return ownership status of the background if user is logged in', function(done) {
+        it('/:backgroundId/ownership should return ownership status', function(done) {
             app.get('/backgrounds/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -245,23 +367,13 @@ describe('/backgrounds', function() {
                 });
         });
 
-        it('/:backgroundId/comments should get all available comments for the background', function(done) {
+        it('/:backgroundId/comments should get all available comments', function(done) {
             app.get('/backgrounds/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    _.each(res.body.results, function(comment) {
-                        assert.isNumber(comment.id);
-                        assert.isString(comment.content);
-
-                        assert.isNumber(comment.user_id);
-                        assert.isString(comment.displayname);
-
-                        assert.isString(comment.created);
-                        if(comment.updated) assert.isString(comment.updated);
-                        assert.isNull(comment.deleted);
-                    });
+                    verifier.comments(res.body.results);
 
                     done();
                 })
@@ -277,28 +389,14 @@ describe('/backgrounds', function() {
                     assert.isArray(res.body.results);
 
                     _.each(res.body.results, function(item) {
-                        assert.isNumber(item.background_id);
-                        assert.isNumber(item.asset_id);
-                        assert.isNumber(item.value);
-
-                        assert.isNumber(item.id);
-                        assert.isBoolean(item.canon);
-                        assert.isNumber(item.popularity);
-                        assert.isString(item.name);
-                        assert.isNumber(item.price);
-                        assert.isBoolean(item.legal);
-                        assert.isNumber(item.assettype_id);
-
-                        assert.isString(item.created);
-                        if(item.deleted) assert.isString(item.deleted);
-                        if(item.updated) assert.isString(item.updated);
+                        verifier.generic(item);
                     });
 
                     done();
                 });
         });
 
-        it('/:backgroundId/attributes should return a list of attributes', function(done) {
+        it('/:backgroundId/attributes should return a list', function(done) {
             app.get('/backgrounds/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
@@ -308,27 +406,48 @@ describe('/backgrounds', function() {
                     assert.isArray(res.body.results);
 
                     _.each(res.body.results, function(item) {
-                        assert.isNumber(item.background_id);
-                        assert.isNumber(item.attribute_id);
-                        assert.isNumber(item.value);
-
-                        assert.isNumber(item.id);
-                        assert.isBoolean(item.canon);
-                        assert.isString(item.name);
-                        if(item.description) assert.isString(item.description);
-                        assert.isNumber(item.attributetype_id);
-                        if(item.icon) assert.equal(validator.isURL(item.icon), true);
-
-                        assert.isString(item.created);
-                        if(item.deleted) assert.isString(item.deleted);
-                        if(item.updated) assert.isString(item.updated);
+                        verifier.generic(item);
                     });
 
                     done();
                 });
         });
 
-        it('/:backgroundId/skills should return a list of skills', function(done) {
+        it('/:backgroundId/augmentations should return a list of augmentations', function(done) {
+            app.get('/backgrounds/' + temporaryId + '/augmentations')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.length);
+                    assert.isArray(res.body.results);
+
+                    _.each(res.body.results, function(item) {
+                        verifier.generic(item);
+                    });
+
+                    done();
+                });
+        });
+
+        it('/:backgroundId/doctrines should return a list', function(done) {
+            app.get('/backgrounds/' + temporaryId + '/doctrines')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.length);
+                    assert.isArray(res.body.results);
+
+                    _.each(res.body.results, function(item) {
+                        verifier.generic(item);
+                    });
+
+                    done();
+                });
+        });
+
+        it('/:backgroundId/skills should return a list', function(done) {
             app.get('/backgrounds/' + temporaryId + '/skills')
                 .expect(200)
                 .end(function(err, res) {
@@ -338,22 +457,24 @@ describe('/backgrounds', function() {
                     assert.isArray(res.body.results);
 
                     _.each(res.body.results, function(item) {
-                        assert.isNumber(item.background_id);
-                        assert.isNumber(item.skill_id);
-                        assert.isNumber(item.value);
+                        verifier.generic(item);
+                    });
 
-                        assert.isNumber(item.id);
-                        assert.isBoolean(item.canon);
-                        assert.isNumber(item.popularity);
-                        assert.isBoolean(item.manifestation);
-                        assert.isString(item.name);
-                        if(item.description) assert.isString(item.description);
-                        if(item.species_id) assert.isNumber(item.species_id);
-                        if(item.icon) assert.equal(validator.isURL(item.icon), true);
+                    done();
+                });
+        });
 
-                        assert.isString(item.created);
-                        if(item.deleted) assert.isString(item.deleted);
-                        if(item.updated) assert.isString(item.updated);
+        it('/:backgroundId/weapons should return a list', function(done) {
+            app.get('/backgrounds/' + temporaryId + '/weapons')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.length);
+                    assert.isArray(res.body.results);
+
+                    _.each(res.body.results, function(item) {
+                        verifier.generic(item);
                     });
 
                     done();
@@ -362,7 +483,7 @@ describe('/backgrounds', function() {
 
     });
 
-    describe('DELETE', function() {
+    xdescribe('DELETE', function() {
 
         it('/:backgroundId/attributes should remove the attribute from the background', function(done) {
             app.delete('/backgrounds/' + temporaryId + '/attributes/1')

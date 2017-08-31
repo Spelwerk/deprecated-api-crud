@@ -135,7 +135,7 @@ describe('/assettypes', function() {
                 })
         });
 
-        it('/:assetTypeId/ownership should return ownership status of the asset if user is logged in', function(done) {
+        it('/:assetTypeId/ownership should return ownership status', function(done) {
             app.get('/assettypes/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {

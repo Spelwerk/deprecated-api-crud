@@ -154,7 +154,7 @@ describe('/weaponmods', function() {
                 })
         });
 
-        it('/:weaponModId/ownership should return ownership status of the weapon mod if user is logged in', function(done) {
+        it('/:weaponModId/ownership should return ownership status', function(done) {
             app.get('/weaponmods/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -166,7 +166,7 @@ describe('/weaponmods', function() {
                 });
         });
 
-        it('/:weaponModId/comments should get all available comments for the asset', function(done) {
+        it('/:weaponModId/comments should get all available comments', function(done) {
             app.get('/weaponmods/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {

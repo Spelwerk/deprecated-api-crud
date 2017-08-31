@@ -378,7 +378,7 @@ describe('/persons', function() {
                 })
         });
 
-        it('/:personId/ownership should return ownership status of the person if user is logged in', function(done) {
+        it('/:personId/ownership should return ownership status', function(done) {
             app.get('/persons/' + personId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -390,7 +390,7 @@ describe('/persons', function() {
                 });
         });
 
-        it('/:personId/comments should get all available comments for the person', function(done) {
+        it('/:personId/comments should get all available comments', function(done) {
             app.get('/persons/' + personId + '/comments')
                 .expect(200)
                 .end(function(err, res) {

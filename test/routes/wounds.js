@@ -134,7 +134,7 @@ describe('/wounds', function() {
                 })
         });
 
-        it('/:woundId/ownership should return ownership status of the asset if user is logged in', function(done) {
+        it('/:woundId/ownership should return ownership status', function(done) {
             app.get('/wounds/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -146,7 +146,7 @@ describe('/wounds', function() {
                 });
         });
 
-        it('/:woundId/comments should get all available comments for the asset', function(done) {
+        it('/:woundId/comments should get all available comments', function(done) {
             app.get('/wounds/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {

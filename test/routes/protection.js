@@ -193,7 +193,7 @@ describe('/protection', function() {
                 })
         });
 
-        it('/:protectionId/ownership should return ownership status of the protection if user is logged in', function(done) {
+        it('/:protectionId/ownership should return ownership status', function(done) {
             app.get('/protection/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -205,7 +205,7 @@ describe('/protection', function() {
                 });
         });
 
-        it('/:protectionId/comments should get all available comments for the protection', function(done) {
+        it('/:protectionId/comments should get all available comments', function(done) {
             app.get('/protection/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
@@ -217,7 +217,7 @@ describe('/protection', function() {
                 })
         });
 
-        it('/:protectionId/attributes should return a list of attributes', function(done) {
+        it('/:protectionId/attributes should return a list', function(done) {
             app.get('/protection/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {

@@ -141,7 +141,7 @@ describe('/skills', function() {
 
     describe('GET', function() {
 
-        it('/ should return a list of skills', function(done) {
+        it('/ should return a list', function(done) {
             app.get('/skills')
                 .expect(200)
                 .end(function(err, res) {
@@ -189,7 +189,7 @@ describe('/skills', function() {
                 })
         });
 
-        it('/:skillId/ownership should return ownership status of the asset if user is logged in', function(done) {
+        it('/:skillId/ownership should return ownership status', function(done) {
             app.get('/skills/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -201,7 +201,7 @@ describe('/skills', function() {
                 });
         });
 
-        it('/:skillId/comments should get all available comments for the asset', function(done) {
+        it('/:skillId/comments should get all available comments', function(done) {
             app.get('/skills/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {

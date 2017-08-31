@@ -124,7 +124,7 @@ describe('/manifestations', function() {
                 })
         });
 
-        it('/:manifestationId/ownership should return ownership status of the asset if user is logged in', function(done) {
+        it('/:manifestationId/ownership should return ownership status', function(done) {
             app.get('/manifestations/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -136,7 +136,7 @@ describe('/manifestations', function() {
                 });
         });
 
-        it('/:manifestationId/comments should get all available comments for the asset', function(done) {
+        it('/:manifestationId/comments should get all available comments', function(done) {
             app.get('/manifestations/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {

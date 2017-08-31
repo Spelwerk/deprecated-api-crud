@@ -8,16 +8,133 @@ var should = chai.should(),
     expect = chai.expect;
 
 var app = require('../app'),
-    verifier = require('./../verifier'),
+    verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
 describe('/milestones', function() {
+
+    var temporaryId,
+        assetId,
+        attributeId,
+        augmentationId,
+        backgroundId,
+        doctrineId,
+        manifestationId,
+        skillId,
+        speciesId,
+        weaponId;
 
     before(function(done) {
         app.login(done);
     });
 
-    var temporaryId;
+    before(function(done) {
+        app.get('/assets')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                assetId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/attributes')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                attributeId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/backgrounds')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                backgroundId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/augmentations')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                augmentationId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/doctrines')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                doctrineId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/manifestations')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                manifestationId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/skills')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                skillId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/species')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                speciesId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/weapons')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                weaponId = res.body.results[0].id;
+
+                done();
+            });
+    });
 
     function verifyList(body) {
         assert.isNumber(body.length);
@@ -35,18 +152,10 @@ describe('/milestones', function() {
     }
 
     function verifyItem(item) {
-        assert.isNumber(item.id);
-        assert.isBoolean(item.canon);
+        verifier.generic(item);
 
-        assert.isString(item.name);
-        if(item.description) assert.isString(item.description);
-        if(item.background_id) assert.isNumber(item.background_id);
         if(item.manifestation_id) assert.isNumber(item.manifestation_id);
         if(item.species_id) assert.isNumber(item.species_id);
-
-        assert.isString(item.created);
-        if(item.updated) assert.isString(item.updated);
-        if(item.deleted) assert.isString(item.deleted);
     }
 
 
@@ -56,9 +165,10 @@ describe('/milestones', function() {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
-                background_id: 1,
-                manifestation_id: 1,
-                species_id: 1
+                icon: 'http://fakeicon.com/' + hasher(20) + '.png',
+                background_id: backgroundId,
+                manifestation_id: manifestationId,
+                species_id: speciesId
             };
 
             app.post('/milestones', payload)
@@ -87,10 +197,6 @@ describe('/milestones', function() {
         });
 
         it('/:milestoneId/comments should create a new comment for the milestone', function(done) {
-            var payload = {
-                content: hasher(20)
-            };
-
             app.post('/milestones/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
@@ -124,12 +230,32 @@ describe('/milestones', function() {
                 .end(done);
         });
 
+        it('/:milestoneId/augmentations should add an augmentation to the milestone', function(done) {
+            var payload = {
+                insert_id: 1
+            };
+
+            app.post('/milestones/' + temporaryId + '/augmentations', payload)
+                .expect(201)
+                .end(done);
+        });
+
+        it('/:milestoneId/doctrines should add an doctrine to the milestone', function(done) {
+            var payload = {
+                insert_id: 1,
+                value: 10
+            };
+
+            app.post('/milestones/' + temporaryId + '/doctrines', payload)
+                .expect(201)
+                .end(done);
+        });
+
         it('/:milestoneId/loyalties should add a loyalty to the milestone', function(done) {
             var payload = {
                 insert_id: 1,
-                occupation: hasher(20),
-                influence_min: 1,
-                influence_max: 10
+                value: 10,
+                custom: hasher(20)
             };
 
             app.post('/milestones/' + temporaryId + '/loyalties', payload)
@@ -148,9 +274,19 @@ describe('/milestones', function() {
                 .end(done);
         });
 
+        it('/:milestoneId/weapons should add an weapon to the milestone', function(done) {
+            var payload = {
+                insert_id: 1
+            };
+
+            app.post('/milestones/' + temporaryId + '/weapons', payload)
+                .expect(201)
+                .end(done);
+        });
+
     });
 
-    xdescribe('PUT', function() {
+    describe('PUT', function() {
 
         it('/:milestoneId should update the item with new values', function(done) {
             var payload = {
@@ -170,44 +306,38 @@ describe('/milestones', function() {
         });
 
         it('/:milestoneId/assets should change the asset value for the milestone', function(done) {
-            var payload = {value: 8};
-
-            app.put('/milestones/' + temporaryId + '/assets/1', payload)
+            app.put('/milestones/' + temporaryId + '/assets/1', { value: 8 })
                 .expect(204)
                 .end(done);
         });
 
         it('/:milestoneId/attributes should change the attribute value for the milestone', function(done) {
-            var payload = {value: 8};
-
-            app.put('/milestones/' + temporaryId + '/attributes/1', payload)
+            app.put('/milestones/' + temporaryId + '/attributes/1', { value: 8 })
                 .expect(204)
                 .end(done);
         });
 
-        it('/:milestoneId/loyalties should change the loyalty values for the milestone', function(done) {
-            var payload = {
-                occupation: hasher(20),
-                influence_min: 2,
-                influence_max: 20
-            };
+        it('/:milestoneId/doctrines should change the doctrine value for the milestone', function(done) {
+            app.put('/milestones/' + temporaryId + '/doctrines/1', { value: 8 })
+                .expect(204)
+                .end(done);
+        });
 
-            app.put('/milestones/' + temporaryId + '/loyalties/1', payload)
+        it('/:milestoneId/loyalties should change the loyalty value for the milestone', function(done) {
+            app.put('/milestones/' + temporaryId + '/loyalties/1', { value: 8, custom: hasher(20) })
                 .expect(204)
                 .end(done);
         });
 
         it('/:milestoneId/skills should change the skill value for the milestone', function(done) {
-            var payload = {value: 8};
-
-            app.put('/milestones/' + temporaryId + '/skills/1', payload)
+            app.put('/milestones/' + temporaryId + '/skills/1', { value: 8 })
                 .expect(204)
                 .end(done);
         });
 
     });
 
-    xdescribe('GET', function() {
+    describe('GET', function() {
 
         it('/ should return a list of milestones', function(done) {
             app.get('/milestones')
@@ -221,8 +351,8 @@ describe('/milestones', function() {
                 });
         });
 
-        it('/background/:backgroundId should return a list of milestones', function(done) {
-            app.get('/milestones/background/1')
+        it('/manifestation/:typeId should return a list of milestones', function(done) {
+            app.get('/milestones/manifestation/' + manifestationId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -233,20 +363,8 @@ describe('/milestones', function() {
                 });
         });
 
-        it('/manifestation/:manifestationId should return a list of milestones', function(done) {
-            app.get('/milestones/manifestation/1')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyList(res.body);
-
-                    done();
-                });
-        });
-
-        it('/species/:speciesId should return a list of milestones', function(done) {
-            app.get('/milestones/species/1')
+        it('/species/:typeId should return a list of milestones', function(done) {
+            app.get('/milestones/species/' + speciesId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -269,7 +387,7 @@ describe('/milestones', function() {
                 })
         });
 
-        it('/:milestoneId/ownership should return ownership status of the milestone if user is logged in', function(done) {
+        it('/:milestoneId/ownership should return ownership status', function(done) {
             app.get('/milestones/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -281,23 +399,13 @@ describe('/milestones', function() {
                 });
         });
 
-        it('/:milestoneId/comments should get all available comments for the milestone', function(done) {
+        it('/:milestoneId/comments should get all available comments', function(done) {
             app.get('/milestones/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    _.each(res.body.results, function(comment) {
-                        assert.isNumber(comment.id);
-                        assert.isString(comment.content);
-
-                        assert.isNumber(comment.user_id);
-                        assert.isString(comment.displayname);
-
-                        assert.isString(comment.created);
-                        if(comment.updated) assert.isString(comment.updated);
-                        assert.isNull(comment.deleted);
-                    });
+                    verifier.comments(res.body.results);
 
                     done();
                 })
@@ -313,29 +421,14 @@ describe('/milestones', function() {
                     assert.isArray(res.body.results);
 
                     _.each(res.body.results, function(item) {
-                        assert.isNumber(item.milestone_id);
-                        assert.isNumber(item.asset_id);
-                        assert.isNumber(item.value);
-
-                        assert.isNumber(item.id);
-                        assert.isBoolean(item.canon);
-                        assert.isNumber(item.popularity);
-                        assert.isString(item.name);
-                        if(item.description) assert.isString(item.description);
-                        assert.isNumber(item.price);
-                        assert.isBoolean(item.legal);
-                        assert.isNumber(item.assettype_id);
-
-                        assert.isString(item.created);
-                        if(item.deleted) assert.isString(item.deleted);
-                        if(item.updated) assert.isString(item.updated);
+                        verifier.generic(item);
                     });
 
                     done();
                 });
         });
 
-        it('/:milestoneId/attributes should return a list of attributes', function(done) {
+        it('/:milestoneId/attributes should return a list', function(done) {
             app.get('/milestones/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
@@ -345,20 +438,41 @@ describe('/milestones', function() {
                     assert.isArray(res.body.results);
 
                     _.each(res.body.results, function(item) {
-                        assert.isNumber(item.milestone_id);
-                        assert.isNumber(item.attribute_id);
-                        assert.isNumber(item.value);
+                        verifier.generic(item);
+                    });
 
-                        assert.isNumber(item.id);
-                        assert.isBoolean(item.canon);
-                        assert.isString(item.name);
-                        if(item.description) assert.isString(item.description);
-                        assert.isNumber(item.attributetype_id);
-                        if(item.icon) assert.equal(validator.isURL(item.icon), true);
+                    done();
+                });
+        });
 
-                        assert.isString(item.created);
-                        if(item.deleted) assert.isString(item.deleted);
-                        if(item.updated) assert.isString(item.updated);
+        it('/:milestoneId/augmentations should return a list of augmentations', function(done) {
+            app.get('/milestones/' + temporaryId + '/augmentations')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.length);
+                    assert.isArray(res.body.results);
+
+                    _.each(res.body.results, function(item) {
+                        verifier.generic(item);
+                    });
+
+                    done();
+                });
+        });
+
+        it('/:milestoneId/doctrines should return a list', function(done) {
+            app.get('/milestones/' + temporaryId + '/doctrines')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.length);
+                    assert.isArray(res.body.results);
+
+                    _.each(res.body.results, function(item) {
+                        verifier.generic(item);
                     });
 
                     done();
@@ -375,30 +489,14 @@ describe('/milestones', function() {
                     assert.isArray(res.body.results);
 
                     _.each(res.body.results, function(item) {
-                        assert.isNumber(item.milestone_id);
-                        assert.isNumber(item.loyalty_id);
-                        assert.isString(item.occupation);
-                        assert.isNumber(item.influence_min);
-                        assert.isNumber(item.influence_max);
-
-                        assert.isNumber(item.id);
-                        assert.isBoolean(item.canon);
-                        assert.isNumber(item.popularity);
-                        assert.isString(item.name);
-                        if(item.description) assert.isString(item.description);
-                        assert.isNumber(item.value);
-                        if(item.icon) assert.equal(validator.isURL(item.icon), true);
-
-                        assert.isString(item.created);
-                        if(item.deleted) assert.isString(item.deleted);
-                        if(item.updated) assert.isString(item.updated);
+                        verifier.generic(item);
                     });
 
                     done();
                 });
         });
 
-        it('/:milestoneId/skills should return a list of skills', function(done) {
+        it('/:milestoneId/skills should return a list', function(done) {
             app.get('/milestones/' + temporaryId + '/skills')
                 .expect(200)
                 .end(function(err, res) {
@@ -408,22 +506,24 @@ describe('/milestones', function() {
                     assert.isArray(res.body.results);
 
                     _.each(res.body.results, function(item) {
-                        assert.isNumber(item.milestone_id);
-                        assert.isNumber(item.skill_id);
-                        assert.isNumber(item.value);
+                        verifier.generic(item);
+                    });
 
-                        assert.isNumber(item.id);
-                        assert.isBoolean(item.canon);
-                        assert.isNumber(item.popularity);
-                        assert.isBoolean(item.manifestation);
-                        assert.isString(item.name);
-                        if(item.description) assert.isString(item.description);
-                        if(item.species_id) assert.isNumber(item.species_id);
-                        if(item.icon) assert.equal(validator.isURL(item.icon), true);
+                    done();
+                });
+        });
 
-                        assert.isString(item.created);
-                        if(item.deleted) assert.isString(item.deleted);
-                        if(item.updated) assert.isString(item.updated);
+        it('/:milestoneId/weapons should return a list', function(done) {
+            app.get('/milestones/' + temporaryId + '/weapons')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.length);
+                    assert.isArray(res.body.results);
+
+                    _.each(res.body.results, function(item) {
+                        verifier.generic(item);
                     });
 
                     done();
@@ -434,20 +534,14 @@ describe('/milestones', function() {
 
     xdescribe('DELETE', function() {
 
-        it('/:milestoneId/assets should remove the asset from the milestone', function(done) {
-            app.delete('/milestones/' + temporaryId + '/assets/1')
-                .expect(204)
-                .end(done);
-        });
-
         it('/:milestoneId/attributes should remove the attribute from the milestone', function(done) {
             app.delete('/milestones/' + temporaryId + '/attributes/1')
                 .expect(204)
                 .end(done);
         });
 
-        it('/:milestoneId/loyalties should remove the loyalty from the milestone', function(done) {
-            app.delete('/milestones/' + temporaryId + '/loyalties/1')
+        it('/:milestoneId/assets should remove the asset from the milestone', function(done) {
+            app.delete('/milestones/' + temporaryId + '/assets/1')
                 .expect(204)
                 .end(done);
         });

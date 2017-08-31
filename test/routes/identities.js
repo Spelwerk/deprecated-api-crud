@@ -134,7 +134,7 @@ describe('/identities', function() {
                 })
         });
 
-        it('/:identityId/ownership should return ownership status of the asset if user is logged in', function(done) {
+        it('/:identityId/ownership should return ownership status', function(done) {
             app.get('/identities/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -146,7 +146,7 @@ describe('/identities', function() {
                 });
         });
 
-        it('/:identityId/comments should get all available comments for the asset', function(done) {
+        it('/:identityId/comments should get all available comments', function(done) {
             app.get('/identities/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {

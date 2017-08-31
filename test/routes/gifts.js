@@ -278,7 +278,7 @@ describe('/gifts', function() {
                 })
         });
 
-        it('/:giftId/ownership should return ownership status of the gift if user is logged in', function(done) {
+        it('/:giftId/ownership should return ownership status', function(done) {
             app.get('/gifts/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -290,7 +290,7 @@ describe('/gifts', function() {
                 });
         });
 
-        it('/:giftId/comments should get all available comments for the gift', function(done) {
+        it('/:giftId/comments should get all available comments', function(done) {
             app.get('/gifts/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
@@ -302,7 +302,7 @@ describe('/gifts', function() {
                 })
         });
 
-        it('/:giftId/attributes should return a list of attributes', function(done) {
+        it('/:giftId/attributes should return a list', function(done) {
             app.get('/gifts/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
@@ -319,7 +319,7 @@ describe('/gifts', function() {
                 });
         });
 
-        it('/:giftId/expertises should return a list of expertises', function(done) {
+        it('/:giftId/expertises should return a list', function(done) {
             app.get('/gifts/' + temporaryId + '/expertises')
                 .expect(200)
                 .end(function(err, res) {
@@ -336,7 +336,7 @@ describe('/gifts', function() {
                 });
         });
 
-        it('/:giftId/skills should return a list of skills', function(done) {
+        it('/:giftId/skills should return a list', function(done) {
             app.get('/gifts/' + temporaryId + '/skills')
                 .expect(200)
                 .end(function(err, res) {

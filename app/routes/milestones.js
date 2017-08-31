@@ -1,23 +1,20 @@
-var query = require('./../../lib/sql/query'),
+var query = require('../../lib/sql/query'),
     ownership = require('../../lib/sql/ownership'),
     sequel = require('../../lib/sql/sequel'),
     generic = require('../../lib/sql/generic'),
     comment = require('../../lib/sql/comment'),
-    relation = require('./../../lib/sql/relation');
+    relation = require('../../lib/sql/relation');
 
 module.exports = function(router) {
     'use strict';
 
-    var tableName = 'asset';
+    var tableName = 'milestone';
 
-    var sql = 'SELECT * FROM asset ' +
-        'LEFT JOIN generic ON generic.id = asset.generic_id ' +
-        'LEFT JOIN assettype ON assettype.generic_id = asset.assettype_id ' +
-        'LEFT JOIN assetgroup ON assetgroup.generic_id = assettype.assetgroup_id';
+    var sql = 'SELECT * FROM ' + tableName + ' LEFT JOIN generic ON generic.id = ' + tableName + '.generic_id';
 
     router.route('/')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE canon = 1 AND deleted IS NULL';
+            var call = sql + ' WHERE deleted IS NULL';
 
             sequel.get(req, res, next, call);
         })
@@ -25,24 +22,34 @@ module.exports = function(router) {
             generic.post(req, res, next, tableName);
         });
 
-    // Group
+    // Background
 
-    router.route('/group/:groupId')
+    router.route('/background/:backgroundId')
         .get(function(req, res, next) {
             var call = sql + ' WHERE deleted IS NULL AND ' +
-                'assetgroup_id = ?';
+                'background_id = ?';
 
-            sequel.get(req, res, next, call, [req.params.groupId]);
+            sequel.get(req, res, next, call, [req.params.backgroundId]);
         });
 
-    // Type
+    // Manifestation
 
-    router.route('/type/:typeId')
+    router.route('/manifestation/:manifestationId')
         .get(function(req, res, next) {
             var call = sql + ' WHERE deleted IS NULL AND ' +
-                'assettype_id = ?';
+                'manifestation_id = ?';
 
-            sequel.get(req, res, next, call, [req.params.typeId]);
+            sequel.get(req, res, next, call, [req.params.manifestationId]);
+        });
+
+    // Species
+
+    router.route('/species/:speciesId')
+        .get(function(req, res, next) {
+            var call = sql + ' WHERE deleted IS NULL AND ' +
+                'species_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.speciesId]);
         });
 
     // ID
@@ -90,6 +97,30 @@ module.exports = function(router) {
             })
         });
 
+    // Assets
+
+    router.route('/:id/assets')
+        .get(function(req, res, next) {
+            var call = 'SELECT * FROM generic_has_generic ' +
+                'LEFT JOIN generic ON generic.id = generic_has_generic.relation_id ' +
+                'LEFT JOIN asset ON asset.generic_id = generic_has_generic.relation_id ' +
+                'WHERE ' +
+                'generic_has_generic.generic_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.id]);
+        })
+        .post(function(req, res, next) {
+            relation.post(req, res, next, req.params.id, req.body.insert_id, req.body.value);
+        });
+
+    router.route('/:id/assets/:assetId')
+        .put(function(req, res, next) {
+            relation.put(req, res, next, req.params.id, req.params.assetId, req.body.value);
+        })
+        .delete(function(req, res, next) {
+            relation.delete(req, res, next, req.params.id, req.params.assetId);
+        });
+
     // Attributes
 
     router.route('/:id/attributes')
@@ -112,6 +143,27 @@ module.exports = function(router) {
         })
         .delete(function(req, res, next) {
             relation.delete(req, res, next, req.params.id, req.params.attributeId);
+        });
+
+    // Augmentations
+
+    router.route('/:id/augmentations')
+        .get(function(req, res, next) {
+            var call = 'SELECT * FROM generic_has_generic ' +
+                'LEFT JOIN generic ON generic.id = generic_has_generic.relation_id ' +
+                'LEFT JOIN augmentation ON augmentation.generic_id = generic_has_generic.relation_id ' +
+                'WHERE ' +
+                'generic_has_generic.generic_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.id]);
+        })
+        .post(function(req, res, next) {
+            relation.post(req, res, next, req.params.id, req.body.insert_id);
+        });
+
+    router.route('/:id/augmentations/:augmentationId')
+        .delete(function(req, res, next) {
+            relation.delete(req, res, next, req.params.id, req.params.augmentationId);
         });
 
     // Doctrines
@@ -138,28 +190,28 @@ module.exports = function(router) {
             relation.delete(req, res, next, req.params.id, req.params.doctrineId);
         });
 
-    // Expertises
+    // Loyalties
 
-    router.route('/:id/expertises')
+    router.route('/:id/loyalties')
         .get(function(req, res, next) {
             var call = 'SELECT * FROM generic_has_generic ' +
                 'LEFT JOIN generic ON generic.id = generic_has_generic.relation_id ' +
-                'LEFT JOIN expertise ON expertise.generic_id = generic_has_generic.relation_id ' +
+                'LEFT JOIN loyalty ON loyalty.generic_id = generic_has_generic.relation_id ' +
                 'WHERE ' +
                 'generic_has_generic.generic_id = ?';
 
             sequel.get(req, res, next, call, [req.params.id]);
         })
         .post(function(req, res, next) {
-            relation.post(req, res, next, req.params.id, req.body.insert_id, req.body.value);
+            relation.post(req, res, next, req.params.id, req.body.insert_id, req.body.value, req.body.custom);
         });
 
-    router.route('/:id/expertises/:expertiseId')
+    router.route('/:id/loyalties/:loyaltyId')
         .put(function(req, res, next) {
-            relation.put(req, res, next, req.params.id, req.params.expertiseId, req.body.value);
+            relation.put(req, res, next, req.params.id, req.params.loyaltyId, req.body.value, req.body.custom);
         })
         .delete(function(req, res, next) {
-            relation.delete(req, res, next, req.params.id, req.params.expertiseId);
+            relation.delete(req, res, next, req.params.id, req.params.loyaltyId);
         });
 
     // Skills
@@ -184,5 +236,26 @@ module.exports = function(router) {
         })
         .delete(function(req, res, next) {
             relation.delete(req, res, next, req.params.id, req.params.skillId);
+        });
+
+    // Weapons
+
+    router.route('/:id/weapons')
+        .get(function(req, res, next) {
+            var call = 'SELECT * FROM generic_has_generic ' +
+                'LEFT JOIN generic ON generic.id = generic_has_generic.relation_id ' +
+                'LEFT JOIN weapon ON weapon.generic_id = generic_has_generic.relation_id ' +
+                'WHERE ' +
+                'generic_has_generic.generic_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.id]);
+        })
+        .post(function(req, res, next) {
+            relation.post(req, res, next, req.params.id, req.body.insert_id);
+        });
+
+    router.route('/:id/weapons/:weaponId')
+        .delete(function(req, res, next) {
+            relation.delete(req, res, next, req.params.id, req.params.weaponId);
         });
 };

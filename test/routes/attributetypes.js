@@ -102,7 +102,7 @@ describe('/attributetypes', function() {
                 })
         });
 
-        it('/:attributeTypeId/ownership should return ownership status of the attribute if user is logged in', function(done) {
+        it('/:attributeTypeId/ownership should return ownership status', function(done) {
             app.get('/attributetypes/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {

@@ -131,7 +131,7 @@ describe('/attributes', function() {
 
     describe('GET', function() {
 
-        it('/ should return a list of attributes', function(done) {
+        it('/ should return a list', function(done) {
             app.get('/attributes')
                 .expect(200)
                 .end(function(err, res) {
@@ -143,7 +143,7 @@ describe('/attributes', function() {
                 });
         });
 
-        xit('/manifestation/:manifestationId should return a list of attributes', function(done) {
+        xit('/manifestation/:manifestationId should return a list', function(done) {
             app.get('/attributes/manifestation/' + manifestationId)
                 .expect(200)
                 .end(function(err, res) {
@@ -155,7 +155,7 @@ describe('/attributes', function() {
                 });
         });
 
-        it('/type/:typeId should return a list of attributes', function(done) {
+        it('/type/:typeId should return a list', function(done) {
             app.get('/attributes/type/1')
                 .expect(200)
                 .end(function(err, res) {
@@ -179,7 +179,7 @@ describe('/attributes', function() {
                 })
         });
 
-        it('/:attributeId/ownership should return ownership status of the attribute if user is logged in', function(done) {
+        it('/:attributeId/ownership should return ownership status', function(done) {
             app.get('/attributes/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -191,7 +191,7 @@ describe('/attributes', function() {
                 });
         });
 
-        it('/:attributeId/comments should get all available comments for the asset', function(done) {
+        it('/:attributeId/comments should get all available comments', function(done) {
             app.get('/attributes/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {

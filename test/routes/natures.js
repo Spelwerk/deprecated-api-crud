@@ -134,7 +134,7 @@ describe('/natures', function() {
                 })
         });
 
-        it('/:natureId/ownership should return ownership status of the asset if user is logged in', function(done) {
+        it('/:natureId/ownership should return ownership status', function(done) {
             app.get('/natures/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -146,7 +146,7 @@ describe('/natures', function() {
                 });
         });
 
-        it('/:natureId/comments should get all available comments for the asset', function(done) {
+        it('/:natureId/comments should get all available comments', function(done) {
             app.get('/natures/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {

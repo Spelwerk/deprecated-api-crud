@@ -258,7 +258,7 @@ describe('/weapontypes', function() {
                 })
         });
 
-        it('/:weaponTypeId/ownership should return ownership status of the weapon group if user is logged in', function(done) {
+        it('/:weaponTypeId/ownership should return ownership status', function(done) {
             app.get('/weapontypes/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -270,7 +270,7 @@ describe('/weapontypes', function() {
                 });
         });
 
-        it('/:weaponTypeId/comments should get all available comments for the asset', function(done) {
+        it('/:weaponTypeId/comments should get all available comments', function(done) {
             app.get('/weapontypes/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {

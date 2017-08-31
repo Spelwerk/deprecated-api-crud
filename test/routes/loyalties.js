@@ -137,7 +137,7 @@ describe('/loyalties', function() {
                 })
         });
 
-        it('/:loyaltyId/ownership should return ownership status of the asset if user is logged in', function(done) {
+        it('/:loyaltyId/ownership should return ownership status', function(done) {
             app.get('/loyalties/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -149,7 +149,7 @@ describe('/loyalties', function() {
                 });
         });
 
-        it('/:loyaltyId/comments should get all available comments for the asset', function(done) {
+        it('/:loyaltyId/comments should get all available comments', function(done) {
             app.get('/loyalties/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {

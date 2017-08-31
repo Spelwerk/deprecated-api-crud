@@ -103,7 +103,7 @@ describe('/assetgroups', function() {
                 })
         });
 
-        it('/:assetGroupId/ownership should return ownership status of the asset group if user is logged in', function(done) {
+        it('/:assetGroupId/ownership should return ownership status', function(done) {
             app.get('/assetgroups/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {

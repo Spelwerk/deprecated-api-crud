@@ -291,7 +291,7 @@ describe('/weapons', function() {
 
     describe('GET', function() {
 
-        it('/ should return a list of weapons', function(done) {
+        it('/ should return a list', function(done) {
             app.get('/weapons')
                 .expect(200)
                 .end(function(err, res) {
@@ -303,7 +303,7 @@ describe('/weapons', function() {
                 });
         });
 
-        it('/augmentation/:augmentationId should return a list of weapons', function(done) {
+        it('/augmentation/:augmentationId should return a list', function(done) {
             app.get('/weapons/augmentation/' + augmentationId)
                 .expect(200)
                 .end(function(err, res) {
@@ -315,7 +315,7 @@ describe('/weapons', function() {
                 });
         });
 
-        it('/species/:speciesId should return a list of weapons', function(done) {
+        it('/species/:speciesId should return a list', function(done) {
             app.get('/weapons/species/' + speciesId)
                 .expect(200)
                 .end(function(err, res) {
@@ -327,7 +327,7 @@ describe('/weapons', function() {
                 });
         });
 
-        it('/type/:typeId should return a list of weapons', function(done) {
+        it('/type/:typeId should return a list', function(done) {
             app.get('/weapons/type/' + weaponTypeId)
                 .expect(200)
                 .end(function(err, res) {
@@ -351,7 +351,7 @@ describe('/weapons', function() {
                 })
         });
 
-        it('/:weaponId/ownership should return ownership status of the weapon if user is logged in', function(done) {
+        it('/:weaponId/ownership should return ownership status', function(done) {
             app.get('/weapons/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -363,7 +363,7 @@ describe('/weapons', function() {
                 });
         });
 
-        it('/:weaponId/comments should get all available comments for the weapon', function(done) {
+        it('/:weaponId/comments should get all available comments', function(done) {
             app.get('/weapons/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
@@ -375,7 +375,7 @@ describe('/weapons', function() {
                 })
         });
 
-        it('/:weaponId/attributes should return a list of attributes', function(done) {
+        it('/:weaponId/attributes should return a list', function(done) {
             app.get('/weapons/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
@@ -392,7 +392,7 @@ describe('/weapons', function() {
                 });
         });
 
-        it('/:weaponId/expertises should return a list of expertises', function(done) {
+        it('/:weaponId/expertises should return a list', function(done) {
             app.get('/weapons/' + temporaryId + '/expertises')
                 .expect(200)
                 .end(function(err, res) {
@@ -409,7 +409,7 @@ describe('/weapons', function() {
                 });
         });
 
-        it('/:weaponId/skills should return a list of skills', function(done) {
+        it('/:weaponId/skills should return a list', function(done) {
             app.get('/weapons/' + temporaryId + '/skills')
                 .expect(200)
                 .end(function(err, res) {

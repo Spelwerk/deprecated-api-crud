@@ -213,7 +213,7 @@ describe('/expertise', function() {
                 })
         });
 
-        it('/:expertiseId/ownership should return ownership status of the asset if user is logged in', function(done) {
+        it('/:expertiseId/ownership should return ownership status', function(done) {
             app.get('/expertises/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -225,7 +225,7 @@ describe('/expertise', function() {
                 });
         });
 
-        it('/:expertiseId/comments should get all available comments for the asset', function(done) {
+        it('/:expertiseId/comments should get all available comments', function(done) {
             app.get('/expertises/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {

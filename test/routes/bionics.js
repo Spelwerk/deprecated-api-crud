@@ -243,7 +243,7 @@ describe('/bionics', function() {
                 })
         });
 
-        it('/:bionicId/ownership should return ownership status of the bionic if user is logged in', function(done) {
+        it('/:bionicId/ownership should return ownership status', function(done) {
             app.get('/bionics/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -255,7 +255,7 @@ describe('/bionics', function() {
                 });
         });
 
-        it('/:bionicId/comments should get all available comments for the bionic', function(done) {
+        it('/:bionicId/comments should get all available comments', function(done) {
             app.get('/bionics/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
@@ -267,7 +267,7 @@ describe('/bionics', function() {
                 })
         });
 
-        it('/:bionicId/attributes should return a list of attributes', function(done) {
+        it('/:bionicId/attributes should return a list', function(done) {
             app.get('/bionics/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {

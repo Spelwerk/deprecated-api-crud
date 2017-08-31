@@ -312,7 +312,7 @@ describe('/assets', function() {
                 })
         });
 
-        it('/:assetId/ownership should return ownership status of the asset if user is logged in', function(done) {
+        it('/:assetId/ownership should return ownership status', function(done) {
             app.get('/assets/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -324,7 +324,7 @@ describe('/assets', function() {
                 });
         });
 
-        it('/:assetId/comments should get all available comments for the asset', function(done) {
+        it('/:assetId/comments should get all available comments', function(done) {
             app.get('/assets/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
@@ -336,7 +336,7 @@ describe('/assets', function() {
                 })
         });
 
-        it('/:assetId/attributes should return a list of attributes', function(done) {
+        it('/:assetId/attributes should return a list', function(done) {
             app.get('/assets/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
@@ -353,7 +353,7 @@ describe('/assets', function() {
                 });
         });
 
-        it('/:assetId/doctrines should return a list of doctrines', function(done) {
+        it('/:assetId/doctrines should return a list', function(done) {
             app.get('/assets/' + temporaryId + '/doctrines')
                 .expect(200)
                 .end(function(err, res) {
@@ -370,7 +370,7 @@ describe('/assets', function() {
                 });
         });
 
-        it('/:assetId/expertises should return a list of expertises', function(done) {
+        it('/:assetId/expertises should return a list', function(done) {
             app.get('/assets/' + temporaryId + '/expertises')
                 .expect(200)
                 .end(function(err, res) {
@@ -387,7 +387,7 @@ describe('/assets', function() {
                 });
         });
 
-        it('/:assetId/skills should return a list of skills', function(done) {
+        it('/:assetId/skills should return a list', function(done) {
             app.get('/assets/' + temporaryId + '/skills')
                 .expect(200)
                 .end(function(err, res) {

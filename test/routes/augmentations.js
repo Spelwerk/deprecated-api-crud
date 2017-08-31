@@ -253,7 +253,7 @@ describe('/augmentations', function() {
                 })
         });
 
-        it('/:augmentationId/ownership should return ownership status of the augmentation if user is logged in', function(done) {
+        it('/:augmentationId/ownership should return ownership', function(done) {
             app.get('/augmentations/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -265,7 +265,7 @@ describe('/augmentations', function() {
                 });
         });
 
-        it('/:augmentationId/comments should get all available comments for the augmentation', function(done) {
+        it('/:augmentationId/comments should get all available comments', function(done) {
             app.get('/augmentations/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
@@ -277,7 +277,7 @@ describe('/augmentations', function() {
                 })
         });
 
-        it('/:augmentationId/attributes should return a list of attributes', function(done) {
+        it('/:augmentationId/attributes should return a list', function(done) {
             app.get('/augmentations/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
@@ -294,7 +294,7 @@ describe('/augmentations', function() {
                 });
         });
 
-        it('/:augmentationId/expertises should return a list of expertises', function(done) {
+        it('/:augmentationId/expertises should return a list', function(done) {
             app.get('/augmentations/' + temporaryId + '/expertises')
                 .expect(200)
                 .end(function(err, res) {
@@ -311,7 +311,7 @@ describe('/augmentations', function() {
                 });
         });
 
-        it('/:augmentationId/skills should return a list of skills', function(done) {
+        it('/:augmentationId/skills should return a list', function(done) {
             app.get('/augmentations/' + temporaryId + '/skills')
                 .expect(200)
                 .end(function(err, res) {

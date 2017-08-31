@@ -195,7 +195,7 @@ describe('/species', function() {
                 })
         });
 
-        it('/:speciesId/ownership should return ownership status of the species if user is logged in', function(done) {
+        it('/:speciesId/ownership should return ownership status', function(done) {
             app.get('/species/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
@@ -207,7 +207,7 @@ describe('/species', function() {
                 });
         });
 
-        it('/:speciesId/comments should get all available comments for the species', function(done) {
+        it('/:speciesId/comments should get all available comments', function(done) {
             app.get('/species/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
@@ -219,7 +219,7 @@ describe('/species', function() {
                 })
         });
 
-        it('/:speciesId/attributes should return a list of attributes', function(done) {
+        it('/:speciesId/attributes should return a list', function(done) {
             app.get('/species/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
