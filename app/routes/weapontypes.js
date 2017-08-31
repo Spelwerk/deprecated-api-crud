@@ -30,7 +30,6 @@ module.exports = function(router) {
 
             weapontype.name = req.body.name;
             weapontype.description = req.body.description;
-            weapontype.icon = req.body.icon;
 
             weapontype.augmentation = req.body.augmentation_id;
             weapontype.damage = req.body.damage_id;
@@ -54,10 +53,10 @@ module.exports = function(router) {
                     query('INSERT INTO expertise (generic_id,skill_id) VALUES (?,?)', [expertise.id, weapontype.skill], callback);
                 },
 
-                // WEAPONGROUP
+                // WEAPONTYPE
 
                 function(callback) {
-                    query('INSERT INTO generic (user_id,name,description,icon) VALUES (?,?,?,?)', [req.user.id, weapontype.name, weapontype.description, weapontype.icon], function(err, result) {
+                    query('INSERT INTO generic (user_id,name,description) VALUES (?,?,?)', [req.user.id, weapontype.name, weapontype.description], function(err, result) {
                         if(err) return callback(err);
 
                         weapontype.id = result.insertId;

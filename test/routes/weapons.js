@@ -11,26 +11,40 @@ var app = require('../app'),
     verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
-describe('/gifts', function() {
+describe('/weapons', function() {
 
     var temporaryId,
-        manifestationId,
+        augmentationId,
         speciesId,
+        weaponTypeId,
         attributeId,
         expertiseId,
-        skillId;
+        skillId,
+        modId;
 
     before(function(done) {
         app.login(done);
     });
 
     before(function(done) {
-        app.get('/manifestations')
+        app.get('/weapontypes')
             .expect(200)
             .end(function(err, res) {
                 if(err) return done(err);
 
-                manifestationId = res.body.results[0].id;
+                weaponTypeId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/augmentations')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                augmentationId = res.body.results[0].id;
 
                 done();
             });
@@ -84,6 +98,18 @@ describe('/gifts', function() {
             });
     });
 
+    before(function(done) {
+        app.get('/weaponmods')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                modId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
     function verifyList(body) {
         assert.isNumber(body.length);
 
@@ -102,22 +128,46 @@ describe('/gifts', function() {
     function verifyItem(item) {
         verifier.generic(item);
 
-        if(item.manifestation_id) assert.isNumber(item.manifestation_id);
+        assert.isNumber(item.weapontype_id);
+        assert.isNumber(item.damage_id);
+        assert.isNumber(item.expertise_id);
+        assert.isNumber(item.skill_id);
         if(item.species_id) assert.isNumber(item.species_id);
+        if(item.augmentation_id) assert.isNumber(item.augmentation_id);
+
+        assert.isBoolean(item.legal);
+        assert.isNumber(item.price);
+        assert.isNumber(item.damage_dice);
+        assert.isNumber(item.damage_bonus);
+        assert.isNumber(item.critical_dice);
+        assert.isNumber(item.critical_bonus);
+        assert.isNumber(item.hand);
+        assert.isNumber(item.initiative);
+        assert.isNumber(item.hit);
+        assert.isNumber(item.distance);
     }
 
 
     describe('POST', function() {
 
-        it('/ should create a new gift', function(done) {
+        it('/ should create a new weapon', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
-                manifestation_id: manifestationId,
-                species_id: speciesId
+                weapontype_id: weaponTypeId,
+                legal: true,
+                price: 8,
+                damage_dice: 2,
+                damage_bonus: 3,
+                critical_dice: 4,
+                critical_bonus: 5,
+                hand: 1,
+                initiative: 6,
+                hit: 7,
+                distance: 100
             };
 
-            app.post('/gifts', payload)
+            app.post('/weapons', payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -130,8 +180,8 @@ describe('/gifts', function() {
                 });
         });
 
-        it('/:giftId/clone should create a copy of the gift', function(done) {
-            app.post('/gifts/' + temporaryId + '/clone')
+        it('/:weaponId/clone should create a copy of the weapon', function(done) {
+            app.post('/weapons/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -142,8 +192,8 @@ describe('/gifts', function() {
                 });
         });
 
-        it('/:giftId/comments should create a new comment for the gift', function(done) {
-            app.post('/gifts/' + temporaryId + '/comments', { comment: hasher(20) })
+        it('/:weaponId/comments should create a new comment for the weapon', function(done) {
+            app.post('/weapons/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -154,35 +204,46 @@ describe('/gifts', function() {
                 });
         });
 
-        it('/:giftId/attributes should add an attribute to the gift', function(done) {
+        it('/:weaponId/attributes should add an attribute to the weapon', function(done) {
             var payload = {
                 insert_id: attributeId,
                 value: 10
             };
 
-            app.post('/gifts/' + temporaryId + '/attributes', payload)
+            app.post('/weapons/' + temporaryId + '/attributes', payload)
                 .expect(201)
                 .end(done);
         });
 
-        it('/:giftId/expertises should add an skill to the gift', function(done) {
+        it('/:weaponId/expertises should add an skill to the weapon', function(done) {
             var payload = {
                 insert_id: expertiseId,
                 value: 10
             };
 
-            app.post('/gifts/' + temporaryId + '/expertises', payload)
+            app.post('/weapons/' + temporaryId + '/expertises', payload)
                 .expect(201)
                 .end(done);
         });
 
-        it('/:giftId/skills should add an skill to the gift', function(done) {
+        it('/:weaponId/skills should add an skill to the weapon', function(done) {
             var payload = {
                 insert_id: skillId,
                 value: 10
             };
 
-            app.post('/gifts/' + temporaryId + '/skills', payload)
+            app.post('/weapons/' + temporaryId + '/skills', payload)
+                .expect(201)
+                .end(done);
+        });
+
+        it('/:weaponId/mods should add an skill to the weapon', function(done) {
+            var payload = {
+                insert_id: modId,
+                value: 10
+            };
+
+            app.post('/weapons/' + temporaryId + '/mods', payload)
                 .expect(201)
                 .end(done);
         });
@@ -191,37 +252,37 @@ describe('/gifts', function() {
 
     describe('PUT', function() {
 
-        it('/:giftId should update the item with new values', function(done) {
+        it('/:weaponId should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
             };
 
-            app.put('/gifts/' + temporaryId, payload)
+            app.put('/weapons/' + temporaryId, payload)
                 .expect(204)
                 .end(done);
         });
 
-        it('/:giftId/canon should update the gift canon field', function(done) {
-            app.put('/gifts/' + temporaryId + '/canon')
+        it('/:weaponId/canon should update the weapon canon field', function(done) {
+            app.put('/weapons/' + temporaryId + '/canon')
                 .expect(204)
                 .end(done);
         });
 
-        it('/:giftId/attributes should change the attribute value for the gift', function(done) {
-            app.put('/gifts/' + temporaryId + '/attributes/' + attributeId, {value: 8})
+        it('/:weaponId/attributes should change the attribute value for the weapon', function(done) {
+            app.put('/weapons/' + temporaryId + '/attributes/' + attributeId, {value: 8})
                 .expect(204)
                 .end(done);
         });
 
-        it('/:giftId/expertises should change the skill value for the gift', function(done) {
-            app.put('/gifts/' + temporaryId + '/expertises/' + expertiseId, {value: 8})
+        it('/:weaponId/expertises should change the skill value for the weapon', function(done) {
+            app.put('/weapons/' + temporaryId + '/expertises/' + expertiseId, {value: 8})
                 .expect(204)
                 .end(done);
         });
 
-        it('/:giftId/skills should change the skill value for the gift', function(done) {
-            app.put('/gifts/' + temporaryId + '/skills/' + skillId, {value: 8})
+        it('/:weaponId/skills should change the skill value for the weapon', function(done) {
+            app.put('/weapons/' + temporaryId + '/skills/' + skillId, {value: 8})
                 .expect(204)
                 .end(done);
         });
@@ -230,8 +291,8 @@ describe('/gifts', function() {
 
     describe('GET', function() {
 
-        it('/ should return a list of gifts', function(done) {
-            app.get('/gifts')
+        it('/ should return a list of weapons', function(done) {
+            app.get('/weapons')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -242,8 +303,8 @@ describe('/gifts', function() {
                 });
         });
 
-        it('/manifestation/:manifestationId should return a list of gifts', function(done) {
-            app.get('/gifts/manifestation/' + manifestationId)
+        it('/augmentation/:augmentationId should return a list of weapons', function(done) {
+            app.get('/weapons/augmentation/' + augmentationId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -254,8 +315,8 @@ describe('/gifts', function() {
                 });
         });
 
-        it('/species/:speciesId should return a list of gifts', function(done) {
-            app.get('/gifts/species/' + speciesId)
+        it('/species/:speciesId should return a list of weapons', function(done) {
+            app.get('/weapons/species/' + speciesId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -266,8 +327,20 @@ describe('/gifts', function() {
                 });
         });
 
-        it('/:giftId should return one gift', function(done) {
-            app.get('/gifts/' + temporaryId)
+        it('/type/:typeId should return a list of weapons', function(done) {
+            app.get('/weapons/type/' + weaponTypeId)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('/:weaponId should return one weapon', function(done) {
+            app.get('/weapons/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -278,8 +351,8 @@ describe('/gifts', function() {
                 })
         });
 
-        it('/:giftId/ownership should return ownership status of the gift if user is logged in', function(done) {
-            app.get('/gifts/' + temporaryId + '/ownership')
+        it('/:weaponId/ownership should return ownership status of the weapon if user is logged in', function(done) {
+            app.get('/weapons/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -290,8 +363,8 @@ describe('/gifts', function() {
                 });
         });
 
-        it('/:giftId/comments should get all available comments for the gift', function(done) {
-            app.get('/gifts/' + temporaryId + '/comments')
+        it('/:weaponId/comments should get all available comments for the weapon', function(done) {
+            app.get('/weapons/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -302,8 +375,8 @@ describe('/gifts', function() {
                 })
         });
 
-        it('/:giftId/attributes should return a list of attributes', function(done) {
-            app.get('/gifts/' + temporaryId + '/attributes')
+        it('/:weaponId/attributes should return a list of attributes', function(done) {
+            app.get('/weapons/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -319,8 +392,8 @@ describe('/gifts', function() {
                 });
         });
 
-        it('/:giftId/expertises should return a list of expertises', function(done) {
-            app.get('/gifts/' + temporaryId + '/expertises')
+        it('/:weaponId/expertises should return a list of expertises', function(done) {
+            app.get('/weapons/' + temporaryId + '/expertises')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -336,8 +409,25 @@ describe('/gifts', function() {
                 });
         });
 
-        it('/:giftId/skills should return a list of skills', function(done) {
-            app.get('/gifts/' + temporaryId + '/skills')
+        it('/:weaponId/skills should return a list of skills', function(done) {
+            app.get('/weapons/' + temporaryId + '/skills')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.length);
+                    assert.isArray(res.body.results);
+
+                    _.each(res.body.results, function(item) {
+                        verifier.generic(item);
+                    });
+
+                    done();
+                });
+        });
+
+        it('/:weaponId/mods should return a list of mods', function(done) {
+            app.get('/weapons/' + temporaryId + '/mods')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -357,26 +447,8 @@ describe('/gifts', function() {
 
     xdescribe('DELETE', function() {
 
-        it('/:giftId/attributes should remove the attribute from the gift', function(done) {
-            app.delete('/gifts/' + temporaryId + '/attributes/' + attributeId)
-                .expect(204)
-                .end(done);
-        });
-
-        it('/:giftId/skills should remove the skill from the gift', function(done) {
-            app.delete('/gifts/' + temporaryId + '/skills/' + skillId)
-                .expect(204)
-                .end(done);
-        });
-
-        it('/:giftId/expertises should remove the expertise from the gift', function(done) {
-            app.delete('/gifts/' + temporaryId + '/expertises/' + skillId)
-                .expect(204)
-                .end(done);
-        });
-
-        it('/:giftId should update the gift deleted field', function(done) {
-            app.delete('/gifts/' + temporaryId)
+        it('/:weaponId should update the weapon deleted field', function(done) {
+            app.delete('/weapons/' + temporaryId)
                 .expect(204)
                 .end(done);
         });

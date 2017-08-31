@@ -33,9 +33,9 @@ require('./routes/bionics');
 
 require('./routes/protection');
 
-//require('./routes/weapontypes');
-//require('./routes/weaponmods');
-//require('./routes/weapons');
+require('./routes/weapontypes');
+require('./routes/weaponmods');
+require('./routes/weapons');
 
 //require('./routes/milestones');
 //require('./routes/backgrounds');
