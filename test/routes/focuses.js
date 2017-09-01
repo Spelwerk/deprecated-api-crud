@@ -13,6 +13,8 @@ var app = require('../app'),
 
 describe('/focuses', function() {
 
+    var baseRoute = '/focuses';
+
     var temporaryId,
         manifestationId;
 
@@ -64,7 +66,7 @@ describe('/focuses', function() {
                 icon: 'http://fakeicon.com/' + hasher(20) + '.png'
             };
 
-            app.post('/focuses', payload)
+            app.post(baseRoute, payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -77,8 +79,8 @@ describe('/focuses', function() {
                 });
         });
 
-        it('/:focusId/comments should create a new comment for the asset', function(done) {
-            app.post('/focuses/' + temporaryId + '/comments', { comment: hasher(20) })
+        it('/:focusId/comments should create a new comment', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -99,13 +101,13 @@ describe('/focuses', function() {
                 description: hasher(20)
             };
 
-            app.put('/focuses/' + temporaryId, payload)
+            app.put(baseRoute + '/' + temporaryId, payload)
                 .expect(204)
                 .end(done);
         });
 
-        it('/:focusId/canon should update the asset canon field', function(done) {
-            app.put('/focuses/' + temporaryId + '/canon')
+        it('/:focusId/canon should update the canon status', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/canon/1')
                 .expect(204)
                 .end(done);
         });
@@ -115,7 +117,7 @@ describe('/focuses', function() {
     describe('GET', function() {
 
         it('/ should return a list of focuses', function(done) {
-            app.get('/focuses')
+            app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -126,8 +128,8 @@ describe('/focuses', function() {
                 });
         });
 
-        it('/:focusId should return one asset', function(done) {
-            app.get('/focuses/' + temporaryId)
+        it('/:focusId should return one item', function(done) {
+            app.get(baseRoute + '/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -139,7 +141,7 @@ describe('/focuses', function() {
         });
 
         it('/:focusId/ownership should return ownership status', function(done) {
-            app.get('/focuses/' + temporaryId + '/ownership')
+            app.get(baseRoute + '/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -151,7 +153,7 @@ describe('/focuses', function() {
         });
 
         it('/:focusId/comments should get all available comments', function(done) {
-            app.get('/focuses/' + temporaryId + '/comments')
+            app.get(baseRoute + '/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -167,7 +169,7 @@ describe('/focuses', function() {
     xdescribe('DELETE', function() {
 
         it('/:focusId should update the asset deleted field', function(done) {
-            app.delete('/focuses/' + temporaryId)
+            app.delete(baseRoute + '/' + temporaryId)
                 .expect(204)
                 .end(done);
         });

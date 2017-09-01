@@ -13,6 +13,8 @@ var app = require('../app'),
 
 describe('/software', function() {
 
+    var baseRoute = '/software';
+
     var temporaryId;
 
     before(function(done) {
@@ -56,7 +58,7 @@ describe('/software', function() {
                 hacking_bonus: 10
             };
 
-            app.post('/software', payload)
+            app.post(baseRoute, payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -69,8 +71,8 @@ describe('/software', function() {
                 });
         });
 
-        it('/:softwareId/clone should create a copy of the asset', function(done) {
-            app.post('/software/' + temporaryId + '/clone')
+        it('/:id/clone should create a copy', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -81,8 +83,8 @@ describe('/software', function() {
                 });
         });
 
-        it('/:softwareId/comments should create a new comment for the asset', function(done) {
-            app.post('/software/' + temporaryId + '/comments', { comment: hasher(20) })
+        it('/:id/comments should create a new comment', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -97,19 +99,19 @@ describe('/software', function() {
 
     describe('PUT', function() {
 
-        it('/:softwareId should update the item with new values', function(done) {
+        it('/:id should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
             };
 
-            app.put('/software/' + temporaryId, payload)
+            app.put(baseRoute + '/' + temporaryId, payload)
                 .expect(204)
                 .end(done);
         });
 
-        it('/:softwareId/canon should update the asset canon field', function(done) {
-            app.put('/software/' + temporaryId + '/canon')
+        it('/:id/canon should update the canon status', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/canon/1')
                 .expect(204)
                 .end(done);
         });
@@ -119,7 +121,7 @@ describe('/software', function() {
     describe('GET', function() {
 
         it('/ should return a list of software', function(done) {
-            app.get('/software')
+            app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -130,8 +132,8 @@ describe('/software', function() {
                 });
         });
 
-        it('/:softwareId should return one asset', function(done) {
-            app.get('/software/' + temporaryId)
+        it('/:id should return one item', function(done) {
+            app.get(baseRoute + '/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -142,8 +144,8 @@ describe('/software', function() {
                 })
         });
 
-        it('/:softwareId/ownership should return ownership status', function(done) {
-            app.get('/software/' + temporaryId + '/ownership')
+        it('/:id/ownership should return ownership status', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -154,8 +156,8 @@ describe('/software', function() {
                 });
         });
 
-        it('/:softwareId/comments should get all available comments', function(done) {
-            app.get('/software/' + temporaryId + '/comments')
+        it('/:id/comments should get all available comments', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -170,8 +172,8 @@ describe('/software', function() {
 
     xdescribe('DELETE', function() {
 
-        it('/:softwareId should update the asset deleted field', function(done) {
-            app.delete('/software/' + temporaryId)
+        it('/:id should update the asset deleted field', function(done) {
+            app.delete(baseRoute + '/' + temporaryId)
                 .expect(204)
                 .end(done);
         });

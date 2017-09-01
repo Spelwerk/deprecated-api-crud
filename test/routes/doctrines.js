@@ -13,6 +13,8 @@ var app = require('../app'),
 
 describe('/doctrine', function() {
 
+    var baseRoute = '/doctrines';
+
     var temporaryId,
         manifestationId;
 
@@ -65,7 +67,7 @@ describe('/doctrine', function() {
                 icon: 'http://fakeicon.com/' + hasher(20) + '.png'
             };
 
-            app.post('/doctrines', payload)
+            app.post(baseRoute, payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -78,8 +80,8 @@ describe('/doctrine', function() {
                 });
         });
 
-        it('/:doctrineId/comments should create a new comment for the asset', function(done) {
-            app.post('/doctrines/' + temporaryId + '/comments', { comment: hasher(20) })
+        it('/:id/comments should create a new comment', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -94,19 +96,19 @@ describe('/doctrine', function() {
 
     describe('PUT', function() {
 
-        it('/:doctrineId should update the item with new values', function(done) {
+        it('/:id should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
             };
 
-            app.put('/doctrines/' + temporaryId, payload)
+            app.put(baseRoute + '/' + temporaryId, payload)
                 .expect(204)
                 .end(done);
         });
 
-        it('/:doctrineId/canon should update the asset canon field', function(done) {
-            app.put('/doctrines/' + temporaryId + '/canon')
+        it('/:id/canon should update the canon status', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/canon/1')
                 .expect(204)
                 .end(done);
         });
@@ -116,7 +118,7 @@ describe('/doctrine', function() {
     describe('GET', function() {
 
         it('/ should return a list of doctrine', function(done) {
-            app.get('/doctrines')
+            app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -127,8 +129,8 @@ describe('/doctrine', function() {
                 });
         });
 
-        it('/:doctrineId should return one asset', function(done) {
-            app.get('/doctrines/' + temporaryId)
+        it('/:id should return one item', function(done) {
+            app.get(baseRoute + '/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -139,8 +141,8 @@ describe('/doctrine', function() {
                 })
         });
 
-        it('/:doctrineId/ownership should return ownership status', function(done) {
-            app.get('/doctrines/' + temporaryId + '/ownership')
+        it('/:id/ownership should return ownership status', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -151,8 +153,8 @@ describe('/doctrine', function() {
                 });
         });
 
-        it('/:doctrineId/comments should get all available comments', function(done) {
-            app.get('/doctrines/' + temporaryId + '/comments')
+        it('/:id/comments should get all available comments', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -167,8 +169,8 @@ describe('/doctrine', function() {
 
     xdescribe('DELETE', function() {
 
-        it('/:doctrineId should update the asset deleted field', function(done) {
-            app.delete('/doctrines/' + temporaryId)
+        it('/:id should update the asset deleted field', function(done) {
+            app.delete(baseRoute + '/' + temporaryId)
                 .expect(204)
                 .end(done);
         });

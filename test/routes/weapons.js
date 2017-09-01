@@ -13,6 +13,8 @@ var app = require('../app'),
 
 describe('/weapons', function() {
 
+    var baseRoute = '/weapons';
+
     var temporaryId,
         augmentationId,
         speciesId,
@@ -167,7 +169,7 @@ describe('/weapons', function() {
                 distance: 100
             };
 
-            app.post('/weapons', payload)
+            app.post(baseRoute, payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -180,8 +182,8 @@ describe('/weapons', function() {
                 });
         });
 
-        it('/:weaponId/clone should create a copy of the weapon', function(done) {
-            app.post('/weapons/' + temporaryId + '/clone')
+        it('/:id/clone should create a copy', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -192,8 +194,8 @@ describe('/weapons', function() {
                 });
         });
 
-        it('/:weaponId/comments should create a new comment for the weapon', function(done) {
-            app.post('/weapons/' + temporaryId + '/comments', { comment: hasher(20) })
+        it('/:id/comments should create a new comment', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -204,46 +206,46 @@ describe('/weapons', function() {
                 });
         });
 
-        it('/:weaponId/attributes should add an attribute to the weapon', function(done) {
+        it('/:id/attributes should add an attribute', function(done) {
             var payload = {
                 insert_id: attributeId,
                 value: 10
             };
 
-            app.post('/weapons/' + temporaryId + '/attributes', payload)
+            app.post(baseRoute + '/' + temporaryId + '/attributes', payload)
                 .expect(201)
                 .end(done);
         });
 
-        it('/:weaponId/expertises should add an skill to the weapon', function(done) {
+        it('/:id/expertises should add a skill', function(done) {
             var payload = {
                 insert_id: expertiseId,
                 value: 10
             };
 
-            app.post('/weapons/' + temporaryId + '/expertises', payload)
+            app.post(baseRoute + '/' + temporaryId + '/expertises', payload)
                 .expect(201)
                 .end(done);
         });
 
-        it('/:weaponId/skills should add an skill to the weapon', function(done) {
+        it('/:id/skills should add a skill', function(done) {
             var payload = {
                 insert_id: skillId,
                 value: 10
             };
 
-            app.post('/weapons/' + temporaryId + '/skills', payload)
+            app.post(baseRoute + '/' + temporaryId + '/skills', payload)
                 .expect(201)
                 .end(done);
         });
 
-        it('/:weaponId/mods should add an skill to the weapon', function(done) {
+        it('/:id/mods should add a skill', function(done) {
             var payload = {
                 insert_id: modId,
                 value: 10
             };
 
-            app.post('/weapons/' + temporaryId + '/mods', payload)
+            app.post(baseRoute + '/' + temporaryId + '/mods', payload)
                 .expect(201)
                 .end(done);
         });
@@ -252,37 +254,37 @@ describe('/weapons', function() {
 
     describe('PUT', function() {
 
-        it('/:weaponId should update the item with new values', function(done) {
+        it('/:id should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
             };
 
-            app.put('/weapons/' + temporaryId, payload)
+            app.put(baseRoute + '/' + temporaryId, payload)
                 .expect(204)
                 .end(done);
         });
 
-        it('/:weaponId/canon should update the weapon canon field', function(done) {
-            app.put('/weapons/' + temporaryId + '/canon')
+        it('/:id/canon should update the canon status', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/canon/1')
                 .expect(204)
                 .end(done);
         });
 
-        it('/:weaponId/attributes should change the attribute value for the weapon', function(done) {
-            app.put('/weapons/' + temporaryId + '/attributes/' + attributeId, {value: 8})
+        it('/:id/attributes should change the value', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/attributes/' + attributeId, {value: 8})
                 .expect(204)
                 .end(done);
         });
 
-        it('/:weaponId/expertises should change the skill value for the weapon', function(done) {
-            app.put('/weapons/' + temporaryId + '/expertises/' + expertiseId, {value: 8})
+        it('/:id/expertises should change the value', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/expertises/' + expertiseId, {value: 8})
                 .expect(204)
                 .end(done);
         });
 
-        it('/:weaponId/skills should change the skill value for the weapon', function(done) {
-            app.put('/weapons/' + temporaryId + '/skills/' + skillId, {value: 8})
+        it('/:id/skills should change the value', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/skills/' + skillId, {value: 8})
                 .expect(204)
                 .end(done);
         });
@@ -292,7 +294,7 @@ describe('/weapons', function() {
     describe('GET', function() {
 
         it('/ should return a list', function(done) {
-            app.get('/weapons')
+            app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -339,8 +341,8 @@ describe('/weapons', function() {
                 });
         });
 
-        it('/:weaponId should return one weapon', function(done) {
-            app.get('/weapons/' + temporaryId)
+        it('/:id should return one item', function(done) {
+            app.get(baseRoute + '/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -351,8 +353,8 @@ describe('/weapons', function() {
                 })
         });
 
-        it('/:weaponId/ownership should return ownership status', function(done) {
-            app.get('/weapons/' + temporaryId + '/ownership')
+        it('/:id/ownership should return ownership status', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -363,8 +365,8 @@ describe('/weapons', function() {
                 });
         });
 
-        it('/:weaponId/comments should get all available comments', function(done) {
-            app.get('/weapons/' + temporaryId + '/comments')
+        it('/:id/comments should get all available comments', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -375,8 +377,8 @@ describe('/weapons', function() {
                 })
         });
 
-        it('/:weaponId/attributes should return a list', function(done) {
-            app.get('/weapons/' + temporaryId + '/attributes')
+        it('/:id/attributes should return a list', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -392,8 +394,8 @@ describe('/weapons', function() {
                 });
         });
 
-        it('/:weaponId/expertises should return a list', function(done) {
-            app.get('/weapons/' + temporaryId + '/expertises')
+        it('/:id/expertises should return a list', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/expertises')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -409,8 +411,8 @@ describe('/weapons', function() {
                 });
         });
 
-        it('/:weaponId/skills should return a list', function(done) {
-            app.get('/weapons/' + temporaryId + '/skills')
+        it('/:id/skills should return a list', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/skills')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -426,8 +428,8 @@ describe('/weapons', function() {
                 });
         });
 
-        it('/:weaponId/mods should return a list of mods', function(done) {
-            app.get('/weapons/' + temporaryId + '/mods')
+        it('/:id/mods should return a list of mods', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/mods')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -447,8 +449,8 @@ describe('/weapons', function() {
 
     xdescribe('DELETE', function() {
 
-        it('/:weaponId should update the weapon deleted field', function(done) {
-            app.delete('/weapons/' + temporaryId)
+        it('/:id should update the weapon deleted field', function(done) {
+            app.delete(baseRoute + '/' + temporaryId)
                 .expect(204)
                 .end(done);
         });

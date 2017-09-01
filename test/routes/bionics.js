@@ -13,6 +13,8 @@ var app = require('../app'),
 
 describe('/bionics', function() {
 
+    var baseRoute = '/bionics';
+
     var temporaryId,
         bodyPartId,
         attributeId,
@@ -108,7 +110,7 @@ describe('/bionics', function() {
                 hacking: 10
             };
 
-            app.post('/bionics', payload)
+            app.post(baseRoute, payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -121,8 +123,8 @@ describe('/bionics', function() {
                 });
         });
 
-        it('/:bionicId/clone should create a copy of the bionic', function(done) {
-            app.post('/bionics/' + temporaryId + '/clone')
+        it('/:id/clone should create a copy', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -133,8 +135,8 @@ describe('/bionics', function() {
                 });
         });
 
-        it('/:bionicId/comments should create a new comment for the bionic', function(done) {
-            app.post('/bionics/' + temporaryId + '/comments', { comment: hasher(20) })
+        it('/:id/comments should create a new comment', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -145,33 +147,33 @@ describe('/bionics', function() {
                 });
         });
 
-        it('/:bionicId/attributes should add an attribute to the bionic', function(done) {
+        it('/:id/attributes should add an attribute', function(done) {
             var payload = {
                 insert_id: attributeId,
                 value: 10
             };
 
-            app.post('/bionics/' + temporaryId + '/attributes', payload)
+            app.post(baseRoute + '/' + temporaryId + '/attributes', payload)
                 .expect(201)
                 .end(done);
         });
 
-        it('/:bionicId/augmentations should add an augmentation to the bionic', function(done) {
+        it('/:id/augmentations should add an augmentation to the bionic', function(done) {
             var payload = {
                 insert_id: augmentationId
             };
 
-            app.post('/bionics/' + temporaryId + '/augmentations', payload)
+            app.post(baseRoute + '/' + temporaryId + '/augmentations', payload)
                 .expect(201)
                 .end(done);
         });
 
-        it('/:bionicId/software should add an software to the bionic', function(done) {
+        it('/:id/software should add an software to the bionic', function(done) {
             var payload = {
                 insert_id: softwareId
             };
 
-            app.post('/bionics/' + temporaryId + '/software', payload)
+            app.post(baseRoute + '/' + temporaryId + '/software', payload)
                 .expect(201)
                 .end(done);
         });
@@ -180,25 +182,25 @@ describe('/bionics', function() {
 
     describe('PUT', function() {
 
-        it('/:bionicId should update the item with new values', function(done) {
+        it('/:id should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
             };
 
-            app.put('/bionics/' + temporaryId, payload)
+            app.put(baseRoute + '/' + temporaryId, payload)
                 .expect(204)
                 .end(done);
         });
 
-        it('/:bionicId/canon should update the bionic canon field', function(done) {
-            app.put('/bionics/' + temporaryId + '/canon')
+        it('/:id/canon should update the canon status', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/canon/1')
                 .expect(204)
                 .end(done);
         });
 
-        it('/:bionicId/attributes should change the attribute value for the bionic', function(done) {
-            app.put('/bionics/' + temporaryId + '/attributes/' + attributeId, { value: 8 })
+        it('/:id/attributes should change the value', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/attributes/' + attributeId, { value: 8 })
                 .expect(204)
                 .end(done);
         });
@@ -208,7 +210,7 @@ describe('/bionics', function() {
     describe('GET', function() {
 
         it('/ should return a list of bionics', function(done) {
-            app.get('/bionics')
+            app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -231,8 +233,8 @@ describe('/bionics', function() {
                 });
         });
 
-        it('/:bionicId should return one bionic', function(done) {
-            app.get('/bionics/' + temporaryId)
+        it('/:id should return one item', function(done) {
+            app.get(baseRoute + '/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -243,8 +245,8 @@ describe('/bionics', function() {
                 })
         });
 
-        it('/:bionicId/ownership should return ownership status', function(done) {
-            app.get('/bionics/' + temporaryId + '/ownership')
+        it('/:id/ownership should return ownership status', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -255,8 +257,8 @@ describe('/bionics', function() {
                 });
         });
 
-        it('/:bionicId/comments should get all available comments', function(done) {
-            app.get('/bionics/' + temporaryId + '/comments')
+        it('/:id/comments should get all available comments', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -267,8 +269,8 @@ describe('/bionics', function() {
                 })
         });
 
-        it('/:bionicId/attributes should return a list', function(done) {
-            app.get('/bionics/' + temporaryId + '/attributes')
+        it('/:id/attributes should return a list', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -284,8 +286,8 @@ describe('/bionics', function() {
                 });
         });
 
-        it('/:bionicId/augmentations should return a list of augmentations', function(done) {
-            app.get('/bionics/' + temporaryId + '/augmentations')
+        it('/:id/augmentations should return a list of augmentations', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/augmentations')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -301,8 +303,8 @@ describe('/bionics', function() {
                 });
         });
 
-        it('/:bionicId/software should return a list of software', function(done) {
-            app.get('/bionics/' + temporaryId + '/software')
+        it('/:id/software should return a list of software', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/software')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -322,20 +324,20 @@ describe('/bionics', function() {
 
     xdescribe('DELETE', function() {
 
-        it('/:bionicId/attributes should remove the attribute from the bionic', function(done) {
-            app.delete('/bionics/' + temporaryId + '/attributes/1')
+        it('/:id/attributes should remove the attribute from the bionic', function(done) {
+            app.delete(baseRoute + '/' + temporaryId + '/attributes/1')
                 .expect(204)
                 .end(done);
         });
 
-        it('/:bionicId/augmentations should remove the augmentation from the bionic', function(done) {
-            app.delete('/bionics/' + temporaryId + '/augmentations/1')
+        it('/:id/augmentations should remove the augmentation from the bionic', function(done) {
+            app.delete(baseRoute + '/' + temporaryId + '/augmentations/1')
                 .expect(204)
                 .end(done);
         });
 
-        it('/:bionicId should update the bionic deleted field', function(done) {
-            app.delete('/bionics/' + temporaryId)
+        it('/:id should update the bionic deleted field', function(done) {
+            app.delete(baseRoute + '/' + temporaryId)
                 .expect(204)
                 .end(done);
         });

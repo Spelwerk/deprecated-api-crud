@@ -54,7 +54,7 @@ describe('/persons', function() {
                 world_id: 1
             };
 
-            app.post('/persons', payload)
+            app.post(baseRoute, payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -67,7 +67,7 @@ describe('/persons', function() {
                 });
         });
 
-        it('/:personId/comments should create a new comment for the person', function(done) {
+        it('/:personId/comments should create a new comment', function(done) {
             app.post('/persons/' + personId + '/comments', {content: hasher(20)})
                 .expect(201)
                 .end(function(err, res) {
@@ -117,7 +117,7 @@ describe('/persons', function() {
         });
 
 
-        it('/:personId/attributes should add an attribute to the person', function(done) {
+        it('/:personId/attributes should add an attribute', function(done) {
             app.post('/persons/' + personId + '/attributes', {insert_id: 1, value: 10})
                 .expect(201)
                 .end(done);
@@ -355,7 +355,7 @@ describe('/persons', function() {
     describe('GET', function() {
 
         it('/ should return a list of persons', function(done) {
-            app.get('/persons')
+            app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -366,7 +366,7 @@ describe('/persons', function() {
                 });
         });
 
-        it('/:personId should return one person', function(done) {
+        it('/:personId should return one item', function(done) {
             app.get('/persons/' + personId)
                 .expect(200)
                 .end(function(err, res) {
@@ -379,7 +379,7 @@ describe('/persons', function() {
         });
 
         it('/:personId/ownership should return ownership status', function(done) {
-            app.get('/persons/' + personId + '/ownership')
+            app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -391,7 +391,7 @@ describe('/persons', function() {
         });
 
         it('/:personId/comments should get all available comments', function(done) {
-            app.get('/persons/' + personId + '/comments')
+            app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);

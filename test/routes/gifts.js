@@ -13,6 +13,8 @@ var app = require('../app'),
 
 describe('/gifts', function() {
 
+    var baseRoute = '/gifts';
+
     var temporaryId,
         manifestationId,
         speciesId,
@@ -117,7 +119,7 @@ describe('/gifts', function() {
                 species_id: speciesId
             };
 
-            app.post('/gifts', payload)
+            app.post(baseRoute, payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -130,8 +132,8 @@ describe('/gifts', function() {
                 });
         });
 
-        it('/:giftId/clone should create a copy of the gift', function(done) {
-            app.post('/gifts/' + temporaryId + '/clone')
+        it('/:id/clone should create a copy', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -142,8 +144,8 @@ describe('/gifts', function() {
                 });
         });
 
-        it('/:giftId/comments should create a new comment for the gift', function(done) {
-            app.post('/gifts/' + temporaryId + '/comments', { comment: hasher(20) })
+        it('/:id/comments should create a new comment', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -154,35 +156,35 @@ describe('/gifts', function() {
                 });
         });
 
-        it('/:giftId/attributes should add an attribute to the gift', function(done) {
+        it('/:id/attributes should add an attribute', function(done) {
             var payload = {
                 insert_id: attributeId,
                 value: 10
             };
 
-            app.post('/gifts/' + temporaryId + '/attributes', payload)
+            app.post(baseRoute + '/' + temporaryId + '/attributes', payload)
                 .expect(201)
                 .end(done);
         });
 
-        it('/:giftId/expertises should add an skill to the gift', function(done) {
+        it('/:id/expertises should add a skill', function(done) {
             var payload = {
                 insert_id: expertiseId,
                 value: 10
             };
 
-            app.post('/gifts/' + temporaryId + '/expertises', payload)
+            app.post(baseRoute + '/' + temporaryId + '/expertises', payload)
                 .expect(201)
                 .end(done);
         });
 
-        it('/:giftId/skills should add an skill to the gift', function(done) {
+        it('/:id/skills should add a skill', function(done) {
             var payload = {
                 insert_id: skillId,
                 value: 10
             };
 
-            app.post('/gifts/' + temporaryId + '/skills', payload)
+            app.post(baseRoute + '/' + temporaryId + '/skills', payload)
                 .expect(201)
                 .end(done);
         });
@@ -191,37 +193,37 @@ describe('/gifts', function() {
 
     describe('PUT', function() {
 
-        it('/:giftId should update the item with new values', function(done) {
+        it('/:id should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
             };
 
-            app.put('/gifts/' + temporaryId, payload)
+            app.put(baseRoute + '/' + temporaryId, payload)
                 .expect(204)
                 .end(done);
         });
 
-        it('/:giftId/canon should update the gift canon field', function(done) {
-            app.put('/gifts/' + temporaryId + '/canon')
+        it('/:id/canon should update the canon status', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/canon/1')
                 .expect(204)
                 .end(done);
         });
 
-        it('/:giftId/attributes should change the attribute value for the gift', function(done) {
-            app.put('/gifts/' + temporaryId + '/attributes/' + attributeId, {value: 8})
+        it('/:id/attributes should change the value', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/attributes/' + attributeId, {value: 8})
                 .expect(204)
                 .end(done);
         });
 
-        it('/:giftId/expertises should change the skill value for the gift', function(done) {
-            app.put('/gifts/' + temporaryId + '/expertises/' + expertiseId, {value: 8})
+        it('/:id/expertises should change the value', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/expertises/' + expertiseId, {value: 8})
                 .expect(204)
                 .end(done);
         });
 
-        it('/:giftId/skills should change the skill value for the gift', function(done) {
-            app.put('/gifts/' + temporaryId + '/skills/' + skillId, {value: 8})
+        it('/:id/skills should change the value', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/skills/' + skillId, {value: 8})
                 .expect(204)
                 .end(done);
         });
@@ -231,7 +233,7 @@ describe('/gifts', function() {
     describe('GET', function() {
 
         it('/ should return a list of gifts', function(done) {
-            app.get('/gifts')
+            app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -266,8 +268,8 @@ describe('/gifts', function() {
                 });
         });
 
-        it('/:giftId should return one gift', function(done) {
-            app.get('/gifts/' + temporaryId)
+        it('/:id should return one item', function(done) {
+            app.get(baseRoute + '/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -278,8 +280,8 @@ describe('/gifts', function() {
                 })
         });
 
-        it('/:giftId/ownership should return ownership status', function(done) {
-            app.get('/gifts/' + temporaryId + '/ownership')
+        it('/:id/ownership should return ownership status', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -290,8 +292,8 @@ describe('/gifts', function() {
                 });
         });
 
-        it('/:giftId/comments should get all available comments', function(done) {
-            app.get('/gifts/' + temporaryId + '/comments')
+        it('/:id/comments should get all available comments', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -302,8 +304,8 @@ describe('/gifts', function() {
                 })
         });
 
-        it('/:giftId/attributes should return a list', function(done) {
-            app.get('/gifts/' + temporaryId + '/attributes')
+        it('/:id/attributes should return a list', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -319,8 +321,8 @@ describe('/gifts', function() {
                 });
         });
 
-        it('/:giftId/expertises should return a list', function(done) {
-            app.get('/gifts/' + temporaryId + '/expertises')
+        it('/:id/expertises should return a list', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/expertises')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -336,8 +338,8 @@ describe('/gifts', function() {
                 });
         });
 
-        it('/:giftId/skills should return a list', function(done) {
-            app.get('/gifts/' + temporaryId + '/skills')
+        it('/:id/skills should return a list', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/skills')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -357,26 +359,26 @@ describe('/gifts', function() {
 
     xdescribe('DELETE', function() {
 
-        it('/:giftId/attributes should remove the attribute from the gift', function(done) {
-            app.delete('/gifts/' + temporaryId + '/attributes/' + attributeId)
+        it('/:id/attributes should remove the attribute from the gift', function(done) {
+            app.delete(baseRoute + '/' + temporaryId + '/attributes/' + attributeId)
                 .expect(204)
                 .end(done);
         });
 
-        it('/:giftId/skills should remove the skill from the gift', function(done) {
-            app.delete('/gifts/' + temporaryId + '/skills/' + skillId)
+        it('/:id/skills should remove the skill from the gift', function(done) {
+            app.delete(baseRoute + '/' + temporaryId + '/skills/' + skillId)
                 .expect(204)
                 .end(done);
         });
 
-        it('/:giftId/expertises should remove the expertise from the gift', function(done) {
-            app.delete('/gifts/' + temporaryId + '/expertises/' + skillId)
+        it('/:id/expertises should remove the expertise from the gift', function(done) {
+            app.delete(baseRoute + '/' + temporaryId + '/expertises/' + skillId)
                 .expect(204)
                 .end(done);
         });
 
-        it('/:giftId should update the gift deleted field', function(done) {
-            app.delete('/gifts/' + temporaryId)
+        it('/:id should update the gift deleted field', function(done) {
+            app.delete(baseRoute + '/' + temporaryId)
                 .expect(204)
                 .end(done);
         });

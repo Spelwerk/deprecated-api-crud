@@ -13,6 +13,8 @@ var app = require('./../app'),
 
 describe('/attributes', function() {
 
+    var baseRoute = '/attributes';
+
     var temporaryId,
         typeId,
         manifestationId;
@@ -32,20 +34,6 @@ describe('/attributes', function() {
                 done();
             });
     });
-
-    /*
-    before(function(done) {
-        app.get('/manifestations')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                manifestationId = res.body.results[0].id;
-
-                done();
-            });
-    });
-    */
 
     function verifyList(body) {
         assert.isNumber(body.length);
@@ -81,7 +69,7 @@ describe('/attributes', function() {
                 icon: 'http://fakeicon.com/' + hasher(20) + '.png'
             };
 
-            app.post('/attributes', payload)
+            app.post(baseRoute, payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -94,8 +82,8 @@ describe('/attributes', function() {
                 });
         });
 
-        it('/:expertiseId/comments should create a new comment for the asset', function(done) {
-            app.post('/expertises/' + temporaryId + '/comments', { comment: hasher(20) })
+        it('/:expertiseId/comments should create a new comment', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -110,19 +98,19 @@ describe('/attributes', function() {
 
     describe('PUT', function() {
 
-        it('/:attributeId should update the item with new values', function(done) {
+        it('/:id should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
             };
 
-            app.put('/attributes/' + temporaryId, payload)
+            app.put(baseRoute + '/' + temporaryId, payload)
                 .expect(204)
                 .end(done);
         });
 
-        it('/:attributeId/canon should update the attribute canon field', function(done) {
-            app.put('/attributes/' + temporaryId + '/canon')
+        it('/:id/canon should update the canon status', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/canon/1')
                 .expect(204)
                 .end(done);
         });
@@ -132,7 +120,7 @@ describe('/attributes', function() {
     describe('GET', function() {
 
         it('/ should return a list', function(done) {
-            app.get('/attributes')
+            app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -156,7 +144,7 @@ describe('/attributes', function() {
         });
 
         it('/type/:typeId should return a list', function(done) {
-            app.get('/attributes/type/1')
+            app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -167,8 +155,8 @@ describe('/attributes', function() {
                 });
         });
 
-        it('/:attributeId should return one attribute', function(done) {
-            app.get('/attributes/' + temporaryId)
+        it('/:id should return one item', function(done) {
+            app.get(baseRoute + '/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -179,8 +167,8 @@ describe('/attributes', function() {
                 })
         });
 
-        it('/:attributeId/ownership should return ownership status', function(done) {
-            app.get('/attributes/' + temporaryId + '/ownership')
+        it('/:id/ownership should return ownership status', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -191,8 +179,8 @@ describe('/attributes', function() {
                 });
         });
 
-        it('/:attributeId/comments should get all available comments', function(done) {
-            app.get('/attributes/' + temporaryId + '/comments')
+        it('/:id/comments should get all available comments', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -207,8 +195,8 @@ describe('/attributes', function() {
 
     xdescribe('DELETE', function() {
 
-        it('/:attributeId should update the weapon deleted field', function(done) {
-            app.delete('/attributes/' + temporaryId)
+        it('/:id should update the weapon deleted field', function(done) {
+            app.delete(baseRoute + '/' + temporaryId)
                 .expect(204)
                 .end(done);
         });

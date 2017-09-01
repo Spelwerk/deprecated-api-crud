@@ -13,6 +13,8 @@ var app = require('../app'),
 
 describe('/milestones', function() {
 
+    var baseRoute = '/milestones';
+
     var temporaryId,
         assetId,
         attributeId,
@@ -171,7 +173,7 @@ describe('/milestones', function() {
                 species_id: speciesId
             };
 
-            app.post('/milestones', payload)
+            app.post(baseRoute, payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -184,8 +186,8 @@ describe('/milestones', function() {
                 });
         });
 
-        it('/:milestoneId/clone should create a copy of the milestone', function(done) {
-            app.post('/milestones/' + temporaryId + '/clone')
+        it('/:id/clone should create a copy', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -196,8 +198,8 @@ describe('/milestones', function() {
                 });
         });
 
-        it('/:milestoneId/comments should create a new comment for the milestone', function(done) {
-            app.post('/milestones/' + temporaryId + '/comments', { comment: hasher(20) })
+        it('/:id/comments should create a new comment', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -208,78 +210,78 @@ describe('/milestones', function() {
                 });
         });
 
-        it('/:milestoneId/assets should add an asset to the milestone', function(done) {
+        it('/:id/assets should add an asset to the milestone', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
             };
 
-            app.post('/milestones/' + temporaryId + '/assets', payload)
+            app.post(baseRoute + '/' + temporaryId + '/assets', payload)
                 .expect(201)
                 .end(done);
         });
 
-        it('/:milestoneId/attributes should add an attribute to the milestone', function(done) {
+        it('/:id/attributes should add an attribute', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
             };
 
-            app.post('/milestones/' + temporaryId + '/attributes', payload)
+            app.post(baseRoute + '/' + temporaryId + '/attributes', payload)
                 .expect(201)
                 .end(done);
         });
 
-        it('/:milestoneId/augmentations should add an augmentation to the milestone', function(done) {
+        it('/:id/augmentations should add an augmentation to the milestone', function(done) {
             var payload = {
                 insert_id: 1
             };
 
-            app.post('/milestones/' + temporaryId + '/augmentations', payload)
+            app.post(baseRoute + '/' + temporaryId + '/augmentations', payload)
                 .expect(201)
                 .end(done);
         });
 
-        it('/:milestoneId/doctrines should add an doctrine to the milestone', function(done) {
+        it('/:id/doctrines should add a doctrine', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
             };
 
-            app.post('/milestones/' + temporaryId + '/doctrines', payload)
+            app.post(baseRoute + '/' + temporaryId + '/doctrines', payload)
                 .expect(201)
                 .end(done);
         });
 
-        it('/:milestoneId/loyalties should add a loyalty to the milestone', function(done) {
+        it('/:id/loyalties should add a loyalty to the milestone', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10,
                 custom: hasher(20)
             };
 
-            app.post('/milestones/' + temporaryId + '/loyalties', payload)
+            app.post(baseRoute + '/' + temporaryId + '/loyalties', payload)
                 .expect(201)
                 .end(done);
         });
 
-        it('/:milestoneId/skills should add an skill to the milestone', function(done) {
+        it('/:id/skills should add a skill', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
             };
 
-            app.post('/milestones/' + temporaryId + '/skills', payload)
+            app.post(baseRoute + '/' + temporaryId + '/skills', payload)
                 .expect(201)
                 .end(done);
         });
 
-        it('/:milestoneId/weapons should add an weapon to the milestone', function(done) {
+        it('/:id/weapons should add an weapon to the milestone', function(done) {
             var payload = {
                 insert_id: 1
             };
 
-            app.post('/milestones/' + temporaryId + '/weapons', payload)
+            app.post(baseRoute + '/' + temporaryId + '/weapons', payload)
                 .expect(201)
                 .end(done);
         });
@@ -288,49 +290,49 @@ describe('/milestones', function() {
 
     describe('PUT', function() {
 
-        it('/:milestoneId should update the item with new values', function(done) {
+        it('/:id should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
             };
 
-            app.put('/milestones/' + temporaryId, payload)
+            app.put(baseRoute + '/' + temporaryId, payload)
                 .expect(204)
                 .end(done);
         });
 
-        it('/:milestoneId/canon should update the milestone canon field', function(done) {
-            app.put('/milestones/' + temporaryId + '/canon')
+        it('/:id/canon should update the canon status', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/canon/1')
                 .expect(204)
                 .end(done);
         });
 
-        it('/:milestoneId/assets should change the asset value for the milestone', function(done) {
-            app.put('/milestones/' + temporaryId + '/assets/1', { value: 8 })
+        it('/:id/assets should change the value', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/assets/1', { value: 8 })
                 .expect(204)
                 .end(done);
         });
 
-        it('/:milestoneId/attributes should change the attribute value for the milestone', function(done) {
-            app.put('/milestones/' + temporaryId + '/attributes/1', { value: 8 })
+        it('/:id/attributes should change the value', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/attributes/1', { value: 8 })
                 .expect(204)
                 .end(done);
         });
 
-        it('/:milestoneId/doctrines should change the doctrine value for the milestone', function(done) {
-            app.put('/milestones/' + temporaryId + '/doctrines/1', { value: 8 })
+        it('/:id/doctrines should change the value', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/doctrines/1', { value: 8 })
                 .expect(204)
                 .end(done);
         });
 
-        it('/:milestoneId/loyalties should change the loyalty value for the milestone', function(done) {
-            app.put('/milestones/' + temporaryId + '/loyalties/1', { value: 8, custom: hasher(20) })
+        it('/:id/loyalties should change the value', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/loyalties/1', { value: 8, custom: hasher(20) })
                 .expect(204)
                 .end(done);
         });
 
-        it('/:milestoneId/skills should change the skill value for the milestone', function(done) {
-            app.put('/milestones/' + temporaryId + '/skills/1', { value: 8 })
+        it('/:id/skills should change the value', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/skills/1', { value: 8 })
                 .expect(204)
                 .end(done);
         });
@@ -340,7 +342,7 @@ describe('/milestones', function() {
     describe('GET', function() {
 
         it('/ should return a list of milestones', function(done) {
-            app.get('/milestones')
+            app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -375,8 +377,8 @@ describe('/milestones', function() {
                 });
         });
 
-        it('/:milestoneId should return one milestone', function(done) {
-            app.get('/milestones/' + temporaryId)
+        it('/:id should return one item', function(done) {
+            app.get(baseRoute + '/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -387,8 +389,8 @@ describe('/milestones', function() {
                 })
         });
 
-        it('/:milestoneId/ownership should return ownership status', function(done) {
-            app.get('/milestones/' + temporaryId + '/ownership')
+        it('/:id/ownership should return ownership status', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -399,8 +401,8 @@ describe('/milestones', function() {
                 });
         });
 
-        it('/:milestoneId/comments should get all available comments', function(done) {
-            app.get('/milestones/' + temporaryId + '/comments')
+        it('/:id/comments should get all available comments', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -411,8 +413,8 @@ describe('/milestones', function() {
                 })
         });
 
-        it('/:milestoneId/assets should return a list of assets', function(done) {
-            app.get('/milestones/' + temporaryId + '/assets')
+        it('/:id/assets should return a list of assets', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/assets')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -428,8 +430,8 @@ describe('/milestones', function() {
                 });
         });
 
-        it('/:milestoneId/attributes should return a list', function(done) {
-            app.get('/milestones/' + temporaryId + '/attributes')
+        it('/:id/attributes should return a list', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -445,8 +447,8 @@ describe('/milestones', function() {
                 });
         });
 
-        it('/:milestoneId/augmentations should return a list of augmentations', function(done) {
-            app.get('/milestones/' + temporaryId + '/augmentations')
+        it('/:id/augmentations should return a list of augmentations', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/augmentations')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -462,8 +464,8 @@ describe('/milestones', function() {
                 });
         });
 
-        it('/:milestoneId/doctrines should return a list', function(done) {
-            app.get('/milestones/' + temporaryId + '/doctrines')
+        it('/:id/doctrines should return a list', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/doctrines')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -479,8 +481,8 @@ describe('/milestones', function() {
                 });
         });
 
-        it('/:milestoneId/loyalties should return a list of loyalties', function(done) {
-            app.get('/milestones/' + temporaryId + '/loyalties')
+        it('/:id/loyalties should return a list of loyalties', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/loyalties')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -496,8 +498,8 @@ describe('/milestones', function() {
                 });
         });
 
-        it('/:milestoneId/skills should return a list', function(done) {
-            app.get('/milestones/' + temporaryId + '/skills')
+        it('/:id/skills should return a list', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/skills')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -513,8 +515,8 @@ describe('/milestones', function() {
                 });
         });
 
-        it('/:milestoneId/weapons should return a list', function(done) {
-            app.get('/milestones/' + temporaryId + '/weapons')
+        it('/:id/weapons should return a list', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/weapons')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -534,26 +536,26 @@ describe('/milestones', function() {
 
     xdescribe('DELETE', function() {
 
-        it('/:milestoneId/attributes should remove the attribute from the milestone', function(done) {
-            app.delete('/milestones/' + temporaryId + '/attributes/1')
+        it('/:id/attributes should remove the attribute from the milestone', function(done) {
+            app.delete(baseRoute + '/' + temporaryId + '/attributes/1')
                 .expect(204)
                 .end(done);
         });
 
-        it('/:milestoneId/assets should remove the asset from the milestone', function(done) {
-            app.delete('/milestones/' + temporaryId + '/assets/1')
+        it('/:id/assets should remove the asset from the milestone', function(done) {
+            app.delete(baseRoute + '/' + temporaryId + '/assets/1')
                 .expect(204)
                 .end(done);
         });
 
-        it('/:milestoneId/skills should remove the skill from the milestone', function(done) {
-            app.delete('/milestones/' + temporaryId + '/skills/1')
+        it('/:id/skills should remove the skill from the milestone', function(done) {
+            app.delete(baseRoute + '/' + temporaryId + '/skills/1')
                 .expect(204)
                 .end(done);
         });
 
-        it('/:milestoneId should update the milestone deleted field', function(done) {
-            app.delete('/milestones/' + temporaryId)
+        it('/:id should update the milestone deleted field', function(done) {
+            app.delete(baseRoute + '/' + temporaryId)
                 .expect(204)
                 .end(done);
         });

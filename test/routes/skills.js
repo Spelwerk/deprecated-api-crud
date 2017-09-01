@@ -13,6 +13,8 @@ var app = require('./../app'),
 
 describe('/skills', function() {
 
+    var baseRoute = '/skills';
+
     var temporaryId,
         manifestationId,
         speciesId;
@@ -79,7 +81,7 @@ describe('/skills', function() {
                 icon: 'http://fakeicon.com/' + hasher(20) + '.png'
             };
 
-            app.post('/skills', payload)
+            app.post(baseRoute, payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -92,8 +94,8 @@ describe('/skills', function() {
                 });
         });
 
-        it('/:skillId/clone should create a copy of the asset', function(done) {
-            app.post('/skills/' + temporaryId + '/clone')
+        it('/:id/clone should create a copy', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -104,8 +106,8 @@ describe('/skills', function() {
                 });
         });
 
-        it('/:skillId/comments should create a new comment for the asset', function(done) {
-            app.post('/skills/' + temporaryId + '/comments', { comment: hasher(20) })
+        it('/:id/comments should create a new comment', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -120,19 +122,19 @@ describe('/skills', function() {
 
     describe('PUT', function() {
 
-        it('/:skillId should update the item with new values', function(done) {
+        it('/:id should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
             };
 
-            app.put('/skills/' + temporaryId, payload)
+            app.put(baseRoute + '/' + temporaryId, payload)
                 .expect(204)
                 .end(done);
         });
 
-        it('/:skillId/canon should update the asset canon field', function(done) {
-            app.put('/skills/' + temporaryId + '/canon')
+        it('/:id/canon should update the canon status', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/canon/1')
                 .expect(204)
                 .end(done);
         });
@@ -142,7 +144,7 @@ describe('/skills', function() {
     describe('GET', function() {
 
         it('/ should return a list', function(done) {
-            app.get('/skills')
+            app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -177,8 +179,8 @@ describe('/skills', function() {
                 });
         });
 
-        it('/:skillId should return one asset', function(done) {
-            app.get('/skills/' + temporaryId)
+        it('/:id should return one item', function(done) {
+            app.get(baseRoute + '/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -189,8 +191,8 @@ describe('/skills', function() {
                 })
         });
 
-        it('/:skillId/ownership should return ownership status', function(done) {
-            app.get('/skills/' + temporaryId + '/ownership')
+        it('/:id/ownership should return ownership status', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -201,8 +203,8 @@ describe('/skills', function() {
                 });
         });
 
-        it('/:skillId/comments should get all available comments', function(done) {
-            app.get('/skills/' + temporaryId + '/comments')
+        it('/:id/comments should get all available comments', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -217,8 +219,8 @@ describe('/skills', function() {
 
     xdescribe('DELETE', function() {
 
-        it('/:skillId should update the asset deleted field', function(done) {
-            app.delete('/skills/' + temporaryId)
+        it('/:id should update the asset deleted field', function(done) {
+            app.delete(baseRoute + '/' + temporaryId)
                 .expect(204)
                 .end(done);
         });

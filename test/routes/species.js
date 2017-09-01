@@ -13,6 +13,8 @@ var app = require('../app'),
 
 describe('/species', function() {
 
+    var baseRoute = '/species';
+
     var temporaryId,
         attributeId;
 
@@ -80,7 +82,7 @@ describe('/species', function() {
                 icon: 'http://fakeicon.com/' + hasher(20) + '.png'
             };
 
-            app.post('/species', payload)
+            app.post(baseRoute, payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -93,8 +95,8 @@ describe('/species', function() {
                 });
         });
 
-        it('/:speciesId/clone should create a copy of the species', function(done) {
-            app.post('/species/' + temporaryId + '/clone')
+        it('/:id/clone should create a copy', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -105,8 +107,8 @@ describe('/species', function() {
                 });
         });
 
-        it('/:speciesId/comments should create a new comment for the species', function(done) {
-            app.post('/species/' + temporaryId + '/comments', { comment: hasher(20) })
+        it('/:id/comments should create a new comment', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -117,13 +119,13 @@ describe('/species', function() {
                 });
         });
 
-        it('/:speciesId/attributes should add an attribute to the species', function(done) {
+        it('/:id/attributes should add an attribute', function(done) {
             var payload = {
                 insert_id: attributeId,
                 value: 10
             };
 
-            app.post('/species/' + temporaryId + '/attributes', payload)
+            app.post(baseRoute + '/' + temporaryId + '/attributes', payload)
                 .expect(201)
                 .end(done);
         });
@@ -132,25 +134,25 @@ describe('/species', function() {
 
     describe('PUT', function() {
 
-        it('/:speciesId should update the item with new values', function(done) {
+        it('/:id should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
             };
 
-            app.put('/species/' + temporaryId, payload)
+            app.put(baseRoute + '/' + temporaryId, payload)
                 .expect(204)
                 .end(done);
         });
 
-        it('/:speciesId/canon should update the species canon field', function(done) {
-            app.put('/species/' + temporaryId + '/canon')
+        it('/:id/canon should update the canon status', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/canon/1')
                 .expect(204)
                 .end(done);
         });
 
-        it('/:speciesId/attributes should change the attribute value for the species', function(done) {
-            app.put('/species/' + temporaryId + '/attributes/1', { value: 8 })
+        it('/:id/attributes should change the value', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/attributes/1', { value: 8 })
                 .expect(204)
                 .end(done);
         });
@@ -160,7 +162,7 @@ describe('/species', function() {
     describe('GET', function() {
 
         it('/ should return a list of species', function(done) {
-            app.get('/species')
+            app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -172,7 +174,7 @@ describe('/species', function() {
         });
 
         it('/playable/:playable should return a list of species', function(done) {
-            app.get('/species/playable/1')
+            app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -183,8 +185,8 @@ describe('/species', function() {
                 });
         });
 
-        it('/:speciesId should return one species', function(done) {
-            app.get('/species/' + temporaryId)
+        it('/:id should return one item', function(done) {
+            app.get(baseRoute + '/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -195,8 +197,8 @@ describe('/species', function() {
                 })
         });
 
-        it('/:speciesId/ownership should return ownership status', function(done) {
-            app.get('/species/' + temporaryId + '/ownership')
+        it('/:id/ownership should return ownership status', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -207,8 +209,8 @@ describe('/species', function() {
                 });
         });
 
-        it('/:speciesId/comments should get all available comments', function(done) {
-            app.get('/species/' + temporaryId + '/comments')
+        it('/:id/comments should get all available comments', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -219,8 +221,8 @@ describe('/species', function() {
                 })
         });
 
-        it('/:speciesId/attributes should return a list', function(done) {
-            app.get('/species/' + temporaryId + '/attributes')
+        it('/:id/attributes should return a list', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -244,20 +246,20 @@ describe('/species', function() {
 
     xdescribe('DELETE', function() {
 
-        it('/:speciesId/attributes should remove the attribute from the species', function(done) {
-            app.delete('/species/' + temporaryId + '/attributes/1')
+        it('/:id/attributes should remove the attribute from the species', function(done) {
+            app.delete(baseRoute + '/' + temporaryId + '/attributes/1')
                 .expect(204)
                 .end(done);
         });
 
-        it('/:speciesId/weapons should remove the weapon from the species', function(done) {
-            app.delete('/species/' + temporaryId + '/weapons/1')
+        it('/:id/weapons should remove the weapon from the species', function(done) {
+            app.delete(baseRoute + '/' + temporaryId + '/weapons/1')
                 .expect(204)
                 .end(done);
         });
 
-        it('/:speciesId should update the species deleted field', function(done) {
-            app.delete('/species/' + temporaryId)
+        it('/:id should update the species deleted field', function(done) {
+            app.delete(baseRoute + '/' + temporaryId)
                 .expect(204)
                 .end(done);
         });

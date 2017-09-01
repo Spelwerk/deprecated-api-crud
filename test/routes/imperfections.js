@@ -13,6 +13,8 @@ var app = require('../app'),
 
 describe('/imperfections', function() {
 
+    var baseRoute = '/imperfections';
+
     var temporaryId,
         manifestationId,
         speciesId,
@@ -117,7 +119,7 @@ describe('/imperfections', function() {
                 species_id: speciesId
             };
 
-            app.post('/imperfections', payload)
+            app.post(baseRoute, payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -130,8 +132,8 @@ describe('/imperfections', function() {
                 });
         });
 
-        it('/:imperfectionId/clone should create a copy of the imperfection', function(done) {
-            app.post('/imperfections/' + temporaryId + '/clone')
+        it('/:id/clone should create a copy', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -142,8 +144,8 @@ describe('/imperfections', function() {
                 });
         });
 
-        it('/:imperfectionId/comments should create a new comment for the imperfection', function(done) {
-            app.post('/imperfections/' + temporaryId + '/comments', { comment: hasher(20) })
+        it('/:id/comments should create a new comment', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -154,35 +156,35 @@ describe('/imperfections', function() {
                 });
         });
 
-        it('/:imperfectionId/attributes should add an attribute to the imperfection', function(done) {
+        it('/:id/attributes should add an attribute', function(done) {
             var payload = {
                 insert_id: attributeId,
                 value: 10
             };
 
-            app.post('/imperfections/' + temporaryId + '/attributes', payload)
+            app.post(baseRoute + '/' + temporaryId + '/attributes', payload)
                 .expect(201)
                 .end(done);
         });
 
-        it('/:imperfectionId/skills should add an skill to the imperfection', function(done) {
+        it('/:id/skills should add a skill', function(done) {
             var payload = {
                 insert_id: skillId,
                 value: 10
             };
 
-            app.post('/imperfections/' + temporaryId + '/skills', payload)
+            app.post(baseRoute + '/' + temporaryId + '/skills', payload)
                 .expect(201)
                 .end(done);
         });
 
-        it('/:imperfectionId/expertises should add an skill to the imperfection', function(done) {
+        it('/:id/expertises should add a skill', function(done) {
             var payload = {
                 insert_id: expertiseId,
                 value: 10
             };
 
-            app.post('/imperfections/' + temporaryId + '/expertises', payload)
+            app.post(baseRoute + '/' + temporaryId + '/expertises', payload)
                 .expect(201)
                 .end(done);
         });
@@ -191,37 +193,37 @@ describe('/imperfections', function() {
 
     describe('PUT', function() {
 
-        it('/:imperfectionId should update the item with new values', function(done) {
+        it('/:id should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
             };
 
-            app.put('/imperfections/' + temporaryId, payload)
+            app.put(baseRoute + '/' + temporaryId, payload)
                 .expect(204)
                 .end(done);
         });
 
-        it('/:imperfectionId/canon should update the imperfection canon field', function(done) {
-            app.put('/imperfections/' + temporaryId + '/canon')
+        it('/:id/canon should update the canon status', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/canon/1')
                 .expect(204)
                 .end(done);
         });
 
-        it('/:imperfectionId/attributes should change the attribute value for the imperfection', function(done) {
-            app.put('/imperfections/' + temporaryId + '/attributes/' + attributeId, {value: 8})
+        it('/:id/attributes should change the value', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/attributes/' + attributeId, {value: 8})
                 .expect(204)
                 .end(done);
         });
 
-        it('/:imperfectionId/skills should change the skill value for the imperfection', function(done) {
-            app.put('/imperfections/' + temporaryId + '/skills/' + skillId, {value: 8})
+        it('/:id/skills should change the value', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/skills/' + skillId, {value: 8})
                 .expect(204)
                 .end(done);
         });
 
-        it('/:imperfectionId/expertises should change the skill value for the imperfection', function(done) {
-            app.put('/imperfections/' + temporaryId + '/expertises/' + expertiseId, {value: 8})
+        it('/:id/expertises should change the value', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/expertises/' + expertiseId, {value: 8})
                 .expect(204)
                 .end(done);
         });
@@ -231,7 +233,7 @@ describe('/imperfections', function() {
     describe('GET', function() {
 
         it('/ should return a list of imperfections', function(done) {
-            app.get('/imperfections')
+            app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -266,8 +268,8 @@ describe('/imperfections', function() {
                 });
         });
 
-        it('/:imperfectionId should return one imperfection', function(done) {
-            app.get('/imperfections/' + temporaryId)
+        it('/:id should return one item', function(done) {
+            app.get(baseRoute + '/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -278,8 +280,8 @@ describe('/imperfections', function() {
                 })
         });
 
-        it('/:imperfectionId/ownership should return ownership status', function(done) {
-            app.get('/imperfections/' + temporaryId + '/ownership')
+        it('/:id/ownership should return ownership status', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -290,8 +292,8 @@ describe('/imperfections', function() {
                 });
         });
 
-        it('/:imperfectionId/comments should get all available comments', function(done) {
-            app.get('/imperfections/' + temporaryId + '/comments')
+        it('/:id/comments should get all available comments', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -302,8 +304,8 @@ describe('/imperfections', function() {
                 })
         });
 
-        it('/:imperfectionId/attributes should return a list', function(done) {
-            app.get('/imperfections/' + temporaryId + '/attributes')
+        it('/:id/attributes should return a list', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -319,8 +321,8 @@ describe('/imperfections', function() {
                 });
         });
 
-        it('/:imperfectionId/skills should return a list', function(done) {
-            app.get('/imperfections/' + temporaryId + '/skills')
+        it('/:id/skills should return a list', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/skills')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -336,8 +338,8 @@ describe('/imperfections', function() {
                 });
         });
 
-        it('/:imperfectionId/skills should return a list', function(done) {
-            app.get('/imperfections/' + temporaryId + '/expertises')
+        it('/:id/skills should return a list', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/expertises')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -357,26 +359,26 @@ describe('/imperfections', function() {
 
     xdescribe('DELETE', function() {
 
-        it('/:imperfectionId/attributes should remove the attribute from the imperfection', function(done) {
-            app.delete('/imperfections/' + temporaryId + '/attributes/' + attributeId)
+        it('/:id/attributes should remove the attribute from the imperfection', function(done) {
+            app.delete(baseRoute + '/' + temporaryId + '/attributes/' + attributeId)
                 .expect(204)
                 .end(done);
         });
 
-        it('/:imperfectionId/skills should remove the skill from the imperfection', function(done) {
-            app.delete('/imperfections/' + temporaryId + '/skills/' + skillId)
+        it('/:id/skills should remove the skill from the imperfection', function(done) {
+            app.delete(baseRoute + '/' + temporaryId + '/skills/' + skillId)
                 .expect(204)
                 .end(done);
         });
 
-        it('/:imperfectionId/expertises should remove the expertise from the imperfection', function(done) {
-            app.delete('/imperfections/' + temporaryId + '/expertises/' + skillId)
+        it('/:id/expertises should remove the expertise from the imperfection', function(done) {
+            app.delete(baseRoute + '/' + temporaryId + '/expertises/' + skillId)
                 .expect(204)
                 .end(done);
         });
 
-        it('/:imperfectionId should update the imperfection deleted field', function(done) {
-            app.delete('/imperfections/' + temporaryId)
+        it('/:id should update the imperfection deleted field', function(done) {
+            app.delete(baseRoute + '/' + temporaryId)
                 .expect(204)
                 .end(done);
         });

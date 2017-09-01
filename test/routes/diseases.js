@@ -8,10 +8,12 @@ var should = chai.should(),
     expect = chai.expect;
 
 var app = require('../app'),
-    verifier = require('./../verifier'),
+    verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
 describe('/diseases', function() {
+
+    var baseRoute = '/diseases';
 
     var temporaryId;
 
@@ -35,20 +37,15 @@ describe('/diseases', function() {
     }
 
     function verifyItem(item) {
-        verifier.generic(item);
+        assert.isNumber(item.id);
+        assert.isString(item.name);
     }
 
 
     describe('POST', function() {
 
         it('/ should create a new asset', function(done) {
-            var payload = {
-                name: hasher(20),
-                description: hasher(20),
-                icon: 'http://fakeicon.com/' + hasher(20) + '.png'
-            };
-
-            app.post('/diseases', payload)
+            app.post(baseRoute, { name: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -61,57 +58,12 @@ describe('/diseases', function() {
                 });
         });
 
-        it('/:diseaseId/clone should create a copy of the asset', function(done) {
-            app.post('/diseases/' + temporaryId + '/clone')
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
-        });
-
-        it('/:diseaseId/comments should create a new comment for the asset', function(done) {
-            app.post('/diseases/' + temporaryId + '/comments', { comment: hasher(20) })
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
-        });
-
-    });
-
-    describe('PUT', function() {
-
-        it('/:diseaseId should update the item with new values', function(done) {
-            var payload = {
-                name: hasher(20),
-                description: hasher(20)
-            };
-
-            app.put('/diseases/' + temporaryId, payload)
-                .expect(204)
-                .end(done);
-        });
-
-        it('/:diseaseId/canon should update the asset canon field', function(done) {
-            app.put('/diseases/' + temporaryId + '/canon')
-                .expect(204)
-                .end(done);
-        });
-
     });
 
     describe('GET', function() {
 
         it('/ should return a list of diseases', function(done) {
-            app.get('/diseases')
+            app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -122,8 +74,8 @@ describe('/diseases', function() {
                 });
         });
 
-        it('/:diseaseId should return one asset', function(done) {
-            app.get('/diseases/' + temporaryId)
+        it('/:diseaseId should return one item', function(done) {
+            app.get(baseRoute + '/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -134,36 +86,12 @@ describe('/diseases', function() {
                 })
         });
 
-        it('/:diseaseId/ownership should return ownership status', function(done) {
-            app.get('/diseases/' + temporaryId + '/ownership')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isBoolean(res.body.ownership);
-
-                    done();
-                });
-        });
-
-        it('/:diseaseId/comments should get all available comments', function(done) {
-            app.get('/diseases/' + temporaryId + '/comments')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifier.comments(res.body.results);
-
-                    done();
-                })
-        });
-
     });
 
     xdescribe('DELETE', function() {
 
         it('/:diseaseId should update the asset deleted field', function(done) {
-            app.delete('/diseases/' + temporaryId)
+            app.delete(baseRoute + '/' + temporaryId)
                 .expect(204)
                 .end(done);
         });

@@ -48,6 +48,7 @@ module.exports = function(router) {
     basic.canon(router);
     basic.clone(router, tableName);
     basic.comments(router);
+    basic.labels(router);
     basic.ownership(router);
 
     // Relations

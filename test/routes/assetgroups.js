@@ -13,6 +13,8 @@ var app = require('./../app'),
 
 describe('/assetgroups', function() {
 
+    var baseRoute = '/assetgroups';
+
     var temporaryId;
 
     before(function(done) {
@@ -44,7 +46,7 @@ describe('/assetgroups', function() {
         it('/ should create a new asset group', function(done) {
             var payload = {name: hasher(20)};
 
-            app.post('/assetgroups', payload)
+            app.post(baseRoute, payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -61,16 +63,16 @@ describe('/assetgroups', function() {
 
     describe('PUT', function() {
 
-        it('/:assetGroupId should update the item with new values', function(done) {
+        it('/:id should update the item with new values', function(done) {
             var payload = {name: hasher(20)};
 
-            app.put('/assetgroups/' + temporaryId, payload)
+            app.put(baseRoute + '/' + temporaryId, payload)
                 .expect(204)
                 .end(done);
         });
 
-        it('/:assetGroupId/canon should update the asset group canon field', function(done) {
-            app.put('/assetgroups/' + temporaryId + '/canon')
+        it('/:id/canon should update the canon status', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/canon/1')
                 .expect(204)
                 .end(done);
         });
@@ -80,7 +82,7 @@ describe('/assetgroups', function() {
     describe('GET', function() {
 
         it('/ should return a list of asset groups', function(done) {
-            app.get('/assetgroups')
+            app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -91,8 +93,8 @@ describe('/assetgroups', function() {
                 });
         });
 
-        it('/:assetGroupId should return one asset group', function(done) {
-            app.get('/assetgroups/' + temporaryId)
+        it('/:id should return one item', function(done) {
+            app.get(baseRoute + '/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -103,8 +105,8 @@ describe('/assetgroups', function() {
                 })
         });
 
-        it('/:assetGroupId/ownership should return ownership status', function(done) {
-            app.get('/assetgroups/' + temporaryId + '/ownership')
+        it('/:id/ownership should return ownership status', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -119,8 +121,8 @@ describe('/assetgroups', function() {
 
     xdescribe('DELETE', function() {
 
-        it('/:assetGroupId should update the asset group deleted field', function(done) {
-            app.delete('/assetgroups/' + temporaryId)
+        it('/:id should update the asset group deleted field', function(done) {
+            app.delete(baseRoute + '/' + temporaryId)
                 .expect(204)
                 .end(done);
         });

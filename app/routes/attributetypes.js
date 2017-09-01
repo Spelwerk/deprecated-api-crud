@@ -26,5 +26,6 @@ module.exports = function(router) {
     basic.id(router, sql, tableName);
     basic.canon(router);
     basic.comments(router);
+    basic.labels(router);
     basic.ownership(router);
 };

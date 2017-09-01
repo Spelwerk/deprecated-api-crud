@@ -13,6 +13,8 @@ var app = require('./../app'),
 
 describe('/assettypes', function() {
 
+    var baseRoute = '/assettypes';
+
     var temporaryId,
         groupId;
 
@@ -64,7 +66,7 @@ describe('/assettypes', function() {
                 icon: 'http://fakeicon.com/' + hasher(20) + '.png'
             };
 
-            app.post('/assettypes', payload)
+            app.post(baseRoute, payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -81,16 +83,16 @@ describe('/assettypes', function() {
 
     describe('PUT', function() {
 
-        it('/:assetTypeId should update the item with new values', function(done) {
+        it('/:id should update the item with new values', function(done) {
             var payload = {name: hasher(20)};
 
-            app.put('/assettypes/' + temporaryId, payload)
+            app.put(baseRoute + '/' + temporaryId, payload)
                 .expect(204)
                 .end(done);
         });
 
-        it('/:assetTypeId/canon should update the asset canon field', function(done) {
-            app.put('/assettypes/' + temporaryId + '/canon')
+        it('/:id/canon should update the canon status', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/canon/1')
                 .expect(204)
                 .end(done);
         });
@@ -100,7 +102,7 @@ describe('/assettypes', function() {
     describe('GET', function() {
 
         it('/ should return a list of assettypes', function(done) {
-            app.get('/assettypes')
+            app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -112,7 +114,7 @@ describe('/assettypes', function() {
         });
 
         it('/group/:assetGroupId should return a list of assettypes', function(done) {
-            app.get('/assettypes/group/1')
+            app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -123,8 +125,8 @@ describe('/assettypes', function() {
                 });
         });
 
-        it('/:assetTypeId should return one asset type', function(done) {
-            app.get('/assettypes/' + temporaryId)
+        it('/:id should return one item', function(done) {
+            app.get(baseRoute + '/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -135,8 +137,8 @@ describe('/assettypes', function() {
                 })
         });
 
-        it('/:assetTypeId/ownership should return ownership status', function(done) {
-            app.get('/assettypes/' + temporaryId + '/ownership')
+        it('/:id/ownership should return ownership status', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -151,8 +153,8 @@ describe('/assettypes', function() {
 
     xdescribe('DELETE', function() {
 
-        it('/:assetTypeId should update the asset deleted field', function(done) {
-            app.delete('/assettypes/' + temporaryId)
+        it('/:id should update the asset deleted field', function(done) {
+            app.delete(baseRoute + '/' + temporaryId)
                 .expect(204)
                 .end(done);
         });

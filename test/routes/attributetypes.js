@@ -17,6 +17,8 @@ describe('/attributetypes', function() {
         app.login(done);
     });
 
+    var baseRoute = '/attributetypes';
+
     var temporaryId;
 
     function verifyList(body) {
@@ -49,7 +51,7 @@ describe('/attributetypes', function() {
                 special: false
             };
 
-            app.post('/attributetypes', payload)
+            app.post(baseRoute, payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -66,10 +68,10 @@ describe('/attributetypes', function() {
 
     describe('PUT', function() {
 
-        it('/:attributeTypeId should update the item with new values', function(done) {
+        it('/:id should update the item with new values', function(done) {
             var payload = {name: hasher(20)};
 
-            app.put('/attributetypes/' + temporaryId, payload)
+            app.put(baseRoute + '/' + temporaryId, payload)
                 .expect(204)
                 .end(done);
         });
@@ -79,7 +81,7 @@ describe('/attributetypes', function() {
     describe('GET', function() {
 
         it('/ should return a list of attributetypes', function(done) {
-            app.get('/attributetypes')
+            app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -90,8 +92,8 @@ describe('/attributetypes', function() {
                 });
         });
 
-        it('/:attributeTypeId should return one attribute type', function(done) {
-            app.get('/attributetypes/' + temporaryId)
+        it('/:id should return one item', function(done) {
+            app.get(baseRoute + '/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -102,8 +104,8 @@ describe('/attributetypes', function() {
                 })
         });
 
-        it('/:attributeTypeId/ownership should return ownership status', function(done) {
-            app.get('/attributetypes/' + temporaryId + '/ownership')
+        it('/:id/ownership should return ownership status', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -118,8 +120,8 @@ describe('/attributetypes', function() {
 
     xdescribe('DELETE', function() {
 
-        it('/:attributeTypeId should update the attribute deleted field', function(done) {
-            app.delete('/attributetypes/' + temporaryId)
+        it('/:id should update the attribute deleted field', function(done) {
+            app.delete(baseRoute + '/' + temporaryId)
                 .expect(204)
                 .end(done);
         });

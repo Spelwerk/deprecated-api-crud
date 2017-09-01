@@ -56,7 +56,7 @@ describe('/users', function() {
                 password: password
             };
 
-            app.post('/users', payload)
+            app.post(baseRoute, payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -77,7 +77,7 @@ describe('/users', function() {
                 password: password
             };
 
-            app.post('/users/login/password', payload)
+            app.post(baseRoute, payload)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -189,7 +189,7 @@ describe('/users', function() {
         });
 
         it('/ should return a list of users', function(done) {
-            app.get('/users')
+            app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);

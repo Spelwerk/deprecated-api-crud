@@ -1,19 +1,7 @@
-var basic = require('./../../lib/generic/basic');
+var simple = require('../../lib/specific/simple');
 
 module.exports = function(router) {
     'use strict';
 
-    var tableName = 'wound';
-
-    var sql = 'SELECT * FROM ' + tableName + ' LEFT JOIN generic ON generic.id = ' + tableName + '.generic_id';
-
-    basic.root(router, sql, tableName);
-
-    // ID
-
-    basic.id(router, sql, tableName);
-    basic.canon(router);
-    basic.clone(router, tableName);
-    basic.comments(router);
-    basic.ownership(router);
+    simple(router, 'wound');
 };

@@ -13,6 +13,8 @@ var app = require('../app'),
 
 describe('/augmentations', function() {
 
+    var baseRoute = '/augmentations';
+
     var temporaryId,
         attributeId,
         expertiseId,
@@ -106,7 +108,7 @@ describe('/augmentations', function() {
                 hacking: 10
             };
 
-            app.post('/augmentations', payload)
+            app.post(baseRoute, payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -119,8 +121,8 @@ describe('/augmentations', function() {
                 });
         });
 
-        it('/:augmentationId/clone should create a copy of the augmentation', function(done) {
-            app.post('/augmentations/' + temporaryId + '/clone')
+        it('/:id/clone should create a copy', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -131,8 +133,8 @@ describe('/augmentations', function() {
                 });
         });
 
-        it('/:augmentationId/comments should create a new comment for the augmentation', function(done) {
-            app.post('/augmentations/' + temporaryId + '/comments', { comment: hasher(20) })
+        it('/:id/comments should create a new comment', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -143,45 +145,45 @@ describe('/augmentations', function() {
                 });
         });
 
-        it('/:augmentationId/attributes should add an attribute to the augmentation', function(done) {
+        it('/:id/attributes should add an attribute', function(done) {
             var payload = {
                 insert_id: attributeId,
                 value: 10
             };
 
-            app.post('/augmentations/' + temporaryId + '/attributes', payload)
+            app.post(baseRoute + '/' + temporaryId + '/attributes', payload)
                 .expect(201)
                 .end(done);
         });
 
-        it('/:augmentationId/expertises should add an expertise to the augmentation', function(done) {
+        it('/:id/expertises should add an expertise', function(done) {
             var payload = {
                 insert_id: expertiseId,
                 value: 10
             };
 
-            app.post('/augmentations/' + temporaryId + '/expertises', payload)
+            app.post(baseRoute + '/' + temporaryId + '/expertises', payload)
                 .expect(201)
                 .end(done);
         });
 
-        it('/:augmentationId/skills should add an skill to the augmentation', function(done) {
+        it('/:id/skills should add a skill', function(done) {
             var payload = {
                 insert_id: skillId,
                 value: 10
             };
 
-            app.post('/augmentations/' + temporaryId + '/skills', payload)
+            app.post(baseRoute + '/' + temporaryId + '/skills', payload)
                 .expect(201)
                 .end(done);
         });
 
-        it('/:augmentationId/software should add an software to the augmentation', function(done) {
+        it('/:id/software should add an software to the augmentation', function(done) {
             var payload = {
                 insert_id: softwareId
             };
 
-            app.post('/augmentations/' + temporaryId + '/software', payload)
+            app.post(baseRoute + '/' + temporaryId + '/software', payload)
                 .expect(201)
                 .end(done);
         });
@@ -190,37 +192,37 @@ describe('/augmentations', function() {
 
     describe('PUT', function() {
 
-        it('/:augmentationId should update the item with new values', function(done) {
+        it('/:id should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
             };
 
-            app.put('/augmentations/' + temporaryId, payload)
+            app.put(baseRoute + '/' + temporaryId, payload)
                 .expect(204)
                 .end(done);
         });
 
-        it('/:augmentationId/canon should update the augmentation canon field', function(done) {
-            app.put('/augmentations/' + temporaryId + '/canon')
+        it('/:id/canon should update the canon status', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/canon/1')
                 .expect(204)
                 .end(done);
         });
 
-        it('/:augmentationId/attributes should change the attribute value for the augmentation', function(done) {
-            app.put('/augmentations/' + temporaryId + '/attributes/' + attributeId, {value: 8})
+        it('/:id/attributes should change the value', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/attributes/' + attributeId, {value: 8})
                 .expect(204)
                 .end(done);
         });
 
-        it('/:augmentationId/expertises should change the expertise value for the augmentation', function(done) {
-            app.put('/augmentations/' + temporaryId + '/expertises/' + expertiseId, {value: 8})
+        it('/:id/expertises should change the value', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/expertises/' + expertiseId, {value: 8})
                 .expect(204)
                 .end(done);
         });
 
-        it('/:augmentationId/skills should change the skill value for the augmentation', function(done) {
-            app.put('/augmentations/' + temporaryId + '/skills/' + skillId, {value: 8})
+        it('/:id/skills should change the value', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/skills/' + skillId, {value: 8})
                 .expect(204)
                 .end(done);
         });
@@ -230,7 +232,7 @@ describe('/augmentations', function() {
     describe('GET', function() {
 
         it('/ should return a list of augmentations', function(done) {
-            app.get('/augmentations')
+            app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -241,8 +243,8 @@ describe('/augmentations', function() {
                 });
         });
 
-        it('/:augmentationId should return one augmentation', function(done) {
-            app.get('/augmentations/' + temporaryId)
+        it('/:id should return one item', function(done) {
+            app.get(baseRoute + '/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -253,8 +255,8 @@ describe('/augmentations', function() {
                 })
         });
 
-        it('/:augmentationId/ownership should return ownership', function(done) {
-            app.get('/augmentations/' + temporaryId + '/ownership')
+        it('/:id/ownership should return ownership', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -265,8 +267,8 @@ describe('/augmentations', function() {
                 });
         });
 
-        it('/:augmentationId/comments should get all available comments', function(done) {
-            app.get('/augmentations/' + temporaryId + '/comments')
+        it('/:id/comments should get all available comments', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -277,8 +279,8 @@ describe('/augmentations', function() {
                 })
         });
 
-        it('/:augmentationId/attributes should return a list', function(done) {
-            app.get('/augmentations/' + temporaryId + '/attributes')
+        it('/:id/attributes should return a list', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -294,8 +296,8 @@ describe('/augmentations', function() {
                 });
         });
 
-        it('/:augmentationId/expertises should return a list', function(done) {
-            app.get('/augmentations/' + temporaryId + '/expertises')
+        it('/:id/expertises should return a list', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/expertises')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -311,8 +313,8 @@ describe('/augmentations', function() {
                 });
         });
 
-        it('/:augmentationId/skills should return a list', function(done) {
-            app.get('/augmentations/' + temporaryId + '/skills')
+        it('/:id/skills should return a list', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/skills')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -328,8 +330,8 @@ describe('/augmentations', function() {
                 });
         });
 
-        it('/:augmentationId/software should return a list of software', function(done) {
-            app.get('/augmentations/' + temporaryId + '/software')
+        it('/:id/software should return a list of software', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/software')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -349,20 +351,20 @@ describe('/augmentations', function() {
 
     xdescribe('DELETE', function() {
 
-        it('/:augmentationId/attributes should remove the attribute from the augmentation', function(done) {
-            app.delete('/augmentations/' + temporaryId + '/attributes/1')
+        it('/:id/attributes should remove the attribute from the augmentation', function(done) {
+            app.delete(baseRoute + '/' + temporaryId + '/attributes/1')
                 .expect(204)
                 .end(done);
         });
 
-        it('/:augmentationId/skills should remove the skill from the augmentation', function(done) {
-            app.delete('/augmentations/' + temporaryId + '/skills/1')
+        it('/:id/skills should remove the skill from the augmentation', function(done) {
+            app.delete(baseRoute + '/' + temporaryId + '/skills/1')
                 .expect(204)
                 .end(done);
         });
 
-        it('/:augmentationId should update the augmentation deleted field', function(done) {
-            app.delete('/augmentations/' + temporaryId)
+        it('/:id should update the augmentation deleted field', function(done) {
+            app.delete(baseRoute + '/' + temporaryId)
                 .expect(204)
                 .end(done);
         });

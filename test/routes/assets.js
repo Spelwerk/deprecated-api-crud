@@ -13,6 +13,8 @@ var app = require('./../app'),
 
 describe('/assets', function() {
 
+    var baseRoute = '/assets';
+
     var temporaryId,
         groupId,
         typeId,
@@ -134,7 +136,7 @@ describe('/assets', function() {
                 price: 10
             };
 
-            app.post('/assets', payload)
+            app.post(baseRoute, payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -147,8 +149,8 @@ describe('/assets', function() {
                 });
         });
 
-        it('/:assetId/clone should create a copy of the asset', function(done) {
-            app.post('/assets/' + temporaryId + '/clone')
+        it('/:id/clone should create a copy', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -159,8 +161,8 @@ describe('/assets', function() {
                 });
         });
 
-        it('/:assetId/comments should create a new comment for the asset', function(done) {
-            app.post('/assets/' + temporaryId + '/comments', { comment: hasher(20) })
+        it('/:id/comments should create a new comment', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -171,46 +173,58 @@ describe('/assets', function() {
                 });
         });
 
-        it('/:assetId/attributes should add an attribute to the asset', function(done) {
+        it('/:id/labels should create a label', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/labels', { label: 'staticLabel' })
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.id);
+
+                    done();
+                })
+        });
+
+        it('/:id/attributes should add an attribute', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
             };
 
-            app.post('/assets/' + temporaryId + '/attributes', payload)
+            app.post(baseRoute + '/' + temporaryId + '/attributes', payload)
                 .expect(201)
                 .end(done);
         });
 
-        it('/:assetId/doctrines should add an doctrine to the asset', function(done) {
+        it('/:id/doctrines should add a doctrine', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
             };
 
-            app.post('/assets/' + temporaryId + '/doctrines', payload)
+            app.post(baseRoute + '/' + temporaryId + '/doctrines', payload)
                 .expect(201)
                 .end(done);
         });
 
-        it('/:assetId/expertises should add an expertise to the asset', function(done) {
+        it('/:id/expertises should add an expertise', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
             };
 
-            app.post('/assets/' + temporaryId + '/expertises', payload)
+            app.post(baseRoute + '/' + temporaryId + '/expertises', payload)
                 .expect(201)
                 .end(done);
         });
 
-        it('/:assetId/skills should add an skill to the asset', function(done) {
+        it('/:id/skills should add a skill', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
             };
 
-            app.post('/assets/' + temporaryId + '/skills', payload)
+            app.post(baseRoute + '/' + temporaryId + '/skills', payload)
                 .expect(201)
                 .end(done);
         });
@@ -219,43 +233,43 @@ describe('/assets', function() {
 
     describe('PUT', function() {
 
-        it('/:assetId should update the item with new values', function(done) {
+        it('/:id should update the item with new values', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20)
             };
 
-            app.put('/assets/' + temporaryId, payload)
+            app.put(baseRoute + '/' + temporaryId, payload)
                 .expect(204)
                 .end(done);
         });
 
-        it('/:assetId/canon should update the asset canon field', function(done) {
-            app.put('/assets/' + temporaryId + '/canon')
+        it('/:id/canon should update the canon status', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/canon/1')
                 .expect(204)
                 .end(done);
         });
 
-        it('/:assetId/attributes should change the attribute value for the asset', function(done) {
-            app.put('/assets/' + temporaryId + '/attributes/' + attributeId, {value: 8})
+        it('/:id/attributes should change the value', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/attributes/' + attributeId, {value: 8})
                 .expect(204)
                 .end(done);
         });
 
-        it('/:assetId/doctrines should change the doctrine value for the asset', function(done) {
-            app.put('/assets/' + temporaryId + '/doctrines/' + doctrineId, {value: 8})
+        it('/:id/doctrines should change the value', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/doctrines/' + doctrineId, {value: 8})
                 .expect(204)
                 .end(done);
         });
 
-        it('/:assetId/expertises should change the expertise value for the asset', function(done) {
-            app.put('/assets/' + temporaryId + '/expertises/' + expertiseId, {value: 8})
+        it('/:id/expertises should change the value', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/expertises/' + expertiseId, {value: 8})
                 .expect(204)
                 .end(done);
         });
 
-        it('/:assetId/skills should change the skill value for the asset', function(done) {
-            app.put('/assets/' + temporaryId + '/skills/' + skillId, {value: 8})
+        it('/:id/skills should change the value', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/skills/' + skillId, {value: 8})
                 .expect(204)
                 .end(done);
         });
@@ -265,7 +279,7 @@ describe('/assets', function() {
     describe('GET', function() {
 
         it('/ should return a list of assets', function(done) {
-            app.get('/assets')
+            app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -300,8 +314,8 @@ describe('/assets', function() {
                 });
         });
 
-        it('/:assetId should return one asset', function(done) {
-            app.get('/assets/' + temporaryId)
+        it('/:id should return one item', function(done) {
+            app.get(baseRoute + '/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -312,8 +326,8 @@ describe('/assets', function() {
                 })
         });
 
-        it('/:assetId/ownership should return ownership status', function(done) {
-            app.get('/assets/' + temporaryId + '/ownership')
+        it('/:id/ownership should return ownership status', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/ownership')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -324,8 +338,8 @@ describe('/assets', function() {
                 });
         });
 
-        it('/:assetId/comments should get all available comments', function(done) {
-            app.get('/assets/' + temporaryId + '/comments')
+        it('/:id/comments should get all available comments', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/comments')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -336,8 +350,8 @@ describe('/assets', function() {
                 })
         });
 
-        it('/:assetId/attributes should return a list', function(done) {
-            app.get('/assets/' + temporaryId + '/attributes')
+        it('/:id/attributes should return a list', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/attributes')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -353,8 +367,8 @@ describe('/assets', function() {
                 });
         });
 
-        it('/:assetId/doctrines should return a list', function(done) {
-            app.get('/assets/' + temporaryId + '/doctrines')
+        it('/:id/doctrines should return a list', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/doctrines')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -370,8 +384,8 @@ describe('/assets', function() {
                 });
         });
 
-        it('/:assetId/expertises should return a list', function(done) {
-            app.get('/assets/' + temporaryId + '/expertises')
+        it('/:id/expertises should return a list', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/expertises')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -387,8 +401,8 @@ describe('/assets', function() {
                 });
         });
 
-        it('/:assetId/skills should return a list', function(done) {
-            app.get('/assets/' + temporaryId + '/skills')
+        it('/:id/skills should return a list', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/skills')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -408,32 +422,32 @@ describe('/assets', function() {
 
     xdescribe('DELETE', function() {
 
-        it('/:assetId/attributes should remove the attribute from the asset', function(done) {
-            app.delete('/assets/' + temporaryId + '/attributes/1')
+        it('/:id/attributes should remove the attribute from the asset', function(done) {
+            app.delete(baseRoute + '/' + temporaryId + '/attributes/1')
                 .expect(204)
                 .end(done);
         });
 
-        it('/:assetId/doctrines should remove the doctrine from the asset', function(done) {
-            app.delete('/assets/' + temporaryId + '/doctrines/1')
+        it('/:id/doctrines should remove the doctrine from the asset', function(done) {
+            app.delete(baseRoute + '/' + temporaryId + '/doctrines/1')
                 .expect(204)
                 .end(done);
         });
 
-        it('/:assetId/expertises should remove the expertise from the asset', function(done) {
-            app.delete('/assets/' + temporaryId + '/expertises/1')
+        it('/:id/expertises should remove the expertise from the asset', function(done) {
+            app.delete(baseRoute + '/' + temporaryId + '/expertises/1')
                 .expect(204)
                 .end(done);
         });
 
-        it('/:assetId/skills should remove the skill from the asset', function(done) {
-            app.delete('/assets/' + temporaryId + '/skills/1')
+        it('/:id/skills should remove the skill from the asset', function(done) {
+            app.delete(baseRoute + '/' + temporaryId + '/skills/1')
                 .expect(204)
                 .end(done);
         });
 
-        it('/:assetId should update the asset deleted field', function(done) {
-            app.delete('/assets/' + temporaryId)
+        it('/:id should update the asset deleted field', function(done) {
+            app.delete(baseRoute + '/' + temporaryId)
                 .expect(204)
                 .end(done);
         });

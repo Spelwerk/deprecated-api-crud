@@ -393,7 +393,7 @@ module.exports = function(router) {
             });
         })
         .delete(function(req, res, next) {
-            sequel.delete(req, res, next, tableName, req.params.personId, adminRestriction);
+            sequel.delete(req, res, next, false, tableName, req.params.personId);
         });
 
     // Playable
