@@ -15,10 +15,23 @@ describe('/nicknamegroups', function() {
 
     var baseRoute = '/nicknamegroups';
 
-    var temporaryId;
+    var temporaryId,
+        nameId;
 
     before(function(done) {
         app.login(done);
+    });
+
+    before(function(done) {
+        app.get('/nicknames')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                nameId = res.body.results[0].id;
+
+                done();
+            })
     });
 
     function verifyList(body) {
@@ -58,6 +71,12 @@ describe('/nicknamegroups', function() {
                 });
         });
 
+        it('/:id/nicknames should add an item', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/nicknames', { insert_id: nameId })
+                .expect(201)
+                .end(done);
+        });
+
     });
 
     describe('GET', function() {
@@ -74,7 +93,7 @@ describe('/nicknamegroups', function() {
                 });
         });
 
-        it('/:diseaseId should return one item', function(done) {
+        it('/:id should return one item', function(done) {
             app.get(baseRoute + '/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
@@ -84,6 +103,23 @@ describe('/nicknamegroups', function() {
 
                     done();
                 })
+        });
+
+        it('/:id/nicknames should return a list', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/nicknames')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.length);
+                    assert.isArray(res.body.results);
+
+                    _.each(res.body.results, function(item) {
+                        assert.isString(item.name);
+                    });
+
+                    done();
+                });
         });
 
     });

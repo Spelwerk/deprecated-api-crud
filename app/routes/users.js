@@ -619,12 +619,12 @@ module.exports = function(router) {
 
     router.route('/:userId/admin')
         .put(function(req, res, next) {
+            if(!req.user.admin) return next({status: 403, message: 'Forbidden.', error: 'User is not administrator'});
+
             var insert = {};
 
             insert.id = req.params.userId;
             insert.admin = req.body.admin;
-
-            if(!req.user.admin) return next('Forbidden.');
 
             query('UPDATE user SET admin = ? WHERE id = ?', [insert.admin, insert.id], function(err) {
                 if(err) return next(err);
