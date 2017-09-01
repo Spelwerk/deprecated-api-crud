@@ -77,7 +77,26 @@ module.exports = function(router) {
             })
         });
 
-    // Bodyparts todo generic_has_generic on bodypart
+    // Bodyparts
+
+    router.route('/:id/bodyparts')
+        .get(function(req, res, next) {
+            var call = 'SELECT * FROM generic_has_generic ' +
+                'LEFT JOIN generic ON generic.id = generic_has_generic.relation_id ' +
+                'LEFT JOIN bodypart ON bodypart.generic_id = generic_has_generic.relation_id ' +
+                'WHERE ' +
+                'generic_has_generic.generic_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.id]);
+        })
+        .post(function(req, res, next) {
+            relation.post(req, res, next, req.params.id, req.body.insert_id);
+        });
+
+    router.route('/:id/bodyparts/:bodyPartId')
+        .delete(function(req, res, next) {
+            relation.delete(req, res, next, req.params.id, req.params.bodyPartId);
+        });
 
     // Attributes
 
@@ -102,6 +121,4 @@ module.exports = function(router) {
         .delete(function(req, res, next) {
             relation.delete(req, res, next, req.params.id, req.params.attributeId);
         });
-
-    // Weapons todo list from weapon where weapongroup.species_id = ?
 };
