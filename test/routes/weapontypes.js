@@ -166,7 +166,7 @@ describe('/weapontypes', function() {
                 .end(done);
         });
 
-        it('/:id/canon should update the canon status', function(done) {
+        it('/:id/canon/:canon should update the canon status', function(done) {
             app.put(baseRoute + '/' + temporaryId + '/canon/1')
                 .expect(204)
                 .end(done);
@@ -176,7 +176,7 @@ describe('/weapontypes', function() {
 
     describe('GET', function() {
 
-        it('/ should return a list of weapon groups', function(done) {
+        it('/ should return a list', function(done) {
             app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
@@ -188,7 +188,19 @@ describe('/weapontypes', function() {
                 });
         });
 
-        it('/augmentation/:augmentationId should return a list of weapon groups', function(done) {
+        it('/deleted should return a list of deleted items', function(done) {
+            app.get(baseRoute + '/deleted')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('/augmentation/:augmentationId should return a list', function(done) {
             app.get('/weapontypes/augmentation/' + augmentationId)
                 .expect(200)
                 .end(function(err, res) {
@@ -200,7 +212,7 @@ describe('/weapontypes', function() {
                 });
         });
 
-        it('/damage/:damageId should return a list of weapon groups', function(done) {
+        it('/damage/:damageId should return a list', function(done) {
             app.get('/weapontypes/damage/' + attributeId)
                 .expect(200)
                 .end(function(err, res) {
@@ -212,7 +224,7 @@ describe('/weapontypes', function() {
                 });
         });
 
-        it('/expertise/:expertiseId should return a list of weapon groups', function(done) {
+        it('/expertise/:expertiseId should return a list', function(done) {
             app.get('/weapontypes/expertise/' + expertiseId)
                 .expect(200)
                 .end(function(err, res) {
@@ -224,7 +236,7 @@ describe('/weapontypes', function() {
                 });
         });
 
-        it('/skill/:skillId should return a list of weapon groups', function(done) {
+        it('/skill/:skillId should return a list', function(done) {
             app.get('/weapontypes/skill/' + skillId)
                 .expect(200)
                 .end(function(err, res) {
@@ -236,7 +248,7 @@ describe('/weapontypes', function() {
                 });
         });
 
-        it('/species/:speciesId should return a list of weapon groups', function(done) {
+        it('/species/:speciesId should return a list', function(done) {
             app.get('/weapontypes/species/' + speciesId)
                 .expect(200)
                 .end(function(err, res) {

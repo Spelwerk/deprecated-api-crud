@@ -71,7 +71,7 @@ describe('/assetgroups', function() {
                 .end(done);
         });
 
-        it('/:id/canon should update the canon status', function(done) {
+        it('/:id/canon/:canon should update the canon status', function(done) {
             app.put(baseRoute + '/' + temporaryId + '/canon/1')
                 .expect(204)
                 .end(done);
@@ -81,8 +81,20 @@ describe('/assetgroups', function() {
 
     describe('GET', function() {
 
-        it('/ should return a list of asset groups', function(done) {
+        it('/ should return a list', function(done) {
             app.get(baseRoute)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('/deleted should return a list of deleted items', function(done) {
+            app.get(baseRoute + '/deleted')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);

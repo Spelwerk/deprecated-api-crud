@@ -3,7 +3,7 @@ var basic = require('./../../lib/generic/basic');
 module.exports = function(router) {
     'use strict';
 
-    var tableName = 'loyalty';
+    var tableName = 'country';
 
     var sql = 'SELECT * FROM ' + tableName + ' LEFT JOIN generic ON generic.id = ' + tableName + '.generic_id';
 

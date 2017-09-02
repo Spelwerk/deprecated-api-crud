@@ -38,6 +38,13 @@ module.exports = function(router) {
             generic.post(req, res, next, tableName);
         });
 
+    router.route('/deleted')
+        .get(function(req, res, next) {
+            var call = sql + ' WHERE g1.deleted IS NOT NULL';
+
+            sequel.get(req, res, next, call);
+        });
+
     // Manifestations
 
     router.route('/manifestation/:manifestationId')
@@ -111,4 +118,5 @@ module.exports = function(router) {
     basic.comments(router);
     basic.labels(router);
     basic.ownership(router);
+    basic.revive(router);
 };

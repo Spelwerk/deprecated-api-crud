@@ -4,12 +4,13 @@ var async = require('async'),
     nconf = require('nconf'),
     moment = require('moment');
 
-var query = require('../../lib/sql/query'),
-    sequel = require('../../lib/sql/sequel'),
-    hasher = require('../../lib/hasher'),
-    mailer = require('../../lib/mailer'),
-    onion = require('../../lib/onion'),
-    tokens = require('../../lib/tokens');
+var query = require('./../../lib/sql/query'),
+    sequel = require('./../../lib/sql/sequel'),
+    hasher = require('./../../lib/hasher'),
+    mailer = require('./../../lib/mailer'),
+    onion = require('./../../lib/onion');
+
+var users = require('./../../lib/specific/users');
 
 module.exports = function(router) {
     var sql = 'SELECT ' +
@@ -24,63 +25,6 @@ module.exports = function(router) {
         'updated, ' +
         'deleted ' +
         'FROM user';
-
-    function relationPost(req, res, next, userId, relationName, relationId) {
-        if(!req.user.id) return next({status: 403, message: 'Forbidden', error: 'User is not logged in'});
-
-        if(req.user.id !== userId && !req.user.admin) return next({status: 403, message: 'Forbidden', error: 'User is not administrator and may not edit other users.'});
-
-        query('INSERT INTO user_has_' + relationName + ' (user_id,' + relationName + '_id) VALUES (?,?)', [userId, relationId], function(err) {
-            if(err) return next(err);
-
-            res.status(200).send();
-        });
-    }
-
-    function relationDelete(req, res, next, userId, relationName, relationId) {
-        if(!req.user.id) return next({status: 403, message: 'Forbidden', error: 'User is not logged in'});
-
-        if(req.user.id !== userId && !req.user.admin) return next({status: 403, message: 'Forbidden', error: 'User is not administrator and may not edit other users.'});
-
-        query('DELETE FROM user_has_' + relationName + ' WHERE user_id = ? AND ' + relationName + '_id = ?', [userId, relationId], function(err) {
-            if(err) return next(err);
-
-            res.status(200).send();
-        });
-    }
-
-    function loginToken(req, userId, callback) {
-        var user = {};
-
-        user.id = userId;
-        user.os = req.body.os || '';
-        user.browser = req.body.browser || '';
-        user.ip = req.body.ip || req.connection.remoteAddress;
-
-        async.series([
-            function(callback) {
-                query('SELECT email FROM user WHERE id = ? AND deleted IS NULL', [user.id], function(err, result) {
-                    if(err) return callback({status: 500, message: 'Database error', error: err.error, query: err.query});
-
-                    if(!result[0]) return callback({status: 404, message: 'Not found', error: 'User not found on successful database request'});
-
-                    user.email = result[0].email;
-
-                    callback();
-                });
-            },
-            function(callback) {
-                user.token = tokens.encode(user.email);
-
-                callback();
-            },
-            function(callback) {
-                query('INSERT INTO usertoken (user_id,token,os,browser,ip) VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE token = VALUES (token)', [user.id, user.token, user.os, user.browser, user.ip], callback);
-            }
-        ], function(err) {
-            callback(err, user.token);
-        });
-    }
 
     // Basic user routes
 
@@ -133,7 +77,7 @@ module.exports = function(router) {
                     mailer(insert.email, subject, text, callback);
                 },
                 function(callback) {
-                    loginToken(req, user.id, function(err, result) {
+                    users.token(req, user.id, function(err, result) {
                         if(err) return callback(err);
 
                         user.token = result;
@@ -232,7 +176,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    loginToken(req, user.id, function(err, result) {
+                    users.token(req, user.id, function(err, result) {
                         if(err) return callback(err);
 
                         user.token = result;
@@ -308,7 +252,7 @@ module.exports = function(router) {
                     query('UPDATE user SET login_secret = NULL, login_timeout = NULL WHERE id = ?', [user.id], callback);
                 },
                 function(callback) {
-                    loginToken(req, user.id, function(err, result) {
+                    users.token(req, user.id, function(err, result) {
                         if(err) return callback(err);
 
                         user.token = result;
@@ -475,7 +419,7 @@ module.exports = function(router) {
                     query('UPDATE user SET email = ?, reset_secret = NULL, reset_timeout = NULL WHERE id = ?', [insert.email, user.id], callback);
                 },
                 function(callback) {
-                    loginToken(req, user.id, function(err, result) {
+                    users.token(req, user.id, function(err, result) {
                         if(err) return callback(err);
 
                         user.token = result;
@@ -633,25 +577,7 @@ module.exports = function(router) {
             });
         });
 
-    // User owned assets
+    // Relations
 
-    router.route('/:userId/assets')
-        .get(function(req, res, next) {
-            var call = 'SELECT * FROM user_has_asset ' +
-                'LEFT JOIN asset ON asset.id = user_has_asset.asset_id ' +
-                'WHERE ' +
-                'user_has_asset.user_id = ? AND ' +
-                'asset.deleted IS NULL';
-
-            sequel.get(req, res, next, call);
-        })
-        .post(function(req, res, next) {
-            relationPost(req, res, next, req.params.userId, 'asset', req.body.insert_id);
-        });
-
-    router.route('/:userId/assets/:assetId')
-        .delete(function(req, res, next) {
-            relationDelete(req, res, next, req.params.userId, 'asset', req.body.insert_id);
-        });
-
+    users.relation(router, 'assets', 'asset');
 };

@@ -81,7 +81,7 @@ describe('/nicknamegroups', function() {
 
     describe('GET', function() {
 
-        it('/ should return a list of items', function(done) {
+        it('/ should return a list', function(done) {
             app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {

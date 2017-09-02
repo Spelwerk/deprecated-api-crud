@@ -11,14 +11,66 @@ var app = require('../app'),
     verifier = require('./../verifier'),
     hasher = require('../../lib/hasher');
 
-describe('/languages', function() {
+describe('/countries', function() {
 
-    var baseRoute = '/languages';
+    var baseRoute = '/countries';
 
-    var temporaryId;
+    var temporaryId,
+        languageId,
+        firstnameGroupId,
+        nicknameGroupId,
+        surnameGroupId;
 
     before(function(done) {
         app.login(done);
+    });
+
+    before(function(done) {
+        app.get('/languages')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                languageId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/firstnamegroups')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                firstnameGroupId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/nicknamegroups')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                nicknameGroupId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    before(function(done) {
+        app.get('/surnamegroups')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                surnameGroupId = res.body.results[0].id;
+
+                done();
+            });
     });
 
     function verifyList(body) {
@@ -38,6 +90,11 @@ describe('/languages', function() {
 
     function verifyItem(item) {
         verifier.generic(item);
+
+        assert.isNumber(item.language_id);
+        assert.isNumber(item.firstnamegroup_id);
+        assert.isNumber(item.nicknamegroup_id);
+        assert.isNumber(item.surnamegroup_id);
     }
 
 
@@ -47,7 +104,10 @@ describe('/languages', function() {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
-                icon: 'http://fakeicon.com/' + hasher(20) + '.png'
+                language_id: languageId,
+                firstnamegroup_id: firstnameGroupId,
+                nicknamegroup_id: nicknameGroupId,
+                surnamegroup_id: surnameGroupId
             };
 
             app.post(baseRoute, payload)
@@ -85,6 +145,18 @@ describe('/languages', function() {
 
                     done();
                 });
+        });
+
+        it('/:id/labels should create a label', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/labels', { label: hasher(20) })
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.id);
+
+                    done();
+                })
         });
 
     });

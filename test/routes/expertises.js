@@ -121,7 +121,7 @@ describe('/expertise', function() {
                 .end(done);
         });
 
-        it('/:id/canon should update the canon status', function(done) {
+        it('/:id/canon/:canon should update the canon status', function(done) {
             app.put(baseRoute + '/' + temporaryId + '/canon/1')
                 .expect(204)
                 .end(done);
@@ -131,7 +131,7 @@ describe('/expertise', function() {
 
     describe('GET', function() {
 
-        it('/ should return a list of expertise', function(done) {
+        it('/ should return a list', function(done) {
             app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
@@ -143,7 +143,19 @@ describe('/expertise', function() {
                 });
         });
 
-        it('/manifestation/:manifestationId should return a list of expertise', function(done) {
+        it('/deleted should return a list of deleted items', function(done) {
+            app.get(baseRoute + '/deleted')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('/manifestation/:manifestationId should return a list', function(done) {
             app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
@@ -155,7 +167,7 @@ describe('/expertise', function() {
                 });
         });
 
-        it('/skill/:skillId should return a list of expertise', function(done) {
+        it('/skill/:skillId should return a list', function(done) {
             app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
@@ -167,7 +179,7 @@ describe('/expertise', function() {
                 });
         });
 
-        it('/species/:speciesId should return a list of expertise', function(done) {
+        it('/species/:speciesId should return a list', function(done) {
             app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
@@ -179,7 +191,7 @@ describe('/expertise', function() {
                 });
         });
 
-        it('/skill/:skillId/manifestation/:manifestationId should return a list of expertise', function(done) {
+        it('/skill/:skillId/manifestation/:manifestationId should return a list', function(done) {
             app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
@@ -191,7 +203,7 @@ describe('/expertise', function() {
                 });
         });
 
-        it('/skill/:skillId/species/:speciesId should return a list of expertise', function(done) {
+        it('/skill/:skillId/species/:speciesId should return a list', function(done) {
             app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {

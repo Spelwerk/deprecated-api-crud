@@ -165,7 +165,7 @@ describe('/users', function() {
                 });
         });
 
-        it('/tokens should return a list of all current tokens for the user', function(done) {
+        it('/tokens should return a list', function(done) {
             app.get('/users/tokens', token)
                 .expect(200)
                 .end(function(err, res) {
@@ -188,7 +188,7 @@ describe('/users', function() {
 
         });
 
-        it('/ should return a list of users', function(done) {
+        it('/ should return a list', function(done) {
             app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {

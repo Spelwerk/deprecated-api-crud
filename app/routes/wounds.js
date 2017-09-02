@@ -1,7 +1,7 @@
-var simple = require('../../lib/specific/simple');
+var unique = require('../../lib/specific/unique');
 
 module.exports = function(router) {
     'use strict';
 
-    simple(router, 'wound');
+    unique(router, 'wound');
 };

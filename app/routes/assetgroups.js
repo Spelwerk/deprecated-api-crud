@@ -16,4 +16,5 @@ module.exports = function(router) {
     basic.comments(router);
     basic.labels(router);
     basic.ownership(router);
+    basic.revive(router);
 };

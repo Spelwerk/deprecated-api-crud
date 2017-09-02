@@ -204,7 +204,7 @@ describe('/gifts', function() {
                 .end(done);
         });
 
-        it('/:id/canon should update the canon status', function(done) {
+        it('/:id/canon/:canon should update the canon status', function(done) {
             app.put(baseRoute + '/' + temporaryId + '/canon/1')
                 .expect(204)
                 .end(done);
@@ -232,7 +232,7 @@ describe('/gifts', function() {
 
     describe('GET', function() {
 
-        it('/ should return a list of gifts', function(done) {
+        it('/ should return a list', function(done) {
             app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
@@ -244,7 +244,19 @@ describe('/gifts', function() {
                 });
         });
 
-        it('/manifestation/:manifestationId should return a list of gifts', function(done) {
+        it('/deleted should return a list of deleted items', function(done) {
+            app.get(baseRoute + '/deleted')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('/manifestation/:manifestationId should return a list', function(done) {
             app.get('/gifts/manifestation/' + manifestationId)
                 .expect(200)
                 .end(function(err, res) {
@@ -256,7 +268,7 @@ describe('/gifts', function() {
                 });
         });
 
-        it('/species/:speciesId should return a list of gifts', function(done) {
+        it('/species/:speciesId should return a list', function(done) {
             app.get('/gifts/species/' + speciesId)
                 .expect(200)
                 .end(function(err, res) {

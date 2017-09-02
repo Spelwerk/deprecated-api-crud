@@ -275,7 +275,7 @@ describe('/backgrounds', function() {
                 .end(done);
         });
 
-        it('/:id/canon should update the canon status', function(done) {
+        it('/:id/canon/:canon should update the canon status', function(done) {
             app.put(baseRoute + '/' + temporaryId + '/canon/1')
                 .expect(204)
                 .end(done);
@@ -309,7 +309,7 @@ describe('/backgrounds', function() {
 
     describe('GET', function() {
 
-        it('/ should return a list of backgrounds', function(done) {
+        it('/ should return a list', function(done) {
             app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
@@ -321,7 +321,19 @@ describe('/backgrounds', function() {
                 });
         });
 
-        it('/manifestation/:typeId should return a list of backgrounds', function(done) {
+        it('/deleted should return a list of deleted items', function(done) {
+            app.get(baseRoute + '/deleted')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('/manifestation/:typeId should return a list', function(done) {
             app.get('/backgrounds/manifestation/' + manifestationId)
                 .expect(200)
                 .end(function(err, res) {
@@ -333,7 +345,7 @@ describe('/backgrounds', function() {
                 });
         });
 
-        it('/species/:typeId should return a list of backgrounds', function(done) {
+        it('/species/:typeId should return a list', function(done) {
             app.get('/backgrounds/species/' + speciesId)
                 .expect(200)
                 .end(function(err, res) {
@@ -381,7 +393,7 @@ describe('/backgrounds', function() {
                 })
         });
 
-        it('/:id/assets should return a list of assets', function(done) {
+        it('/:id/assets should return a list', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/assets')
                 .expect(200)
                 .end(function(err, res) {
@@ -415,7 +427,7 @@ describe('/backgrounds', function() {
                 });
         });
 
-        it('/:id/augmentations should return a list of augmentations', function(done) {
+        it('/:id/augmentations should return a list', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/augmentations')
                 .expect(200)
                 .end(function(err, res) {

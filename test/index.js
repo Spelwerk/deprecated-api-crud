@@ -1,3 +1,6 @@
+require('./routes/attributetypes');
+require('./routes/attributes');
+
 require('./routes/bodyparts');
 require('./routes/identities');
 require('./routes/natures');
@@ -11,13 +14,12 @@ require('./routes/firstnamegroups');
 require('./routes/surnames');
 require('./routes/surnamegroups');
 
+require('./routes/countries');
+
 require('./routes/diseases');
 require('./routes/sanity');
 require('./routes/wounds');
 require('./routes/labels');
-
-require('./routes/attributetypes');
-require('./routes/attributes');
 
 require('./routes/manifestations');
 require('./routes/focuses');

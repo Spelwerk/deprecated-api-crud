@@ -301,7 +301,7 @@ describe('/milestones', function() {
                 .end(done);
         });
 
-        it('/:id/canon should update the canon status', function(done) {
+        it('/:id/canon/:canon should update the canon status', function(done) {
             app.put(baseRoute + '/' + temporaryId + '/canon/1')
                 .expect(204)
                 .end(done);
@@ -341,7 +341,7 @@ describe('/milestones', function() {
 
     describe('GET', function() {
 
-        it('/ should return a list of milestones', function(done) {
+        it('/ should return a list', function(done) {
             app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
@@ -353,7 +353,19 @@ describe('/milestones', function() {
                 });
         });
 
-        it('/manifestation/:typeId should return a list of milestones', function(done) {
+        it('/deleted should return a list of deleted items', function(done) {
+            app.get(baseRoute + '/deleted')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('/manifestation/:typeId should return a list', function(done) {
             app.get('/milestones/manifestation/' + manifestationId)
                 .expect(200)
                 .end(function(err, res) {
@@ -365,7 +377,7 @@ describe('/milestones', function() {
                 });
         });
 
-        it('/species/:typeId should return a list of milestones', function(done) {
+        it('/species/:typeId should return a list', function(done) {
             app.get('/milestones/species/' + speciesId)
                 .expect(200)
                 .end(function(err, res) {
@@ -413,7 +425,7 @@ describe('/milestones', function() {
                 })
         });
 
-        it('/:id/assets should return a list of assets', function(done) {
+        it('/:id/assets should return a list', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/assets')
                 .expect(200)
                 .end(function(err, res) {
@@ -447,7 +459,7 @@ describe('/milestones', function() {
                 });
         });
 
-        it('/:id/augmentations should return a list of augmentations', function(done) {
+        it('/:id/augmentations should return a list', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/augmentations')
                 .expect(200)
                 .end(function(err, res) {
@@ -481,7 +493,7 @@ describe('/milestones', function() {
                 });
         });
 
-        it('/:id/loyalties should return a list of loyalties', function(done) {
+        it('/:id/loyalties should return a list', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/loyalties')
                 .expect(200)
                 .end(function(err, res) {

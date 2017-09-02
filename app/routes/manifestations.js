@@ -94,6 +94,13 @@ module.exports = function(router) {
             });
         });
 
+    router.route('/deleted')
+        .get(function(req, res, next) {
+            var call = sql + ' WHERE deleted IS NOT NULL';
+
+            sequel.get(req, res, next, call);
+        });
+
     // ID
 
     basic.id(router, sql, tableName);
@@ -102,4 +109,5 @@ module.exports = function(router) {
     basic.comments(router);
     basic.labels(router);
     basic.ownership(router);
+    basic.revive(router);
 };
