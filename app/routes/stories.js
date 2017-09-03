@@ -1,3 +1,5 @@
+var sequel = require('./../../lib/sql/sequel');
+
 var basic = require('../../lib/generic/basic'),
     relations = require('../../lib/generic/relations');
 
@@ -9,6 +11,14 @@ module.exports = function(router) {
     var sql = 'SELECT * FROM ' + tableName + ' LEFT JOIN generic ON generic.id = ' + tableName + '.generic_id';
 
     basic.root(router, sql, tableName);
+
+    router.route('/world/:worldId')
+        .get(function(req, res, next) {
+            var call = sql + ' WHERE deleted IS NULL AND ' +
+                'world_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.worldId]);
+        });
 
     // ID
 
@@ -23,8 +33,6 @@ module.exports = function(router) {
     // Relations
 
     //relations(router, 'locations', 'location');
-    relations(router, 'meetings', 'meeting');
-
     //relations(router, 'creatures', 'creature');
     //relations(router, 'individuals', 'individual');
     //relations(router, 'avatars', 'avatar');

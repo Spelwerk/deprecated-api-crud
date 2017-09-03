@@ -1,3 +1,5 @@
+var sequel = require('./../../lib/sql/sequel');
+
 var basic = require('../../lib/generic/basic');
 
 module.exports = function(router) {
@@ -9,13 +11,18 @@ module.exports = function(router) {
 
     basic.root(router, sql, tableName);
 
+    router.route('/story/:storyId')
+        .get(function(req, res, next) {
+            var call = sql + ' WHERE deleted IS NULL AND ' +
+                'story_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.storyId]);
+        });
+
     // ID
 
     basic.id(router, sql, tableName);
-    basic.canon(router);
-    basic.clone(router, tableName);
     basic.comments(router);
-    basic.labels(router);
     basic.ownership(router);
     basic.revive(router);
 };
