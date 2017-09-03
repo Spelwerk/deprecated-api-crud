@@ -50,6 +50,9 @@ module.exports = function(router) {
                 function(callback) {
                     query('INSERT INTO expertise (generic_id,skill_id) VALUES (?,?)', [expertise.id, weapontype.skill], callback);
                 },
+                function(callback) {
+                    query('INSERT INTO user_has_generic (user_id,generic_id) VALUES (?,?)', [req.user.id, expertise.id], callback);
+                },
 
                 // WEAPONTYPE
 
@@ -65,9 +68,6 @@ module.exports = function(router) {
                 function(callback) {
                     query('INSERT INTO weapontype (generic_id,skill_id,expertise_id,damage_id,augmentation_id,species_id) VALUES (?,?,?,?,?,?)', [weapontype.id, weapontype.skill, expertise.id, weapontype.damage, weapontype.augmentation, weapontype.species], callback);
                 },
-
-                // USER SAVE
-
                 function(callback) {
                     query('INSERT INTO user_has_generic (user_id,generic_id) VALUES (?,?)', [req.user.id, weapontype.id], callback);
                 }

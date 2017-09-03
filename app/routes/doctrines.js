@@ -49,8 +49,6 @@ module.exports = function(router) {
 
                         skill.id = results[0].generic_id;
 
-                        console.log(skill);
-
                         callback();
                     });
                 },
@@ -68,6 +66,9 @@ module.exports = function(router) {
                 },
                 function(callback) {
                     query('INSERT INTO expertise (generic_id,skill_id,manifestation_id) VALUES (?,?,?)', [expertise.id, skill.id, manifestation.id], callback);
+                },
+                function(callback) {
+                    query('INSERT INTO user_has_generic (user_id,generic_id) VALUES (?,?)', [req.user.id, expertise.id], callback);
                 },
 
                 // DOCTRINE

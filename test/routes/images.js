@@ -11,9 +11,9 @@ var app = require('../app'),
     verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
-describe('/labels', function() {
+describe('/images', function() {
 
-    var baseRoute = '/labels';
+    var baseRoute = '/images';
 
     var temporaryId;
 
@@ -38,14 +38,23 @@ describe('/labels', function() {
 
     function verifyItem(item) {
         assert.isNumber(item.id);
-        assert.isString(item.name);
+        assert.isNumber(item.user_id);
+
+        assert.equal(validator.isURL(item.path), true);
+
+        assert.isString(item.created);
+        assert.isNull(item.deleted);
     }
 
 
     describe('POST', function() {
 
         it('/ should create a new item', function(done) {
-            app.post(baseRoute, { name: hasher(20) })
+            var payload = {
+                path: 'http://fakeimage.com/' + hasher(20) + '.png'
+            };
+
+            app.post(baseRoute, payload)
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);

@@ -72,6 +72,9 @@ module.exports = function(router) {
                 function(callback) {
                     query('INSERT INTO skill (generic_id,manifestation_id) VALUES (?,?)', [skill.id, manifestation.id], callback);
                 },
+                function(callback) {
+                    query('INSERT INTO user_has_generic (user_id,generic_id) VALUES (?,?)', [req.user.id, skill.id], callback);
+                },
 
                 // ATTRIBUTE
 
@@ -86,6 +89,9 @@ module.exports = function(router) {
                 },
                 function(callback) {
                     query('INSERT INTO attribute (generic_id,attributetype_id,manifestation_id,maximum) VALUES (?,?,?,?)', [attribute.id, attribute.type, manifestation.id, attribute.maximum], callback);
+                },
+                function(callback) {
+                    query('INSERT INTO user_has_generic (user_id,generic_id) VALUES (?,?)', [req.user.id, attribute.id], callback);
                 }
             ], function(err) {
                 if(err) return next(err);

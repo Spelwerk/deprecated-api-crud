@@ -219,7 +219,7 @@ module.exports = function(router) {
             ], function(err) {
                 if(err) return next(err);
 
-                res.status(200).send();
+                res.status(204).send();
             });
         });
 
@@ -301,7 +301,7 @@ module.exports = function(router) {
             ], function(err) {
                 if(err) return next(err);
 
-                res.status(200).send();
+                res.status(204).send();
             });
         });
 
@@ -350,7 +350,7 @@ module.exports = function(router) {
             ], function(err) {
                 if(err) return next(err);
 
-                res.status(200).send();
+                res.status(204).send();
             });
         });
 
@@ -385,7 +385,7 @@ module.exports = function(router) {
             ], function(err) {
                 if(err) return next(err);
 
-                res.status(200).send();
+                res.status(204).send();
             });
         });
 
@@ -465,7 +465,7 @@ module.exports = function(router) {
             ], function(err) {
                 if(err) return next(err);
 
-                res.status(200).send();
+                res.status(204).send();
             });
         });
 
@@ -510,22 +510,22 @@ module.exports = function(router) {
             ], function(err) {
                 if(err) return next(err);
 
-                res.status(200).send();
+                res.status(204).send();
             });
         });
 
     // User specific
 
-    router.route('/:userId')
+    router.route('/:id')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE user.id = ? AND user.deleted IS NULL';
+            var call = sql + ' WHERE deleted IS NULL AND id = ?';
 
-            sequel.get(req, res, next, call, [req.params.userId], true);
+            sequel.get(req, res, next, call, [req.params.id], true);
         })
         .put(function(req, res, next) {
             var insert = {};
 
-            insert.id = parseInt(req.params.userId);
+            insert.id = parseInt(req.params.id);
             insert.displayname = req.body.displayname;
             insert.firstname = req.body.firstname;
             insert.surname = req.body.surname;
@@ -534,50 +534,76 @@ module.exports = function(router) {
 
             if(!req.user.admin && req.user.id !== insert.id) return next({status: 403, message: 'Forbidden', error: 'User is not administrator and may not edit other users'});
 
-            query('UPDATE user SET displayname = ?, firstname = ?, surname = ? WHERE id = ?', [insert.displayname, insert.firstname, insert.surname, insert.id], function(err, result) {
+            query('UPDATE user SET displayname = ?, firstname = ?, surname = ? WHERE id = ?', [insert.displayname, insert.firstname, insert.surname, insert.id], function(err) {
                 if(err) return next(err);
 
-                res.status(200).send();
+                res.status(204).send();
             });
         })
         .delete(function(req, res, next) {
             var insert = {};
 
-            insert.id = req.params.userId;
+            insert.id = req.params.id;
 
             if(!req.user.admin && req.user.id !== insert.id) return next({status: 403, message: 'Forbidden', error: 'User is not administrator and may not remove other users'});
 
-            insert.email = 'DELETED' + insert.id;
-            insert.displayname = 'DELETED' + insert.id;
+            insert.email = 'DELETED {{' + insert.id + '}}';
+            insert.displayname = 'DELETED {{' + insert.id + '}}';
             insert.password = hasher(128);
 
             var sql = 'UPDATE user SET email = ?, displayname = ?, password = ?, firstname = NULL, surname = NULL, deleted = CURRENT_TIMESTAMP WHERE id = ?',
                 array = [insert.email, insert.displayname, insert.password, insert.id];
 
-            query(sql, array, function(err, result) {
+            query(sql, array, function(err) {
                 if(err) return next(err);
 
-                res.status(200).send();
+                res.status(204).send();
             });
         });
 
-    router.route('/:userId/admin')
+    router.route('/:id/admin')
         .put(function(req, res, next) {
             if(!req.user.admin) return next({status: 403, message: 'Forbidden.', error: 'User is not administrator'});
 
             var insert = {};
 
-            insert.id = req.params.userId;
+            insert.id = req.params.id;
             insert.admin = req.body.admin;
 
             query('UPDATE user SET admin = ? WHERE id = ?', [insert.admin, insert.id], function(err) {
                 if(err) return next(err);
 
-                res.status(200).send();
+                res.status(204).send();
             });
         });
 
     // Relations
 
+    users.relation(router, 'assetgroups', 'assetgroup');
     users.relation(router, 'assets', 'asset');
+    users.relation(router, 'assettypes', 'assettype');
+    users.relation(router, 'attributes', 'attribute');
+    users.relation(router, 'augmentations', 'augmentation');
+    users.relation(router, 'backgrounds', 'background');
+    users.relation(router, 'bionics', 'bionic');
+    users.relation(router, 'bodyparts', 'bodypart');
+    users.relation(router, 'countries', 'country');
+    users.relation(router, 'doctrines', 'doctrine');
+    users.relation(router, 'expertises', 'expertise');
+    users.relation(router, 'focuses', 'focus');
+    users.relation(router, 'gifts', 'gift');
+    users.relation(router, 'identities', 'identity');
+    users.relation(router, 'imperfections', 'imperfection');
+    users.relation(router, 'languages', 'language');
+    users.relation(router, 'loyalties', 'loyalty');
+    users.relation(router, 'manifestations', 'manifestation');
+    users.relation(router, 'milestones', 'milestone');
+    users.relation(router, 'natures', 'nature');
+    users.relation(router, 'protection', 'protection');
+    users.relation(router, 'skills', 'skill');
+    users.relation(router, 'software', 'software');
+    users.relation(router, 'species', 'species');
+    users.relation(router, 'weaponmods', 'weaponmod');
+    users.relation(router, 'weapons', 'weapon');
+    users.relation(router, 'weapontypes', 'weapontype');
 };
