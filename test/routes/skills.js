@@ -15,14 +15,13 @@ describe('/skills', function() {
 
     var baseRoute = '/skills';
 
-    var temporaryId,
-        manifestationId,
-        speciesId;
+    var temporaryId;
 
     before(function(done) {
         app.login(done);
     });
 
+    var manifestationId;
     before(function(done) {
         app.get('/manifestations')
             .expect(200)
@@ -35,6 +34,7 @@ describe('/skills', function() {
             });
     });
 
+    var speciesId;
     before(function(done) {
         app.get('/species')
             .expect(200)
@@ -72,7 +72,7 @@ describe('/skills', function() {
 
     describe('POST', function() {
 
-        it('/ should create a new asset', function(done) {
+        it('/ should create a new item', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),

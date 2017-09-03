@@ -15,14 +15,13 @@ describe('/protection', function() {
 
     var baseRoute = '/protection';
 
-    var temporaryId,
-        attributeId,
-        bodyPartId;
+    var temporaryId;
 
     before(function(done) {
         app.login(done);
     });
 
+    var attributeId;
     before(function(done) {
         app.get('/attributes')
             .expect(200)
@@ -35,6 +34,7 @@ describe('/protection', function() {
             });
     });
 
+    var bodyPartId;
     before(function(done) {
         app.get('/bodyparts')
             .expect(200)
@@ -72,7 +72,7 @@ describe('/protection', function() {
 
     describe('POST', function() {
 
-        it('/ should create a new protection', function(done) {
+        it('/ should create a new item', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
@@ -117,7 +117,7 @@ describe('/protection', function() {
                 });
         });
 
-        it('/:id/attributes should add an attribute', function(done) {
+        it('/:id/attributes should add a relation to the item', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10

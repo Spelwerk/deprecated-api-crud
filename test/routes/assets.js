@@ -15,18 +15,13 @@ describe('/assets', function() {
 
     var baseRoute = '/assets';
 
-    var temporaryId,
-        groupId,
-        typeId,
-        attributeId,
-        doctrineId,
-        expertiseId,
-        skillId;
+    var temporaryId;
 
     before(function(done) {
         app.login(done);
     });
 
+    var groupId;
     before(function(done) {
         app.get('/assetgroups')
             .expect(200)
@@ -39,6 +34,7 @@ describe('/assets', function() {
             });
     });
 
+    var typeId;
     before(function(done) {
         app.get('/assettypes')
             .expect(200)
@@ -51,6 +47,7 @@ describe('/assets', function() {
             });
     });
 
+    var attributeId;
     before(function(done) {
         app.get('/attributes')
             .expect(200)
@@ -63,6 +60,7 @@ describe('/assets', function() {
             });
     });
 
+    var doctrineId;
     before(function(done) {
         app.get('/doctrines')
             .expect(200)
@@ -75,6 +73,7 @@ describe('/assets', function() {
             });
     });
 
+    var expertiseId;
     before(function(done) {
         app.get('/expertises')
             .expect(200)
@@ -87,6 +86,7 @@ describe('/assets', function() {
             });
     });
 
+    var skillId;
     before(function(done) {
         app.get('/skills')
             .expect(200)
@@ -127,7 +127,7 @@ describe('/assets', function() {
 
     describe('POST', function() {
 
-        it('/ should create a new asset', function(done) {
+        it('/ should create a new item', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
@@ -185,7 +185,7 @@ describe('/assets', function() {
                 })
         });
 
-        it('/:id/attributes should add an attribute', function(done) {
+        it('/:id/attributes should add a relation to the item', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
@@ -196,7 +196,7 @@ describe('/assets', function() {
                 .end(done);
         });
 
-        it('/:id/doctrines should add a doctrine', function(done) {
+        it('/:id/doctrines should add a relation to the item', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
@@ -207,7 +207,7 @@ describe('/assets', function() {
                 .end(done);
         });
 
-        it('/:id/expertises should add an expertise', function(done) {
+        it('/:id/expertises should add a relation to the item', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
@@ -218,7 +218,7 @@ describe('/assets', function() {
                 .end(done);
         });
 
-        it('/:id/skills should add a skill', function(done) {
+        it('/:id/skills should add a relation to the item', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10

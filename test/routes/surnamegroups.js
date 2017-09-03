@@ -15,13 +15,13 @@ describe('/surnamegroups', function() {
 
     var baseRoute = '/surnamegroups';
 
-    var temporaryId,
-        nameId;
+    var temporaryId;
 
     before(function(done) {
         app.login(done);
     });
 
+    var nameId;
     before(function(done) {
         app.get('/surnames')
             .expect(200)
@@ -71,7 +71,7 @@ describe('/surnamegroups', function() {
                 });
         });
 
-        it('/:id/surnames should add an item', function(done) {
+        it('/:id/surnames should add a relation to the item', function(done) {
             app.post(baseRoute + '/' + temporaryId + '/surnames', { insert_id: nameId })
                 .expect(201)
                 .end(done);

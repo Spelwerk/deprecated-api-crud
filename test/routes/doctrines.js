@@ -15,13 +15,13 @@ describe('/doctrine', function() {
 
     var baseRoute = '/doctrines';
 
-    var temporaryId,
-        manifestationId;
+    var temporaryId;
 
     before(function(done) {
         app.login(done);
     });
 
+    var manifestationId
     before(function(done) {
         app.get('/manifestations')
             .expect(200)
@@ -59,7 +59,7 @@ describe('/doctrine', function() {
 
     describe('POST', function() {
 
-        it('/ should create a new asset', function(done) {
+        it('/ should create a new item', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),

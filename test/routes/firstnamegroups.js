@@ -15,13 +15,13 @@ describe('/firstnamegroups', function() {
 
     var baseRoute = '/firstnamegroups';
 
-    var temporaryId,
-        nameId;
+    var temporaryId;
 
     before(function(done) {
         app.login(done);
     });
 
+    var nameId;
     before(function(done) {
         app.get('/firstnames')
             .expect(200)
@@ -71,7 +71,7 @@ describe('/firstnamegroups', function() {
                 });
         });
 
-        it('/:id/firstnames should add an item', function(done) {
+        it('/:id/firstnames should add a relation to the item', function(done) {
             app.post(baseRoute + '/' + temporaryId + '/firstnames', { insert_id: nameId })
                 .expect(201)
                 .end(done);

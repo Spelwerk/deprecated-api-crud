@@ -50,7 +50,7 @@ describe('/users', function() {
 
     describe('POST', function() {
 
-        it('/ should create a new user', function(done) {
+        it('/ should create a new item', function(done) {
             this.timeout = 6000;
 
             var payload = {

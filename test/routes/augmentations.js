@@ -15,16 +15,13 @@ describe('/augmentations', function() {
 
     var baseRoute = '/augmentations';
 
-    var temporaryId,
-        attributeId,
-        expertiseId,
-        skillId,
-        softwareId;
+    var temporaryId;
 
     before(function(done) {
         app.login(done);
     });
 
+    var attributeId;
     before(function(done) {
         app.get('/attributes')
             .expect(200)
@@ -37,6 +34,7 @@ describe('/augmentations', function() {
             });
     });
 
+    var expertiseId;
     before(function(done) {
         app.get('/expertises')
             .expect(200)
@@ -49,6 +47,7 @@ describe('/augmentations', function() {
             });
     });
 
+    var skillId;
     before(function(done) {
         app.get('/skills')
             .expect(200)
@@ -61,6 +60,7 @@ describe('/augmentations', function() {
             });
     });
 
+    var softwareId;
     before(function(done) {
         app.get('/software')
             .expect(200)
@@ -99,7 +99,7 @@ describe('/augmentations', function() {
 
     describe('POST', function() {
 
-        it('/ should create a new augmentation', function(done) {
+        it('/ should create a new item', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
@@ -145,7 +145,7 @@ describe('/augmentations', function() {
                 });
         });
 
-        it('/:id/attributes should add an attribute', function(done) {
+        it('/:id/attributes should add a relation to the item', function(done) {
             var payload = {
                 insert_id: attributeId,
                 value: 10
@@ -156,7 +156,7 @@ describe('/augmentations', function() {
                 .end(done);
         });
 
-        it('/:id/expertises should add an expertise', function(done) {
+        it('/:id/expertises should add a relation to the item', function(done) {
             var payload = {
                 insert_id: expertiseId,
                 value: 10
@@ -167,7 +167,7 @@ describe('/augmentations', function() {
                 .end(done);
         });
 
-        it('/:id/skills should add a skill', function(done) {
+        it('/:id/skills should add a relation to the item', function(done) {
             var payload = {
                 insert_id: skillId,
                 value: 10
@@ -178,7 +178,7 @@ describe('/augmentations', function() {
                 .end(done);
         });
 
-        it('/:id/software should add an software to the augmentation', function(done) {
+        it('/:id/software should add a relation to the item', function(done) {
             var payload = {
                 insert_id: softwareId
             };

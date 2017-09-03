@@ -15,21 +15,33 @@ describe('/attributes', function() {
 
     var baseRoute = '/attributes';
 
-    var temporaryId,
-        typeId,
-        manifestationId;
+    var temporaryId;
 
     before(function(done) {
         app.login(done);
     });
 
+    var attributeTypeId;
     before(function(done) {
         app.get('/attributetypes')
             .expect(200)
             .end(function(err, res) {
                 if(err) return done(err);
 
-                typeId = res.body.results[0].id;
+                attributeTypeId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    var manifestationId;
+    before(function(done) {
+        app.get('/manifestations')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                manifestationId = res.body.results[0].id;
 
                 done();
             });
@@ -60,11 +72,11 @@ describe('/attributes', function() {
 
     describe('POST', function() {
 
-        it('/ should create a new attribute', function(done) {
+        it('/ should create a new item', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
-                attributetype_id: typeId,
+                attributetype_id: attributeTypeId,
                 maximum: 10,
                 icon: 'http://fakeicon.com/' + hasher(20) + '.png'
             };

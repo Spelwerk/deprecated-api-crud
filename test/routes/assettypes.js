@@ -15,13 +15,13 @@ describe('/assettypes', function() {
 
     var baseRoute = '/assettypes';
 
-    var temporaryId,
-        groupId;
+    var temporaryId;
 
     before(function(done) {
         app.login(done);
     });
 
+    var groupId;
     before(function(done) {
         app.get('/assetgroups')
             .expect(200)
@@ -59,7 +59,7 @@ describe('/assettypes', function() {
 
     describe('POST', function() {
 
-        it('/ should create a new asset type', function(done) {
+        it('/ should create a new item', function(done) {
             var payload = {
                 name: hasher(20),
                 assetgroup_id: groupId,

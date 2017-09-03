@@ -15,20 +15,13 @@ describe('/backgrounds', function() {
 
     var baseRoute = '/backgrounds';
 
-    var temporaryId,
-        assetId,
-        attributeId,
-        augmentationId,
-        doctrineId,
-        manifestationId,
-        skillId,
-        speciesId,
-        weaponId;
+    var temporaryId;
 
     before(function(done) {
         app.login(done);
     });
 
+    var assetId;
     before(function(done) {
         app.get('/assets')
             .expect(200)
@@ -41,6 +34,7 @@ describe('/backgrounds', function() {
             });
     });
 
+    var attributeId;
     before(function(done) {
         app.get('/attributes')
             .expect(200)
@@ -53,18 +47,7 @@ describe('/backgrounds', function() {
             });
     });
 
-    before(function(done) {
-        app.get('/augmentations')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                augmentationId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
+    var doctrineId;
     before(function(done) {
         app.get('/doctrines')
             .expect(200)
@@ -77,6 +60,7 @@ describe('/backgrounds', function() {
             });
     });
 
+    var manifestationId;
     before(function(done) {
         app.get('/manifestations')
             .expect(200)
@@ -89,6 +73,7 @@ describe('/backgrounds', function() {
             });
     });
 
+    var skillId;
     before(function(done) {
         app.get('/skills')
             .expect(200)
@@ -101,6 +86,7 @@ describe('/backgrounds', function() {
             });
     });
 
+    var speciesId;
     before(function(done) {
         app.get('/species')
             .expect(200)
@@ -113,6 +99,7 @@ describe('/backgrounds', function() {
             });
     });
 
+    var weaponId;
     before(function(done) {
         app.get('/weapons')
             .expect(200)
@@ -150,7 +137,7 @@ describe('/backgrounds', function() {
 
     describe('POST', function() {
 
-        it('/ should create a new background', function(done) {
+        it('/ should create a new item', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
@@ -196,7 +183,7 @@ describe('/backgrounds', function() {
                 });
         });
 
-        it('/:id/assets should add an asset to the background', function(done) {
+        it('/:id/assets should add a relation to the item', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
@@ -207,7 +194,7 @@ describe('/backgrounds', function() {
                 .end(done);
         });
 
-        it('/:id/attributes should add an attribute', function(done) {
+        it('/:id/attributes should add a relation to the item', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
@@ -218,7 +205,7 @@ describe('/backgrounds', function() {
                 .end(done);
         });
 
-        it('/:id/augmentations should add an augmentation to the background', function(done) {
+        it('/:id/augmentations should add a relation to the item', function(done) {
             var payload = {
                 insert_id: 1
             };
@@ -228,7 +215,7 @@ describe('/backgrounds', function() {
                 .end(done);
         });
 
-        it('/:id/doctrines should add a doctrine', function(done) {
+        it('/:id/doctrines should add a relation to the item', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
@@ -239,7 +226,7 @@ describe('/backgrounds', function() {
                 .end(done);
         });
 
-        it('/:id/skills should add a skill', function(done) {
+        it('/:id/skills should add a relation to the item', function(done) {
             var payload = {
                 insert_id: 1,
                 value: 10
@@ -250,7 +237,7 @@ describe('/backgrounds', function() {
                 .end(done);
         });
 
-        it('/:id/weapons should add an weapon to the background', function(done) {
+        it('/:id/weapons should add a relation to the item', function(done) {
             var payload = {
                 insert_id: 1
             };

@@ -152,7 +152,7 @@ describe('/weapons', function() {
 
     describe('POST', function() {
 
-        it('/ should create a new weapon', function(done) {
+        it('/ should create a new item', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
@@ -206,7 +206,7 @@ describe('/weapons', function() {
                 });
         });
 
-        it('/:id/attributes should add an attribute', function(done) {
+        it('/:id/attributes should add a relation to the item', function(done) {
             var payload = {
                 insert_id: attributeId,
                 value: 10
@@ -217,7 +217,7 @@ describe('/weapons', function() {
                 .end(done);
         });
 
-        it('/:id/expertises should add a skill', function(done) {
+        it('/:id/expertises should add a relation to the item', function(done) {
             var payload = {
                 insert_id: expertiseId,
                 value: 10
@@ -228,7 +228,7 @@ describe('/weapons', function() {
                 .end(done);
         });
 
-        it('/:id/skills should add a skill', function(done) {
+        it('/:id/skills should add a relation to the item', function(done) {
             var payload = {
                 insert_id: skillId,
                 value: 10
@@ -239,7 +239,7 @@ describe('/weapons', function() {
                 .end(done);
         });
 
-        it('/:id/mods should add a skill', function(done) {
+        it('/:id/mods should add a relation to the item', function(done) {
             var payload = {
                 insert_id: modId,
                 value: 10

@@ -15,13 +15,13 @@ describe('/species', function() {
 
     var baseRoute = '/species';
 
-    var temporaryId,
-        attributeId;
+    var temporaryId;
 
     before(function(done) {
         app.login(done);
     });
 
+    var attributeId;
     before(function(done) {
         app.get('/attributes')
             .expect(200)
@@ -69,7 +69,7 @@ describe('/species', function() {
 
     describe('POST', function() {
 
-        it('/ should create a new species', function(done) {
+        it('/ should create a new item', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
@@ -119,7 +119,7 @@ describe('/species', function() {
                 });
         });
 
-        it('/:id/attributes should add an attribute', function(done) {
+        it('/:id/attributes should add a relation to the item', function(done) {
             var payload = {
                 insert_id: attributeId,
                 value: 10

@@ -44,7 +44,7 @@ describe('/persons', function() {
 
     describe('POST', function() {
 
-        it('/ should create a new person', function(done) {
+        it('/ should create a new item', function(done) {
             var payload = {
                 supernatural: 1,
                 nickname: hasher(20),
@@ -86,100 +86,100 @@ describe('/persons', function() {
                 .end(done);
         });
 
-        it('/:personId/gifts should add a gift to the person', function(done) {
+        it('/:personId/gifts should add a relation to the item', function(done) {
             app.post('/persons/' + personId + '/gifts', {insert_id: 1})
                 .expect(204)
                 .end(done);
         });
 
-        it('/:personId/imperfections should add an imperfection to the person', function(done) {
+        it('/:personId/imperfections should add a relation to the item', function(done) {
             app.post('/persons/' + personId + '/imperfections', {insert_id: 1})
                 .expect(204)
                 .end(done);
         });
 
-        it('/:personId/manifestations should add a manifestation to the person', function(done) {
+        it('/:personId/manifestations should add a relation to the item', function(done) {
             app.post('/persons/' + personId + '/manifestations', {insert_id: 1})
                 .expect(201)
                 .end(done);
         });
 
-        it('/:personId/milestones should add a milestone to the person', function(done) {
+        it('/:personId/milestones should add a relation to the item', function(done) {
             app.post('/persons/' + personId + '/milestones', {insert_id: 1})
                 .expect(204)
                 .end(done);
         });
 
-        it('/:personId/species should add a species to the person', function(done) {
+        it('/:personId/species should add a relation to the item', function(done) {
             app.post('/persons/' + personId + '/species', {insert_id: 2})
                 .expect(201)
                 .end(done);
         });
 
 
-        it('/:personId/attributes should add an attribute', function(done) {
+        it('/:personId/attributes should add a relation to the item', function(done) {
             app.post('/persons/' + personId + '/attributes', {insert_id: 1, value: 10})
                 .expect(201)
                 .end(done);
         });
 
-        it('/:personId/skills should add a skill to the person', function(done) {
+        it('/:personId/skills should add a relation to the item', function(done) {
             app.post('/persons/' + personId + '/skills', {insert_id: 1, value: 10})
                 .expect(201)
                 .end(done);
         });
 
-        it('/:personId/expertises should add a expertise to the person', function(done) {
+        it('/:personId/expertises should add a relation to the item', function(done) {
             app.post('/persons/' + personId + '/expertises', {insert_id: 1, value: 10})
                 .expect(204)
                 .end(done);
         });
 
-        it('/:personId/doctrines should add a doctrine to the person', function(done) {
+        it('/:personId/doctrines should add a relation to the item', function(done) {
             app.post('/persons/' + personId + '/doctrines', {insert_id: 1, value: 10})
                 .expect(204)
                 .end(done);
         });
 
 
-        it('/:personId/assets should add an asset to the person', function(done) {
+        it('/:personId/assets should add a relation to the item', function(done) {
             app.post('/persons/' + personId + '/assets', {insert_id: 1, value: 10})
                 .expect(201)
                 .end(done);
         });
 
-        it('/:personId/bionics should add a bionic to the person', function(done) {
+        it('/:personId/bionics should add a relation to the item', function(done) {
             app.post('/persons/' + personId + '/bionics', {insert_id: 1})
                 .expect(201)
                 .end(done);
         });
 
-        it('/:personId/augmentations should add an augmentation to the person', function(done) {
+        it('/:personId/augmentations should add a relation to the item', function(done) {
             app.post('/persons/' + personId + '/augmentations', {insert_id: 2, bionic_id: 1})
                 .expect(201)
                 .end(done);
         });
 
-        it('/:personId/protection should add a protection to the person', function(done) {
+        it('/:personId/protection should add a relation to the item', function(done) {
             app.post('/persons/' + personId + '/protection', {insert_id: 1})
                 .expect(201)
                 .end(done);
         });
 
-        it('/:personId/software should add a software to the person', function(done) {
+        it('/:personId/software should add a relation to the item', function(done) {
             app.post('/persons/' + personId + '/software', {insert_id: 1})
                 .expect(201)
                 .end(done);
         });
 
-        it('/:personId/weapons should add a weapons to the person', function(done) {
+        it('/:personId/weapons should add a relation to the item', function(done) {
             app.post('/persons/' + personId + '/weapons', {insert_id: 1})
                 .expect(201)
                 .end(done);
         });
 
 
-        it('/:personId/diseases should add a disease to the person', function(done) {
+        it('/:personId/diseases should add a relation to the item', function(done) {
             app.post('/persons/' + personId + '/diseases', {name: hasher(20), timestwo: 1})
                 .expect(201)
                 .end(function(err, res) {
@@ -193,7 +193,7 @@ describe('/persons', function() {
                 });
         });
 
-        it('/:personId/sanity should add a disease to the person', function(done) {
+        it('/:personId/sanity should add a relation to the item', function(done) {
             app.post('/persons/' + personId + '/sanity', {name: hasher(20), timestwo: 1})
                 .expect(201)
                 .end(function(err, res) {
@@ -207,7 +207,7 @@ describe('/persons', function() {
                 });
         });
 
-        it('/:personId/wounds should add a disease to the person', function(done) {
+        it('/:personId/wounds should add a relation to the item', function(done) {
             app.post('/persons/' + personId + '/wounds', {name: hasher(20), timestwo: 1})
                 .expect(201)
                 .end(function(err, res) {

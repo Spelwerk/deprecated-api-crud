@@ -15,41 +15,13 @@ describe('/gifts', function() {
 
     var baseRoute = '/gifts';
 
-    var temporaryId,
-        manifestationId,
-        speciesId,
-        attributeId,
-        expertiseId,
-        skillId;
+    var temporaryId;
 
     before(function(done) {
         app.login(done);
     });
 
-    before(function(done) {
-        app.get('/manifestations')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                manifestationId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
-    before(function(done) {
-        app.get('/species')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                speciesId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
+    var attributeId;
     before(function(done) {
         app.get('/attributes')
             .expect(200)
@@ -62,6 +34,7 @@ describe('/gifts', function() {
             });
     });
 
+    var expertiseId;
     before(function(done) {
         app.get('/expertises')
             .expect(200)
@@ -74,6 +47,20 @@ describe('/gifts', function() {
             });
     });
 
+    var manifestationId;
+    before(function(done) {
+        app.get('/manifestations')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                manifestationId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    var skillId;
     before(function(done) {
         app.get('/skills')
             .expect(200)
@@ -81,6 +68,19 @@ describe('/gifts', function() {
                 if(err) return done(err);
 
                 skillId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    var speciesId;
+    before(function(done) {
+        app.get('/species')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                speciesId = res.body.results[0].id;
 
                 done();
             });
@@ -111,7 +111,7 @@ describe('/gifts', function() {
 
     describe('POST', function() {
 
-        it('/ should create a new gift', function(done) {
+        it('/ should create a new item', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
@@ -156,7 +156,7 @@ describe('/gifts', function() {
                 });
         });
 
-        it('/:id/attributes should add an attribute', function(done) {
+        it('/:id/attributes should add a relation to the item', function(done) {
             var payload = {
                 insert_id: attributeId,
                 value: 10
@@ -167,7 +167,7 @@ describe('/gifts', function() {
                 .end(done);
         });
 
-        it('/:id/expertises should add a skill', function(done) {
+        it('/:id/expertises should add a relation to the item', function(done) {
             var payload = {
                 insert_id: expertiseId,
                 value: 10
@@ -178,7 +178,7 @@ describe('/gifts', function() {
                 .end(done);
         });
 
-        it('/:id/skills should add a skill', function(done) {
+        it('/:id/skills should add a relation to the item', function(done) {
             var payload = {
                 insert_id: skillId,
                 value: 10

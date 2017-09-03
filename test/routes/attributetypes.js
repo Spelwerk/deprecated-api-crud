@@ -13,13 +13,13 @@ var app = require('./../app'),
 
 describe('/attributetypes', function() {
 
-    before(function(done) {
-        app.login(done);
-    });
-
     var baseRoute = '/attributetypes';
 
     var temporaryId;
+
+    before(function(done) {
+        app.login(done);
+    });
 
     function verifyList(body) {
         assert.isNumber(body.length);
@@ -45,7 +45,7 @@ describe('/attributetypes', function() {
 
     describe('POST', function() {
 
-        it('/ should create a new attribute type', function(done) {
+        it('/ should create a new item', function(done) {
             var payload = {
                 name: hasher(20),
                 special: false

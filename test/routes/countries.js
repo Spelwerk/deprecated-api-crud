@@ -15,16 +15,13 @@ describe('/countries', function() {
 
     var baseRoute = '/countries';
 
-    var temporaryId,
-        languageId,
-        firstnameGroupId,
-        nicknameGroupId,
-        surnameGroupId;
+    var temporaryId;
 
     before(function(done) {
         app.login(done);
     });
 
+    var languageId;
     before(function(done) {
         app.get('/languages')
             .expect(200)
@@ -37,6 +34,7 @@ describe('/countries', function() {
             });
     });
 
+    var firstnameGroupId;
     before(function(done) {
         app.get('/firstnamegroups')
             .expect(200)
@@ -49,6 +47,7 @@ describe('/countries', function() {
             });
     });
 
+    var nicknameGroupId;
     before(function(done) {
         app.get('/nicknamegroups')
             .expect(200)
@@ -61,6 +60,7 @@ describe('/countries', function() {
             });
     });
 
+    var surnameGroupId;
     before(function(done) {
         app.get('/surnamegroups')
             .expect(200)
@@ -100,7 +100,7 @@ describe('/countries', function() {
 
     describe('POST', function() {
 
-        it('/ should create a new asset', function(done) {
+        it('/ should create a new item', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),

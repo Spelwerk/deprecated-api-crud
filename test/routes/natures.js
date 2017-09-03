@@ -43,7 +43,7 @@ describe('/natures', function() {
 
     describe('POST', function() {
 
-        it('/ should create a new asset', function(done) {
+        it('/ should create a new item', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),

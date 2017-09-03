@@ -15,16 +15,13 @@ describe('/bionics', function() {
 
     var baseRoute = '/bionics';
 
-    var temporaryId,
-        bodyPartId,
-        attributeId,
-        augmentationId,
-        softwareId;
+    var temporaryId;
 
     before(function(done) {
         app.login(done);
     });
 
+    var bodyPartId;
     before(function(done) {
         app.get('/bodyparts')
             .expect(200)
@@ -37,6 +34,7 @@ describe('/bionics', function() {
             });
     });
 
+    var attributeId;
     before(function(done) {
         app.get('/attributes')
             .expect(200)
@@ -49,6 +47,7 @@ describe('/bionics', function() {
             });
     });
 
+    var augmentationId;
     before(function(done) {
         app.get('/augmentations')
             .expect(200)
@@ -61,6 +60,7 @@ describe('/bionics', function() {
             });
     });
 
+    var softwareId;
     before(function(done) {
         app.get('/software')
             .expect(200)
@@ -100,7 +100,7 @@ describe('/bionics', function() {
 
     describe('POST', function() {
 
-        it('/ should create a new bionic', function(done) {
+        it('/ should create a new item', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
@@ -147,7 +147,7 @@ describe('/bionics', function() {
                 });
         });
 
-        it('/:id/attributes should add an attribute', function(done) {
+        it('/:id/attributes should add a relation to the item', function(done) {
             var payload = {
                 insert_id: attributeId,
                 value: 10
@@ -158,7 +158,7 @@ describe('/bionics', function() {
                 .end(done);
         });
 
-        it('/:id/augmentations should add an augmentation to the bionic', function(done) {
+        it('/:id/augmentations should add a relation to the item', function(done) {
             var payload = {
                 insert_id: augmentationId
             };
@@ -168,7 +168,7 @@ describe('/bionics', function() {
                 .end(done);
         });
 
-        it('/:id/software should add an software to the bionic', function(done) {
+        it('/:id/software should add a relation to the item', function(done) {
             var payload = {
                 insert_id: softwareId
             };

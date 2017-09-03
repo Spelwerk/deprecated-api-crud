@@ -50,4 +50,6 @@ require('./routes/weapons');
 require('./routes/backgrounds');
 require('./routes/milestones');
 
+require('./routes/worlds');
+
 //require('./routes/users');

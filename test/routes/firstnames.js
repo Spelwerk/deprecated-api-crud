@@ -47,7 +47,7 @@ describe('/firstnames', function() {
 
         var feminine = [true,false][Math.round(Math.random())];
 
-        it('/ should create a new asset', function(done) {
+        it('/ should create a new item', function(done) {
             app.post(baseRoute, { name: hasher(20), feminine: feminine })
                 .expect(201)
                 .end(function(err, res) {

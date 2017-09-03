@@ -44,7 +44,7 @@ describe('/diseases', function() {
 
     describe('POST', function() {
 
-        it('/ should create a new asset', function(done) {
+        it('/ should create a new item', function(done) {
             app.post(baseRoute, { name: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {

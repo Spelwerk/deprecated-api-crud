@@ -15,29 +15,13 @@ describe('/weapontypes', function() {
 
     var baseRoute = '/weapontypes';
 
-    var temporaryId,
-        augmentationId,
-        attributeId,
-        expertiseId,
-        skillId,
-        speciesId;
+    var temporaryId;
 
     before(function(done) {
         app.login(done);
     });
 
-    before(function(done) {
-        app.get('/augmentations')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                augmentationId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
+    var attributeId;
     before(function(done) {
         app.get('/attributes')
             .expect(200)
@@ -50,6 +34,20 @@ describe('/weapontypes', function() {
             });
     });
 
+    var augmentationId;
+    before(function(done) {
+        app.get('/augmentations')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                augmentationId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    var expertiseId;
     before(function(done) {
         app.get('/expertises')
             .expect(200)
@@ -62,6 +60,7 @@ describe('/weapontypes', function() {
             });
     });
 
+    var skillId;
     before(function(done) {
         app.get('/skills')
             .expect(200)
@@ -74,6 +73,7 @@ describe('/weapontypes', function() {
             });
     });
 
+    var speciesId;
     before(function(done) {
         app.get('/species')
             .expect(200)
@@ -115,7 +115,7 @@ describe('/weapontypes', function() {
 
     describe('POST', function() {
 
-        it('/ should create a new weapon group', function(done) {
+        it('/ should create a new item', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),

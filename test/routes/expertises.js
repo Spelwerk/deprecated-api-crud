@@ -15,15 +15,26 @@ describe('/expertise', function() {
 
     var baseRoute = '/expertises';
 
-    var temporaryId,
-        skillId,
-        speciesId,
-        manifestationId;
+    var temporaryId;
 
     before(function(done) {
         app.login(done);
     });
 
+    var manifestationId;
+    before(function(done) {
+        app.get('/manifestations')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                manifestationId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    var skillId;
     before(function(done) {
         app.get('/skills')
             .expect(200)
@@ -31,6 +42,19 @@ describe('/expertise', function() {
                 if(err) return done(err);
 
                 skillId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    var speciesId;
+    before(function(done) {
+        app.get('/species')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                speciesId = res.body.results[0].id;
 
                 done();
             });
@@ -62,7 +86,7 @@ describe('/expertise', function() {
 
     describe('POST', function() {
 
-        it('/ should create a new asset', function(done) {
+        it('/ should create a new item', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
@@ -156,7 +180,7 @@ describe('/expertise', function() {
         });
 
         it('/manifestation/:manifestationId should return a list', function(done) {
-            app.get(baseRoute)
+            app.get(baseRoute + '/manifestation/' + manifestationId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -168,7 +192,7 @@ describe('/expertise', function() {
         });
 
         it('/skill/:skillId should return a list', function(done) {
-            app.get(baseRoute)
+            app.get(baseRoute + '/skill/' + skillId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -180,7 +204,7 @@ describe('/expertise', function() {
         });
 
         it('/species/:speciesId should return a list', function(done) {
-            app.get(baseRoute)
+            app.get(baseRoute + '/species/' + speciesId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -192,7 +216,7 @@ describe('/expertise', function() {
         });
 
         it('/skill/:skillId/manifestation/:manifestationId should return a list', function(done) {
-            app.get(baseRoute)
+            app.get(baseRoute + '/skill/' + skillId + '/manifestation/' + manifestationId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -204,7 +228,7 @@ describe('/expertise', function() {
         });
 
         it('/skill/:skillId/species/:speciesId should return a list', function(done) {
-            app.get(baseRoute)
+            app.get(baseRoute + '/skill/' + skillId + '/species/' + speciesId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
