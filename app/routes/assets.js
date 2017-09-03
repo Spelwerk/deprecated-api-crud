@@ -1,8 +1,5 @@
-var query = require('./../../lib/sql/query'),
-    sequel = require('../../lib/sql/sequel'),
-    generic = require('../../lib/sql/generic'),
-    comment = require('../../lib/sql/comment'),
-    relation = require('./../../lib/sql/relation');
+var sequel = require('../../lib/sql/sequel'),
+    generic = require('../../lib/sql/generic');
 
 var basic = require('./../../lib/generic/basic'),
     relations = require('./../../lib/generic/relations');
@@ -61,6 +58,7 @@ module.exports = function(router) {
     basic.canon(router);
     basic.clone(router, tableName);
     basic.comments(router);
+    basic.images(router);
     basic.labels(router);
     basic.ownership(router);
     basic.revive(router);
