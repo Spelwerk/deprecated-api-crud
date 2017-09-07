@@ -14,8 +14,6 @@ require('./routes/firstnamegroups');
 require('./routes/surnames');
 require('./routes/surnamegroups');
 
-require('./routes/countries');
-
 require('./routes/diseases');
 require('./routes/sanity');
 require('./routes/wounds');
@@ -51,5 +49,6 @@ require('./routes/backgrounds');
 require('./routes/milestones');
 
 require('./routes/worlds');
+require('./routes/countries');
 
 //require('./routes/users');

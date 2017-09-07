@@ -35,6 +35,7 @@ describe('/attributes', function() {
     });
 
     var manifestationId;
+/*
     before(function(done) {
         app.get('/manifestations')
             .expect(200)
@@ -46,6 +47,7 @@ describe('/attributes', function() {
                 done();
             });
     });
+*/
 
     function verifyList(body) {
         assert.isNumber(body.length);

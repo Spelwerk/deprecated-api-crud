@@ -73,19 +73,6 @@ describe('/worlds', function() {
             });
     });
 
-    var countryId;
-    before(function(done) {
-        app.get('/countries')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                countryId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
     var doctrineId;
     before(function(done) {
         app.get('/doctrines')
@@ -356,10 +343,6 @@ describe('/worlds', function() {
             app.post(baseRoute + '/' + temporaryId + '/bionics', { insert_id: bionicId }).expect(201).end(done);
         });
 
-        it('/:id/countries should add a relation to the item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/countries', { insert_id: countryId }).expect(201).end(done);
-        });
-
         it('/:id/doctrines should add a relation to the item', function(done) {
             app.post(baseRoute + '/' + temporaryId + '/doctrines', { insert_id: doctrineId }).expect(201).end(done);
         });
@@ -551,23 +534,6 @@ describe('/worlds', function() {
 
         it('/:id/bionics should return a list', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/bionics')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        verifier.generic(item);
-                    });
-
-                    done();
-                });
-        });
-
-        it('/:id/countries should return a list', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/countries')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);

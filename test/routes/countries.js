@@ -73,6 +73,19 @@ describe('/countries', function() {
             });
     });
 
+    var worldId;
+    before(function(done) {
+        app.get('/worlds')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                worldId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
     function verifyList(body) {
         assert.isNumber(body.length);
 
@@ -107,7 +120,8 @@ describe('/countries', function() {
                 language_id: languageId,
                 firstnamegroup_id: firstnameGroupId,
                 nicknamegroup_id: nicknameGroupId,
-                surnamegroup_id: surnameGroupId
+                surnamegroup_id: surnameGroupId,
+                world_id: worldId
             };
 
             app.post(baseRoute, payload)

@@ -12,7 +12,6 @@ module.exports = function(router) {
         'attribute.attributetype_id, ' +
         'attribute.manifestation_id, ' +
         'attribute.maximum, ' +
-        'attributetype.special, ' +
         'generic.id, ' +
         'generic.user_id, ' +
         'generic.original_id, ' +

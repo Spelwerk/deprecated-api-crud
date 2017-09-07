@@ -38,8 +38,6 @@ describe('/attributetypes', function() {
 
     function verifyItem(item) {
         verifier.generic(item);
-
-        assert.isBoolean(item.special);
     }
 
 
@@ -47,8 +45,7 @@ describe('/attributetypes', function() {
 
         it('/ should create a new item', function(done) {
             var payload = {
-                name: hasher(20),
-                special: false
+                name: hasher(20)
             };
 
             app.post(baseRoute, payload)
