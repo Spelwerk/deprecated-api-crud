@@ -3,6 +3,27 @@
 module.exports = function(app, callback) {
     var logger = require(appRoot + '/lib/logger');
 
+    app.use(function(err, req, res, next) {
+        if(!err.error.sqlState) next();
+
+        switch(err.error.errno)
+        {
+            default:
+                err.status = 500;
+                err.message = 'Database Error';
+                break;
+
+            case 1062:
+                var split = err.error.sqlMessage.split("\' for key \'")[1].split("_UNIQUE")[0];
+
+                err.status = 409;
+                err.message = 'This ' + split + ' has already been saved';
+                break;
+        }
+
+        next(err);
+    });
+
     // Return error information as response
     app.use(function(err, req, res, next) {
         if(environment === 'development') console.error(err);

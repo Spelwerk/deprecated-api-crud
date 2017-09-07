@@ -70,7 +70,7 @@ module.exports = function(router) {
                     var text =
                         '<b>Hello!</b>' +
                         '<br/>' +
-                        'Use the following verification code to verify your account creation: <a href="' + nconf.get('links:base') + nconf.get('links:users:create') + insert.verify.secret + '">' + insert.verify.secret + '</a>' +
+                        'Use the following verification code to verify your account creation: <a href="' + nconf.get('links:base') + nconf.get('links:user:create') + insert.verify.secret + '">' + insert.verify.secret + '</a>' +
                         '<br/>'
                     ;
 
@@ -210,7 +210,7 @@ module.exports = function(router) {
                     var text =
                         '<b>Hello!</b>' +
                         '<br/>' +
-                        'Use the following verification code to login to your account: <a href="' + nconf.get('links:base') + nconf.get('links:users:login') + insert.login.secret + '">' + insert.login.secret + '</a>' +
+                        'Use the following verification code to login to your account: <a href="' + nconf.get('links:base') + nconf.get('links:user:login') + insert.login.secret + '">' + insert.login.secret + '</a>' +
                         '<br/>'
                     ;
 
@@ -292,7 +292,7 @@ module.exports = function(router) {
                     var text =
                         '<b>Hello!</b>' +
                         '<br/>' +
-                        'Use the following verification code to verify your account creation: <a href="' + nconf.get('links:base') + nconf.get('links:users:create') + insert.verify.secret + '">' + insert.verify.secret + '</a>' +
+                        'Use the following verification code to verify your account creation: <a href="' + nconf.get('links:base') + nconf.get('links:user:create') + insert.verify.secret + '">' + insert.verify.secret + '</a>' +
                         '<br/>'
                     ;
 
@@ -376,7 +376,7 @@ module.exports = function(router) {
                     var text =
                         '<b>Hello!</b>' +
                         '<br/>' +
-                        'Use the following verification code to change your email: <a href="' + nconf.get('links:base') + nconf.get('links:users:email') + insert.reset.secret + '">' + insert.reset.secret + '</a>' +
+                        'Use the following verification code to change your email: <a href="' + nconf.get('links:base') + nconf.get('links:user:email') + insert.reset.secret + '">' + insert.reset.secret + '</a>' +
                         '<br/>'
                     ;
 
@@ -456,7 +456,7 @@ module.exports = function(router) {
                     var text =
                         '<b>Hello!</b>' +
                         '<br/>' +
-                        'Use the following verification code to reset your password: <a href="' + nconf.get('links:base') + nconf.get('links:users:password') + insert.reset.secret + '">' + insert.reset.secret + '</a>' +
+                        'Use the following verification code to reset your password: <a href="' + nconf.get('links:base') + nconf.get('links:user:password') + insert.reset.secret + '">' + insert.reset.secret + '</a>' +
                         '<br/>'
                     ;
 
