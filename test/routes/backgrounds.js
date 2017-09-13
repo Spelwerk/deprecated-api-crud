@@ -484,32 +484,4 @@ describe('/backgrounds', function() {
 
     });
 
-    xdescribe('DELETE', function() {
-
-        it('/:id/attributes should remove the attribute from the background', function(done) {
-            app.delete(baseRoute + '/' + temporaryId + '/attributes/1')
-                .expect(204)
-                .end(done);
-        });
-
-        it('/:id/assets should remove the asset from the background', function(done) {
-            app.delete(baseRoute + '/' + temporaryId + '/assets/1')
-                .expect(204)
-                .end(done);
-        });
-
-        it('/:id/skills should remove the skill from the background', function(done) {
-            app.delete(baseRoute + '/' + temporaryId + '/skills/1')
-                .expect(204)
-                .end(done);
-        });
-
-        it('/:id should update the background deleted field', function(done) {
-            app.delete(baseRoute + '/' + temporaryId)
-                .expect(204)
-                .end(done);
-        });
-
-    });
-
 });

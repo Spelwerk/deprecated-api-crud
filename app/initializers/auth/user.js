@@ -42,8 +42,8 @@ module.exports = function(app, callback) {
 
                     if(!results[0]) return callback({status: 404, message: 'Missing user', error: 'User missing from database'});
 
-                    req.user.admin = results[0].admin;
-                    req.user.verified = results[0].verified;
+                    req.user.admin = !!results[0].admin;
+                    req.user.verified = !!results[0].verified;
 
                     callback();
                 });

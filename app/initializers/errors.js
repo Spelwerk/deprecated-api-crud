@@ -4,7 +4,7 @@ module.exports = function(app, callback) {
     var logger = require(appRoot + '/lib/logger');
 
     app.use(function(err, req, res, next) {
-        if(!err.error.sqlState) next();
+        if(!err.database) next();
 
         switch(err.error.errno)
         {

@@ -361,26 +361,4 @@ describe('/augmentations', function() {
 
     });
 
-    xdescribe('DELETE', function() {
-
-        it('/:id/attributes should remove the attribute from the augmentation', function(done) {
-            app.delete(baseRoute + '/' + temporaryId + '/attributes/1')
-                .expect(204)
-                .end(done);
-        });
-
-        it('/:id/skills should remove the skill from the augmentation', function(done) {
-            app.delete(baseRoute + '/' + temporaryId + '/skills/1')
-                .expect(204)
-                .end(done);
-        });
-
-        it('/:id should update the augmentation deleted field', function(done) {
-            app.delete(baseRoute + '/' + temporaryId)
-                .expect(204)
-                .end(done);
-        });
-
-    });
-
 });

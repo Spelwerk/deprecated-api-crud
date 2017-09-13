@@ -66,6 +66,27 @@ describe('/attributetypes', function() {
     describe('PUT', function() {
 
         it('/:id should update the item with new values', function(done) {
+            var payload = {
+                name: hasher(20),
+                description: hasher(20)
+            };
+
+            app.put(baseRoute + '/' + temporaryId, payload)
+                .expect(204)
+                .end(done);
+        });
+
+        it('/:id/canon/:canon should update the canon status', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/canon/1')
+                .expect(204)
+                .end(done);
+        });
+
+    });
+
+    describe('PUT', function() {
+
+        it('/:id should update the item with new values', function(done) {
             var payload = {name: hasher(20)};
 
             app.put(baseRoute + '/' + temporaryId, payload)
@@ -123,16 +144,6 @@ describe('/attributetypes', function() {
 
                     done();
                 });
-        });
-
-    });
-
-    xdescribe('DELETE', function() {
-
-        it('/:id should update the attribute deleted field', function(done) {
-            app.delete(baseRoute + '/' + temporaryId)
-                .expect(204)
-                .end(done);
         });
 
     });

@@ -256,26 +256,4 @@ describe('/species', function() {
 
     });
 
-    xdescribe('DELETE', function() {
-
-        it('/:id/attributes should remove the attribute from the species', function(done) {
-            app.delete(baseRoute + '/' + temporaryId + '/attributes/1')
-                .expect(204)
-                .end(done);
-        });
-
-        it('/:id/weapons should remove the weapon from the species', function(done) {
-            app.delete(baseRoute + '/' + temporaryId + '/weapons/1')
-                .expect(204)
-                .end(done);
-        });
-
-        it('/:id should update the species deleted field', function(done) {
-            app.delete(baseRoute + '/' + temporaryId)
-                .expect(204)
-                .end(done);
-        });
-
-    });
-
 });

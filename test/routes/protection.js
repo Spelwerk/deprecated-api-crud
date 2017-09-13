@@ -250,20 +250,4 @@ describe('/protection', function() {
 
     });
 
-    xdescribe('DELETE', function() {
-
-        it('/:id/attributes should remove the attribute from the protection', function(done) {
-            app.delete(baseRoute + '/' + temporaryId + '/attributes/1')
-                .expect(204)
-                .end(done);
-        });
-
-        it('/:id should update the protection deleted field', function(done) {
-            app.delete(baseRoute + '/' + temporaryId)
-                .expect(204)
-                .end(done);
-        });
-
-    });
-
 });

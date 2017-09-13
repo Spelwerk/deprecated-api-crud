@@ -174,14 +174,4 @@ describe('/natures', function() {
 
     });
 
-    xdescribe('DELETE', function() {
-
-        it('/:id should update the asset deleted field', function(done) {
-            app.delete(baseRoute + '/' + temporaryId)
-                .expect(204)
-                .end(done);
-        });
-
-    });
-
 });

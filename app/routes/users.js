@@ -38,9 +38,9 @@ module.exports = function(router) {
             var user = {},
                 insert = {};
 
-            insert.email = req.body.email;
-            insert.password = req.body.password || hasher(128);
-            insert.displayname = req.body.displayname || req.body.email;
+            insert.email = req.body.email.toLowerCase();
+            insert.password = req.body.password || null;
+            insert.displayname = req.body.displayname || insert.email;
 
             async.series([
                 function(callback) {
@@ -92,20 +92,48 @@ module.exports = function(router) {
             });
         });
 
+    // Verifying that a user exists
+
+    router.route('/exists/email/:email')
+        .get(function(req, res, next) {
+            var email = req.params.email.toUpperCase(),
+                exists = false;
+
+            query('SELECT id FROM user WHERE UPPER(email) = ? AND deleted IS NULL', [email], function(err, results) {
+                if(err) return next(err);
+
+                if(results[0].id) exists = true;
+
+                res.status(200).send({existence: exists});
+            });
+        });
+
+    router.route('/exists/name/:name')
+        .get(function(req, res, next) {
+            var displayName = req.params.name.toUpperCase(),
+                exists = false;
+
+            query('SELECT id FROM user WHERE UPPER(displayname) = ? AND deleted IS NULL', [displayName], function(err, results) {
+                if(err) return next(err);
+
+                if(results[0].id) exists = true;
+
+                res.status(200).send({existence: exists});
+            });
+        });
+
     // Information about current user
 
     router.route('/info')
         .get(function(req, res, next) {
-            if(!req.user) return next('Forbidden');
+            if(!req.user) return next({status: 403, message: 'Forbidden', error: 'User is not logged in'});
 
-            var user = {
+            res.status(200).send({
                 id: req.user.id,
                 email: req.user.email,
                 verified: req.user.verified,
                 admin: req.user.admin
-            };
-
-            res.status(200).send({user: user});
+            });
         });
 
     // Tokens belonging to current user
@@ -158,10 +186,12 @@ module.exports = function(router) {
                     query('SELECT id,password FROM user WHERE email = ? AND deleted IS NULL', [insert.email], function(err, result) {
                         if(err) return callback(err);
 
-                        if(result.length === 0) return callback({message: 'Missing Email'});
+                        if(result.length === 0) return callback({status: 403, message: 'Forbidden', error: 'Missing Email'});
 
                         user.id = result[0].id;
                         user.password = result[0].password;
+
+                        if(user.password === null) return callback({status: 403, message: 'Forbidden', error: 'Password not set, verify your account.'});
 
                         callback();
                     });
@@ -195,7 +225,7 @@ module.exports = function(router) {
         .post(function(req, res, next) {
             var insert = {};
 
-            insert.email = req.body.email;
+            insert.email = req.body.email.toUpperCase();
 
             insert.login = {};
             insert.login.secret = hasher(128);
@@ -203,7 +233,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    query('UPDATE user SET login_secret = ?, login_timeout = ? WHERE email = ? AND deleted IS NULL', [insert.login.secret, insert.login.timeout, insert.email], callback);
+                    query('UPDATE user SET login_secret = ?, login_timeout = ? WHERE UPPER(email) = ? AND deleted IS NULL', [insert.login.secret, insert.login.timeout, insert.email], callback);
                 },
                 function(callback) {
                     var subject = 'User Verification';
@@ -232,10 +262,10 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    query('SELECT id, login_timeout AS timeout FROM user WHERE login_secret = ?', [insert.secret], function(err, result) {
+                    query('SELECT id, login_timeout AS timeout FROM user WHERE login_secret = ? AND deleted IS NULL', [insert.secret], function(err, result) {
                         if(err) return callback(err);
 
-                        if(!result[0]) return callback('Wrong Secret.');
+                        if(!result[0]) return callback({status: 403, message: 'Forbidden', error: 'The secret provided was not correct'});
 
                         user.id = result[0].id;
                         user.timeout = result[0].timeout;
@@ -244,12 +274,9 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    if(moment(user.timeout).isBefore(moment())) return callback('Timeout Expired.');
+                    if(moment(user.timeout).isBefore(moment())) return callback({status: 403, message: 'Forbidden', error: 'Timeout Expired'});
 
                     callback();
-                },
-                function(callback) {
-                    query('UPDATE user SET login_secret = NULL, login_timeout = NULL WHERE id = ?', [user.id], callback);
                 },
                 function(callback) {
                     users.token(req, user.id, function(err, result) {
@@ -274,10 +301,9 @@ module.exports = function(router) {
 
     router.route('/verify/email')
         .post(function(req, res, next) {
-            var user = {},
-                insert = {};
+            var insert = {};
 
-            insert.email = req.body.email;
+            insert.email = req.body.email.toUpperCase();
 
             insert.verify = {};
             insert.verify.secret = hasher(128);
@@ -285,7 +311,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    query('UPDATE user SET verify_secret = ?, verify_timeout = ? WHERE email = ?', [insert.verify.secret, insert.verify.timeout, insert.email], callback);
+                    query('UPDATE user SET verify_secret = ?, verify_timeout = ? WHERE UPPER(email) = ? AND deleted IS NULL', [insert.verify.secret, insert.verify.timeout, insert.email], callback);
                 },
                 function(callback) {
                     var subject = 'User Verification';
@@ -311,18 +337,18 @@ module.exports = function(router) {
                 insert = {};
 
             insert.secret = req.body.secret;
-            insert.displayname = req.body.displayname;
-            insert.firstname = req.body.firstname;
-            insert.surname = req.body.surname;
+            insert.displayname = req.body.displayname.toLowerCase();
+            insert.firstname = req.body.firstname || null;
+            insert.surname = req.body.surname || null;
             insert.password = req.body.password;
             insert.timeout = moment().format("YYYY-MM-DD HH:mm:ss");
 
             async.series([
                 function(callback) {
-                    query('SELECT id, verify_timeout AS timeout FROM user WHERE verify_secret = ?', [insert.secret], function(err, result) {
+                    query('SELECT id, verify_timeout AS timeout FROM user WHERE verify_secret = ? AND deleted IS NULL', [insert.secret], function(err, result) {
                         if(err) return callback(err);
 
-                        if(!result[0]) return callback('Wrong Secret.');
+                        if(!result[0]) return callback({status: 403, message: 'Forbidden', error: 'The secret provided was not correct'});
 
                         user.id = result[0].id;
                         user.timeout = result[0].timeout;
@@ -331,7 +357,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    if(moment(user.timeout).isBefore(moment())) return callback('Timeout Expired.');
+                    if(moment(user.timeout).isBefore(moment())) return callback({status: 403, message: 'Forbidden', error: 'Timeout Expired'});
 
                     callback();
                 },
@@ -358,10 +384,9 @@ module.exports = function(router) {
 
     router.route('/email/email')
         .post(function(req, res, next) {
-            var user = {},
-                insert = {};
+            var insert = {};
 
-            insert.email = req.body.email;
+            insert.email = req.body.email.toUpperCase();
 
             insert.reset = {};
             insert.reset.secret = hasher(128);
@@ -369,7 +394,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    query('UPDATE user SET reset_secret = ?, reset_timeout = ? WHERE email = ? AND deleted IS NULL', [insert.reset.secret, insert.reset.timeout, insert.email], callback);
+                    query('UPDATE user SET reset_secret = ?, reset_timeout = ? WHERE UPPER(email) = ? AND deleted IS NULL', [insert.reset.secret, insert.reset.timeout, insert.email], callback);
                 },
                 function(callback) {
                     var subject = 'Email Change';
@@ -395,14 +420,14 @@ module.exports = function(router) {
                 insert = {};
 
             insert.secret = req.body.secret;
-            insert.email = req.body.email;
+            insert.email = req.body.email.toLowerCase();
 
             async.series([
                 function(callback) {
-                    query('SELECT id, reset_timeout AS timeout FROM user WHERE reset_secret = ?', [insert.secret], function(err, result) {
+                    query('SELECT id, reset_timeout AS timeout FROM user WHERE reset_secret = ? AND deleted IS NULL', [insert.secret], function(err, result) {
                         if(err) return callback(err);
 
-                        if(!result[0]) return callback('Wrong Secret.');
+                        if(!result[0]) return callback({status: 403, message: 'Forbidden', error: 'The secret provided was not correct'});
 
                         user.id = result[0].id;
                         user.timeout = result[0].timeout;
@@ -411,7 +436,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    if(moment(user.timeout).isBefore(moment())) return callback('Timeout Expired.');
+                    if(moment(user.timeout).isBefore(moment())) return callback({status: 403, message: 'Forbidden', error: 'Timeout Expired'});
 
                     callback();
                 },
@@ -438,10 +463,9 @@ module.exports = function(router) {
 
     router.route('/password/email')
         .post(function(req, res, next) {
-            var user = {},
-                insert = {};
+            var insert = {};
 
-            insert.email = req.body.email;
+            insert.email = req.body.email.toUpperCase();
 
             insert.reset = {};
             insert.reset.secret = hasher(128);
@@ -449,7 +473,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    query('UPDATE user SET reset_secret = ?, reset_timeout = ? WHERE email = ? AND deleted IS NULL', [insert.reset.secret, insert.reset.timeout, insert.email], callback);
+                    query('UPDATE user SET reset_secret = ?, reset_timeout = ? WHERE UPPER(email) = ? AND deleted IS NULL', [insert.reset.secret, insert.reset.timeout, insert.email], callback);
                 },
                 function(callback) {
                     var subject = 'Password Reset';
@@ -479,10 +503,10 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    query('SELECT id, reset_timeout AS timeout FROM user WHERE reset_secret = ?', [insert.secret], function(err, result) {
+                    query('SELECT id, reset_timeout AS timeout FROM user WHERE reset_secret = ? AND deleted IS NULL', [insert.secret], function(err, result) {
                         if(err) return callback(err);
 
-                        if(!result[0]) return callback('Wrong Secret.');
+                        if(!result[0]) return callback({status: 403, message: 'Forbidden', error: 'The secret provided was not correct'});
 
                         user.id = result[0].id;
                         user.timeout = result[0].timeout;
@@ -491,7 +515,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    if(moment(user.timeout).isBefore(moment())) return callback('Timeout Expired.');
+                    if(moment(user.timeout).isBefore(moment())) return callback({status: 403, message: 'Forbidden', error: 'Timeout Expired'});
 
                     callback();
                 },
@@ -526,7 +550,7 @@ module.exports = function(router) {
             var insert = {};
 
             insert.id = parseInt(req.params.id);
-            insert.displayname = req.body.displayname;
+            insert.displayname = req.body.displayname.toLowerCase();
             insert.firstname = req.body.firstname;
             insert.surname = req.body.surname;
 
@@ -534,7 +558,7 @@ module.exports = function(router) {
 
             if(!req.user.admin && req.user.id !== insert.id) return next({status: 403, message: 'Forbidden', error: 'User is not administrator and may not edit other users'});
 
-            query('UPDATE user SET displayname = ?, firstname = ?, surname = ? WHERE id = ?', [insert.displayname, insert.firstname, insert.surname, insert.id], function(err) {
+            query('UPDATE user SET displayname = ?, firstname = ?, surname = ? WHERE id = ? AND deleted IS NULL', [insert.displayname, insert.firstname, insert.surname, insert.id], function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();
@@ -543,16 +567,15 @@ module.exports = function(router) {
         .delete(function(req, res, next) {
             var insert = {};
 
-            insert.id = req.params.id;
+            insert.id = parseInt(req.params.id);
 
             if(!req.user.admin && req.user.id !== insert.id) return next({status: 403, message: 'Forbidden', error: 'User is not administrator and may not remove other users'});
 
             insert.email = 'DELETED {{' + insert.id + '}}';
             insert.displayname = 'DELETED {{' + insert.id + '}}';
-            insert.password = hasher(128);
 
-            var sql = 'UPDATE user SET email = ?, displayname = ?, password = ?, firstname = NULL, surname = NULL, deleted = CURRENT_TIMESTAMP WHERE id = ?',
-                array = [insert.email, insert.displayname, insert.password, insert.id];
+            var sql = 'UPDATE user SET email = ?, displayname = ?, password = NULL, firstname = NULL, surname = NULL, deleted = CURRENT_TIMESTAMP WHERE id = ?',
+                array = [insert.email, insert.displayname, insert.id];
 
             query(sql, array, function(err) {
                 if(err) return next(err);
@@ -570,7 +593,7 @@ module.exports = function(router) {
             insert.id = req.params.id;
             insert.admin = req.body.admin;
 
-            query('UPDATE user SET admin = ? WHERE id = ?', [insert.admin, insert.id], function(err) {
+            query('UPDATE user SET admin = ? WHERE id = ? AND deleted IS NULL', [insert.admin, insert.id], function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();

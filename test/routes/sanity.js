@@ -88,14 +88,4 @@ describe('/sanity', function() {
 
     });
 
-    xdescribe('DELETE', function() {
-
-        it('/:diseaseId should update the asset deleted field', function(done) {
-            app.delete(baseRoute + '/' + temporaryId)
-                .expect(204)
-                .end(done);
-        });
-
-    });
-
 });

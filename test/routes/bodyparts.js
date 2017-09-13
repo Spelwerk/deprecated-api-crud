@@ -173,14 +173,4 @@ describe('/bodyparts', function() {
 
     });
 
-    xdescribe('DELETE', function() {
-
-        it('/:id should update the bodypart deleted field', function(done) {
-            app.delete(baseRoute + '/' + temporaryId)
-                .expect(204)
-                .end(done);
-        });
-
-    });
-
 });

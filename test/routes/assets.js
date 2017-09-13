@@ -432,38 +432,4 @@ describe('/assets', function() {
 
     });
 
-    xdescribe('DELETE', function() {
-
-        it('/:id/attributes should remove the attribute from the asset', function(done) {
-            app.delete(baseRoute + '/' + temporaryId + '/attributes/1')
-                .expect(204)
-                .end(done);
-        });
-
-        it('/:id/doctrines should remove the doctrine from the asset', function(done) {
-            app.delete(baseRoute + '/' + temporaryId + '/doctrines/1')
-                .expect(204)
-                .end(done);
-        });
-
-        it('/:id/expertises should remove the expertise from the asset', function(done) {
-            app.delete(baseRoute + '/' + temporaryId + '/expertises/1')
-                .expect(204)
-                .end(done);
-        });
-
-        it('/:id/skills should remove the skill from the asset', function(done) {
-            app.delete(baseRoute + '/' + temporaryId + '/skills/1')
-                .expect(204)
-                .end(done);
-        });
-
-        it('/:id should update the asset deleted field', function(done) {
-            app.delete(baseRoute + '/' + temporaryId)
-                .expect(204)
-                .end(done);
-        });
-
-    });
-
 });

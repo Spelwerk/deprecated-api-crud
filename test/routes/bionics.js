@@ -334,26 +334,4 @@ describe('/bionics', function() {
 
     });
 
-    xdescribe('DELETE', function() {
-
-        it('/:id/attributes should remove the attribute from the bionic', function(done) {
-            app.delete(baseRoute + '/' + temporaryId + '/attributes/1')
-                .expect(204)
-                .end(done);
-        });
-
-        it('/:id/augmentations should remove the augmentation from the bionic', function(done) {
-            app.delete(baseRoute + '/' + temporaryId + '/augmentations/1')
-                .expect(204)
-                .end(done);
-        });
-
-        it('/:id should update the bionic deleted field', function(done) {
-            app.delete(baseRoute + '/' + temporaryId)
-                .expect(204)
-                .end(done);
-        });
-
-    });
-
 });

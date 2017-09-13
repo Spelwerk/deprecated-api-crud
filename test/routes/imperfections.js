@@ -369,32 +369,4 @@ describe('/imperfections', function() {
 
     });
 
-    xdescribe('DELETE', function() {
-
-        it('/:id/attributes should remove the attribute from the imperfection', function(done) {
-            app.delete(baseRoute + '/' + temporaryId + '/attributes/' + attributeId)
-                .expect(204)
-                .end(done);
-        });
-
-        it('/:id/skills should remove the skill from the imperfection', function(done) {
-            app.delete(baseRoute + '/' + temporaryId + '/skills/' + skillId)
-                .expect(204)
-                .end(done);
-        });
-
-        it('/:id/expertises should remove the expertise from the imperfection', function(done) {
-            app.delete(baseRoute + '/' + temporaryId + '/expertises/' + skillId)
-                .expect(204)
-                .end(done);
-        });
-
-        it('/:id should update the imperfection deleted field', function(done) {
-            app.delete(baseRoute + '/' + temporaryId)
-                .expect(204)
-                .end(done);
-        });
-
-    });
-
 });
