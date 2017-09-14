@@ -36,5 +36,5 @@ module.exports = function(router) {
     // Relations
 
     relations(router, 'bodyparts', 'bodypart');
-    relations(router, 'attributes', 'attribute', true);
+    relations(router, 'attributes', 'attribute');
 };
