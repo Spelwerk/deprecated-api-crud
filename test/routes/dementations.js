@@ -11,9 +11,9 @@ var app = require('../app'),
     verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
-describe('/sanity', function() {
+describe('/dementations', function() {
 
-    var baseRoute = '/sanity';
+    var baseRoute = '/dementations';
 
     var temporaryId;
 
@@ -74,7 +74,7 @@ describe('/sanity', function() {
                 });
         });
 
-        it('/:diseaseId should return one item', function(done) {
+        it('/:id should return one item', function(done) {
             app.get(baseRoute + '/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {

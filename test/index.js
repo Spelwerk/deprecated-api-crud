@@ -15,7 +15,7 @@ require('./routes/surnames');
 require('./routes/surnamegroups');
 
 require('./routes/diseases');
-require('./routes/sanity');
+require('./routes/dementations');
 require('./routes/wounds');
 require('./routes/labels');
 
