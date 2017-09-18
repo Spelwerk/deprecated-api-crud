@@ -15,19 +15,13 @@ describe('/weapons', function() {
 
     var baseRoute = '/weapons';
 
-    var temporaryId,
-        augmentationId,
-        speciesId,
-        weaponTypeId,
-        attributeId,
-        expertiseId,
-        skillId,
-        modId;
+    var temporaryId;
 
     before(function(done) {
         app.login(done);
     });
 
+    var weaponTypeId;
     before(function(done) {
         app.get('/weapontypes')
             .expect(200)
@@ -40,6 +34,7 @@ describe('/weapons', function() {
             });
     });
 
+    var augmentationId;
     before(function(done) {
         app.get('/augmentations')
             .expect(200)
@@ -52,6 +47,7 @@ describe('/weapons', function() {
             });
     });
 
+    var speciesId;
     before(function(done) {
         app.get('/species')
             .expect(200)
@@ -64,6 +60,7 @@ describe('/weapons', function() {
             });
     });
 
+    var attributeId;
     before(function(done) {
         app.get('/attributes')
             .expect(200)
@@ -76,6 +73,7 @@ describe('/weapons', function() {
             });
     });
 
+    var expertiseId;
     before(function(done) {
         app.get('/expertises')
             .expect(200)
@@ -88,6 +86,7 @@ describe('/weapons', function() {
             });
     });
 
+    var skillId;
     before(function(done) {
         app.get('/skills')
             .expect(200)
@@ -100,6 +99,7 @@ describe('/weapons', function() {
             });
     });
 
+    var modId;
     before(function(done) {
         app.get('/weaponmods')
             .expect(200)
@@ -144,8 +144,6 @@ describe('/weapons', function() {
         assert.isNumber(item.critical_dice);
         assert.isNumber(item.critical_bonus);
         assert.isNumber(item.hand);
-        assert.isNumber(item.initiative);
-        assert.isNumber(item.hit);
         assert.isNumber(item.distance);
     }
 
@@ -164,8 +162,6 @@ describe('/weapons', function() {
                 critical_dice: 4,
                 critical_bonus: 5,
                 hand: 1,
-                initiative: 6,
-                hit: 7,
                 distance: 100
             };
 

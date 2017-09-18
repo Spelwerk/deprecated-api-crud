@@ -26,6 +26,7 @@ module.exports = function(router) {
             if(!req.user.id) return next({status: 403, message: 'Forbidden', error: 'User is not logged in'});
 
             var defaultWeaponName = req.body.weapon || 'Brawl',
+                defaultWeaponDescription = 'Unarmed combat for the species: ' + req.body.name,
                 defaultDamageAttribute = defaults.attributes.bashing,
                 defaultSkillId = defaults.skills.melee;
 
@@ -45,6 +46,14 @@ module.exports = function(router) {
             species.multiply_expertise = req.body.multiply_expertise || 1;
             species.multiply_skill = req.body.multiply_skill || 1;
 
+            expertise.name = defaultWeaponName + ' Mastery';
+            expertise.description = 'Expertise for ' + defaultWeaponDescription;
+
+            weapontype.name = 'Unarmed ' + defaultWeaponName;
+            weapontype.description = 'Weapon Type for ' + defaultWeaponDescription;
+
+            weapon.name = defaultWeaponName;
+            weapon.description = defaultWeaponDescription;
             weapon.legal = 1;
             weapon.damage_dice = 2;
             weapon.critical_dice = 1;
@@ -76,7 +85,7 @@ module.exports = function(router) {
                 // EXPERTISE
 
                 function(callback) {
-                    query('INSERT INTO generic (user_id,name) VALUES (?,?)', [req.user.id, defaultWeaponName], function(err, result) {
+                    query('INSERT INTO generic (user_id,name,description) VALUES (?,?,?)', [req.user.id, expertise.name, expertise.description], function(err, result) {
                         if(err) return callback(err);
 
                         expertise.id = result.insertId;
@@ -91,7 +100,7 @@ module.exports = function(router) {
                 // WEAPON TYPE
 
                 function(callback) {
-                    query('INSERT INTO generic (user_id,name) VALUES (?,?)', [req.user.id, defaultWeaponName], function(err, result) {
+                    query('INSERT INTO generic (user_id,name,description) VALUES (?,?,?)', [req.user.id, weapontype.name, weapontype.description], function(err, result) {
                         if(err) return callback(err);
 
                         weapontype.id = result.insertId;
@@ -106,7 +115,7 @@ module.exports = function(router) {
                 // WEAPON
 
                 function(callback) {
-                    query('INSERT INTO generic (user_id,name) VALUES (?,?)', [req.user.id, defaultWeaponName], function(err, result) {
+                    query('INSERT INTO generic (user_id,name,description) VALUES (?,?,?)', [req.user.id, weapon.name, weapon.description], function(err, result) {
                         if(err) return callback(err);
 
                         weapon.id = result.insertId;

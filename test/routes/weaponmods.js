@@ -46,8 +46,6 @@ describe('/weaponmods', function() {
         assert.isNumber(item.critical_dice);
         assert.isNumber(item.critical_bonus);
         assert.isNumber(item.hand);
-        assert.isNumber(item.initiative);
-        assert.isNumber(item.hit);
         assert.isNumber(item.distance);
     }
 
@@ -65,8 +63,6 @@ describe('/weaponmods', function() {
                 critical_dice: 4,
                 critical_bonus: 5,
                 hand: -1,
-                initiative: 6,
-                hit: 7,
                 distance: 50
             };
 
