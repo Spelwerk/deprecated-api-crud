@@ -4,10 +4,10 @@ var nconf = require('nconf'),
     async = require('async'),
     path = require('path');
 
-var logger = require('./lib/logger');
-
 global.appRoot = path.resolve(__dirname);
 global.environment = process.env.NODE_ENV || 'development';
+
+var logger = require('./lib/logger');
 
 async.series([
     function(callback) {
@@ -51,7 +51,7 @@ async.series([
         console.error('[APP] Initialization failed', err);
         logger.error('[APP] Initialization failed', err);
     } else {
-        console.info('[APP] Initialized successfully');
-        logger.info('[APP] Initialized successfully');
+        console.info('[APP] Initialized successfully in ' + environment + ' environment');
+        logger.info('[APP] Initialized successfully in ' + environment + ' environment');
     }
 });

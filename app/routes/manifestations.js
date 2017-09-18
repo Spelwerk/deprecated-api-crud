@@ -33,7 +33,7 @@ module.exports = function(router) {
             manifestation.icon = req.body.icon;
 
             attribute.name = req.body.power;
-            attribute.type = defaults.attributes.types.power;
+            attribute.type = defaults.attributeTypes.power;
             attribute.maximum = req.body.maximum || defaults.manifestation.power.maximum;
 
             skill.name = req.body.skill;

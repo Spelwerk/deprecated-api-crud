@@ -75,7 +75,7 @@ describe('/species', function() {
                 description: hasher(20),
                 playable: true,
                 manifestation: true,
-                max_age: 10,
+                max_age: 100,
                 multiply_doctrine: 10,
                 multiply_expertise: 10,
                 multiply_skill: 10,
@@ -95,7 +95,7 @@ describe('/species', function() {
                 });
         });
 
-        it('/:id/clone should create a copy', function(done) {
+        xit('/:id/clone should create a copy', function(done) {
             app.post(baseRoute + '/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
@@ -107,7 +107,7 @@ describe('/species', function() {
                 });
         });
 
-        it('/:id/comments should create a new comment', function(done) {
+        xit('/:id/comments should create a new comment', function(done) {
             app.post(baseRoute + '/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
@@ -119,7 +119,7 @@ describe('/species', function() {
                 });
         });
 
-        it('/:id/attributes should add a relation to the item', function(done) {
+        xit('/:id/attributes should add a relation to the item', function(done) {
             var payload = {
                 insert_id: attributeId,
                 value: 10
@@ -132,7 +132,7 @@ describe('/species', function() {
 
     });
 
-    describe('PUT', function() {
+    xdescribe('PUT', function() {
 
         it('/:id should update the item with new values', function(done) {
             var payload = {
@@ -159,7 +159,7 @@ describe('/species', function() {
 
     });
 
-    describe('GET', function() {
+    xdescribe('GET', function() {
 
         it('/ should return a list', function(done) {
             app.get(baseRoute)

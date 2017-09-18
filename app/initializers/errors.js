@@ -3,42 +3,24 @@
 module.exports = function(app, callback) {
     var logger = require(appRoot + '/lib/logger');
 
-    app.use(function(err, req, res, next) {
-        if(!err.database) next();
-
-        switch(err.error.errno)
-        {
-            default:
-                err.status = 500;
-                err.message = 'Database Error';
-                break;
-
-            case 1062:
-                var split = err.error.sqlMessage.split("\' for key \'")[1].split("_UNIQUE")[0];
-
-                err.status = 409;
-                err.message = 'This ' + split + ' has already been saved';
-                break;
-        }
-
-        next(err);
-    });
-
     // Return error information as response
     app.use(function(err, req, res, next) {
-        if(environment === 'development') console.error(err);
+        err.status = err.status || 500;
+        err.message = err.message || 'Server encountered an error';
+        err.error = err.error || 'Contact an administrator if the error persists.';
 
-        var status = err.status || 500;
+        var fullInformation = {message: err.message, error: err.error, stackTrace: err.stackTrace, environment: environment, method: req.method, url: req.url},
+            basicInformation = {message: err.message, error: err.error};
 
-        var message = err.message || 'Server encountered an error';
+        var sendError = environment !== 'production'
+            ? fullInformation
+            : basicInformation;
 
-        var error = environment === 'development'
-            ? {environment: environment, method: req.method, url: req.url, query: err.query, error: err.error}
-            : null;
+        logger.error(fullInformation);
 
-        logger.error(error);
+        if(environment !== 'production') console.error(fullInformation);
 
-        res.status(status).send({message: message, error: error});
+        res.status(err.status).send(sendError);
     });
 
     callback();

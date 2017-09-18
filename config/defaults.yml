@@ -1,37 +1,54 @@
 attributes:
-  ids:
-    resilience: 2
-    stamina: 2
-    tolerance: 2
-    initiative: 2
-    speed: 2
-    disease: 2
-    sanity: 2
-    trauma: 2
-    ballistic: 2
-    bashing: 2
-    piercing: 2
-    slashing: 2
-    damage: 2
-    honor: 2
-    infamy: 2
-    ammunition: 2
-    money: 2
-    rations: 2
-    experience: 2
-    energy: 2
+  # resistance
+  sanity: 11
+  stamina: 12
+  tolerance: 13
+  # wound
+  endurance: 14
+  balance: 15
+  resilience: 16
+  # hitPoint
+  disease: 17
+  dementation: 18
+  trauma: 19
+  # combat
+  initiative: 20
+  speed: 21
+  hit: 22
+  damage: 23
+  # damage
+  ballistic: 24
+  bashing: 25
+  piercing: 26
+  slashing: 27
+  mind: 28
+  poison: 29
+  # reputation
+  honor: 30
+  notoriety: 31
+  # consumable
+  ammunition: 32
+  wealth: 33
+  rations: 34
+  # experience
+  experience: 35
+  # energy
+  energy: 36
 
-  types:
-    body: 1
-    combat: 1
-    wound: 1
-    protection: 1
-    damage: 1
-    reputation: 1
-    consumable: 1
-    experience: 1
-    energy: 1
-    power: 1
+attributeTypes:
+  resistance: 1
+  wound: 2
+  hitPoint: 3
+  combat: 4
+  damage: 5
+  reputation: 6
+  consumable: 7
+  experience: 8
+  energy: 9
+  power: 10
+
+skills:
+  melee: 49
 
 manifestation:
   power:

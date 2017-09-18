@@ -1,5 +1,3 @@
-var sequel = require('../../lib/sql/sequel');
-
 var basic = require('./../../lib/generic/basic');
 
 module.exports = function(router) {
@@ -10,16 +8,6 @@ module.exports = function(router) {
     var sql = 'SELECT * FROM ' + tableName + ' LEFT JOIN generic ON generic.id = ' + tableName + '.generic_id';
 
     basic.root(router, sql, tableName);
-
-    // Special
-
-    router.route('/special/:special')
-        .get(function(req, res, next) {
-            var call = sql + ' WHERE deleted IS NULL AND ' +
-                'special = ?';
-
-            sequel.get(req, res, next, call, [req.params.special]);
-        });
 
     // ID
 
