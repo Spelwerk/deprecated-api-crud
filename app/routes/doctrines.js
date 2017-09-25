@@ -44,10 +44,10 @@ module.exports = function(router) {
                 // SKILL
 
                 function(callback) {
-                    query('SELECT generic_id FROM skill WHERE manifestation_id = ?', [manifestation.id], function(err, results) {
+                    query('SELECT generic_id AS id FROM skill WHERE manifestation_id = ?', [manifestation.id], function(err, results) {
                         if(err) return callback(err);
 
-                        skill.id = results[0].generic_id;
+                        skill.id = results[0].id;
 
                         callback();
                     });

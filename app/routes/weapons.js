@@ -1,7 +1,9 @@
-var sequel = require('../../lib/sql/sequel');
+var sequel = require('./../../lib/sql/sequel');
 
 var basic = require('./../../lib/generic/basic'),
     relations = require('./../../lib/generic/relations');
+
+var weapons = require('./../../lib/specific/weapons');
 
 module.exports = function(router) {
     'use strict';
@@ -38,7 +40,26 @@ module.exports = function(router) {
         'LEFT JOIN generic ON generic.id = weapon.generic_id ' +
         'LEFT JOIN weapontype ON weapontype.generic_id = weapon.weapontype_id';
 
-    basic.root(router, sql, tableName);
+    router.route('/')
+        .get(function(req, res, next) {
+            var call = sql + ' WHERE deleted IS NULL AND canon = 1';
+
+            sequel.get(req, res, next, call);
+        })
+        .post(function(req, res, next) {
+            weapons.post(req, function(err, id) {
+                if(err) return next(err);
+
+                res.status(201).send({id: id});
+            });
+        });
+
+    router.route('/deleted')
+        .get(function(req, res, next) {
+            var call = sql + ' WHERE deleted IS NOT NULL';
+
+            sequel.get(req, res, next, call);
+        });
 
     // Augmentation
 

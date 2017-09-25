@@ -414,7 +414,7 @@ module.exports = function(router) {
             });
         });
 
-    router.route('/email/verify')
+    router.route('/email/verify') // todo send email that email has been changed to both adresses
         .post(function(req, res, next) {
             var user = {},
                 insert = {};
@@ -493,7 +493,7 @@ module.exports = function(router) {
             });
         });
 
-    router.route('/password/verify')
+    router.route('/password/verify') // todo send email that password has been changed
         .post(function(req, res, next) {
             var user = {},
                 insert = {};
