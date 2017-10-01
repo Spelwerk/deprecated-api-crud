@@ -60,14 +60,14 @@ describe('/countries', function() {
             });
     });
 
-    var surnameGroupId;
+    var lastnameGroupId;
     before(function(done) {
-        app.get('/surnamegroups')
+        app.get('/lastnamegroups')
             .expect(200)
             .end(function(err, res) {
                 if(err) return done(err);
 
-                surnameGroupId = res.body.results[0].id;
+                lastnameGroupId = res.body.results[0].id;
 
                 done();
             });
@@ -91,10 +91,10 @@ describe('/countries', function() {
     function verifyItem(item) {
         verifier.generic(item);
 
-        assert.isNumber(item.language_id);
-        assert.isNumber(item.firstnamegroup_id);
-        assert.isNumber(item.nicknamegroup_id);
-        assert.isNumber(item.surnamegroup_id);
+        if(item.language_id) assert.isNumber(item.language_id);
+        if(item.firstnamegroup_id) assert.isNumber(item.firstnamegroup_id);
+        if(item.nicknamegroup_id) assert.isNumber(item.nicknamegroup_id);
+        if(item.lastnamegroup_id) assert.isNumber(item.lastnamegroup_id);
     }
 
 
@@ -107,7 +107,7 @@ describe('/countries', function() {
                 language_id: languageId,
                 firstnamegroup_id: firstnameGroupId,
                 nicknamegroup_id: nicknameGroupId,
-                surnamegroup_id: surnameGroupId
+                lastnamegroup_id: lastnameGroupId
             };
 
             app.post(baseRoute, payload)

@@ -11,27 +11,14 @@ var app = require('../app'),
     verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
-describe('/surnamegroups', function() {
+describe('/drive', function() {
 
-    var baseRoute = '/surnamegroups';
+    var baseRoute = '/drive';
 
     var temporaryId;
 
     before(function(done) {
         app.login(done);
-    });
-
-    var nameId;
-    before(function(done) {
-        app.get('/surnames')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                nameId = res.body.results[0].id;
-
-                done();
-            })
     });
 
     function verifyList(body) {
@@ -71,12 +58,6 @@ describe('/surnamegroups', function() {
                 });
         });
 
-        it('/:id/surnames should add a relation to the item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/surnames', { insert_id: nameId })
-                .expect(201)
-                .end(done);
-        });
-
     });
 
     describe('GET', function() {
@@ -103,23 +84,6 @@ describe('/surnamegroups', function() {
 
                     done();
                 })
-        });
-
-        it('/:id/surnames should return a list', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/surnames')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        assert.isString(item.name);
-                    });
-
-                    done();
-                });
         });
 
     });

@@ -9,4 +9,6 @@ module.exports = function(router) {
 
     generic.root(router, sql, tableName, true);
     generic.id(router, sql, tableName, true);
+    generic.canon(router, tableName);
+    generic.revive(router, tableName);
 };

@@ -12,8 +12,13 @@ require('./routes/nicknames');
 require('./routes/nicknamegroups');
 require('./routes/firstnames');
 require('./routes/firstnamegroups');
-require('./routes/surnames');
-require('./routes/surnamegroups');
+require('./routes/lastnames');
+require('./routes/lastnamegroups');
+
+require('./routes/drive');
+require('./routes/pride');
+require('./routes/problem');
+require('./routes/shame');
 
 require('./routes/diseases');
 require('./routes/dementations');

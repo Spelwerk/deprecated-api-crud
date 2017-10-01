@@ -36,7 +36,9 @@ module.exports = function(router) {
                 aDescription = 'Power attribute for: ' + req.body.name,
                 aIcon = req.body.icon,
                 aType = defaults.attributeType.power,
-                aMaximum = req.body.maximum;
+                aOptional = 1,
+                aMaximum = req.body.maximum,
+                aValue = 0;
 
             var sName = req.body.skill,
                 sDescription = 'Skill for: ' + req.body.name,
@@ -44,7 +46,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    attributes(req.user, aName, aDescription, aIcon, aType, aMaximum, function(err, id) {
+                    attributes(req.user, aName, aDescription, aIcon, aType, aOptional, aMaximum, aValue, function(err, id) {
                         if(err) return callback(err);
 
                         aId = id;

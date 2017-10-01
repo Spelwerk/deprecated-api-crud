@@ -264,8 +264,43 @@ describe('/worlds', function() {
         if(item.species_id) assert.isNumber(item.species_id);
     }
 
+    it('/ should create a new item', function(done) {
+        var payload = {
+            name: hasher(20),
+            description: hasher(20),
+            icon: 'http://fakeicon.com/' + hasher(20) + '.png',
+            augmentation: 1,
+            bionic: 1,
+            manifestation: 1,
+            software: 1,
+            split_doctrine: 2,
+            split_expertise: 3,
+            split_milestone: 4,
+            split_relationship: 5,
+            split_skill: 6,
+            max_doctrine: 7,
+            max_expertise: 8,
+            max_gift: 9,
+            max_imperfection: 10,
+            max_milestone: 11,
+            max_relationship: 12,
+            max_skill: 13
+        };
 
-    describe('POST', function() {
+        app.post(baseRoute, payload)
+            .expect(201)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                assert.isNumber(res.body.id);
+
+                temporaryId = res.body.id;
+
+                done();
+            });
+    });
+
+    xdescribe('POST', function() {
 
         it('/ should create a new item', function(done) {
             var payload = {
@@ -397,7 +432,7 @@ describe('/worlds', function() {
 
     });
 
-    describe('PUT', function() {
+    xdescribe('PUT', function() {
 
         it('/:id should update the item with new values', function(done) {
             var payload = {
@@ -418,7 +453,7 @@ describe('/worlds', function() {
 
     });
 
-    describe('GET', function() {
+    xdescribe('GET', function() {
 
         it('/ should return a list', function(done) {
             app.get(baseRoute)
