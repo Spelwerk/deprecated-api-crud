@@ -1,32 +1,19 @@
-var sequel = require('../../lib/sql/sequel');
+'use strict';
 
-var basic = require('./../../lib/generic/basic');
+var generic = require('../../lib/helper/generic');
 
 module.exports = function(router) {
-    'use strict';
-
     var tableName = 'assettype';
 
-    var sql = 'SELECT * FROM ' + tableName + ' LEFT JOIN generic ON generic.id = ' + tableName + '.generic_id';
+    var sql = 'SELECT * FROM ' + tableName + ' ' +
+        'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
 
-    basic.root(router, sql, tableName);
-
-    // Group
-
-    router.route('/group/:groupId')
-        .get(function(req, res, next) {
-            var call = sql + ' WHERE deleted IS NULL AND ' +
-                'assetgroup_id = ?';
-
-            sequel.get(req, res, next, call, [req.params.groupId]);
-        });
-
-    // ID
-
-    basic.id(router, sql, tableName);
-    basic.canon(router);
-    basic.comments(router);
-    basic.labels(router);
-    basic.ownership(router);
-    basic.revive(router);
+    generic.root(router, sql, tableName, false, true);
+    generic.id(router, sql, tableName, false, true);
+    generic.canon(router, tableName);
+    generic.clone(router, tableName);
+    generic.comments(router, tableName);
+    generic.labels(router, tableName);
+    generic.ownership(router, tableName);
+    generic.revive(router, tableName);
 };

@@ -21,33 +21,18 @@ describe('/attributes', function() {
         app.login(done);
     });
 
-    var attributeTypeId;
+    var typeId;
     before(function(done) {
         app.get('/attributetypes')
             .expect(200)
             .end(function(err, res) {
                 if(err) return done(err);
 
-                attributeTypeId = res.body.results[0].id;
+                typeId = res.body.results[0].id;
 
                 done();
             });
     });
-
-    var manifestationId;
-/*
-    before(function(done) {
-        app.get('/manifestations')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                manifestationId = res.body.results[0].id;
-
-                done();
-            });
-    });
-*/
 
     function verifyList(body) {
         assert.isNumber(body.length);
@@ -78,7 +63,7 @@ describe('/attributes', function() {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
-                attributetype_id: attributeTypeId,
+                attributetype_id: typeId,
                 maximum: 10,
                 icon: 'http://fakeicon.com/' + hasher(20) + '.png'
             };
@@ -157,20 +142,8 @@ describe('/attributes', function() {
                 });
         });
 
-        xit('/manifestation/:manifestationId should return a list', function(done) {
-            app.get('/attributes/manifestation/' + manifestationId)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyList(res.body);
-
-                    done();
-                });
-        });
-
         it('/type/:typeId should return a list', function(done) {
-            app.get(baseRoute)
+            app.get(baseRoute + '/type/' + typeId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);

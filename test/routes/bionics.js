@@ -94,7 +94,7 @@ describe('/bionics', function() {
         assert.isNumber(item.bodypart_id);
         assert.isBoolean(item.legal);
         assert.isNumber(item.price);
-        assert.isNumber(item.hacking);
+        assert.isNumber(item.hacking_difficulty);
     }
 
 
@@ -107,7 +107,7 @@ describe('/bionics', function() {
                 bodypart_id: bodyPartId,
                 legal: true,
                 price: 10,
-                hacking: 10
+                hacking_difficulty: 10
             };
 
             app.post(baseRoute, payload)

@@ -1,48 +1,20 @@
-var sequel = require('../../lib/sql/sequel'),
-    generic = require('../../lib/sql/generic');
+'use strict';
 
-var basic = require('./../../lib/generic/basic'),
-    relations = require('./../../lib/generic/relations');
+var generic = require('../../lib/helper/generic'),
+    relations = require('../../lib/helper/relations');
+
+var sequel = require('../../lib/sql/sequel');
 
 module.exports = function(router) {
-    'use strict';
-
     var tableName = 'asset';
 
-    var sql = 'SELECT ' +
-        'asset.generic_id, ' +
-        'asset.assettype_id, ' +
-        'asset.legal, ' +
-        'asset.price, ' +
-        'assettype.assetgroup_id, ' +
-        'assettype.equipable, ' +
-        'generic.id, ' +
-        'generic.user_id, ' +
-        'generic.original_id, ' +
-        'generic.canon, ' +
-        'generic.name, ' +
-        'generic.description, ' +
-        'generic.icon, ' +
-        'generic.created, ' +
-        'generic.updated, ' +
-        'generic.deleted ' +
-        'FROM asset ' +
-        'LEFT JOIN generic ON generic.id = asset.generic_id ' +
-        'LEFT JOIN assettype ON assettype.generic_id = asset.assettype_id';
+    var sql = 'SELECT * FROM ' + tableName + ' ' +
+        'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id ' +
+        'LEFT JOIN ' + tableName + '_is_corporation ON ' + tableName + '_is_corporation.' + tableName + '_id = ' + tableName + '.id';
 
-    basic.root(router, sql, tableName);
+    generic.root(router, sql, tableName, false, true);
 
-    // Group
-
-    router.route('/group/:groupId')
-        .get(function(req, res, next) {
-            var call = sql + ' WHERE deleted IS NULL AND ' +
-                'assetgroup_id = ?';
-
-            sequel.get(req, res, next, call, [req.params.groupId]);
-        });
-
-    // Type
+    // TYPE
 
     router.route('/type/:typeId')
         .get(function(req, res, next) {
@@ -54,19 +26,18 @@ module.exports = function(router) {
 
     // ID
 
-    basic.id(router, sql, tableName);
-    basic.canon(router);
-    basic.clone(router, tableName);
-    basic.comments(router);
-    basic.images(router);
-    basic.labels(router);
-    basic.ownership(router);
-    basic.revive(router);
+    generic.id(router, sql, tableName, false, true);
+    generic.canon(router, tableName);
+    generic.clone(router, tableName);
+    generic.comments(router, tableName);
+    generic.images(router, tableName);
+    generic.labels(router, tableName);
+    generic.ownership(router, tableName);
+    generic.revive(router, tableName);
 
-    // Relations
+    // RELATIONS
 
-    relations(router, 'attributes', 'attribute', true);
-    relations(router, 'doctrines', 'doctrine', true);
-    relations(router, 'expertises', 'expertise', true);
-    relations(router, 'skills', 'skill', true);
+    relations(router, tableName, 'attributes', 'attribute');
+    relations(router, tableName, 'doctrines', 'doctrine');
+    relations(router, tableName, 'skills', 'skill');
 };

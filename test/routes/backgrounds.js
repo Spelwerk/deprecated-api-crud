@@ -205,12 +205,12 @@ describe('/backgrounds', function() {
                 .end(done);
         });
 
-        it('/:id/augmentations should add a relation to the item', function(done) {
+        it('/:id/bionics should add a relation to the item', function(done) {
             var payload = {
                 insert_id: 1
             };
 
-            app.post(baseRoute + '/' + temporaryId + '/augmentations', payload)
+            app.post(baseRoute + '/' + temporaryId + '/bionics', payload)
                 .expect(201)
                 .end(done);
         });
@@ -320,7 +320,7 @@ describe('/backgrounds', function() {
                 });
         });
 
-        it('/manifestation/:typeId should return a list', function(done) {
+        it('/manifestation/:manifestationId should return a list', function(done) {
             app.get('/backgrounds/manifestation/' + manifestationId)
                 .expect(200)
                 .end(function(err, res) {
@@ -332,7 +332,7 @@ describe('/backgrounds', function() {
                 });
         });
 
-        it('/species/:typeId should return a list', function(done) {
+        it('/species/:speciesId should return a list', function(done) {
             app.get('/backgrounds/species/' + speciesId)
                 .expect(200)
                 .end(function(err, res) {
@@ -414,8 +414,8 @@ describe('/backgrounds', function() {
                 });
         });
 
-        it('/:id/augmentations should return a list', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/augmentations')
+        it('/:id/bionics should return a list', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/bionics')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);

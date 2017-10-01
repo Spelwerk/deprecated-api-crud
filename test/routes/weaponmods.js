@@ -45,7 +45,6 @@ describe('/weaponmods', function() {
         assert.isNumber(item.damage_bonus);
         assert.isNumber(item.critical_dice);
         assert.isNumber(item.critical_bonus);
-        assert.isNumber(item.hand);
         assert.isNumber(item.distance);
     }
 
@@ -62,7 +61,6 @@ describe('/weaponmods', function() {
                 damage_bonus: 3,
                 critical_dice: 4,
                 critical_bonus: 5,
-                hand: -1,
                 distance: 50
             };
 

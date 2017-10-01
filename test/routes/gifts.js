@@ -34,19 +34,6 @@ describe('/gifts', function() {
             });
     });
 
-    var expertiseId;
-    before(function(done) {
-        app.get('/expertises')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                expertiseId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
     var manifestationId;
     before(function(done) {
         app.get('/manifestations')
@@ -167,17 +154,6 @@ describe('/gifts', function() {
                 .end(done);
         });
 
-        it('/:id/expertises should add a relation to the item', function(done) {
-            var payload = {
-                insert_id: expertiseId,
-                value: 10
-            };
-
-            app.post(baseRoute + '/' + temporaryId + '/expertises', payload)
-                .expect(201)
-                .end(done);
-        });
-
         it('/:id/skills should add a relation to the item', function(done) {
             var payload = {
                 insert_id: skillId,
@@ -212,12 +188,6 @@ describe('/gifts', function() {
 
         it('/:id/attributes should change the value', function(done) {
             app.put(baseRoute + '/' + temporaryId + '/attributes/' + attributeId, {value: 8})
-                .expect(204)
-                .end(done);
-        });
-
-        it('/:id/expertises should change the value', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/expertises/' + expertiseId, {value: 8})
                 .expect(204)
                 .end(done);
         });
@@ -318,23 +288,6 @@ describe('/gifts', function() {
 
         it('/:id/attributes should return a list', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/attributes')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        verifier.generic(item);
-                    });
-
-                    done();
-                });
-        });
-
-        it('/:id/expertises should return a list', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/expertises')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);

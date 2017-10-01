@@ -46,8 +46,7 @@ describe('/languages', function() {
         it('/ should create a new item', function(done) {
             var payload = {
                 name: hasher(20),
-                description: hasher(20),
-                icon: 'http://fakeicon.com/' + hasher(20) + '.png'
+                description: hasher(20)
             };
 
             app.post(baseRoute, payload)

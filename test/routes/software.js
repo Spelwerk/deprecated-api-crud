@@ -21,6 +21,19 @@ describe('/software', function() {
         app.login(done);
     });
 
+    var typeId;
+    before(function(done) {
+        app.get('/softwaretypes')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                typeId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
     function verifyList(body) {
         assert.isNumber(body.length);
 
@@ -39,9 +52,10 @@ describe('/software', function() {
     function verifyItem(item) {
         verifier.generic(item);
 
+        assert.isNumber(item.softwaretype_id);
         assert.isBoolean(item.legal);
         assert.isNumber(item.price);
-        assert.isNumber(item.hacking);
+        assert.isNumber(item.hacking_difficulty);
         assert.isNumber(item.hacking_bonus);
     }
 
@@ -52,9 +66,10 @@ describe('/software', function() {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
+                softwaretype_id: typeId,
                 legal: true,
                 price: 10,
-                hacking: 10,
+                hacking_difficulty: 10,
                 hacking_bonus: 10
             };
 
@@ -134,6 +149,18 @@ describe('/software', function() {
 
         it('/deleted should return a list of deleted items', function(done) {
             app.get(baseRoute + '/deleted')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('/type/:typeId should return a list', function(done) {
+            app.get(baseRoute + '/type/' + typeId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);

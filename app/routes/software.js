@@ -1,21 +1,35 @@
-var basic = require('./../../lib/generic/basic');
+'use strict';
+
+var generic = require('../../lib/helper/generic');
+
+var sequel = require('../../lib/sql/sequel');
 
 module.exports = function(router) {
-    'use strict';
-
     var tableName = 'software';
 
-    var sql = 'SELECT * FROM ' + tableName + ' LEFT JOIN generic ON generic.id = ' + tableName + '.generic_id';
+    var sql = 'SELECT * FROM ' + tableName + ' ' +
+        'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
 
-    basic.root(router, sql, tableName);
+    generic.root(router, sql, tableName, false, true);
+
+    // Type
+
+    router.route('/type/:typeId')
+        .get(function(req, res, next) {
+            var call = sql + ' WHERE deleted IS NULL AND ' +
+                'softwaretype_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.typeId]);
+        });
 
     // ID
 
-    basic.id(router, sql, tableName);
-    basic.canon(router);
-    basic.clone(router, tableName);
-    basic.comments(router);
-    basic.labels(router);
-    basic.ownership(router);
-    basic.revive(router);
+    generic.id(router, sql, tableName, false, true);
+    generic.canon(router, tableName);
+    generic.clone(router, tableName);
+    generic.comments(router, tableName);
+    generic.labels(router, tableName);
+    generic.images(router, tableName);
+    generic.ownership(router, tableName);
+    generic.revive(router, tableName);
 };

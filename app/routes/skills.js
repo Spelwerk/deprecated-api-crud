@@ -1,16 +1,21 @@
+'use strict';
+
 var async = require('async');
 
-var query = require('./../../lib/sql/query'),
-    sequel = require('../../lib/sql/sequel');
+var generic = require('../../lib/helper/generic');
 
-var basic = require('./../../lib/generic/basic');
+var sequel = require('../../lib/sql/sequel');
+
+var expertises = require('../../lib/tables/expertises'),
+    skills = require('../../lib/tables/skills');
 
 module.exports = function(router) {
-    'use strict';
-
     var tableName = 'skill';
 
-    var sql = 'SELECT * FROM ' + tableName + ' LEFT JOIN generic ON generic.id = ' + tableName + '.generic_id';
+    var sql = 'SELECT * FROM ' + tableName + ' ' +
+        'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id ' +
+        'LEFT JOIN skill_is_manifestation ON skill_is_manifestation.skill_id = skill.id ' +
+        'LEFT JOIN skill_is_species ON skill_is_species.skill_id = skill.id';
 
     router.route('/')
         .get(function(req, res, next) {
@@ -19,61 +24,33 @@ module.exports = function(router) {
             sequel.get(req, res, next, call);
         })
         .post(function(req, res, next) {
-            if(!req.user.id) return next({status: 403, message: 'Forbidden', error: 'User is not logged in'});
+            var sId,
+                sName = req.body.name,
+                sDescription = req.body.description,
+                sIcon = req.body.icon,
+                sManifestation = req.body.manifestation_id,
+                sSpecies = req.body.species_id;
 
-            var skill = {},
-                expertise = {};
-
-            skill.name = req.body.name;
-            skill.description = req.body.description || null;
-            skill.icon = req.body.icon || null;
-
-            skill.manifestation = req.body.manifestation_id || null;
-            skill.species = req.body.species_id || null;
-
-            expertise.description = 'Generic expertise used where the other expertises do not fit, and you still want to show you are extra good at something. You can use the Custom Description field to explain where this is applicable for your character. Remember that if you have a suggestion for a new expertise you can easily add it to the game system and your own created worlds. If the new expertise is of great quality it may even be adopted as canon by Spelwerk.';
+            var eName = req.body.name,
+                eDescription = 'Generic expertise used where the other expertises do not fit, and you still want to show you are extra good at something. You can use the Custom Description field to explain where this is applicable for your character. Remember that if you have a suggestion for a new expertise you can easily add it to the game system and your own created worlds. If the new expertise is of great quality it may even be adopted as canon by Spelwerk.';
 
             async.series([
-
-                // SKILL
-
                 function(callback) {
-                    query('INSERT INTO generic (user_id,name,description,icon) VALUES (?,?,?,?)', [req.user.id, skill.name, skill.description, skill.icon], function(err, result) {
+                    skills(req.user, sName, sDescription, sIcon, sManifestation, sSpecies, function(err, id) {
                         if(err) return callback(err);
 
-                        skill.id = result.insertId;
+                        sId = id;
 
                         callback();
-                    });
+                    })
                 },
                 function(callback) {
-                    query('INSERT INTO skill (generic_id,manifestation_id,species_id) VALUES (?,?,?)', [skill.id, skill.manifestation, skill.species], callback);
-                },
-                function(callback) {
-                    query('INSERT INTO user_has_generic (user_id,generic_id) VALUES (?,?)', [req.user.id, skill.id], callback);
-                },
-
-                // GENERIC EXPERTISE
-
-                function(callback) {
-                    query('INSERT INTO generic (user_id,name,description) VALUES (?,?,?)', [req.user.id, skill.name, expertise.description], function(err, result) {
-                        if(err) return callback(err);
-
-                        expertise.id = result.insertId;
-
-                        callback();
-                    });
-                },
-                function(callback) {
-                    query('INSERT INTO expertise (generic_id,skill_id,manifestation_id,species_id) VALUES (?,?,?,?)', [expertise.id, skill.id, skill.manifestation, skill.species], callback);
-                },
-                function(callback) {
-                    query('INSERT INTO user_has_generic (user_id,generic_id) VALUES (?,?)', [req.user.id, expertise.id], callback);
+                    expertises(req.user, eName, eDescription, sId, sManifestation, sSpecies, callback);
                 }
             ], function(err) {
                 if(err) return next(err);
 
-                res.status(201).send({id: skill.id});
+                res.status(201).send({id: sId});
             });
         });
 
@@ -84,7 +61,7 @@ module.exports = function(router) {
             sequel.get(req, res, next, call);
         });
 
-    basic.root(router, sql, tableName);
+    generic.root(router, sql, tableName);
 
     // Manifestation
 
@@ -108,11 +85,11 @@ module.exports = function(router) {
 
     // ID
 
-    basic.id(router, sql, tableName);
-    basic.canon(router);
-    basic.clone(router, tableName);
-    basic.comments(router);
-    basic.labels(router);
-    basic.ownership(router);
-    basic.revive(router);
+    generic.id(router, sql, tableName, false, true);
+    generic.canon(router, tableName);
+    generic.clone(router, tableName);
+    generic.comments(router, tableName);
+    generic.labels(router, tableName);
+    generic.ownership(router, tableName);
+    generic.revive(router, tableName);
 };

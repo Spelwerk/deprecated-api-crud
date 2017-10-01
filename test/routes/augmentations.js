@@ -93,7 +93,7 @@ describe('/augmentations', function() {
 
         assert.isBoolean(item.legal);
         assert.isNumber(item.price);
-        assert.isNumber(item.hacking);
+        assert.isNumber(item.hacking_difficulty);
     }
 
 
@@ -105,7 +105,7 @@ describe('/augmentations', function() {
                 description: hasher(20),
                 legal: true,
                 price: 10,
-                hacking: 10
+                hacking_difficulty: 10
             };
 
             app.post(baseRoute, payload)

@@ -5,13 +5,10 @@ var validator = require('validator'),
 module.exports.generic = function(item) {
     assert.isNumber(item.id);
     assert.isNumber(item.user_id);
-    if(item.original_id) assert.isNumber(item.original_id);
-
     assert.isBoolean(item.canon);
 
     assert.isString(item.name);
     if(item.description) assert.isString(item.description);
-
     if(item.icon) assert.equal(validator.isURL(item.icon), true);
 
     assert.isString(item.created);

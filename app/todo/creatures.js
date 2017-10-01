@@ -2,8 +2,8 @@
 
 var sequel = require('../../lib/sql/sequel');
 
-var basic = require('./../../lib/generic/basic'),
-    creatures = require('./../../lib/specific/creatures');
+var basic = require('../../lib/generic/basic'),
+    creatures = require('../../lib/helper/creatures');
 
 module.exports = function(router) {
     var tableName = 'creature';

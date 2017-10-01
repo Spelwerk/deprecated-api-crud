@@ -228,7 +228,7 @@ module.exports = function(router) {
                         // Loop through species list of attributes
                         for (var m in species.attribute) {
 
-                            // If species attribute was not added to world call = it is species specific attribute
+                            // If species attribute was not added to world call = it is species helper attribute
                             if (species.attribute[m].updated !== true) {
                                 call += '(' + insert.id + ',' + species.attribute[m].attribute_id + ',' + species.attribute[m].value + '),';
                             }

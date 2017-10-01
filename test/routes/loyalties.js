@@ -49,8 +49,8 @@ describe('/loyalties', function() {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
-                value: 10,
-                icon: 'http://fakeicon.com/' + hasher(20) + '.png'
+                icon: 'http://fakeicon.com/' + hasher(20) + '.png',
+                value: 10
             };
 
             app.post(baseRoute, payload)
@@ -61,30 +61,6 @@ describe('/loyalties', function() {
                     assert.isNumber(res.body.id);
 
                     temporaryId = res.body.id;
-
-                    done();
-                });
-        });
-
-        it('/:id/clone should create a copy', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/clone')
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
-        });
-
-        it('/:id/comments should create a new comment', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/comments', { comment: hasher(20) })
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.id);
 
                     done();
                 });
@@ -146,30 +122,6 @@ describe('/loyalties', function() {
                     if(err) return done(err);
 
                     verifyItem(res.body.result);
-
-                    done();
-                })
-        });
-
-        it('/:id/ownership should return ownership status', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/ownership')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isBoolean(res.body.ownership);
-
-                    done();
-                });
-        });
-
-        it('/:id/comments should get all available comments', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/comments')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifier.comments(res.body.results);
 
                     done();
                 })

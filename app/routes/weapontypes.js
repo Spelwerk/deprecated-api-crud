@@ -1,14 +1,19 @@
+'use strict';
+
+var async = require('async');
+
+var generic = require('../../lib/helper/generic');
+
 var sequel = require('../../lib/sql/sequel');
 
-var basic = require('./../../lib/generic/basic'),
-    weapontypes = require('./../../lib/specific/weapontypes');
+var expertises = require('../../lib/tables/expertises'),
+    weaponTypes = require('../../lib/tables/weapontypes');
 
 module.exports = function(router) {
-    'use strict';
-
     var tableName = 'weapontype';
 
-    var sql = 'SELECT * FROM ' + tableName + ' LEFT JOIN generic ON generic.id = ' + tableName + '.generic_id';
+    var sql = 'SELECT * FROM ' + tableName + ' ' +
+        'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
 
     router.route('/')
         .get(function(req, res, next) {
@@ -17,10 +22,43 @@ module.exports = function(router) {
             sequel.get(req, res, next, call);
         })
         .post(function(req, res, next) {
-            weapontypes.post(req, function(err, id) {
+            var eId,
+                eName = req.body.name + ' Mastery',
+                eDescription = req.body.description,
+                eSkillId = req.body.skill_id,
+                eSpeciesId = req.body.species_id;
+
+            var wId,
+                wName = req.body.name,
+                wDescription = req.body.description,
+                wIcon = req.body.icon,
+                wAttributeId = req.body.attribute_id,
+                wAugmentation = !!req.body.augmentation,
+                wSpecies = !!req.body.species_id;
+
+            async.series([
+                function(callback) {
+                    expertises(req.user, eName, eDescription, eSkillId, null, eSpeciesId, function(err, id) {
+                        if(err) return callback(err);
+
+                        eId = id;
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    weaponTypes(req.user, wName, wDescription, wIcon, wAttributeId, eId, wAugmentation, wSpecies, function(err, id) {
+                        if(err) return callback(err);
+
+                        wId = id;
+
+                        callback();
+                    });
+                }
+            ], function(err) {
                 if(err) return next(err);
 
-                res.status(201).send({id: id});
+                res.status(201).send({id: wId});
             });
         });
 
@@ -30,29 +68,29 @@ module.exports = function(router) {
 
             sequel.get(req, res, next, call);
         });
-    
+
     // Augmentation
 
-    router.route('/augmentation/:augmentationId')
+    router.route('/augmentation/:augmentation')
         .get(function(req, res, next) {
             var call = sql + ' WHERE deleted IS NULL AND ' +
-                'augmentation_id = ?';
+                'augmentation = ?';
 
-            sequel.get(req, res, next, call, [req.params.augmentationId]);
+            sequel.get(req, res, next, call, [req.params.augmentation]);
         });
 
-    // Damage
-    
+    // Damage Type
+
     router.route('/damage/:damageId')
         .get(function(req, res, next) {
             var call = sql + ' WHERE deleted IS NULL AND ' +
-                'damage_id = ?';
+                'attribute_id = ?';
 
             sequel.get(req, res, next, call, [req.params.damageId]);
         });
 
     // Expertise
-    
+
     router.route('/expertise/:expertiseId')
         .get(function(req, res, next) {
             var call = sql + ' WHERE deleted IS NULL AND ' +
@@ -61,33 +99,23 @@ module.exports = function(router) {
             sequel.get(req, res, next, call, [req.params.expertiseId]);
         });
 
-    // Skill
-    
-    router.route('/skill/:skillId')
-        .get(function(req, res, next) {
-            var call = sql + ' WHERE deleted IS NULL AND ' +
-                'skill_id = ?';
-
-            sequel.get(req, res, next, call, [req.params.skillId]);
-        });
-
     // Species
-    
-    router.route('/species/:speciesId')
+
+    router.route('/species/:species')
         .get(function(req, res, next) {
             var call = sql + ' WHERE deleted IS NULL AND ' +
-                'species_id = ?';
+                'species = ?';
 
-            sequel.get(req, res, next, call, [req.params.speciesId]);
+            sequel.get(req, res, next, call, [req.params.species]);
         });
 
     // ID
 
-    basic.id(router, sql, tableName);
-    basic.canon(router);
-    basic.clone(router, tableName);
-    basic.comments(router);
-    basic.labels(router);
-    basic.ownership(router);
-    basic.revive(router);
+    generic.id(router, sql, tableName, false, true);
+    generic.canon(router, tableName);
+    generic.clone(router, tableName);
+    generic.comments(router, tableName);
+    generic.labels(router, tableName);
+    generic.ownership(router, tableName);
+    generic.revive(router, tableName);
 };

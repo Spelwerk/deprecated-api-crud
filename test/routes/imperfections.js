@@ -34,19 +34,6 @@ describe('/imperfections', function() {
             });
     });
 
-    var expertiseId;
-    before(function(done) {
-        app.get('/expertises')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                expertiseId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
     var manifestationId;
     before(function(done) {
         app.get('/manifestations')
@@ -178,17 +165,6 @@ describe('/imperfections', function() {
                 .end(done);
         });
 
-        it('/:id/expertises should add a relation to the item', function(done) {
-            var payload = {
-                insert_id: expertiseId,
-                value: 10
-            };
-
-            app.post(baseRoute + '/' + temporaryId + '/expertises', payload)
-                .expect(201)
-                .end(done);
-        });
-
     });
 
     describe('PUT', function() {
@@ -218,12 +194,6 @@ describe('/imperfections', function() {
 
         it('/:id/skills should change the value', function(done) {
             app.put(baseRoute + '/' + temporaryId + '/skills/' + skillId, {value: 8})
-                .expect(204)
-                .end(done);
-        });
-
-        it('/:id/expertises should change the value', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/expertises/' + expertiseId, {value: 8})
                 .expect(204)
                 .end(done);
         });
@@ -335,23 +305,6 @@ describe('/imperfections', function() {
 
         it('/:id/skills should return a list', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/skills')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        verifier.generic(item);
-                    });
-
-                    done();
-                });
-        });
-
-        it('/:id/skills should return a list', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/expertises')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);

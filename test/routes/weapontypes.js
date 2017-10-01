@@ -34,19 +34,6 @@ describe('/weapontypes', function() {
             });
     });
 
-    var augmentationId;
-    before(function(done) {
-        app.get('/augmentations')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                augmentationId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
     var expertiseId;
     before(function(done) {
         app.get('/expertises')
@@ -104,12 +91,11 @@ describe('/weapontypes', function() {
     function verifyItem(item) {
         verifier.generic(item);
 
-        assert.isNumber(item.damage_id);
+        assert.isNumber(item.attribute_id);
         assert.isNumber(item.expertise_id);
-        assert.isNumber(item.skill_id);
 
-        if(item.augmentation_id) assert.isNumber(item.augmentation_id);
-        if(item.species_id) assert.isNumber(item.species_id);
+        assert.isBoolean(item.augmentation);
+        assert.isBoolean(item.species);
     }
 
 
@@ -120,8 +106,8 @@ describe('/weapontypes', function() {
                 name: hasher(20),
                 description: hasher(20),
                 icon: 'http://fakeicon.com/' + hasher(20) + '.png',
-                augmentation_id: augmentationId,
-                damage_id: attributeId,
+                augmentation: true,
+                attribute_id: attributeId,
                 skill_id: skillId,
                 species_id: speciesId
             };
@@ -200,8 +186,8 @@ describe('/weapontypes', function() {
                 });
         });
 
-        it('/augmentation/:augmentationId should return a list', function(done) {
-            app.get('/weapontypes/augmentation/' + augmentationId)
+        it('/augmentation/:augmentation should return a list', function(done) {
+            app.get('/weapontypes/augmentation/1')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -236,20 +222,8 @@ describe('/weapontypes', function() {
                 });
         });
 
-        it('/skill/:skillId should return a list', function(done) {
-            app.get('/weapontypes/skill/' + skillId)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyList(res.body);
-
-                    done();
-                });
-        });
-
-        it('/species/:speciesId should return a list', function(done) {
-            app.get('/weapontypes/species/' + speciesId)
+        it('/species/:species should return a list', function(done) {
+            app.get('/weapontypes/species/1')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);

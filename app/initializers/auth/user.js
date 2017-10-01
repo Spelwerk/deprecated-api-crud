@@ -11,8 +11,7 @@ module.exports = function(app, callback) {
         req.user = {
             id: null,
             admin: false,
-            verified: false,
-            verifiedOwner: false
+            verified: false
         };
 
         if(!req.headers['x-user-token']) return next();
@@ -26,7 +25,7 @@ module.exports = function(app, callback) {
 
         async.series([
             function(callback) {
-                query('SELECT user_id AS id FROM usertoken WHERE token = ?', [req.user.token], function(err, results) {
+                query('SELECT user_id AS id FROM user_token WHERE token = ?', [req.user.token], function(err, results) {
                     if(err) return callback(err);
 
                     if(results.length === 0) return callback({status: 403, message: 'Missing token', error: 'Token could not be found in table'});

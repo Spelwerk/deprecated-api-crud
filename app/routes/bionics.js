@@ -1,16 +1,18 @@
+'use strict';
+
+var generic = require('../../lib/helper/generic'),
+    relations = require('../../lib/helper/relations');
+
 var sequel = require('../../lib/sql/sequel');
 
-var basic = require('./../../lib/generic/basic'),
-    relations = require('./../../lib/generic/relations');
-
 module.exports = function(router) {
-    'use strict';
-
     var tableName = 'bionic';
 
-    var sql = 'SELECT * FROM ' + tableName + ' LEFT JOIN generic ON generic.id = ' + tableName + '.generic_id';
+    var sql = 'SELECT * FROM ' + tableName + ' ' +
+        'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id ' +
+        'LEFT JOIN ' + tableName + '_is_corporation ON ' + tableName + '_is_corporation.' + tableName + '_id = ' + tableName + '.id';
 
-    basic.root(router, sql, tableName);
+    generic.root(router, sql, tableName, false, true);
 
     // Body Parts
 
@@ -24,18 +26,19 @@ module.exports = function(router) {
 
     // ID
 
-    basic.id(router, sql, tableName);
-    basic.canon(router);
-    basic.clone(router, tableName);
-    basic.comments(router);
-    basic.images(router);
-    basic.labels(router);
-    basic.ownership(router);
-    basic.revive(router);
+    generic.id(router, sql, tableName, false, true);
+    generic.canon(router, tableName);
+    generic.clone(router, tableName);
+    generic.comments(router, tableName);
+    generic.images(router, tableName);
+    generic.labels(router, tableName);
+    generic.ownership(router, tableName);
+    generic.revive(router, tableName);
 
     // Relations
 
-    relations(router, 'attributes', 'attribute', true);
-    relations(router, 'augmentations', 'augmentation');
-    relations(router, 'software', 'software');
+    relations(router, tableName, 'attributes', 'attribute');
+    relations(router, tableName, 'augmentations', 'augmentation');
+    relations(router, tableName, 'skills', 'skill');
+    relations(router, tableName, 'software', 'software');
 };

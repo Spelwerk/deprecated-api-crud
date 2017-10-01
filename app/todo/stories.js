@@ -1,7 +1,7 @@
-var sequel = require('./../../lib/sql/sequel');
+var sequel = require('../../lib/sql/sequel');
 
 var basic = require('../../lib/generic/basic'),
-    relations = require('../../lib/generic/relations');
+    relations = require('../../lib/helper/relations');
 
 module.exports = function(router) {
     'use strict';

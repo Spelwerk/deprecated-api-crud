@@ -1,4 +1,4 @@
-var sequel = require('./../../lib/sql/sequel');
+var sequel = require('../../lib/sql/sequel');
 
 var basic = require('../../lib/generic/basic');
 

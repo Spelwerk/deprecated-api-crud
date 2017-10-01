@@ -219,16 +219,6 @@ describe('/milestones', function() {
                 .end(done);
         });
 
-        it('/:id/augmentations should add a relation to the item', function(done) {
-            var payload = {
-                insert_id: 1
-            };
-
-            app.post(baseRoute + '/' + temporaryId + '/augmentations', payload)
-                .expect(201)
-                .end(done);
-        });
-
         it('/:id/doctrines should add a relation to the item', function(done) {
             var payload = {
                 insert_id: 1,
@@ -431,23 +421,6 @@ describe('/milestones', function() {
 
         it('/:id/attributes should return a list', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/attributes')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        verifier.generic(item);
-                    });
-
-                    done();
-                });
-        });
-
-        it('/:id/augmentations should return a list', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/augmentations')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);

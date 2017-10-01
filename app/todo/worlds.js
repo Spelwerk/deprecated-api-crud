@@ -1,11 +1,11 @@
 var async = require('async'),
     yaml = require('node-yaml');
 
-var query = require('./../../lib/sql/query'),
-    sequel = require('./../../lib/sql/sequel');
+var query = require('../../lib/sql/query'),
+    sequel = require('../../lib/sql/sequel');
 
-var basic = require('./../../lib/generic/basic'),
-    relations = require('./../../lib/generic/relations');
+var basic = require('../../lib/generic/basic'),
+    relations = require('../../lib/helper/relations');
 
 var defaults = yaml.readSync('./../../config/defaults.yml');
 

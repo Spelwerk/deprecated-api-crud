@@ -1,17 +1,21 @@
+'use strict';
+
 var async = require('async');
 
-var query = require('./../../lib/sql/query'),
-    ownership = require('../../lib/sql/ownership'),
-    sequel = require('../../lib/sql/sequel');
+var generic = require('../../lib/helper/generic');
 
-var basic = require('./../../lib/generic/basic');
+var sequel = require('../../lib/sql/sequel'),
+    query = require('../../lib/sql/query'),
+    ownership = require('../../lib/sql/ownership');
+
+var expertises = require('../../lib/tables/expertises'),
+    doctrines = require('../../lib/tables/doctrines');
 
 module.exports = function(router) {
-    'use strict';
-
     var tableName = 'doctrine';
 
-    var sql = 'SELECT * FROM ' + tableName + ' LEFT JOIN generic ON generic.id = ' + tableName + '.generic_id';
+    var sql = 'SELECT * FROM ' + tableName + ' ' +
+        'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
 
     router.route('/')
         .get(function(req, res, next) {
@@ -20,78 +24,53 @@ module.exports = function(router) {
             sequel.get(req, res, next, call);
         })
         .post(function(req, res, next) {
-            if(!req.user.id) return next({status: 403, message: 'Forbidden', error: 'User is not logged in'});
+            var dId,
+                dName = req.body.name,
+                dDescription = req.body.description,
+                dIcon = req.body.icon,
+                dEffects = req.body.effects;
 
-            var manifestation = {},
-                skill = {},
-                expertise = {},
-                doctrine = {};
+            var mId = req.body.manifestation_id,
+                sId;
 
-            manifestation.id = req.body.manifestation_id;
-
-            expertise.name = req.body.name + ' Mastery';
-
-            doctrine.name = req.body.name;
-            doctrine.description = req.body.description;
-            doctrine.manifestation_id = manifestation.id;
-            doctrine.icon = req.body.icon;
+            var eId,
+                eName = req.body.name + ' Mastery';
 
             async.series([
                 function(callback) {
-                    ownership(req, manifestation.id, callback);
+                    ownership(req.user, 'manifestation', mId, callback);
                 },
-
-                // SKILL
-
                 function(callback) {
-                    query('SELECT generic_id AS id FROM skill WHERE manifestation_id = ?', [manifestation.id], function(err, results) {
+                    query('SELECT skill_id AS id FROM skill_is_manifestation WHERE manifestation_id = ?', [mId], function(err, results) {
                         if(err) return callback(err);
 
-                        skill.id = results[0].id;
-
-                        callback();
-                    });
-                },
-
-                // EXPERTISE
-
-                function(callback) {
-                    query('INSERT INTO generic (user_id,name,description) VALUES (?,?,?)', [req.user.id, doctrine.name, doctrine.description], function(err, result) {
-                        if(err) return callback(err);
-
-                        expertise.id = result.insertId;
+                        sId = results[0].id;
 
                         callback();
                     });
                 },
                 function(callback) {
-                    query('INSERT INTO expertise (generic_id,skill_id,manifestation_id) VALUES (?,?,?)', [expertise.id, skill.id, manifestation.id], callback);
-                },
-                function(callback) {
-                    query('INSERT INTO user_has_generic (user_id,generic_id) VALUES (?,?)', [req.user.id, expertise.id], callback);
-                },
-
-                // DOCTRINE
-
-                function(callback) {
-                    query('INSERT INTO generic (user_id,name,description,icon) VALUES (?,?,?,?)', [req.user.id, doctrine.name, doctrine.description, doctrine.icon], function(err, result) {
+                    expertises(req.user, eName, null, sId, mId, null, function(err, id) {
                         if(err) return callback(err);
 
-                        doctrine.id = result.insertId;
+                        eId = id;
 
                         callback();
                     });
                 },
                 function(callback) {
-                    query('INSERT INTO doctrine (generic_id,expertise_id,manifestation_id) VALUES (?,?,?)', [doctrine.id, expertise.id, manifestation.id], callback);
-                },
-                function(callback) {
-                    query('INSERT INTO user_has_generic (user_id,generic_id) VALUES (?,?)', [req.user.id, doctrine.id], callback);
+                    doctrines(req.user, dName, dDescription, dIcon, eId, mId, dEffects, function(err, id) {
+                        if(err) return callback(err);
+
+                        dId = id;
+
+                        callback();
+                    });
                 }
             ], function(err) {
                 if(err) return next(err);
 
-                res.status(201).send({id: doctrine.id});
+                res.status(201).send({id: dId});
             });
         });
 
@@ -114,12 +93,12 @@ module.exports = function(router) {
 
     // ID
 
-    basic.id(router, sql, tableName);
-    basic.canon(router);
-    basic.clone(router, tableName);
-    basic.comments(router);
-    basic.images(router);
-    basic.labels(router);
-    basic.ownership(router);
-    basic.revive(router);
+    generic.id(router, sql, tableName, false, true);
+    generic.canon(router, tableName);
+    generic.clone(router, tableName);
+    generic.comments(router, tableName);
+    generic.images(router, tableName);
+    generic.labels(router, tableName);
+    generic.ownership(router, tableName);
+    generic.revive(router, tableName);
 };

@@ -1,7 +1,7 @@
-var unique = require('../../lib/specific/unique');
+'use strict';
+
+var unique = require('../../lib/helper/unique');
 
 module.exports = function(router) {
-    'use strict';
-
     unique(router, 'nickname');
 };

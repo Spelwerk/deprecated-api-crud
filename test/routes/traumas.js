@@ -7,13 +7,13 @@ var should = chai.should(),
     assert = chai.assert,
     expect = chai.expect;
 
-var app = require('./../app'),
-    verifier = require('./../verifier'),
-    hasher = require('./../../lib/hasher');
+var app = require('../app'),
+    verifier = require('../verifier'),
+    hasher = require('../../lib/hasher');
 
-describe('/assetgroups', function() {
+describe('/traumas', function() {
 
-    var baseRoute = '/assetgroups';
+    var baseRoute = '/traumas';
 
     var temporaryId;
 
@@ -37,16 +37,15 @@ describe('/assetgroups', function() {
     }
 
     function verifyItem(item) {
-        verifier.generic(item);
+        assert.isNumber(item.id);
+        assert.isString(item.name);
     }
 
 
     describe('POST', function() {
 
         it('/ should create a new item', function(done) {
-            var payload = {name: hasher(20)};
-
-            app.post(baseRoute, payload)
+            app.post(baseRoute, { name: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -61,40 +60,10 @@ describe('/assetgroups', function() {
 
     });
 
-    describe('PUT', function() {
-
-        it('/:id should update the item with new values', function(done) {
-            var payload = {name: hasher(20)};
-
-            app.put(baseRoute + '/' + temporaryId, payload)
-                .expect(204)
-                .end(done);
-        });
-
-        it('/:id/canon/:canon should update the canon status', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/canon/1')
-                .expect(204)
-                .end(done);
-        });
-
-    });
-
     describe('GET', function() {
 
         it('/ should return a list', function(done) {
             app.get(baseRoute)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyList(res.body);
-
-                    done();
-                });
-        });
-
-        it('/deleted should return a list of deleted items', function(done) {
-            app.get(baseRoute + '/deleted')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -115,18 +84,6 @@ describe('/assetgroups', function() {
 
                     done();
                 })
-        });
-
-        it('/:id/ownership should return ownership status', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/ownership')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isBoolean(res.body.ownership);
-
-                    done();
-                });
         });
 
     });

@@ -1,46 +1,57 @@
-var sequel = require('../../lib/sql/sequel'),
-    generic = require('../../lib/sql/generic');
+'use strict';
 
-var basic = require('./../../lib/generic/basic');
+var generic = require('../../lib/helper/generic');
+
+var sequel = require('../../lib/sql/sequel');
+
+var expertises = require('../../lib/tables/expertises');
 
 module.exports = function(router) {
-    'use strict';
-
     var tableName = 'expertise';
 
     var sql = 'SELECT ' +
-        'expertise.generic_id, ' +
+        'expertise.id, ' +
+        'expertise.user_id, ' +
+        'expertise.canon, ' +
+        'expertise.name, ' +
+        'expertise.description, ' +
         'expertise.skill_id, ' +
-        'expertise.species_id, ' +
-        'expertise.manifestation_id, ' +
-        'g1.id, ' +
-        'g1.user_id, ' +
-        'g1.original_id, ' +
-        'g1.canon, ' +
-        'g1.name, ' +
-        'g1.description, ' +
-        'g2.icon, ' +
-        'g1.created, ' +
-        'g1.updated, ' +
-        'g1.deleted ' +
+        'expertise.created, ' +
+        'expertise.updated, ' +
+        'expertise.deleted, ' +
+        'skill.icon, ' +
+        'expertise_is_copy.original_id, ' +
+        'expertise_is_manifestation.manifestation_id, ' +
+        'expertise_is_species.species_id ' +
         'FROM expertise ' +
-        'LEFT JOIN skill ON skill.generic_id = expertise.skill_id ' +
-        'LEFT JOIN generic g1 ON g1.id = expertise.generic_id ' +
-        'LEFT JOIN generic g2 ON g2.id = skill.generic_id';
+        'LEFT JOIN expertise_is_copy ON expertise_is_copy.expertise_id = expertise.id ' +
+        'LEFT JOIN expertise_is_manifestation ON expertise_is_manifestation.expertise_id = expertise.id ' +
+        'LEFT JOIN expertise_is_species ON expertise_is_species.expertise_id = expertise.id ' +
+        'LEFT JOIN skill ON skill.id = expertise.skill_id';
 
     router.route('/')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE g1.deleted IS NULL';
+            var call = sql + ' WHERE expertise.deleted IS NULL';
 
             sequel.get(req, res, next, call);
         })
         .post(function(req, res, next) {
-            generic.post(req, res, next, tableName);
+            var name = req.body.name,
+                description = req.body.description,
+                skillId = req.body.skill_id,
+                manifestationId = req.body.manifestation_id,
+                speciesId = req.body.species_id;
+
+            expertises(req.user, name, description, skillId, manifestationId, speciesId, function(err, id) {
+                if(err) return next(err);
+
+                res.status(201).send({id: id});
+            });
         });
 
     router.route('/deleted')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE g1.deleted IS NOT NULL';
+            var call = sql + ' WHERE expertise.deleted IS NOT NULL';
 
             sequel.get(req, res, next, call);
         });
@@ -49,8 +60,8 @@ module.exports = function(router) {
 
     router.route('/manifestation/:manifestationId')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE g1.deleted IS NULL AND ' +
-                'expertise.manifestation_id = ?';
+            var call = sql + ' WHERE expertise.deleted IS NULL AND ' +
+                'manifestation_id = ?';
 
             sequel.get(req, res, next, call, [req.params.manifestationId]);
         });
@@ -59,8 +70,8 @@ module.exports = function(router) {
 
     router.route('/skill/:skillId')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE g1.deleted IS NULL AND ' +
-                'expertise.skill_id = ?';
+            var call = sql + ' WHERE expertise.deleted IS NULL AND ' +
+                'skill_id = ?';
 
             sequel.get(req, res, next, call, [req.params.skillId]);
         });
@@ -69,8 +80,8 @@ module.exports = function(router) {
 
     router.route('/species/:speciesId')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE g1.deleted IS NULL AND ' +
-                'expertise.species_id = ?';
+            var call = sql + ' WHERE expertise.deleted IS NULL AND ' +
+                'species_id = ?';
 
             sequel.get(req, res, next, call, [req.params.speciesId]);
         });
@@ -79,9 +90,9 @@ module.exports = function(router) {
 
     router.route('/skill/:skillId/manifestation/:manifestationId')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE g1.deleted IS NULL AND ' +
-                'expertise.skill_id = ? AND ' +
-                'expertise.manifestation_id = ?';
+            var call = sql + ' WHERE expertise.deleted IS NULL AND ' +
+                'skill_id = ? AND ' +
+                'manifestation_id = ?';
 
             sequel.get(req, res, next, call, [req.params.manifestationId, req.params.skillId]);
         });
@@ -90,33 +101,20 @@ module.exports = function(router) {
 
     router.route('/skill/:skillId/species/:speciesId')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE g1.deleted IS NULL AND ' +
-                'expertise.skill_id = ? AND ' +
-                'expertise.species_id = ?';
+            var call = sql + ' WHERE expertise.deleted IS NULL AND ' +
+                'skill_id = ? AND ' +
+                'species_id = ?';
 
             sequel.get(req, res, next, call, [req.params.skillId, req.params.speciesId]);
         });
 
     // ID
 
-    router.route('/:id')
-        .get(function(req, res, next) {
-            var call = sql + ' WHERE g1.deleted IS NULL AND ' +
-                'g1.id = ?';
-
-            sequel.get(req, res, next, call, [req.params.id], true);
-        })
-        .put(function(req, res, next) {
-            generic.put(req, res, next, tableName, req.params.id);
-        })
-        .delete(function(req, res, next) {
-            generic.delete(req, res, next, req.params.id);
-        });
-
-    basic.canon(router);
-    basic.clone(router, tableName);
-    basic.comments(router);
-    basic.labels(router);
-    basic.ownership(router);
-    basic.revive(router);
+    generic.id(router, sql, tableName, false, true);
+    generic.canon(router, tableName);
+    generic.clone(router, tableName);
+    generic.comments(router, tableName);
+    generic.labels(router, tableName);
+    generic.ownership(router, tableName);
+    generic.revive(router, tableName);
 };

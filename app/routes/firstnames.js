@@ -1,11 +1,11 @@
+'use strict';
+
 var async = require('async');
 
 var sequel = require('../../lib/sql/sequel'),
     query = require('../../lib/sql/query');
 
 module.exports = function(router) {
-    'use strict';
-
     var tableName = 'firstname';
 
     var sql = 'SELECT * FROM ' + tableName;
@@ -17,13 +17,13 @@ module.exports = function(router) {
         .post(function(req, res, next) {
             if(!req.user.id) return next({status: 403, message: 'Forbidden', error: 'User is not logged in'});
 
-            var id = null,
+            var id,
                 name = req.body.name,
                 feminine = req.body.feminine;
 
             async.series([
                 function(callback) {
-                    query('SELECT id FROM ' + tableName + ' WHERE UPPER(name) = ?', [name.toUpperCase()], function(err, results) {
+                    query('SELECT id FROM ' + tableName + ' WHERE LOWER(name) = ?', [name.toLowerCase()], function(err, results) {
                         if(err) return callback(err);
 
                         if(!results[0]) return callback();

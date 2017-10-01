@@ -49,7 +49,8 @@ describe('/manifestations', function() {
                 description: hasher(20),
                 power: hasher(20),
                 skill: hasher(20),
-                icon: 'http://fakeicon.com/' + hasher(20) + '.png'
+                icon: 'http://fakeicon.com/' + hasher(20) + '.png',
+                maximum: 12
             };
 
             app.post(baseRoute, payload)

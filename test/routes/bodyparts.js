@@ -45,8 +45,7 @@ describe('/bodyparts', function() {
 
         it('/ should create a new item', function(done) {
             var payload = {
-                name: hasher(20),
-                description: hasher(20)
+                name: hasher(20)
             };
 
             app.post(baseRoute, payload)
@@ -92,8 +91,7 @@ describe('/bodyparts', function() {
 
         it('/:id should update the item with new values', function(done) {
             var payload = {
-                name: hasher(20),
-                description: hasher(20)
+                name: hasher(20)
             };
 
             app.put(baseRoute + '/' + temporaryId, payload)

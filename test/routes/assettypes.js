@@ -21,19 +21,6 @@ describe('/assettypes', function() {
         app.login(done);
     });
 
-    var groupId;
-    before(function(done) {
-        app.get('/assetgroups')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                groupId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
     function verifyList(body) {
         assert.isNumber(body.length);
 
@@ -51,9 +38,6 @@ describe('/assettypes', function() {
 
     function verifyItem(item) {
         verifier.generic(item);
-
-        assert.isNumber(item.assetgroup_id);
-        assert.isBoolean(item.equipable);
     }
 
 
@@ -61,9 +45,7 @@ describe('/assettypes', function() {
 
         it('/ should create a new item', function(done) {
             var payload = {
-                name: hasher(20),
-                assetgroup_id: groupId,
-                icon: 'http://fakeicon.com/' + hasher(20) + '.png'
+                name: hasher(20)
             };
 
             app.post(baseRoute, payload)

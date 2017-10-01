@@ -1,11 +1,11 @@
+'use strict';
+
 var async = require('async');
 
 var sequel = require('../../lib/sql/sequel'),
     query = require('../../lib/sql/query');
 
 module.exports = function(router) {
-    'use strict';
-
     var tableName = 'image';
 
     var sql = 'SELECT * FROM ' + tableName;
@@ -24,7 +24,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    query('SELECT id FROM ' + tableName + ' WHERE UPPER(path) = ?', [path.toUpperCase()], function(err, results) {
+                    query('SELECT id FROM ' + tableName + ' WHERE LOWER(path) = ?', [path.toLowerCase()], function(err, results) {
                         if(err) return callback(err);
 
                         if(!results[0]) return callback();

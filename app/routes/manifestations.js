@@ -1,19 +1,23 @@
+'use strict';
+
 var async = require('async'),
     yaml = require('node-yaml');
 
-var query = require('./../../lib/sql/query'),
-    sequel = require('../../lib/sql/sequel');
+var generic = require('../../lib/helper/generic');
 
-var basic = require('./../../lib/generic/basic');
+var sequel = require('./../../lib/sql/sequel');
+
+var attributes = require('./../../lib/tables/attributes'),
+    manifestations = require('./../../lib/tables/manifestations'),
+    skills = require('./../../lib/tables/skills');
 
 var defaults = yaml.readSync('./../../config/defaults.yml');
 
 module.exports = function(router) {
-    'use strict';
-
     var tableName = 'manifestation';
 
-    var sql = 'SELECT * FROM ' + tableName + ' LEFT JOIN generic ON generic.id = ' + tableName + '.generic_id';
+    var sql = 'SELECT * FROM ' + tableName + ' ' +
+        'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
 
     router.route('/')
         .get(function(req, res, next) {
@@ -22,81 +26,48 @@ module.exports = function(router) {
             sequel.get(req, res, next, call);
         })
         .post(function(req, res, next) {
-            if(!req.user.id) return next({status: 403, message: 'Forbidden', error: 'User is not logged in'});
+            var mId,
+                mName = req.body.name,
+                mDescription = req.body.description,
+                mIcon = req.body.icon;
 
-            var manifestation = {},
-                attribute = {},
-                skill = {};
+            var aId,
+                aName = req.body.power,
+                aDescription = 'Power attribute for: ' + req.body.name,
+                aIcon = req.body.icon,
+                aType = defaults.attributeType.power,
+                aMaximum = req.body.maximum;
 
-            manifestation.name = req.body.name;
-            manifestation.description = req.body.description;
-            manifestation.icon = req.body.icon;
-
-            attribute.name = req.body.power;
-            attribute.type = defaults.attributeTypes.power;
-            attribute.maximum = req.body.maximum || defaults.manifestation.power.maximum;
-
-            skill.name = req.body.skill;
+            var sName = req.body.skill,
+                sDescription = 'Skill for: ' + req.body.name,
+                sIcon = req.body.icon;
 
             async.series([
-
-                // MANIFESTATION
-
                 function(callback) {
-                    query('INSERT INTO generic (user_id,name,description,icon) VALUES (?,?,?,?)', [req.user.id, manifestation.name, manifestation.description, manifestation.icon], function(err, result) {
+                    attributes(req.user, aName, aDescription, aIcon, aType, aMaximum, function(err, id) {
                         if(err) return callback(err);
 
-                        manifestation.id = result.insertId;
+                        aId = id;
 
                         callback();
                     });
                 },
                 function(callback) {
-                    query('INSERT INTO manifestation (generic_id) VALUES (?)', [manifestation.id], callback);
-                },
-                function(callback) {
-                    query('INSERT INTO user_has_generic (user_id,generic_id) VALUES (?,?)', [req.user.id, manifestation.id], callback);
-                },
-
-                // SKILL
-
-                function(callback) {
-                    query('INSERT INTO generic (user_id,name,icon) VALUES (?,?,?)', [req.user.id, skill.name, manifestation.icon], function(err, result) {
+                    manifestations(req.user, mName, mDescription, mIcon, aId, function(err, id) {
                         if(err) return callback(err);
 
-                        skill.id = result.insertId;
+                        mId = id;
 
                         callback();
                     });
                 },
                 function(callback) {
-                    query('INSERT INTO skill (generic_id,manifestation_id) VALUES (?,?)', [skill.id, manifestation.id], callback);
-                },
-                function(callback) {
-                    query('INSERT INTO user_has_generic (user_id,generic_id) VALUES (?,?)', [req.user.id, skill.id], callback);
-                },
-
-                // ATTRIBUTE
-
-                function(callback) {
-                    query('INSERT INTO generic (user_id,name,icon) VALUES (?,?,?)', [req.user.id, attribute.name, manifestation.icon], function(err, result) {
-                        if(err) return callback(err);
-
-                        attribute.id = result.insertId;
-
-                        callback();
-                    });
-                },
-                function(callback) {
-                    query('INSERT INTO attribute (generic_id,attributetype_id,manifestation_id,maximum) VALUES (?,?,?,?)', [attribute.id, attribute.type, manifestation.id, attribute.maximum], callback);
-                },
-                function(callback) {
-                    query('INSERT INTO user_has_generic (user_id,generic_id) VALUES (?,?)', [req.user.id, attribute.id], callback);
+                    skills(req.user, sName, sDescription, sIcon, mId, null, callback);
                 }
             ], function(err) {
                 if(err) return next(err);
 
-                res.status(201).send({id: manifestation.id});
+                res.status(201).send({id: mId});
             });
         });
 
@@ -109,11 +80,11 @@ module.exports = function(router) {
 
     // ID
 
-    basic.id(router, sql, tableName);
-    basic.canon(router);
-    basic.clone(router, tableName);
-    basic.comments(router);
-    basic.labels(router);
-    basic.ownership(router);
-    basic.revive(router);
+    generic.id(router, sql, tableName, false, true);
+    generic.canon(router, tableName);
+    generic.clone(router, tableName);
+    generic.comments(router, tableName);
+    generic.labels(router, tableName);
+    generic.ownership(router, tableName);
+    generic.revive(router, tableName);
 };

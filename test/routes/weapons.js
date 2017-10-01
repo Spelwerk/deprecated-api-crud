@@ -73,19 +73,6 @@ describe('/weapons', function() {
             });
     });
 
-    var expertiseId;
-    before(function(done) {
-        app.get('/expertises')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                expertiseId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
     var skillId;
     before(function(done) {
         app.get('/skills')
@@ -131,9 +118,8 @@ describe('/weapons', function() {
         verifier.generic(item);
 
         assert.isNumber(item.weapontype_id);
-        assert.isNumber(item.damage_id);
+        assert.isNumber(item.attribute_id);
         assert.isNumber(item.expertise_id);
-        assert.isNumber(item.skill_id);
         if(item.species_id) assert.isNumber(item.species_id);
         if(item.augmentation_id) assert.isNumber(item.augmentation_id);
 
@@ -143,7 +129,6 @@ describe('/weapons', function() {
         assert.isNumber(item.damage_bonus);
         assert.isNumber(item.critical_dice);
         assert.isNumber(item.critical_bonus);
-        assert.isNumber(item.hand);
         assert.isNumber(item.distance);
     }
 
@@ -161,7 +146,6 @@ describe('/weapons', function() {
                 damage_bonus: 3,
                 critical_dice: 4,
                 critical_bonus: 5,
-                hand: 1,
                 distance: 100
             };
 
@@ -213,17 +197,6 @@ describe('/weapons', function() {
                 .end(done);
         });
 
-        it('/:id/expertises should add a relation to the item', function(done) {
-            var payload = {
-                insert_id: expertiseId,
-                value: 10
-            };
-
-            app.post(baseRoute + '/' + temporaryId + '/expertises', payload)
-                .expect(201)
-                .end(done);
-        });
-
         it('/:id/skills should add a relation to the item', function(done) {
             var payload = {
                 insert_id: skillId,
@@ -237,8 +210,7 @@ describe('/weapons', function() {
 
         it('/:id/mods should add a relation to the item', function(done) {
             var payload = {
-                insert_id: modId,
-                value: 10
+                insert_id: modId
             };
 
             app.post(baseRoute + '/' + temporaryId + '/mods', payload)
@@ -269,12 +241,6 @@ describe('/weapons', function() {
 
         it('/:id/attributes should change the value', function(done) {
             app.put(baseRoute + '/' + temporaryId + '/attributes/' + attributeId, {value: 8})
-                .expect(204)
-                .end(done);
-        });
-
-        it('/:id/expertises should change the value', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/expertises/' + expertiseId, {value: 8})
                 .expect(204)
                 .end(done);
         });
@@ -387,23 +353,6 @@ describe('/weapons', function() {
 
         it('/:id/attributes should return a list', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/attributes')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        verifier.generic(item);
-                    });
-
-                    done();
-                });
-        });
-
-        it('/:id/expertises should return a list', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/expertises')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);

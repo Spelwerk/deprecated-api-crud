@@ -66,10 +66,7 @@ describe('/attributetypes', function() {
     describe('PUT', function() {
 
         it('/:id should update the item with new values', function(done) {
-            var payload = {
-                name: hasher(20),
-                description: hasher(20)
-            };
+            var payload = {name: hasher(20)};
 
             app.put(baseRoute + '/' + temporaryId, payload)
                 .expect(204)
@@ -78,18 +75,6 @@ describe('/attributetypes', function() {
 
         it('/:id/canon/:canon should update the canon status', function(done) {
             app.put(baseRoute + '/' + temporaryId + '/canon/1')
-                .expect(204)
-                .end(done);
-        });
-
-    });
-
-    describe('PUT', function() {
-
-        it('/:id should update the item with new values', function(done) {
-            var payload = {name: hasher(20)};
-
-            app.put(baseRoute + '/' + temporaryId, payload)
                 .expect(204)
                 .end(done);
         });
@@ -132,18 +117,6 @@ describe('/attributetypes', function() {
 
                     done();
                 })
-        });
-
-        it('/:id/ownership should return ownership status', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/ownership')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isBoolean(res.body.ownership);
-
-                    done();
-                });
         });
 
     });
