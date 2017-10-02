@@ -38,7 +38,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    expertises(req.user, eName, eDescription, eSkillId, null, eSpeciesId, function(err, id) {
+                    expertises.post(req.user, eName, eDescription, eSkillId, null, eSpeciesId, function(err, id) {
                         if(err) return callback(err);
 
                         eId = id;
@@ -47,7 +47,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    weaponTypes(req.user, wName, wDescription, wIcon, wAttributeId, eId, wAugmentation, wSpecies, function(err, id) {
+                    weaponTypes.post(req.user, wName, wDescription, wIcon, wAttributeId, eId, wAugmentation, wSpecies, function(err, id) {
                         if(err) return callback(err);
 
                         wId = id;

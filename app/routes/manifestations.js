@@ -37,8 +37,10 @@ module.exports = function(router) {
                 aIcon = req.body.icon,
                 aType = defaults.attributeType.power,
                 aOptional = 1,
-                aMaximum = req.body.maximum,
-                aValue = 0;
+                aCreature = 0,
+                aAvatar = 0,
+                aMinimum = 0,
+                aMaximum = req.body.maximum;
 
             var sName = req.body.skill,
                 sDescription = 'Skill for: ' + req.body.name,
@@ -46,7 +48,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    attributes(req.user, aName, aDescription, aIcon, aType, aOptional, aMaximum, aValue, function(err, id) {
+                    attributes.post(req.user, aName, aDescription, aIcon, aType, aAvatar, aCreature, aOptional, aMinimum, aMaximum, function(err, id) {
                         if(err) return callback(err);
 
                         aId = id;
@@ -55,7 +57,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    manifestations(req.user, mName, mDescription, mIcon, aId, function(err, id) {
+                    manifestation.post(req.user, mName, mDescription, mIcon, aId, function(err, id) {
                         if(err) return callback(err);
 
                         mId = id;
@@ -64,7 +66,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    skills(req.user, sName, sDescription, sIcon, mId, null, callback);
+                    skills.post(req.user, sName, sDescription, sIcon, mId, null, callback);
                 }
             ], function(err) {
                 if(err) return next(err);

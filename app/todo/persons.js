@@ -4,7 +4,7 @@ var comment = require('../../lib/sql/comment'),
     ownership = require('../../lib/sql/ownership'),
     relation = require('../../lib/sql/relation'),
     query = require('../../lib/sql/query'),
-    person = require('../../lib/sql/person'),
+    person = require('../../lib/helper/person'),
     sequel = require('../../lib/sql/sequel');
 
 module.exports = function(router) {

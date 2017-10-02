@@ -144,18 +144,6 @@ describe('/stories', function() {
                 });
         });
 
-        it('/world/:worldId should return a list', function(done) {
-            app.get(baseRoute + '/world/' + worldId)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyList(res.body);
-
-                    done();
-                });
-        });
-
         it('/:id should return one item', function(done) {
             app.get(baseRoute + '/' + temporaryId)
                 .expect(200)

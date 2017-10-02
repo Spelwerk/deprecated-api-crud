@@ -36,7 +36,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    skills(req.user, sName, sDescription, sIcon, sManifestation, sSpecies, function(err, id) {
+                    skills.post(req.user, sName, sDescription, sIcon, sManifestation, sSpecies, function(err, id) {
                         if(err) return callback(err);
 
                         sId = id;
@@ -45,7 +45,7 @@ module.exports = function(router) {
                     })
                 },
                 function(callback) {
-                    expertises(req.user, eName, eDescription, sId, sManifestation, sSpecies, callback);
+                    expertises.post(req.user, eName, eDescription, sId, sManifestation, sSpecies, callback);
                 }
             ], function(err) {
                 if(err) return next(err);

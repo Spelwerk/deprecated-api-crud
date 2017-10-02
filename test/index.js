@@ -54,6 +54,6 @@ require('./routes/backgrounds');
 require('./routes/milestones');
 
 require('./routes/countries');
-//require('./routes/worlds');
+require('./routes/worlds');
 
 //require('./routes/users');

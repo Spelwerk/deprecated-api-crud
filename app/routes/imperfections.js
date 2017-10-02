@@ -27,7 +27,7 @@ module.exports = function(router) {
                 manifestationId = req.body.manifestation_id,
                 speciesId = req.body.species_id;
 
-            characteristics(req.user, tableName, name, description, manifestationId, speciesId, function(err, id) {
+            characteristics.post(req.user, tableName, name, description, manifestationId, speciesId, function(err, id) {
                 if(err) return next(err);
 
                 res.status(201).send({id: id});

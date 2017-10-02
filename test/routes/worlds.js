@@ -41,7 +41,9 @@ describe('/worlds', function() {
             .end(function(err, res) {
                 if(err) return done(err);
 
-                attributeId = res.body.results[0].id;
+                var length = res.body.length -1;
+
+                attributeId = res.body.results[length].id;
 
                 done();
             });
@@ -197,7 +199,9 @@ describe('/worlds', function() {
             .end(function(err, res) {
                 if(err) return done(err);
 
-                skillId = res.body.results[0].id;
+                var length = res.body.length -1;
+
+                skillId = res.body.results[length].id;
 
                 done();
             });
@@ -264,43 +268,8 @@ describe('/worlds', function() {
         if(item.species_id) assert.isNumber(item.species_id);
     }
 
-    it('/ should create a new item', function(done) {
-        var payload = {
-            name: hasher(20),
-            description: hasher(20),
-            icon: 'http://fakeicon.com/' + hasher(20) + '.png',
-            augmentation: 1,
-            bionic: 1,
-            manifestation: 1,
-            software: 1,
-            split_doctrine: 2,
-            split_expertise: 3,
-            split_milestone: 4,
-            split_relationship: 5,
-            split_skill: 6,
-            max_doctrine: 7,
-            max_expertise: 8,
-            max_gift: 9,
-            max_imperfection: 10,
-            max_milestone: 11,
-            max_relationship: 12,
-            max_skill: 13
-        };
 
-        app.post(baseRoute, payload)
-            .expect(201)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                assert.isNumber(res.body.id);
-
-                temporaryId = res.body.id;
-
-                done();
-            });
-    });
-
-    xdescribe('POST', function() {
+    describe('POST', function() {
 
         it('/ should create a new item', function(done) {
             var payload = {
@@ -367,7 +336,7 @@ describe('/worlds', function() {
         });
 
         it('/:id/attributes should add a relation to the item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/attributes', { insert_id: attributeId }).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/attributes', { insert_id: attributeId, value: 99 }).expect(201).end(done);
         });
 
         it('/:id/backgrounds should add a relation to the item', function(done) {
@@ -432,7 +401,7 @@ describe('/worlds', function() {
 
     });
 
-    xdescribe('PUT', function() {
+    describe('PUT', function() {
 
         it('/:id should update the item with new values', function(done) {
             var payload = {
@@ -453,7 +422,7 @@ describe('/worlds', function() {
 
     });
 
-    xdescribe('GET', function() {
+    describe('GET', function() {
 
         it('/ should return a list', function(done) {
             app.get(baseRoute)

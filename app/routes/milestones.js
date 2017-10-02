@@ -28,7 +28,7 @@ module.exports = function(router) {
                 manifestationId = req.body.manifestation_id,
                 speciesId = req.body.species_id;
 
-            milestones(req.user, name, description, backgroundId, manifestationId, speciesId, function(err, id) {
+            milestones.post(req.user, name, description, backgroundId, manifestationId, speciesId, function(err, id) {
                 if(err) return next(err);
 
                 res.status(201).send({id: id});

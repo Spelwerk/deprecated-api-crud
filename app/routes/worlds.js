@@ -12,7 +12,8 @@ var query = require('../../lib/sql/query'),
 module.exports = function(router) {
     var tableName = 'world';
 
-    var sql = 'SELECT * FROM ' + tableName + ' LEFT JOIN generic ON generic.id = ' + tableName + '.generic_id';
+    var sql = 'SELECT * FROM ' + tableName + ' ' +
+        'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
 
     router.route('/')
         .get(function(req, res, next) {
@@ -66,11 +67,11 @@ module.exports = function(router) {
                 },
 
                 function(callback) {
-                    query('SELECT id,value FROM attribute WHERE optional = 0', null, function(err, results) {
+                    query('SELECT id,minimum FROM attribute WHERE optional = 0', null, function(err, results) {
                         if(err) return callback(err);
 
                         for(var i in results) {
-                            attributeQuery += '(' + worldId + ',' + results[i].id + ',' + results[i].value + '),';
+                            attributeQuery += '(' + worldId + ',' + results[i].id + ',' + results[i].minimum + '),';
                         }
 
                         attributeQuery = attributeQuery.slice(0, -1);

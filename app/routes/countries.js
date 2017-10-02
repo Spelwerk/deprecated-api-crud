@@ -7,7 +7,7 @@ var sequel = require('../../lib/sql/sequel');
 var countries = require('../../lib/tables/countries');
 
 module.exports = function(router) {
-    var tableName = 'focus';
+    var tableName = 'country';
 
     var sql = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
@@ -26,7 +26,7 @@ module.exports = function(router) {
                 firstNameGroupId = req.body.firstnamegroup_id,
                 lastNameGroupId = req.body.lastnamegroup_id;
 
-            countries(req.user, name, description, languageId, nickNameGroupId, firstNameGroupId, lastNameGroupId, function(err, id) {
+            countries.post(req.user, name, description, languageId, nickNameGroupId, firstNameGroupId, lastNameGroupId, function(err, id) {
                 if(err) return next(err);
 
                 res.status(201).send({id: id});

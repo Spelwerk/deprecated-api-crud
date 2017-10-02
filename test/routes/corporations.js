@@ -7,13 +7,13 @@ var should = chai.should(),
     assert = chai.assert,
     expect = chai.expect;
 
-var app = require('./../app'),
+var app = require('../app'),
     verifier = require('./../verifier'),
-    hasher = require('./../../lib/hasher');
+    hasher = require('../../lib/hasher');
 
-describe('/attributes', function() {
+describe('/corporations', function() {
 
-    var baseRoute = '/attributes';
+    var baseRoute = '/corporations';
 
     var temporaryId;
 
@@ -21,14 +21,27 @@ describe('/attributes', function() {
         app.login(done);
     });
 
-    var typeId;
+    var countryId;
     before(function(done) {
-        app.get('/attributetypes')
+        app.get('/countries')
             .expect(200)
             .end(function(err, res) {
                 if(err) return done(err);
 
-                typeId = res.body.results[0].id;
+                countryId = res.body.results[0].id;
+
+                done();
+            });
+    });
+
+    var locationId;
+    before(function(done) {
+        app.get('/locations')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                locationId = res.body.results[0].id;
 
                 done();
             });
@@ -52,8 +65,8 @@ describe('/attributes', function() {
     function verifyItem(item) {
         verifier.generic(item);
 
-        assert.isNumber(item.attributetype_id);
-        assert.isNumber(item.maximum);
+        if(item.country_id) assert.isNumber(item.country_id);
+        if(item.location_id) assert.isNumber(item.location_id);
     }
 
 
@@ -63,13 +76,8 @@ describe('/attributes', function() {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
-                icon: 'http://fakeicon.com/' + hasher(20) + '.png',
-                attributetype_id: typeId,
-                avatar: 0,
-                creature: 0,
-                optional: 1,
-                minimum: 2,
-                maximum: 10
+                country_id: countryId,
+                location_id: locationId
             };
 
             app.post(baseRoute, payload)
@@ -85,7 +93,19 @@ describe('/attributes', function() {
                 });
         });
 
-        it('/:expertiseId/comments should create a new comment', function(done) {
+        it('/:id/clone should create a copy', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/clone')
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.id);
+
+                    done();
+                });
+        });
+
+        it('/:id/comments should create a new comment', function(done) {
             app.post(baseRoute + '/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
                 .end(function(err, res) {
@@ -95,6 +115,18 @@ describe('/attributes', function() {
 
                     done();
                 });
+        });
+
+        it('/:id/labels should create a label', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/labels', { label: hasher(20) })
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.id);
+
+                    done();
+                })
         });
 
     });
@@ -136,18 +168,6 @@ describe('/attributes', function() {
 
         it('/deleted should return a list of deleted items', function(done) {
             app.get(baseRoute + '/deleted')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyList(res.body);
-
-                    done();
-                });
-        });
-
-        it('/type/:typeId should return a list', function(done) {
-            app.get(baseRoute + '/type/' + typeId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);

@@ -50,7 +50,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    species(req.user, sName, sDescription, sIcon, sPlayable, sManifestation, sMaxAge, sMultiplyDoctrine, sMultiplyExpertise, sMultiplySkill, function(err, id) {
+                    species.post(req.user, sName, sDescription, sIcon, sPlayable, sManifestation, sMaxAge, sMultiplyDoctrine, sMultiplyExpertise, sMultiplySkill, function(err, id) {
                         if(err) return callback(err);
 
                         sId = id;
@@ -59,7 +59,7 @@ module.exports = function(router) {
                     })
                 },
                 function(callback) {
-                    weapons(req.user, wName, wDescription, wType, wLegal, wPrice, wDamageDice, wDamageBonus, wCriticalDice, wCriticalBonus, wDistance, null, sId, null, callback);
+                    weapons.post(req.user, wName, wDescription, wType, wLegal, wPrice, wDamageDice, wDamageBonus, wCriticalDice, wCriticalBonus, wDistance, null, sId, null, callback);
                 }
             ], function(err) {
                 if(err) return next(err);

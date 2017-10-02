@@ -28,7 +28,7 @@ module.exports = function(router) {
                 manifestationId = req.body.manifestation_id,
                 speciesId = req.body.species_id;
 
-            backgrounds(req.user, name, description, icon, manifestationId, speciesId, function(err, id) {
+            backgrounds.post(req.user, name, description, icon, manifestationId, speciesId, function(err, id) {
                 if(err) return next(err);
 
                 res.status(201).send({id: id});

@@ -2,8 +2,8 @@
 
 var sequel = require('../../lib/sql/sequel');
 
-var basic = require('../../lib/generic/basic'),
-    creatures = require('../../lib/helper/creatures');
+var generic = require('../../lib/helper/generic'),
+    creatures = require('../../lib/tables/creatures');
 
 module.exports = function(router) {
     var tableName = 'creature';
@@ -17,7 +17,12 @@ module.exports = function(router) {
             sequel.get(req, res, next, call);
         })
         .post(function(req, res, next) {
-            creatures.post(req, function(err, id) {
+            var name = req.body.name,
+                description = req.body.description,
+                worldId = req.body.world_id,
+                speciesId = req.body.species_id;
+
+            creatures.post(req.user, name, description, worldId, speciesId, function(err, id) {
                 if(err) return next(err);
 
                 res.status(201).send({id: id});
@@ -33,11 +38,11 @@ module.exports = function(router) {
 
     // ID
 
-    basic.id(router, sql, tableName);
-    basic.canon(router);
-    //basic.clone(router, tableName);
-    basic.comments(router);
-    basic.labels(router);
-    basic.ownership(router);
-    basic.revive(router);
+    generic.id(router, sql, tableName, false, true);
+    generic.canon(router, tableName);
+    generic.clone(router, tableName);
+    generic.comments(router, tableName);
+    generic.labels(router, tableName);
+    generic.ownership(router, tableName);
+    generic.revive(router, tableName);
 };

@@ -41,7 +41,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    augmentations(req.user, name, description, legal, price, hackingDifficulty, corporationId, function(err, id) {
+                    augmentations.post(req.user, name, description, legal, price, hackingDifficulty, corporationId, function(err, id) {
                         if(err) return callback(err);
 
                         aId = id;
@@ -52,7 +52,7 @@ module.exports = function(router) {
                 function(callback) {
                     if(!weaponType) return callback();
 
-                    weapons(req.user, name, description, weaponType, legal, price, damageDice, damageBonus, criticalDice, criticalBonus, distance, aId, null, corporationId, callback);
+                    weapons.post(req.user, name, description, weaponType, legal, price, damageDice, damageBonus, criticalDice, criticalBonus, distance, aId, null, corporationId, callback);
                 }
             ], function(err) {
                 if(err) return next(err);

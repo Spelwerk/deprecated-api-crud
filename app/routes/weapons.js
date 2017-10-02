@@ -62,7 +62,7 @@ module.exports = function(router) {
                 speciesId = req.body.species_id,
                 corporationId = req.body.corporation_id;
 
-            weapons(req.user, name, description, typeId, legal, price, damageDice, damageBonus, criticalDice, criticalBonus, distance, augmentationId, speciesId, corporationId, function(err, id) {
+            weapons.post(req.user, name, description, typeId, legal, price, damageDice, damageBonus, criticalDice, criticalBonus, distance, augmentationId, speciesId, corporationId, function(err, id) {
                 if(err) return next(err);
 
                 res.status(201).send({id: id});

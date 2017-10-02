@@ -50,7 +50,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    expertises(req.user, eName, null, sId, mId, null, function(err, id) {
+                    expertises.post(req.user, eName, null, sId, mId, null, function(err, id) {
                         if(err) return callback(err);
 
                         eId = id;
@@ -59,7 +59,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    doctrines(req.user, dName, dDescription, dIcon, eId, mId, dEffects, function(err, id) {
+                    doctrines.post(req.user, dName, dDescription, dIcon, eId, mId, dEffects, function(err, id) {
                         if(err) return callback(err);
 
                         dId = id;
