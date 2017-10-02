@@ -1,8 +1,7 @@
 'use strict';
 
-var generic = require('../../lib/helper/generic');
-
-var sequel = require('./../../lib/sql/sequel');
+var generic = require('../../lib/helper/generic'),
+    sequel = require('./../../lib/sql/sequel');
 
 module.exports = function(router) {
     var tableName = 'attribute';

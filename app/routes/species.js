@@ -4,11 +4,9 @@ var async = require('async'),
     yaml = require('node-yaml');
 
 var generic = require('../../lib/helper/generic'),
-    relations = require('../../lib/helper/relations');
-
-var sequel = require('../../lib/sql/sequel');
-
-var species = require('../../lib/tables/species'),
+    relations = require('../../lib/helper/relations'),
+    sequel = require('../../lib/sql/sequel'),
+    species = require('../../lib/tables/species'),
     weapons = require('../../lib/tables/weapons');
 
 var defaults = yaml.readSync('./../../config/defaults.yml');

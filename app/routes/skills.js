@@ -2,11 +2,9 @@
 
 var async = require('async');
 
-var generic = require('../../lib/helper/generic');
-
-var sequel = require('../../lib/sql/sequel');
-
-var expertises = require('../../lib/tables/expertises'),
+var generic = require('../../lib/helper/generic'),
+    sequel = require('../../lib/sql/sequel'),
+    expertises = require('../../lib/tables/expertises'),
     skills = require('../../lib/tables/skills');
 
 module.exports = function(router) {

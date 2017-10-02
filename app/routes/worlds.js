@@ -3,8 +3,8 @@
 var async = require('async');
 
 var generic = require('../../lib/helper/generic'),
-    query = require('../../lib/sql/query'),
     relations = require('../../lib/helper/relations'),
+    query = require('../../lib/sql/query'),
     worlds = require('../../lib/tables/worlds');
 
 module.exports = function(router) {

@@ -1,11 +1,9 @@
 'use strict';
 
 var generic = require('../../lib/helper/generic'),
-    relations = require('../../lib/helper/relations');
-
-var sequel = require('../../lib/sql/sequel');
-
-var milestones = require('../../lib/tables/milestones');
+    relations = require('../../lib/helper/relations'),
+    sequel = require('../../lib/sql/sequel'),
+    milestones = require('../../lib/tables/milestones');
 
 module.exports = function(router) {
     var tableName = 'milestone';

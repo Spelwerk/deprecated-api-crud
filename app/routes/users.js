@@ -9,9 +9,8 @@ var query = require('../../lib/sql/query'),
     sequel = require('../../lib/sql/sequel'),
     hasher = require('../../lib/hasher'),
     mailer = require('../../lib/mailer'),
-    onion = require('../../lib/onion');
-
-var users = require('../../lib/helper/users');
+    onion = require('../../lib/onion'),
+    users = require('../../lib/helper/users');
 
 module.exports = function(router) {
     var sql = 'SELECT ' +

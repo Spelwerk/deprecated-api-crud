@@ -3,9 +3,8 @@
 var async = require('async'),
     yaml = require('node-yaml');
 
-var generic = require('../../lib/helper/generic');
-
-var attributes = require('./../../lib/tables/attributes'),
+var generic = require('../../lib/helper/generic'),
+    attributes = require('./../../lib/tables/attributes'),
     manifestations = require('./../../lib/tables/manifestations'),
     skills = require('./../../lib/tables/skills');
 

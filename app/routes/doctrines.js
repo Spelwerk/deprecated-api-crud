@@ -2,13 +2,11 @@
 
 var async = require('async');
 
-var generic = require('../../lib/helper/generic');
-
-var sequel = require('../../lib/sql/sequel'),
+var generic = require('../../lib/helper/generic'),
+    sequel = require('../../lib/sql/sequel'),
     query = require('../../lib/sql/query'),
-    ownership = require('../../lib/sql/ownership');
-
-var expertises = require('../../lib/tables/expertises'),
+    ownership = require('../../lib/sql/ownership'),
+    expertises = require('../../lib/tables/expertises'),
     doctrines = require('../../lib/tables/doctrines');
 
 module.exports = function(router) {

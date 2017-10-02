@@ -1,9 +1,8 @@
 'use strict';
 
-var generic = require('../../lib/helper/generic');
-
-var focuses = require('../../lib/tables/focuses'),
-    sequel = require('../../lib/sql/sequel');
+var generic = require('../../lib/helper/generic'),
+    sequel = require('../../lib/sql/sequel'),
+    focuses = require('../../lib/tables/focuses');
 
 module.exports = function(router) {
     var tableName = 'focus';

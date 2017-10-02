@@ -3,9 +3,8 @@
 var async = require('async');
 
 var generic = require('../../lib/helper/generic'),
-    relations = require('../../lib/helper/relations');
-
-var augmentations = require('../../lib/tables/augmentations'),
+    relations = require('../../lib/helper/relations'),
+    augmentations = require('../../lib/tables/augmentations'),
     weapons = require('../../lib/tables/weapons');
 
 module.exports = function(router) {
