@@ -132,15 +132,7 @@ describe('/assettypes', function() {
         });
 
         it('/:id/ownership should return ownership status', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/ownership')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isBoolean(res.body.ownership);
-
-                    done();
-                });
+            app.get(baseRoute + '/' + temporaryId + '/ownership').expect(200).end(function(err, res) { verifier.ownership(err, res, done); });
         });
 
     });

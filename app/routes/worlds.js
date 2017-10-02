@@ -1,13 +1,11 @@
 'use strict';
 
-var async = require('async'),
-    yaml = require('node-yaml');
+var async = require('async');
 
 var generic = require('../../lib/helper/generic'),
-    relations = require('../../lib/helper/relations');
-
-var query = require('../../lib/sql/query'),
-    sequel = require('../../lib/sql/sequel');
+    query = require('../../lib/sql/query'),
+    relations = require('../../lib/helper/relations'),
+    worlds = require('../../lib/tables/worlds');
 
 module.exports = function(router) {
     var tableName = 'world';
@@ -15,55 +13,40 @@ module.exports = function(router) {
     var sql = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
 
-    router.route('/')
-        .get(function(req, res, next) {
-            var call = sql + ' WHERE deleted IS NULL';
+    generic.root(router, tableName, sql);
 
-            sequel.get(req, res, next, call);
-        })
+    router.route('/')
         .post(function(req, res, next) {
             if(!req.user.id) return next({status: 403, message: 'Forbidden', error: 'User is not logged in'});
 
             var worldId,
-
                 name = req.body.name,
-                description = req.body.description || null,
-
-                augmentation = !!req.body.augmentation,
-                bionic = !!req.body.bionic,
-                corporation = !!req.body.corporation,
-                manifestation = !!req.body.manifestation,
-                software = !!req.body.software,
-
-                maxDoctrine = parseInt(req.body.max_doctrine),
-                maxExpertise = parseInt(req.body.max_expertise),
-                maxSkill = parseInt(req.body.max_skill),
-
-                splitDoctrine = parseInt(req.body.split_doctrine),
-                splitExpertise = parseInt(req.body.split_expertise),
-                splitMilestone = parseInt(req.body.split_milestone),
-                splitSkill = parseInt(req.body.split_skill);
+                description = req.body.description,
+                augmentation = req.body.augmentation,
+                bionic = req.body.bionic,
+                corporation = req.body.corporation,
+                manifestation = req.body.manifestation,
+                software = req.body.software,
+                maxDoctrine = req.body.max_doctrine,
+                maxExpertise = req.body.max_expertise,
+                maxSkill = req.body.max_skill,
+                splitDoctrine = req.body.split_doctrine,
+                splitExpertise = req.body.split_expertise,
+                splitMilestone = req.body.split_milestone,
+                splitSkill = req.body.split_skill;
 
             var attributeQuery = 'INSERT INTO world_has_attribute (world_id,attribute_id,value) VALUES ',
                 skillQuery = 'INSERT INTO world_has_skill (world_id,skill_id) VALUES ';
 
             async.series([
                 function(callback) {
-                    var sql = 'INSERT INTO world (user_id,name,description,augmentation,bionic,corporation,manifestation,' +
-                        'software,max_doctrine,max_expertise,max_skill,split_doctrine,split_expertise,' +
-                        'split_milestone,split_skill) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
-
-                    var array = [req.user.id, name, description, augmentation, bionic, corporation, manifestation, software,
-                        maxDoctrine, maxExpertise, maxSkill, splitDoctrine, splitExpertise, splitMilestone,
-                        splitSkill];
-
-                    query(sql, array, function(err, result) {
+                    worlds.post(req.user, name, description, augmentation, bionic, corporation, manifestation, software, maxDoctrine, maxExpertise, maxSkill, splitDoctrine, splitExpertise, splitMilestone, splitSkill, function(err, id) {
                         if(err) return callback(err);
 
-                        worldId = result.insertId;
+                        worldId = id;
 
                         callback();
-                    });
+                    })
                 },
 
                 function(callback) {
@@ -106,16 +89,13 @@ module.exports = function(router) {
             });
         });
 
-    router.route('/deleted')
-        .get(function(req, res, next) {
-            var call = sql + ' WHERE deleted IS NOT NULL';
-
-            sequel.get(req, res, next, call);
-        });
+    generic.deleted(router, tableName, sql);
 
     // ID
 
-    generic.id(router, sql, tableName, false, true);
+    generic.get(router, tableName, sql);
+    generic.put(router, tableName, false, true);
+    generic.delete(router, tableName, false, true);
     generic.canon(router, tableName);
     generic.clone(router, tableName);
     generic.comments(router, tableName);

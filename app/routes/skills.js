@@ -17,12 +17,9 @@ module.exports = function(router) {
         'LEFT JOIN skill_is_manifestation ON skill_is_manifestation.skill_id = skill.id ' +
         'LEFT JOIN skill_is_species ON skill_is_species.skill_id = skill.id';
 
-    router.route('/')
-        .get(function(req, res, next) {
-            var call = sql + ' WHERE deleted IS NULL';
+    generic.root(router, tableName, sql);
 
-            sequel.get(req, res, next, call);
-        })
+    router.route('/')
         .post(function(req, res, next) {
             var sId,
                 sName = req.body.name,
@@ -54,14 +51,7 @@ module.exports = function(router) {
             });
         });
 
-    router.route('/deleted')
-        .get(function(req, res, next) {
-            var call = sql + ' WHERE deleted IS NOT NULL';
-
-            sequel.get(req, res, next, call);
-        });
-
-    generic.root(router, sql, tableName);
+    generic.deleted(router, tableName, sql);
 
     // Manifestation
 
@@ -85,7 +75,9 @@ module.exports = function(router) {
 
     // ID
 
-    generic.id(router, sql, tableName, false, true);
+    generic.get(router, tableName, sql);
+    generic.put(router, tableName, false, true);
+    generic.delete(router, tableName, false, true);
     generic.canon(router, tableName);
     generic.clone(router, tableName);
     generic.comments(router, tableName);

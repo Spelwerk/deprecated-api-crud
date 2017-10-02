@@ -9,8 +9,13 @@ module.exports = function(router) {
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id ' +
         'LEFT JOIN ' + tableName + '_is_corporation ON ' + tableName + '_is_corporation.' + tableName + '_id = ' + tableName + '.id';
 
-    generic.root(router, sql, tableName, false, true);
-    generic.id(router, sql, tableName, false, true);
+    generic.root(router, tableName, sql);
+    generic.post(router, tableName, false, true);
+    generic.deleted(router, tableName, sql);
+
+    generic.get(router, tableName, sql);
+    generic.put(router, tableName, false, true);
+    generic.delete(router, tableName, false, true);
     generic.canon(router, tableName);
     generic.clone(router, tableName);
     generic.comments(router, tableName);

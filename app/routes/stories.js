@@ -8,11 +8,15 @@ module.exports = function(router) {
 
     var sql = 'SELECT * FROM ' + tableName;
 
-    generic.root(router, sql, tableName, false, true);
+    generic.root(router, tableName, sql);
+    generic.post(router, tableName, false, true);
+    generic.deleted(router, tableName, sql);
 
     // ID
 
-    generic.id(router, sql, tableName, false, true);
+    generic.get(router, tableName, sql);
+    generic.put(router, tableName, false, true);
+    generic.delete(router, tableName, false, true);
     generic.canon(router, tableName);
     generic.clone(router, tableName);
     generic.comments(router, tableName);

@@ -152,28 +152,12 @@ describe('/focuses', function() {
                 })
         });
 
-        it('/:focusId/ownership should return ownership status', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/ownership')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isBoolean(res.body.ownership);
-
-                    done();
-                });
+        it('/:id/ownership should return ownership status', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/ownership').expect(200).end(function(err, res) { verifier.ownership(err, res, done); });
         });
 
-        it('/:focusId/comments should get all available comments', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/comments')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifier.comments(res.body.results);
-
-                    done();
-                })
+        it('/:id/comments should get all available comments', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/comments').expect(200).end(function(err, res) { verifier.comments(err, res, done); });
         });
 
     });

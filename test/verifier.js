@@ -16,10 +16,12 @@ module.exports.generic = function(item) {
     assert.isNull(item.deleted);
 };
 
-module.exports.comments = function(results) {
-    assert.isArray(results);
+module.exports.comments = function(err, res, done) {
+    if(err) return done(err);
 
-    _.each(results, function(item) {
+    assert.isArray(res.body.results);
+
+    _.each(res.body.results, function(item) {
         assert.isNumber(item.id);
         assert.isString(item.comment);
 
@@ -30,4 +32,16 @@ module.exports.comments = function(results) {
         if(item.updated) assert.isString(item.updated);
         assert.isNull(item.deleted);
     });
+
+    done();
+};
+
+module.exports.ownership = function(err, res, done) {
+    if(err) return done(err);
+
+    assert.isBoolean(res.body.favorite);
+    assert.isBoolean(res.body.owner);
+    assert.isBoolean(res.body.edit);
+
+    done();
 };

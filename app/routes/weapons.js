@@ -41,12 +41,9 @@ module.exports = function(router) {
         'LEFT JOIN weapon_is_species ON weapon_is_species.weapon_id = weapon.id ' +
         'LEFT JOIN weapon_is_corporation ON weapon_is_corporation.weapon_id = weapon.id';
 
-    router.route('/')
-        .get(function(req, res, next) {
-            var call = sql + ' WHERE weapon.deleted IS NULL AND weapon.canon = 1';
+    generic.root(router, tableName, sql);
 
-            sequel.get(req, res, next, call);
-        })
+    router.route('/')
         .post(function(req, res, next) {
             var name = req.body.name,
                 description = req.body.description,
@@ -69,12 +66,8 @@ module.exports = function(router) {
             });
         });
 
-    router.route('/deleted')
-        .get(function(req, res, next) {
-            var call = sql + ' WHERE weapon.deleted IS NOT NULL';
+    generic.deleted(router, tableName, sql);
 
-            sequel.get(req, res, next, call);
-        });
 
     // Augmentation
 
@@ -108,7 +101,9 @@ module.exports = function(router) {
 
     // ID
 
-    generic.id(router, sql, tableName, false, true);
+    generic.get(router, tableName, sql);
+    generic.put(router, tableName, false, true);
+    generic.delete(router, tableName, false, true);
     generic.canon(router, tableName);
     generic.clone(router, tableName);
     generic.comments(router, tableName);

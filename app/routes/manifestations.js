@@ -5,8 +5,6 @@ var async = require('async'),
 
 var generic = require('../../lib/helper/generic');
 
-var sequel = require('./../../lib/sql/sequel');
-
 var attributes = require('./../../lib/tables/attributes'),
     manifestations = require('./../../lib/tables/manifestations'),
     skills = require('./../../lib/tables/skills');
@@ -19,12 +17,9 @@ module.exports = function(router) {
     var sql = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
 
-    router.route('/')
-        .get(function(req, res, next) {
-            var call = sql + ' WHERE deleted IS NULL';
+    generic.root(router, tableName, sql);
 
-            sequel.get(req, res, next, call);
-        })
+    router.route('/')
         .post(function(req, res, next) {
             var mId,
                 mName = req.body.name,
@@ -57,7 +52,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    manifestation.post(req.user, mName, mDescription, mIcon, aId, function(err, id) {
+                    manifestations.post(req.user, mName, mDescription, mIcon, aId, function(err, id) {
                         if(err) return callback(err);
 
                         mId = id;
@@ -75,16 +70,13 @@ module.exports = function(router) {
             });
         });
 
-    router.route('/deleted')
-        .get(function(req, res, next) {
-            var call = sql + ' WHERE deleted IS NOT NULL';
-
-            sequel.get(req, res, next, call);
-        });
+    generic.deleted(router, tableName, sql);
 
     // ID
 
-    generic.id(router, sql, tableName, false, true);
+    generic.get(router, tableName, sql);
+    generic.put(router, tableName, false, true);
+    generic.delete(router, tableName, false, true);
     generic.canon(router, tableName);
     generic.clone(router, tableName);
     generic.comments(router, tableName);
