@@ -6,7 +6,7 @@ var generic = require('../../lib/helper/generic'),
 module.exports = function(router) {
     var tableName = 'creature';
 
-    var sql = 'SELECT * FROM ' + tableName + ' LEFT JOIN generic ON generic.id = ' + tableName + '.generic_id';
+    var sql = 'SELECT * FROM ' + tableName;
 
     generic.root(router, tableName, sql);
 
