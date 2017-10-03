@@ -31,8 +31,6 @@ module.exports = function(router) {
                 aIcon = req.body.icon,
                 aType = defaults.attributeType.power,
                 aOptional = 1,
-                aCreature = 0,
-                aAvatar = 0,
                 aMinimum = 0,
                 aMaximum = req.body.maximum;
 
@@ -42,7 +40,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    attributes.post(req.user, aName, aDescription, aIcon, aType, aAvatar, aCreature, aOptional, aMinimum, aMaximum, function(err, id) {
+                    attributes.post(req.user, aName, aDescription, aIcon, aType, aOptional, aMinimum, aMaximum, function(err, id) {
                         if(err) return callback(err);
 
                         aId = id;

@@ -95,6 +95,7 @@ module.exports = function(router) {
     router.route('/:id')
         .put(function(req, res, next) {
             var id = req.params.id,
+                name = req.body.name,
                 description = req.body.description,
                 typeId = req.body.weapontype_id,
                 legal = req.body.legal,

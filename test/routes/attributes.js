@@ -65,8 +65,6 @@ describe('/attributes', function() {
                 description: hasher(20),
                 icon: 'http://fakeicon.com/' + hasher(20) + '.png',
                 attributetype_id: typeId,
-                avatar: 0,
-                creature: 0,
                 optional: 1,
                 minimum: 2,
                 maximum: 10
