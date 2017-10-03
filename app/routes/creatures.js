@@ -99,4 +99,8 @@ module.exports = function(router) {
     generic.labels(router, tableName);
     generic.ownership(router, tableName);
     generic.revive(router, tableName);
+
+    // RELATIONS
+
+
 };

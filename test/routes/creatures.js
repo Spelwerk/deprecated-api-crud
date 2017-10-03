@@ -162,7 +162,8 @@ describe('/creatures', function() {
                 point_gift: 3,
                 point_imperfection: 4,
                 point_milestone: 5,
-                point_skill: 6
+                point_skill: 6,
+                wealth_id: 1
             };
 
             app.put(baseRoute + '/' + temporaryId, payload)
