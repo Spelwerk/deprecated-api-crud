@@ -68,7 +68,23 @@ module.exports = function(router) {
         });
 
     generic.get(router, tableName, sql);
-    generic.put(router, tableName, false, true);
+
+    router.route('/:id')
+        .put(function(req, res, next) {
+            var id = req.params.id,
+                name = req.body.name,
+                description = req.body.description,
+                icon = req.body.icon,
+                manifestationId = req.body.manifestation_id,
+                speciesId = req.body.species_id;
+
+            skills.put(req.user, id, name, description, icon, manifestationId, speciesId, function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
+        });
+
     generic.delete(router, tableName, false, true);
     generic.canon(router, tableName);
     generic.clone(router, tableName);

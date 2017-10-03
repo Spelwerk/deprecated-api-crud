@@ -17,10 +17,10 @@ module.exports = function(router) {
                 description = req.body.description,
                 price = req.body.price,
                 countryId = req.body.country_id,
-                individualId = req.body.individual_id,
+                creatureId = req.body.creature_id,
                 locationId = req.body.location_id;
 
-            locations.post(req.user, name, description, price, countryId, individualId, locationId, function(err, id) {
+            locations.post(req.user, name, description, price, countryId, creatureId, locationId, function(err, id) {
                 if(err) return next(err);
 
                 res.status(201).send({id: id});
@@ -29,7 +29,24 @@ module.exports = function(router) {
 
     generic.deleted(router, tableName, sql);
     generic.get(router, tableName, sql);
-    generic.put(router, tableName, false, true);
+
+    router.route('/:id')
+        .put(function(req, res, next) {
+            var id = req.params.id,
+                name = req.body.name,
+                description = req.body.description,
+                price = req.body.price,
+                countryId = req.body.country_id,
+                creatureId = req.body.creature_id,
+                locationId = req.body.location_id;
+
+            locations.put(req.user, id, name, description, price, countryId, creatureId, locationId, function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
+        });
+
     generic.delete(router, tableName, false, true);
     generic.canon(router, tableName);
     generic.clone(router, tableName);

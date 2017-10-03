@@ -29,7 +29,24 @@ module.exports = function(router) {
 
     generic.deleted(router, tableName, sql);
     generic.get(router, tableName, sql);
-    generic.put(router, tableName, false, true);
+
+    router.route('/:id')
+        .put(function(req, res, next) {
+            var id = req.params.id,
+                name = req.body.name,
+                description = req.body.description,
+                languageId = req.body.language_id,
+                nickNameGroupId = req.body.nicknamegroup_id,
+                firstNameGroupId = req.body.firstnamegroup_id,
+                lastNameGroupId = req.body.lastnamegroup_id;
+
+            countries.put(req.user, id, name, description, languageId, nickNameGroupId, firstNameGroupId, lastNameGroupId, function(err, id) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
+        });
+
     generic.delete(router, tableName, false, true);
     generic.canon(router, tableName);
     generic.clone(router, tableName);
