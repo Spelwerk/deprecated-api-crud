@@ -46,8 +46,6 @@ module.exports = function(router) {
 
     generic.deleted(router, tableName, sql);
 
-    // Manifestations
-
     router.route('/manifestation/:manifestationId')
         .get(function(req, res, next) {
             var call = sql + ' WHERE expertise.deleted IS NULL AND ' +
@@ -55,8 +53,6 @@ module.exports = function(router) {
 
             sequel.get(req, res, next, call, [req.params.manifestationId]);
         });
-
-    // Skills
 
     router.route('/skill/:skillId')
         .get(function(req, res, next) {
@@ -66,8 +62,6 @@ module.exports = function(router) {
             sequel.get(req, res, next, call, [req.params.skillId]);
         });
 
-    // Species
-
     router.route('/species/:speciesId')
         .get(function(req, res, next) {
             var call = sql + ' WHERE expertise.deleted IS NULL AND ' +
@@ -75,8 +69,6 @@ module.exports = function(router) {
 
             sequel.get(req, res, next, call, [req.params.speciesId]);
         });
-
-    // Skills & Manifestations
 
     router.route('/skill/:skillId/manifestation/:manifestationId')
         .get(function(req, res, next) {
@@ -87,8 +79,6 @@ module.exports = function(router) {
             sequel.get(req, res, next, call, [req.params.manifestationId, req.params.skillId]);
         });
 
-    // Skills & Species
-
     router.route('/skill/:skillId/species/:speciesId')
         .get(function(req, res, next) {
             var call = sql + ' WHERE expertise.deleted IS NULL AND ' +
@@ -97,8 +87,6 @@ module.exports = function(router) {
 
             sequel.get(req, res, next, call, [req.params.skillId, req.params.speciesId]);
         });
-
-    // ID
 
     generic.get(router, tableName, sql);
     generic.put(router, tableName, false, true);

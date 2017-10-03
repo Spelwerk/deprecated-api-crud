@@ -25,9 +25,6 @@ module.exports = function(router) {
         });
 
     generic.deleted(router, tableName, sql);
-
-    // ID
-
     generic.get(router, tableName, sql);
     generic.put(router, tableName, false, true);
     generic.delete(router, tableName, false, true);

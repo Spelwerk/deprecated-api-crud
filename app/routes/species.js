@@ -65,8 +65,6 @@ module.exports = function(router) {
 
     generic.deleted(router, tableName, sql);
 
-    // Playable
-
     router.route('/playable/:playable')
         .get(function(req, res, next) {
             var call = sql + ' WHERE deleted IS NULL AND ' +
@@ -74,8 +72,6 @@ module.exports = function(router) {
 
             sequel.get(req, res, next, call, [req.params.playable]);
         });
-
-    // ID
 
     generic.get(router, tableName, sql);
     generic.put(router, tableName, false, true);

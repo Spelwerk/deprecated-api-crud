@@ -32,8 +32,6 @@ module.exports = function(router) {
 
     generic.deleted(router, tableName, sql);
 
-    // Manifestation
-
     router.route('/manifestation/:manifestationId')
         .get(function(req, res, next) {
             var call = sql + ' WHERE deleted IS NULL AND ' +
@@ -42,8 +40,6 @@ module.exports = function(router) {
             sequel.get(req, res, next, call, [req.params.manifestationId]);
         });
 
-    // Species
-
     router.route('/species/:speciesId')
         .get(function(req, res, next) {
             var call = sql + ' WHERE deleted IS NULL AND ' +
@@ -51,8 +47,6 @@ module.exports = function(router) {
 
             sequel.get(req, res, next, call, [req.params.speciesId]);
         });
-
-    // ID
 
     generic.get(router, tableName, sql);
     generic.put(router, tableName, false, true);

@@ -15,8 +15,6 @@ module.exports = function(router) {
     generic.post(router, tableName, false, true);
     generic.deleted(router, tableName, sql);
 
-    // TYPE
-
     router.route('/type/:typeId')
         .get(function(req, res, next) {
             var call = sql + ' WHERE deleted IS NULL AND ' +
@@ -24,8 +22,6 @@ module.exports = function(router) {
 
             sequel.get(req, res, next, call, [req.params.typeId]);
         });
-
-    // ID
 
     generic.get(router, tableName, sql);
     generic.put(router, tableName, false, true);

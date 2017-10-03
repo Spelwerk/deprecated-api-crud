@@ -10,7 +10,6 @@ module.exports = function(router) {
     generic.root(router, tableName, sql);
     generic.post(router, tableName, true);
     generic.deleted(router, tableName, sql);
-
     generic.get(router, tableName, sql);
     generic.put(router, tableName, true);
     generic.delete(router, tableName, true);

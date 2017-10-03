@@ -59,8 +59,6 @@ module.exports = function(router) {
 
     generic.deleted(router, tableName, sql);
 
-    // Augmentation
-
     router.route('/augmentation/:augmentation')
         .get(function(req, res, next) {
             var call = sql + ' WHERE deleted IS NULL AND ' +
@@ -68,8 +66,6 @@ module.exports = function(router) {
 
             sequel.get(req, res, next, call, [req.params.augmentation]);
         });
-
-    // Damage Type
 
     router.route('/damage/:damageId')
         .get(function(req, res, next) {
@@ -79,8 +75,6 @@ module.exports = function(router) {
             sequel.get(req, res, next, call, [req.params.damageId]);
         });
 
-    // Expertise
-
     router.route('/expertise/:expertiseId')
         .get(function(req, res, next) {
             var call = sql + ' WHERE deleted IS NULL AND ' +
@@ -89,8 +83,6 @@ module.exports = function(router) {
             sequel.get(req, res, next, call, [req.params.expertiseId]);
         });
 
-    // Species
-
     router.route('/species/:species')
         .get(function(req, res, next) {
             var call = sql + ' WHERE deleted IS NULL AND ' +
@@ -98,8 +90,6 @@ module.exports = function(router) {
 
             sequel.get(req, res, next, call, [req.params.species]);
         });
-
-    // ID
 
     generic.get(router, tableName, sql);
     generic.put(router, tableName, false, true);
