@@ -228,9 +228,6 @@ describe('/species', function() {
 
                     _.each(res.body.results, function(item) {
                         verifier.generic(item);
-
-                        assert.isNumber(item.generic_id);
-                        assert.isNumber(item.relation_id);
                         assert.isNumber(item.value);
                     });
 

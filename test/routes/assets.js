@@ -98,7 +98,7 @@ describe('/assets', function() {
     }
 
 
-    describe('POST', function() {
+    describe('INIT', function() {
 
         it('/ should create a new item', function(done) {
             var payload = {
@@ -123,17 +123,9 @@ describe('/assets', function() {
                 });
         });
 
-        it('/:id/clone should create a copy', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/clone')
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
+    });
 
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
-        });
+    describe('POST', function() {
 
         it('/:id/comments should create a new comment', function(done) {
             app.post(baseRoute + '/' + temporaryId + '/comments', { comment: hasher(20) })
@@ -160,19 +152,12 @@ describe('/assets', function() {
         });
 
         it('/:id/attributes should add a relation to the item', function(done) {
-            var payload = {
-                insert_id: 1,
-                value: 10
-            };
-
-            app.post(baseRoute + '/' + temporaryId + '/attributes', payload)
-                .expect(201)
-                .end(done);
+            app.post(baseRoute + '/' + temporaryId + '/attributes', {insert_id: attributeId, value: 10}).expect(201).end(done);
         });
 
         it('/:id/doctrines should add a relation to the item', function(done) {
             var payload = {
-                insert_id: 1,
+                insert_id: doctrineId,
                 value: 10
             };
 
@@ -183,7 +168,7 @@ describe('/assets', function() {
 
         it('/:id/skills should add a relation to the item', function(done) {
             var payload = {
-                insert_id: 1,
+                insert_id: skillId,
                 value: 10
             };
 
@@ -214,21 +199,15 @@ describe('/assets', function() {
         });
 
         it('/:id/attributes should change the value', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/attributes/' + attributeId, {value: 8})
-                .expect(204)
-                .end(done);
+            app.put(baseRoute + '/' + temporaryId + '/attributes/' + attributeId, {value: 8}).expect(204).end(done);
         });
 
         it('/:id/doctrines should change the value', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/doctrines/' + doctrineId, {value: 8})
-                .expect(204)
-                .end(done);
+            app.put(baseRoute + '/' + temporaryId + '/doctrines/' + doctrineId, {value: 8}).expect(204).end(done);
         });
 
         it('/:id/skills should change the value', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/skills/' + skillId, {value: 8})
-                .expect(204)
-                .end(done);
+            app.put(baseRoute + '/' + temporaryId + '/skills/' + skillId, {value: 8}).expect(204).end(done);
         });
 
     });
@@ -343,5 +322,21 @@ describe('/assets', function() {
         });
 
     });
+
+    describe('CLONE', function() {
+
+        it('/:id/clone should create a copy', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/clone')
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.id);
+
+                    done();
+                });
+        });
+
+    })
 
 });

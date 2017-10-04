@@ -56,4 +56,6 @@ require('./routes/milestones');
 require('./routes/countries');
 require('./routes/worlds');
 
+require('./routes/creatures');
+
 //require('./routes/users');

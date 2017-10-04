@@ -102,5 +102,30 @@ module.exports = function(router) {
 
     // RELATIONS
 
+    creatures.assets(router);
+    creatures.attributes(router);
+    creatures.augmentations(router);
+    creatures.backgrounds(router);
+    creatures.bionics(router);
+    creatures.doctrines(router);
+    creatures.expertises(router);
+    creatures.gifts(router);
+    creatures.imperfections(router);
+    creatures.languages(router);
+    creatures.manifestations(router);
+    creatures.milestones(router);
+    creatures.protections(router);
+    creatures.relations(router);
+    creatures.skills(router);
+    creatures.species(router);
+    creatures.software(router);
+    creatures.weapons(router);
+    creatures.weaponMods(router);
+
+    // WOUNDS
+
+    creatures.dementations(router);
+    creatures.diseases(router);
+    creatures.traumas(router);
 
 };

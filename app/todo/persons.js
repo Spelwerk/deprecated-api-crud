@@ -452,7 +452,7 @@ module.exports = function(router) {
             sequel.get(req, res, next, call, [req.params.personId, req.params.assetId]);
         })
         .put(function(req, res, next) {
-            relation.put(req, res, next, tableName, req.params.personId, 'asset', req.params.assetId, req.body.value);
+            relation.value(req, res, next, tableName, req.params.personId, 'asset', req.params.assetId, req.body.value);
         })
         .delete(function(req, res, next) {
             var personId = parseInt(req.params.personId),

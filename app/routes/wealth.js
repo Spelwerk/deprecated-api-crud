@@ -1,6 +1,7 @@
 'use strict';
 
-var generic = require('../../lib/helper/generic');
+var generic = require('../../lib/helper/generic'),
+    relations = require('../../lib/helper/relations');
 
 module.exports = function(router) {
     var tableName = 'wealth';
@@ -20,4 +21,8 @@ module.exports = function(router) {
     generic.labels(router, tableName);
     generic.ownership(router, tableName);
     generic.revive(router, tableName);
+
+    // Relations
+
+    relations(router, tableName, 'attributes', 'attribute');
 };
