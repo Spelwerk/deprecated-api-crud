@@ -34,21 +34,6 @@ describe('/worlds', function() {
             });
     });
 
-    var attributeId;
-    before(function(done) {
-        app.get('/attributes')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                var length = res.body.length -1;
-
-                attributeId = res.body.results[length].id;
-
-                done();
-            });
-    });
-
     var backgroundId;
     before(function(done) {
         app.get('/backgrounds')
@@ -192,21 +177,6 @@ describe('/worlds', function() {
             });
     });
 
-    var skillId;
-    before(function(done) {
-        app.get('/skills')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                var length = res.body.length -1;
-
-                skillId = res.body.results[length].id;
-
-                done();
-            });
-    });
-
     var softwareId;
     before(function(done) {
         app.get('/software')
@@ -335,10 +305,6 @@ describe('/worlds', function() {
             app.post(baseRoute + '/' + temporaryId + '/assets', { insert_id: assetId }).expect(201).end(done);
         });
 
-        it('/:id/attributes should add a relation to the item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/attributes', { insert_id: attributeId, value: 99 }).expect(201).end(done);
-        });
-
         it('/:id/backgrounds should add a relation to the item', function(done) {
             app.post(baseRoute + '/' + temporaryId + '/backgrounds', { insert_id: backgroundId }).expect(201).end(done);
         });
@@ -381,10 +347,6 @@ describe('/worlds', function() {
 
         it('/:id/protection should add a relation to the item', function(done) {
             app.post(baseRoute + '/' + temporaryId + '/protection', { insert_id: protectionId }).expect(201).end(done);
-        });
-
-        it('/:id/skills should add a relation to the item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/skills', { insert_id: skillId }).expect(201).end(done);
         });
 
         it('/:id/software should add a relation to the item', function(done) {

@@ -7,7 +7,7 @@ function generic(item) {
     assert.isNumber(item.user_id);
     assert.isBoolean(item.canon);
 
-    assert.isString(item.name);
+    if(item.name) assert.isString(item.name);
     if(item.description) assert.isString(item.description);
     if(item.icon) assert.equal(validator.isURL(item.icon), true);
 

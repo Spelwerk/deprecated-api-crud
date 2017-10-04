@@ -65,11 +65,6 @@ describe('/creatures', function() {
 
     function verifyItem(item) {
         verifier.generic(item);
-
-        assert.isNumber(item.assettype_id);
-        assert.isBoolean(item.equipable);
-        assert.isBoolean(item.legal);
-        assert.isNumber(item.price);
     }
 
 
@@ -180,7 +175,7 @@ describe('/creatures', function() {
 
     });
 
-    xdescribe('GET', function() {
+    describe('GET', function() {
 
         it('/ should return a list', function(done) {
             app.get(baseRoute)
@@ -269,6 +264,10 @@ describe('/creatures', function() {
             app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {value: 4}).expect(204).end(done);
         });
 
+        it('PUT /:id/custom should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/custom', {custom: hasher(20)}).expect(204).end(done);
+        });
+
         it('GET /:id should display an item', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId).expect(200).end(function(err, res) { verifier.relation(err, res, done); });
         });
@@ -343,8 +342,8 @@ describe('/creatures', function() {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
         });
 
-        it('PUT /:id should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {custom: hasher(20)}).expect(204).end(done);
+        it('PUT /:id/custom should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/custom', {custom: hasher(20)}).expect(204).end(done);
         });
 
         it('GET /:id should display an item', function(done) {
@@ -376,6 +375,10 @@ describe('/creatures', function() {
 
         it('GET / should get a list of items', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+        it('PUT /:id/custom should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/custom', {custom: hasher(20)}).expect(204).end(done);
         });
 
         it('GET /:id should display an item', function(done) {
@@ -419,6 +422,45 @@ describe('/creatures', function() {
 
     });
 
+    describe('/expertises', function() {
+        var relationRoute = 'expertises',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    var length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
+
+                    done();
+                });
+        });
+
+        it('POST / should add an item to the creature', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 1}).expect(201).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+        it('PUT /:id should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {value: 4}).expect(204).end(done);
+        });
+
+        it('PUT /:id/custom should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/custom', {custom: hasher(20)}).expect(204).end(done);
+        });
+
+        it('GET /:id should display an item', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId).expect(200).end(function(err, res) { verifier.relation(err, res, done); });
+        });
+
+    });
+
     describe('/gifts', function() {
         var relationRoute = 'gifts',
             relationId;
@@ -444,8 +486,8 @@ describe('/creatures', function() {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
         });
 
-        it('PUT /:id should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {custom: hasher(20)}).expect(204).end(done);
+        it('PUT /:id/custom should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/custom', {custom: hasher(20)}).expect(204).end(done);
         });
 
         it('GET /:id should display an item', function(done) {
@@ -479,8 +521,96 @@ describe('/creatures', function() {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
         });
 
-        it('PUT /:id should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {custom: hasher(20)}).expect(204).end(done);
+        it('PUT /:id/custom should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/custom', {custom: hasher(20)}).expect(204).end(done);
+        });
+
+        it('GET /:id should display an item', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId).expect(200).end(function(err, res) { verifier.relation(err, res, done); });
+        });
+
+    });
+
+    describe('/languages', function() {
+        var relationRoute = 'languages',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    var length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
+
+                    done();
+                });
+        });
+
+        it('POST / should add an item to the creature', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+        it('PUT /:id/fluent/1 should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/fluent/1').expect(204).end(done);
+        });
+
+        it('PUT /:id/fluent/0 should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/fluent/0').expect(204).end(done);
+        });
+
+        it('GET /:id should display an item', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId).expect(200).end(function(err, res) { verifier.relation(err, res, done); });
+        });
+
+    });
+
+    describe('/manifestations', function() {
+        var relationRoute = 'manifestations',
+            relationId,
+            focusId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    var length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
+
+                    done();
+                });
+        });
+
+        before(function(done) {
+            app.get('/focuses')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    var length = res.body.length - 1;
+                    focusId = res.body.results[length].id;
+
+                    done();
+                });
+        });
+
+        it('POST / should add an item to the creature', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+        it('PUT /:id/focus should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/focus', {focus_id: focusId}).expect(204).end(done);
         });
 
         it('GET /:id should display an item', function(done) {
@@ -514,12 +644,59 @@ describe('/creatures', function() {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
         });
 
-        it('PUT /:id should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {custom: hasher(20)}).expect(204).end(done);
+        it('PUT /:id/custom should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/custom', {custom: hasher(20)}).expect(204).end(done);
         });
 
         it('GET /:id should display an item', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId).expect(200).end(function(err, res) { verifier.relation(err, res, done); });
+        });
+
+    });
+
+    describe('/protections', function() {
+        var relationRoute = 'protection',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    var length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
+
+                    done();
+                });
+        });
+
+        it('POST / should add an item to the creature', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 1}).expect(201).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+        it('PUT /:id should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {value: 4}).expect(204).end(done);
+        });
+
+        it('PUT /:id/custom should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/custom', {custom: hasher(20)}).expect(204).end(done);
+        });
+
+        it('GET /:id should display an item', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId).expect(200).end(function(err, res) { verifier.relation(err, res, done); });
+        });
+
+        it('EQUIP /:id/equip/1 should equip the item to the creature', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/equip/1').expect(204).end(done);
+        });
+
+        it('UNEQUIP /:id/equip/0 should equip the item to the creature', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/equip/0').expect(204).end(done);
         });
 
     });
@@ -559,6 +736,41 @@ describe('/creatures', function() {
 
     });
 
+    describe('/species', function() {
+        var relationRoute = 'species',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    var length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
+
+                    done();
+                });
+        });
+
+        it('POST / should add an item to the creature', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+        it('PUT /:id/custom should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/custom', {custom: hasher(20)}).expect(204).end(done);
+        });
+
+        it('GET /:id should display an item', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId).expect(200).end(function(err, res) { verifier.relation(err, res, done); });
+        });
+
+    });
+
     describe('/software', function() {
         var relationRoute = 'software',
             relationId;
@@ -586,6 +798,53 @@ describe('/creatures', function() {
 
         it('GET /:id should display an item', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId).expect(200).end(function(err, res) { verifier.relation(err, res, done); });
+        });
+
+    });
+
+    describe('/weapons', function() {
+        var relationRoute = 'weapons',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    var length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
+
+                    done();
+                });
+        });
+
+        it('POST / should add an item to the creature', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 1}).expect(201).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+        it('PUT /:id should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {value: 4}).expect(204).end(done);
+        });
+
+        it('PUT /:id/custom should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/custom', {custom: hasher(20)}).expect(204).end(done);
+        });
+
+        it('GET /:id should display an item', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId).expect(200).end(function(err, res) { verifier.relation(err, res, done); });
+        });
+
+        it('EQUIP /:id/equip/1 should equip the item to the creature', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/equip/1').expect(204).end(done);
+        });
+
+        it('UNEQUIP /:id/equip/0 should equip the item to the creature', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/equip/0').expect(204).end(done);
         });
 
     });

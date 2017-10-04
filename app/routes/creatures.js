@@ -114,7 +114,7 @@ module.exports = function(router) {
     creatures.languages(router);
     creatures.manifestations(router);
     creatures.milestones(router);
-    creatures.protections(router);
+    creatures.protection(router);
     creatures.relations(router);
     creatures.skills(router);
     creatures.species(router);
