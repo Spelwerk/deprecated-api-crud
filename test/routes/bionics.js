@@ -47,19 +47,6 @@ describe('/bionics', function() {
             });
     });
 
-    var augmentationId;
-    before(function(done) {
-        app.get('/augmentations')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                augmentationId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
     var softwareId;
     before(function(done) {
         app.get('/software')
@@ -154,16 +141,6 @@ describe('/bionics', function() {
             };
 
             app.post(baseRoute + '/' + temporaryId + '/attributes', payload)
-                .expect(201)
-                .end(done);
-        });
-
-        it('/:id/augmentations should add a relation to the item', function(done) {
-            var payload = {
-                insert_id: augmentationId
-            };
-
-            app.post(baseRoute + '/' + temporaryId + '/augmentations', payload)
                 .expect(201)
                 .end(done);
         });
@@ -282,23 +259,6 @@ describe('/bionics', function() {
                 });
         });
 
-        it('/:id/augmentations should return a list', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/augmentations')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        verifier.generic(item);
-                    });
-
-                    done();
-                });
-        });
-
         it('/:id/software should return a list', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/software')
                 .expect(200)
@@ -314,6 +274,33 @@ describe('/bionics', function() {
 
                     done();
                 });
+        });
+
+    });
+
+    describe('/augmentations', function() {
+        var relationRoute = 'augmentations',
+            relationId;
+
+        before(function(done) {
+            app.get('/augmentations')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    var length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
+
+                    done();
+                });
+        });
+
+        it('POST / should add a relation to the item', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+        });
+
+        it('GET / should return a list', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
         });
 
     });
