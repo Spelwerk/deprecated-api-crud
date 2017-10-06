@@ -29,3 +29,5 @@ module.exports = function(router) {
 
     //todo special for creatures (player col)
 };
+
+//todo story_has_asset || story_has_protection || story_has_weapon || story_has_weaponmod || story_has_bionic || story_has_augmentation || story_has_software

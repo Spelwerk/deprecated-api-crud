@@ -939,7 +939,8 @@ describe('/creatures', function() {
 
     describe('/weapons', function() {
         var relationRoute = 'weapons',
-            relationId;
+            relationId,
+            modId;
 
         before(function(done) {
             app.get('/' + relationRoute)
@@ -949,6 +950,19 @@ describe('/creatures', function() {
 
                     var length = res.body.length - 1;
                     relationId = res.body.results[length].id;
+
+                    done();
+                });
+        });
+
+        before(function(done) {
+            app.get('/weaponmods')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    var length = res.body.length - 1;
+                    modId = res.body.results[length].id;
 
                     done();
                 });
@@ -982,12 +996,12 @@ describe('/creatures', function() {
             app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/equip/0').expect(204).end(done);
         });
 
-        xit('POST /:id/mods should add a mod to the weapon', function(done) {
-
+        it('POST /:id/mods should add a mod to the weapon', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/mods', {insert_id: modId}).expect(201).end(done);
         });
 
-        xit('GET /:id/mods should display a list of items', function(done) {
-
+        it('GET /:id/mods should display a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/mods').expect(200).end(function(err, res) { verifier.relations(err, res, done); });
         });
 
     });
