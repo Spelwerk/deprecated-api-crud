@@ -21,58 +21,6 @@ describe('/augmentations', function() {
         app.login(done);
     });
 
-    var attributeId;
-    before(function(done) {
-        app.get('/attributes')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                attributeId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
-    var expertiseId;
-    before(function(done) {
-        app.get('/expertises')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                expertiseId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
-    var skillId;
-    before(function(done) {
-        app.get('/skills')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                skillId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
-    var softwareId;
-    before(function(done) {
-        app.get('/software')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                softwareId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
     function verifyList(body) {
         assert.isNumber(body.length);
 
@@ -145,49 +93,6 @@ describe('/augmentations', function() {
                 });
         });
 
-        it('/:id/attributes should add a relation to the item', function(done) {
-            var payload = {
-                insert_id: attributeId,
-                value: 10
-            };
-
-            app.post(baseRoute + '/' + temporaryId + '/attributes', payload)
-                .expect(201)
-                .end(done);
-        });
-
-        it('/:id/expertises should add a relation to the item', function(done) {
-            var payload = {
-                insert_id: expertiseId,
-                value: 10
-            };
-
-            app.post(baseRoute + '/' + temporaryId + '/expertises', payload)
-                .expect(201)
-                .end(done);
-        });
-
-        it('/:id/skills should add a relation to the item', function(done) {
-            var payload = {
-                insert_id: skillId,
-                value: 10
-            };
-
-            app.post(baseRoute + '/' + temporaryId + '/skills', payload)
-                .expect(201)
-                .end(done);
-        });
-
-        it('/:id/software should add a relation to the item', function(done) {
-            var payload = {
-                insert_id: softwareId
-            };
-
-            app.post(baseRoute + '/' + temporaryId + '/software', payload)
-                .expect(201)
-                .end(done);
-        });
-
     });
 
     describe('PUT', function() {
@@ -205,24 +110,6 @@ describe('/augmentations', function() {
 
         it('/:id/canon/:canon should update the canon status', function(done) {
             app.put(baseRoute + '/' + temporaryId + '/canon/1')
-                .expect(204)
-                .end(done);
-        });
-
-        it('/:id/attributes should change the value', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/attributes/' + attributeId, {value: 8})
-                .expect(204)
-                .end(done);
-        });
-
-        it('/:id/expertises should change the value', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/expertises/' + expertiseId, {value: 8})
-                .expect(204)
-                .end(done);
-        });
-
-        it('/:id/skills should change the value', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/skills/' + skillId, {value: 8})
                 .expect(204)
                 .end(done);
         });
@@ -275,72 +162,124 @@ describe('/augmentations', function() {
             app.get(baseRoute + '/' + temporaryId + '/comments').expect(200).end(function(err, res) { verifier.comments(err, res, done); });
         });
 
-        it('/:id/attributes should return a list', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/attributes')
+    });
+
+    describe('/attributes', function() {
+        var relationRoute = 'attributes',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        verifier.generic(item)
-                    });
+                    var length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
 
                     done();
                 });
         });
 
-        it('/:id/expertises should return a list', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/expertises')
+        it('POST / should add an item', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(201).end(done);
+        });
+
+        it('PUT /:id should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {value: 4}).expect(204).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+    });
+
+    describe('/expertises', function() {
+        var relationRoute = 'expertises',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        verifier.generic(item)
-                    });
+                    var length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
 
                     done();
                 });
         });
 
-        it('/:id/skills should return a list', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/skills')
+        it('POST / should add an item', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(201).end(done);
+        });
+
+        it('PUT /:id should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {value: 4}).expect(204).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+    });
+
+    describe('/skills', function() {
+        var relationRoute = 'skills',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        verifier.generic(item)
-                    });
+                    var length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
 
                     done();
                 });
         });
 
-        it('/:id/software should return a list', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/software')
+        it('POST / should add an item', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(201).end(done);
+        });
+
+        it('PUT /:id should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {value: 4}).expect(204).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+    });
+
+    describe('/software', function() {
+        var relationRoute = 'software',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        verifier.generic(item);
-                    });
+                    var length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
 
                     done();
                 });
+        });
+
+        it('POST / should add an item', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
         });
 
     });

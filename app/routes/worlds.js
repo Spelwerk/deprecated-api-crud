@@ -108,7 +108,6 @@ module.exports = function(router) {
     relations(router, tableName, 'bionics', 'bionic');
     relations(router, tableName, 'corporations', 'corporation');
     relations(router, tableName, 'countries', 'country');
-    relations(router, tableName, 'doctrines', 'doctrine');
     relations(router, tableName, 'expertises', 'expertise');
     relations(router, tableName, 'gifts', 'gift');
     relations(router, tableName, 'identities', 'identity');

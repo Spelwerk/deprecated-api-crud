@@ -82,13 +82,16 @@ module.exports = function(router) {
     generic.ownership(router, tableName);
     generic.revive(router, tableName);
 
+    // Loyalties
+
+    milestones.loyalties(router);
+
     // Relations
 
     relations(router, tableName, 'assets', 'asset');
     relations(router, tableName, 'attributes', 'attribute');
     relations(router, tableName, 'bionics', 'bionic');
     relations(router, tableName, 'doctrines', 'doctrine');
-    relations(router, tableName, 'loyalties', 'loyalty');
     relations(router, tableName, 'skills', 'skill');
     relations(router, tableName, 'weapons', 'weapon');
 };

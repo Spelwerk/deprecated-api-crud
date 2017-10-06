@@ -623,6 +623,88 @@ describe('/creatures', function() {
 
     });
 
+    describe('/loyalties', function() {
+        var relationRoute = 'loyalties',
+            relationId,
+            wealthId,
+            uqId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    var length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
+
+                    done();
+                });
+        });
+
+        before(function(done) {
+            app.get('/wealth')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    var length = res.body.length - 1;
+                    wealthId = res.body.results[length].id;
+
+                    done();
+                });
+        });
+
+        it('POST / should add an item to the creature', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, wealth_id: wealthId, name: hasher(20), occupation: hasher(20)}).expect(201).end(function(err, res) {
+                if(err) return done(err);
+
+                assert.isNumber(res.body.id);
+                uqId = res.body.id;
+
+                done();
+            });
+        });
+
+        it('PUT /:id should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + uqId, {wealth_id: wealthId, name: hasher(20), occupation: hasher(20)}).expect(204).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) {
+                if(err) return done(err);
+
+                assert.isNumber(res.body.length);
+                assert.isArray(res.body.results);
+
+                _.each(res.body.results, function(item) {
+                    assert.isNumber(item.id);
+                    assert.isNumber(item.loyalty_id);
+                    assert.isNumber(item.wealth_id);
+                    if(item.name) assert.isString(item.name);
+                    assert.isString(item.occupation);
+                });
+
+                done();
+            });
+        });
+
+        it('GET /:id should display an item', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + uqId).expect(200).end(function(err, res) {
+                if(err) return done(err);
+
+                assert.isNumber(res.body.result.id);
+                assert.isNumber(res.body.result.loyalty_id);
+                assert.isNumber(res.body.result.wealth_id);
+                if(res.body.result.name) assert.isString(res.body.result.name);
+                assert.isString(res.body.result.occupation);
+
+                done();
+            });
+        });
+
+    });
+
     describe('/manifestations', function() {
         var relationRoute = 'manifestations',
             relationId,
@@ -898,6 +980,14 @@ describe('/creatures', function() {
 
         it('UNEQUIP /:id/equip/0 should equip the item to the creature', function(done) {
             app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/equip/0').expect(204).end(done);
+        });
+
+        xit('POST /:id/mods should add a mod to the weapon', function(done) {
+
+        });
+
+        xit('GET /:id/mods should display a list of items', function(done) {
+
         });
 
     });

@@ -21,201 +21,6 @@ describe('/worlds', function() {
         app.login(done);
     });
 
-    var assetId;
-    before(function(done) {
-        app.get('/assets')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                assetId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
-    var backgroundId;
-    before(function(done) {
-        app.get('/backgrounds')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                backgroundId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
-    var bionicId;
-    before(function(done) {
-        app.get('/bionics')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                bionicId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
-    var doctrineId;
-    before(function(done) {
-        app.get('/doctrines')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                doctrineId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
-    var expertiseId;
-    before(function(done) {
-        app.get('/expertises')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                expertiseId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
-    var giftId;
-    before(function(done) {
-        app.get('/gifts')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                giftId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
-    var identityId;
-    before(function(done) {
-        app.get('/identities')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                identityId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
-    var imperfectionId;
-    before(function(done) {
-        app.get('/imperfections')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                imperfectionId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
-    var manifestationId;
-    before(function(done) {
-        app.get('/manifestations')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                manifestationId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
-    var milestoneId;
-    before(function(done) {
-        app.get('/milestones')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                milestoneId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
-    var natureId;
-    before(function(done) {
-        app.get('/natures')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                natureId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
-    var protectionId;
-    before(function(done) {
-        app.get('/protection')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                protectionId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
-    var softwareId;
-    before(function(done) {
-        app.get('/software')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                softwareId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
-    var speciesId;
-    before(function(done) {
-        app.get('/species')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                speciesId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
-    var weaponId;
-    before(function(done) {
-        app.get('/weapons')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                weaponId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
     function verifyList(body) {
         assert.isNumber(body.length);
 
@@ -301,66 +106,6 @@ describe('/worlds', function() {
                 });
         });
 
-        it('/:id/assets should add a relation to the item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/assets', { insert_id: assetId }).expect(201).end(done);
-        });
-
-        it('/:id/backgrounds should add a relation to the item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/backgrounds', { insert_id: backgroundId }).expect(201).end(done);
-        });
-
-        it('/:id/bionics should add a relation to the item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/bionics', { insert_id: bionicId }).expect(201).end(done);
-        });
-
-        it('/:id/doctrines should add a relation to the item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/doctrines', { insert_id: doctrineId }).expect(201).end(done);
-        });
-
-        it('/:id/expertises should add a relation to the item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/expertises', { insert_id: expertiseId }).expect(201).end(done);
-        });
-
-        it('/:id/gifts should add a relation to the item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/gifts', { insert_id: giftId }).expect(201).end(done);
-        });
-
-        it('/:id/identities should add a relation to the item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/identities', { insert_id: identityId }).expect(201).end(done);
-        });
-
-        it('/:id/imperfections should add a relation to the item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/imperfections', { insert_id: imperfectionId }).expect(201).end(done);
-        });
-
-        it('/:id/manifestations should add a relation to the item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/manifestations', { insert_id: manifestationId }).expect(201).end(done);
-        });
-
-        it('/:id/milestones should add a relation to the item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/milestones', { insert_id: milestoneId }).expect(201).end(done);
-        });
-
-        it('/:id/natures should add a relation to the item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/natures', { insert_id: natureId }).expect(201).end(done);
-        });
-
-        it('/:id/protection should add a relation to the item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/protection', { insert_id: protectionId }).expect(201).end(done);
-        });
-
-        it('/:id/software should add a relation to the item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/software', { insert_id: softwareId }).expect(201).end(done);
-        });
-
-        it('/:id/species should add a relation to the item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/species', { insert_id: speciesId }).expect(201).end(done);
-        });
-
-        it('/:id/weapons should add a relation to the item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/weapons', { insert_id: weaponId }).expect(201).end(done);
-        });
-
     });
 
     describe('PUT', function() {
@@ -430,293 +175,382 @@ describe('/worlds', function() {
             app.get(baseRoute + '/' + temporaryId + '/comments').expect(200).end(function(err, res) { verifier.comments(err, res, done); });
         });
 
-        it('/:id/assets should return a list', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/assets')
+    });
+
+    describe('/assets', function() {
+        var relationRoute = 'assets',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        verifier.generic(item);
-                    });
+                    var length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
 
                     done();
                 });
         });
 
-        it('/:id/attributes should return a list', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/attributes')
+        it('POST / should add an item', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+    });
+
+    describe('/backgrounds', function() {
+        var relationRoute = 'backgrounds',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        verifier.generic(item);
-                    });
+                    var length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
 
                     done();
                 });
         });
 
-        it('/:id/backgrounds should return a list', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/backgrounds')
+        it('POST / should add an item', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+    });
+
+    describe('/bionics', function() {
+        var relationRoute = 'bionics',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        verifier.generic(item);
-                    });
+                    var length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
 
                     done();
                 });
         });
 
-        it('/:id/bionics should return a list', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/bionics')
+        it('POST / should add an item', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+    });
+
+    describe('/expertises', function() {
+        var relationRoute = 'expertises',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        verifier.generic(item);
-                    });
+                    var length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
 
                     done();
                 });
         });
 
-        it('/:id/doctrines should return a list', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/doctrines')
+        it('POST / should add an item', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+    });
+
+    describe('/gifts', function() {
+        var relationRoute = 'gifts',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        verifier.generic(item);
-                    });
+                    var length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
 
                     done();
                 });
         });
 
-        it('/:id/expertises should return a list', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/expertises')
+        it('POST / should add an item', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+    });
+
+    describe('/identities', function() {
+        var relationRoute = 'identities',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        verifier.generic(item);
-                    });
+                    var length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
 
                     done();
                 });
         });
 
-        it('/:id/gifts should return a list', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/gifts')
+        it('POST / should add an item', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+    });
+
+    describe('/imperfections', function() {
+        var relationRoute = 'imperfections',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        verifier.generic(item);
-                    });
+                    var length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
 
                     done();
                 });
         });
 
-        it('/:id/identities should return a list', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/identities')
+        it('POST / should add an item', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+    });
+
+    describe('/manifestations', function() {
+        var relationRoute = 'manifestations',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        verifier.generic(item);
-                    });
+                    var length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
 
                     done();
                 });
         });
 
-        it('/:id/imperfections should return a list', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/imperfections')
+        it('POST / should add an item', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+    });
+
+    describe('/milestones', function() {
+        var relationRoute = 'milestones',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        verifier.generic(item);
-                    });
+                    var length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
 
                     done();
                 });
         });
 
-        it('/:id/manifestations should return a list', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/manifestations')
+        it('POST / should add an item', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+    });
+
+    describe('/natures', function() {
+        var relationRoute = 'natures',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        verifier.generic(item);
-                    });
+                    var length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
 
                     done();
                 });
         });
 
-        it('/:id/milestones should return a list', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/milestones')
+        it('POST / should add an item', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+    });
+
+    describe('/protection', function() {
+        var relationRoute = 'protection',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        verifier.generic(item);
-                    });
+                    var length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
 
                     done();
                 });
         });
 
-        it('/:id/natures should return a list', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/natures')
+        it('POST / should add an item', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+    });
+
+    describe('/software', function() {
+        var relationRoute = 'software',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        verifier.generic(item);
-                    });
+                    var length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
 
                     done();
                 });
         });
 
-        it('/:id/protection should return a list', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/protection')
+        it('POST / should add an item', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+    });
+
+    describe('/species', function() {
+        var relationRoute = 'species',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        verifier.generic(item);
-                    });
+                    var length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
 
                     done();
                 });
         });
 
-        it('/:id/skills should return a list', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/skills')
+        it('POST / should add an item', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+    });
+
+    describe('/weapons', function() {
+        var relationRoute = 'weapons',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        verifier.generic(item);
-                    });
+                    var length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
 
                     done();
                 });
         });
 
-        it('/:id/software should return a list', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/software')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        verifier.generic(item);
-                    });
-
-                    done();
-                });
+        it('POST / should add an item', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
         });
 
-        it('/:id/species should return a list', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/species')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        verifier.generic(item);
-                    });
-
-                    done();
-                });
-        });
-
-        it('/:id/weapons should return a list', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/weapons')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.length);
-                    assert.isArray(res.body.results);
-
-                    _.each(res.body.results, function(item) {
-                        verifier.generic(item);
-                    });
-
-                    done();
-                });
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
         });
 
     });

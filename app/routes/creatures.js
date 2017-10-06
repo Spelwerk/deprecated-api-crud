@@ -112,6 +112,7 @@ module.exports = function(router) {
     creatures.gifts(router);
     creatures.imperfections(router);
     creatures.languages(router);
+    creatures.loyalties(router);
     creatures.manifestations(router);
     creatures.milestones(router);
     creatures.protection(router);
@@ -120,7 +121,6 @@ module.exports = function(router) {
     creatures.species(router);
     creatures.software(router);
     creatures.weapons(router);
-    creatures.weaponMods(router);
 
     // WOUNDS
 
