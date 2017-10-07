@@ -235,6 +235,7 @@ describe('/creatures', function() {
 
     });
 
+
     describe('/assets', function() {
         var relationRoute = 'assets',
             relationId;
@@ -256,16 +257,12 @@ describe('/creatures', function() {
             app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 1}).expect(201).end(done);
         });
 
+        it('PUT /:id should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {value: 4, custom: hasher(20)}).expect(204).end(done);
+        });
+
         it('GET / should get a list of items', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
-        });
-
-        it('PUT /:id/custom should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/custom', {custom: hasher(20)}).expect(204).end(done);
-        });
-
-        it('PUT /:id/value should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/value', {value: 4}).expect(204).end(done);
         });
 
         it('GET /:id should display an item', function(done) {
@@ -303,12 +300,12 @@ describe('/creatures', function() {
             app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 1}).expect(201).end(done);
         });
 
-        it('GET / should get a list of items', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        it('PUT /:id should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {value: 4}).expect(204).end(done);
         });
 
-        it('PUT /:id/value should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/value', {value: 4}).expect(204).end(done);
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
         });
 
         it('GET /:id should display an item', function(done) {
@@ -338,12 +335,12 @@ describe('/creatures', function() {
             app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
         });
 
-        it('GET / should get a list of items', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        it('PUT /:id should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {custom: hasher(20)}).expect(204).end(done);
         });
 
-        it('PUT /:id/custom should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/custom', {custom: hasher(20)}).expect(204).end(done);
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
         });
 
         it('GET /:id should display an item', function(done) {
@@ -373,12 +370,12 @@ describe('/creatures', function() {
             app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
         });
 
-        it('GET / should get a list of items', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        it('PUT /:id should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {value: 4, custom: hasher(20)}).expect(204).end(done);
         });
 
-        it('PUT /:id/custom should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/custom', {custom: hasher(20)}).expect(204).end(done);
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
         });
 
         it('GET /:id should display an item', function(done) {
@@ -461,12 +458,12 @@ describe('/creatures', function() {
             app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 1}).expect(201).end(done);
         });
 
-        it('GET / should get a list of items', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        it('PUT /:id should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {value: 4}).expect(204).end(done);
         });
 
-        it('PUT /:id/value should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/value', {value: 4}).expect(204).end(done);
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
         });
 
         it('GET /:id should display an item', function(done) {
@@ -496,16 +493,12 @@ describe('/creatures', function() {
             app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 1}).expect(201).end(done);
         });
 
+        it('PUT /:id should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {value: 4, custom: hasher(20)}).expect(204).end(done);
+        });
+
         it('GET / should get a list of items', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
-        });
-
-        it('PUT /:id/custom should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/custom', {custom: hasher(20)}).expect(204).end(done);
-        });
-
-        it('PUT /:id/value should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/value', {value: 4}).expect(204).end(done);
         });
 
         it('GET /:id should display an item', function(done) {
@@ -535,12 +528,12 @@ describe('/creatures', function() {
             app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
         });
 
-        it('GET / should get a list of items', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        it('PUT /:id should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {custom: hasher(20)}).expect(204).end(done);
         });
 
-        it('PUT /:id/custom should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/custom', {custom: hasher(20)}).expect(204).end(done);
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
         });
 
         it('GET /:id should display an item', function(done) {
@@ -570,12 +563,12 @@ describe('/creatures', function() {
             app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
         });
 
-        it('GET / should get a list of items', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        it('PUT /:id should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {custom: hasher(20)}).expect(204).end(done);
         });
 
-        it('PUT /:id/custom should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/custom', {custom: hasher(20)}).expect(204).end(done);
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
         });
 
         it('GET /:id should display an item', function(done) {
@@ -605,16 +598,12 @@ describe('/creatures', function() {
             app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
         });
 
+        it('PUT /:id should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {fluent: true}).expect(204).end(done);
+        });
+
         it('GET / should get a list of items', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
-        });
-
-        it('PUT /:id/fluent/1 should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/fluent/1').expect(204).end(done);
-        });
-
-        it('PUT /:id/fluent/0 should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/fluent/0').expect(204).end(done);
         });
 
         it('GET /:id should display an item', function(done) {
@@ -740,12 +729,12 @@ describe('/creatures', function() {
             app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
         });
 
-        it('GET / should get a list of items', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        it('PUT /:id should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {focus_id: focusId}).expect(204).end(done);
         });
 
-        it('PUT /:id/focus should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/focus', {focus_id: focusId}).expect(204).end(done);
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
         });
 
         it('GET /:id should display an item', function(done) {
@@ -775,12 +764,12 @@ describe('/creatures', function() {
             app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
         });
 
-        it('GET / should get a list of items', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        it('PUT /:id should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {custom: hasher(20)}).expect(204).end(done);
         });
 
-        it('PUT /:id/custom should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/custom', {custom: hasher(20)}).expect(204).end(done);
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
         });
 
         it('GET /:id should display an item', function(done) {
@@ -810,16 +799,12 @@ describe('/creatures', function() {
             app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 1}).expect(201).end(done);
         });
 
+        it('PUT /:id should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {value: 4, custom: hasher(20)}).expect(204).end(done);
+        });
+
         it('GET / should get a list of items', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
-        });
-
-        it('PUT /:id/custom should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/custom', {custom: hasher(20)}).expect(204).end(done);
-        });
-
-        it('PUT /:id/value should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/value', {value: 4}).expect(204).end(done);
         });
 
         it('GET /:id should display an item', function(done) {
@@ -857,12 +842,12 @@ describe('/creatures', function() {
             app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 1}).expect(201).end(done);
         });
 
-        it('GET / should get a list of items', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        it('PUT /:id should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {value: 4}).expect(204).end(done);
         });
 
-        it('PUT /:id/value should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/value', {value: 4}).expect(204).end(done);
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
         });
 
         it('GET /:id should display an item', function(done) {
@@ -892,12 +877,12 @@ describe('/creatures', function() {
             app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
         });
 
-        it('GET / should get a list of items', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        it('PUT /:id should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {custom: hasher(20)}).expect(204).end(done);
         });
 
-        it('PUT /:id/custom should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/custom', {custom: hasher(20)}).expect(204).end(done);
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
         });
 
         it('GET /:id should display an item', function(done) {
@@ -972,16 +957,12 @@ describe('/creatures', function() {
             app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 1}).expect(201).end(done);
         });
 
+        it('PUT /:id should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {value: 4, custom: hasher(20)}).expect(204).end(done);
+        });
+
         it('GET / should get a list of items', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
-        });
-
-        it('PUT /:id/custom should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/custom', {custom: hasher(20)}).expect(204).end(done);
-        });
-
-        it('PUT /:id/value should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/value', {value: 4}).expect(204).end(done);
         });
 
         it('GET /:id should display an item', function(done) {
