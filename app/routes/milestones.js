@@ -3,7 +3,7 @@
 var generic = require('../../lib/helper/generic'),
     relations = require('../../lib/helper/relations'),
     sequel = require('../../lib/sql/sequel'),
-    milestones = require('../../lib/tables/milestones');
+    milestones = require('../../lib/helper/milestones');
 
 module.exports = function(router) {
     var tableName = 'milestone',

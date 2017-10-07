@@ -1,7 +1,7 @@
 'use strict';
 
 var generic = require('../../lib/helper/generic'),
-    creatures = require('../../lib/tables/creatures');
+    creatures = require('../../lib/helper/creatures');
 
 module.exports = function(router) {
     var tableName = 'creature';
