@@ -34,32 +34,6 @@ describe('/locations', function() {
             });
     });
 
-    var individualId;
-    before(function(done) {
-        app.get('/individuals')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                individualId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
-    var locationId;
-    before(function(done) {
-        app.get('/locations')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                locationId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
     function verifyList(body) {
         assert.isNumber(body.length);
 
@@ -83,16 +57,13 @@ describe('/locations', function() {
         if(item.location_id) assert.isNumber(item.location_id);
     }
 
-
     describe('POST', function() {
 
         it('/ should create a new item', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
-                country_id: countryId,
-                individual_id: individualId,
-                location_id: locationId
+                country_id: countryId
             };
 
             app.post(baseRoute, payload)

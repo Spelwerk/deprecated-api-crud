@@ -3,14 +3,17 @@
 var async = require('async');
 
 var generic = require('../../lib/helper/generic'),
+    elemental = require('../../lib/sql/elemental'),
     sequel = require('../../lib/sql/sequel'),
     query = require('../../lib/sql/query'),
-    ownership = require('../../lib/sql/ownership'),
-    expertises = require('../../lib/tables/expertises'),
-    doctrines = require('../../lib/tables/doctrines');
+    ownership = require('../../lib/sql/ownership');
 
 module.exports = function(router) {
-    var tableName = 'doctrine';
+    var tableName = 'doctrine',
+        options = {
+            userOwned: true,
+            updatedField: true
+        };
 
     var sql = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
@@ -19,45 +22,50 @@ module.exports = function(router) {
 
     router.route('/')
         .post(function(req, res, next) {
-            var dId,
-                dName = req.body.name,
-                dDescription = req.body.description,
-                dIcon = req.body.icon,
-                dEffects = req.body.effects;
+            var manifestation = {
+                id: req.body.manifestation_id
+            };
 
-            var mId = req.body.manifestation_id,
-                sId;
+            var expertise = {
+                name: req.body.name + ' Mastery',
+                manifestation_id: req.body.manifestation_id
+            };
 
-            var eId,
-                eName = req.body.name + ' Mastery';
+            var doctrine = {
+                name: req.body.name,
+                description: req.body.description,
+                icon: req.body.icon,
+                manifestation_id: req.body.manifestation_id,
+                effects: req.body.effects
+            };
 
             async.series([
                 function(callback) {
-                    ownership(req.user, 'manifestation', mId, callback);
+                    ownership(req.user, 'manifestation', manifestation.id, callback);
                 },
                 function(callback) {
-                    query('SELECT skill_id AS id FROM skill_is_manifestation WHERE manifestation_id = ?', [mId], function(err, results) {
+                    query('SELECT skill_id AS id FROM skill_is_manifestation WHERE manifestation_id = ?', [manifestation.id], function(err, results) {
                         if(err) return callback(err);
 
-                        sId = results[0].id;
+                        expertise.skill_id = results[0].id;
 
                         callback();
                     });
                 },
                 function(callback) {
-                    expertises.post(req.user, eName, null, sId, mId, null, function(err, id) {
+                    elemental.post(req.user, expertise, 'expertise', {userOwned: true, combinations: ['manifestation']}, function(err, id) {
                         if(err) return callback(err);
 
-                        eId = id;
+                        doctrine.expertise_id = id;
 
                         callback();
                     });
                 },
                 function(callback) {
-                    doctrines.post(req.user, dName, dDescription, dIcon, eId, mId, dEffects, function(err, id) {
+                    elemental.post(req.user, doctrine, 'doctrine', {userOwned: true}, function(err, id) {
                         if(err) return callback(err);
 
-                        dId = id;
+                        doctrine.id = id;
 
                         callback();
                     });
@@ -65,7 +73,7 @@ module.exports = function(router) {
             ], function(err) {
                 if(err) return next(err);
 
-                res.status(201).send({id: dId});
+                res.status(201).send({id: doctrine.id});
             });
         });
 
@@ -80,23 +88,8 @@ module.exports = function(router) {
         });
 
     generic.get(router, tableName, sql);
-
-    router.route('/:id')
-        .put(function(req, res, next) {
-            var id = req.params.id,
-                name = req.body.name,
-                description = req.body.description,
-                icon = req.body.icon,
-                effects = req.body.effects;
-
-            doctrines.put(req.user, id, name, description, icon, effects, function(err) {
-                if(err) return next(err);
-
-                res.status(204).send();
-            });
-        });
-
-    generic.delete(router, tableName, false, true);
+    generic.put(router, tableName, options);
+    generic.delete(router, tableName, options);
     generic.canon(router, tableName);
     generic.clone(router, tableName);
     generic.comments(router, tableName);

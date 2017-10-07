@@ -21,19 +21,6 @@ describe('/corporations', function() {
         app.login(done);
     });
 
-    var countryId;
-    before(function(done) {
-        app.get('/countries')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                countryId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
     var locationId;
     before(function(done) {
         app.get('/locations')
@@ -69,14 +56,12 @@ describe('/corporations', function() {
         if(item.location_id) assert.isNumber(item.location_id);
     }
 
-
     describe('POST', function() {
 
         it('/ should create a new item', function(done) {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
-                country_id: countryId,
                 location_id: locationId
             };
 

@@ -4,14 +4,16 @@ var async = require('async'),
     yaml = require('node-yaml');
 
 var generic = require('../../lib/helper/generic'),
-    attributes = require('./../../lib/tables/attributes'),
-    manifestations = require('./../../lib/tables/manifestations'),
-    skills = require('./../../lib/tables/skills');
+    elemental = require('../../lib/sql/elemental');
 
 var defaults = yaml.readSync('./../../config/defaults.yml');
 
 module.exports = function(router) {
-    var tableName = 'manifestation';
+    var tableName = 'manifestation',
+        options = {
+            userOwned: true,
+            updatedField: true
+        };
 
     var sql = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
@@ -20,71 +22,69 @@ module.exports = function(router) {
 
     router.route('/')
         .post(function(req, res, next) {
-            var mId,
-                mName = req.body.name,
-                mDescription = req.body.description,
-                mIcon = req.body.icon;
+            var attribute = {
+                name: req.body.power,
+                description: 'Power attribute for: ' + req.body.name,
+                icon: req.body.icon,
+                attributetype_id: defaults.attributeType.power,
+                optional: 1,
+                minimum: 0,
+                maximum: req.body.maximum
+            };
 
-            var aId,
-                aName = req.body.power,
-                aDescription = 'Power attribute for: ' + req.body.name,
-                aIcon = req.body.icon,
-                aType = defaults.attributeType.power,
-                aOptional = 1,
-                aMinimum = 0,
-                aMaximum = req.body.maximum;
+            var manifestation = {
+                name: req.body.name,
+                description: req.body.description,
+                icon: req.body.icon
+            };
 
-            var sName = req.body.skill,
-                sDescription = 'Skill for: ' + req.body.name,
-                sIcon = req.body.icon;
+            var skill = {
+                name: req.body.skill,
+                description: 'Skill for: ' + req.body.name,
+                icon: req.body.icon
+            };
 
             async.series([
                 function(callback) {
-                    attributes.post(req.user, aName, aDescription, aIcon, aType, aOptional, aMinimum, aMaximum, function(err, id) {
+                    elemental.post(req.user, attribute, 'attribute', {userOwned: true}, function(err, id) {
                         if(err) return callback(err);
 
-                        aId = id;
+                        attribute.id = id;
+                        manifestation.attribute_id = id;
 
                         callback();
                     });
                 },
                 function(callback) {
-                    manifestations.post(req.user, mName, mDescription, mIcon, aId, function(err, id) {
+                    elemental.post(req.user, manifestation, 'manifestation', {userOwned: true}, function(err, id) {
                         if(err) return callback(err);
 
-                        mId = id;
+                        manifestation.id = id;
+                        skill.manifestation_id = id;
 
                         callback();
                     });
                 },
                 function(callback) {
-                    skills.post(req.user, sName, sDescription, sIcon, mId, null, callback);
+                    elemental.post(req.user, skill, 'skill', {userOwned: true, combinations: ['manifestation']}, function(err, id) {
+                        if(err) return callback(err);
+
+                        skill.id = id;
+
+                        callback();
+                    });
                 }
             ], function(err) {
                 if(err) return next(err);
 
-                res.status(201).send({id: mId});
+                res.status(201).send({id: manifestation.id});
             });
         });
 
     generic.deleted(router, tableName, sql);
     generic.get(router, tableName, sql);
-
-    router.route('/:id')
-        .put(function(req, res, next) {
-            var id = req.params.id,
-                name = req.body.name,
-                description = req.body.description,
-                icon = req.body.icon;
-
-            manifestations.put(req.user, id, name, description, icon, function(err) {
-                if(err) return next(err);
-
-                res.status(204).send();
-            });
-        });
-
-    generic.delete(router, tableName, false, true);
+    generic.put(router, tableName, options);
+    generic.delete(router, tableName, options);
     generic.canon(router, tableName);
     generic.clone(router, tableName);
     generic.comments(router, tableName);

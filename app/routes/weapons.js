@@ -2,11 +2,14 @@
 
 var generic = require('../../lib/helper/generic'),
     relations = require('../../lib/helper/relations'),
-    sequel = require('../../lib/sql/sequel'),
-    weapons = require('../../lib/tables/weapons');
+    sequel = require('../../lib/sql/sequel');
 
 module.exports = function(router) {
-    var tableName = 'weapon';
+    var tableName = 'weapon',
+        options = {
+            userOwned: true,
+            updatedField: true
+        };
 
     var sql = 'SELECT ' +
         'weapon.id, ' +
@@ -40,30 +43,7 @@ module.exports = function(router) {
         'LEFT JOIN weapon_is_corporation ON weapon_is_corporation.weapon_id = weapon.id';
 
     generic.root(router, tableName, sql);
-
-    router.route('/')
-        .post(function(req, res, next) {
-            var name = req.body.name,
-                description = req.body.description,
-                typeId = req.body.weapontype_id,
-                legal = req.body.legal,
-                price = req.body.price,
-                damageDice = req.body.damage_dice,
-                damageBonus = req.body.damage_bonus,
-                criticalDice = req.body.critical_dice,
-                criticalBonus = req.body.critical_bonus,
-                distance = req.body.distance,
-                augmentationId = req.body.augmentation_id,
-                speciesId = req.body.species_id,
-                corporationId = req.body.corporation_id;
-
-            weapons.post(req.user, name, description, typeId, legal, price, damageDice, damageBonus, criticalDice, criticalBonus, distance, augmentationId, speciesId, corporationId, function(err, id) {
-                if(err) return next(err);
-
-                res.status(201).send({id: id});
-            });
-        });
-
+    generic.post(router, tableName, options);
     generic.deleted(router, tableName, sql);
 
     router.route('/augmentation/:augmentationId')
@@ -91,30 +71,8 @@ module.exports = function(router) {
         });
 
     generic.get(router, tableName, sql);
-
-    router.route('/:id')
-        .put(function(req, res, next) {
-            var id = req.params.id,
-                name = req.body.name,
-                description = req.body.description,
-                typeId = req.body.weapontype_id,
-                legal = req.body.legal,
-                price = req.body.price,
-                damageDice = req.body.damage_dice,
-                damageBonus = req.body.damage_bonus,
-                criticalDice = req.body.critical_dice,
-                criticalBonus = req.body.critical_bonus,
-                distance = req.body.distance,
-                corporationId = req.body.corporation_id;
-
-            weapons.put(req.user, id, name, description, typeId, legal, price, damageDice, damageBonus, criticalDice, criticalBonus, distance, corporationId, function(err) {
-                if(err) return next(err);
-
-                res.status(204).send();
-            });
-        });
-
-    generic.delete(router, tableName, false, true);
+    generic.put(router, tableName, options);
+    generic.delete(router, tableName, options);
     generic.canon(router, tableName);
     generic.clone(router, tableName);
     generic.comments(router, tableName);

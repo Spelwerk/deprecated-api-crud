@@ -3,12 +3,15 @@
 var async = require('async');
 
 var generic = require('../../lib/helper/generic'),
-    sequel = require('../../lib/sql/sequel'),
-    expertises = require('../../lib/tables/expertises'),
-    skills = require('../../lib/tables/skills');
+    elemental = require('../../lib/sql/elemental'),
+    sequel = require('../../lib/sql/sequel');
 
 module.exports = function(router) {
-    var tableName = 'skill';
+    var tableName = 'skill',
+        options = {
+            userOwned: true,
+            updatedField: true
+        };
 
     var sql = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id ' +
@@ -19,33 +22,39 @@ module.exports = function(router) {
 
     router.route('/')
         .post(function(req, res, next) {
-            var sId,
-                sName = req.body.name,
-                sDescription = req.body.description,
-                sIcon = req.body.icon,
-                sManifestation = req.body.manifestation_id,
-                sSpecies = req.body.species_id;
+            var skill = {
+                name: req.body.name,
+                description: req.body.description,
+                icon: req.body.icon,
+                manifestation_id: req.body.manifestation_id,
+                species_id: req.body.species_id
+            };
 
-            var eName = req.body.name,
-                eDescription = 'Generic expertise used where the other expertises do not fit, and you still want to show you are extra good at something. You can use the Custom Description field to explain where this is applicable for your character. Remember that if you have a suggestion for a new expertise you can easily add it to the game system and your own created worlds. If the new expertise is of great quality it may even be adopted as canon by Spelwerk.';
+            var expertise = {
+                name: req.body.name,
+                description: 'Generic expertise used where the other expertises do not fit, and you still want to show you are extra good at something. You can use the Custom Description field to explain where this is applicable for your character. Remember that if you have a suggestion for a new expertise you can easily add it to the game system and your own created worlds. If the new expertise is of great quality it may even be adopted as canon by Spelwerk.',
+                manifestation_id: req.body.manifestation_id,
+                species_id: req.body.species_id
+            };
 
             async.series([
                 function(callback) {
-                    skills.post(req.user, sName, sDescription, sIcon, sManifestation, sSpecies, function(err, id) {
+                    elemental.post(req.user, skill, 'skill', {userOwned: true, combinations: ['manifestation', 'species']}, function(err, id) {
                         if(err) return callback(err);
 
-                        sId = id;
+                        skill.id = id;
+                        expertise.skill_id = id;
 
                         callback();
-                    })
+                    });
                 },
                 function(callback) {
-                    expertises.post(req.user, eName, eDescription, sId, sManifestation, sSpecies, callback);
+                    elemental.post(req.user, expertise, 'expertise', {userOwned: true, combinations: ['manifestation', 'species']}, callback);
                 }
             ], function(err) {
                 if(err) return next(err);
 
-                res.status(201).send({id: sId});
+                res.status(201).send({id: skill.id});
             });
         });
 
@@ -68,24 +77,8 @@ module.exports = function(router) {
         });
 
     generic.get(router, tableName, sql);
-
-    router.route('/:id')
-        .put(function(req, res, next) {
-            var id = req.params.id,
-                name = req.body.name,
-                description = req.body.description,
-                icon = req.body.icon,
-                manifestationId = req.body.manifestation_id,
-                speciesId = req.body.species_id;
-
-            skills.put(req.user, id, name, description, icon, manifestationId, speciesId, function(err) {
-                if(err) return next(err);
-
-                res.status(204).send();
-            });
-        });
-
-    generic.delete(router, tableName, false, true);
+    generic.put(router, tableName, options);
+    generic.delete(router, tableName, options);
     generic.canon(router, tableName);
     generic.clone(router, tableName);
     generic.comments(router, tableName);

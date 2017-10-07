@@ -3,9 +3,10 @@
 var generic = require('../../lib/helper/generic');
 
 module.exports = function(router) {
-    var tableName = 'assettype',
+    var tableName = 'corporation',
         options = {
             userOwned: true,
+            combinations: ['location'],
             updatedField: true
         };
 

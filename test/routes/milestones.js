@@ -89,7 +89,6 @@ describe('/milestones', function() {
             var payload = {
                 name: hasher(20),
                 description: hasher(20),
-                icon: 'http://fakeicon.com/' + hasher(20) + '.png',
                 background_id: backgroundId,
                 manifestation_id: manifestationId,
                 species_id: speciesId

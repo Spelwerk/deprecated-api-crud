@@ -3,12 +3,15 @@
 var async = require('async');
 
 var generic = require('../../lib/helper/generic'),
-    sequel = require('../../lib/sql/sequel'),
-    expertises = require('../../lib/tables/expertises'),
-    weaponTypes = require('../../lib/tables/weapontypes');
+    elemental = require('../../lib/sql/elemental'),
+    sequel = require('../../lib/sql/sequel');
 
 module.exports = function(router) {
-    var tableName = 'weapontype';
+    var tableName = 'weapontype',
+        options = {
+            userOwned: true,
+            updatedField: true
+        };
 
     var sql = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
@@ -17,35 +20,40 @@ module.exports = function(router) {
 
     router.route('/')
         .post(function(req, res, next) {
-            var eId,
-                eName = req.body.name + ' Mastery',
-                eDescription = req.body.description,
-                eSkillId = req.body.skill_id,
-                eSpeciesId = req.body.species_id;
+            var expertise = {
+                name: req.body.name + ' Mastery',
+                description: req.body.description,
+                skill_id: req.body.skill_id,
+                species_id: req.body.species_id
+            };
 
-            var wId,
-                wName = req.body.name,
-                wDescription = req.body.description,
-                wIcon = req.body.icon,
-                wAttributeId = req.body.attribute_id,
-                wAugmentation = !!req.body.augmentation,
-                wSpecies = !!req.body.species_id;
+            var equipable = !!req.body.augmentation || !!req.body.species_id;
+
+            var weaponType = {
+                name: req.body.name,
+                description: req.body.description,
+                icon: req.body.icon,
+                attribute_id: req.body.attribute_id,
+                augmentation: !!req.body.augmentation,
+                species: !!req.body.species_id,
+                equipable: equipable
+            };
 
             async.series([
                 function(callback) {
-                    expertises.post(req.user, eName, eDescription, eSkillId, null, eSpeciesId, function(err, id) {
+                    elemental.post(req.user, expertise, 'expertise', {userOwned: true, combinations: ['species']}, function(err, id) {
                         if(err) return callback(err);
 
-                        eId = id;
+                        weaponType.expertise_id = id;
 
                         callback();
                     });
                 },
                 function(callback) {
-                    weaponTypes.post(req.user, wName, wDescription, wIcon, wAttributeId, eId, wAugmentation, wSpecies, function(err, id) {
+                    elemental.post(req.user, weaponType, 'weapontype', {userOwned: true}, function(err, id) {
                         if(err) return callback(err);
 
-                        wId = id;
+                        weaponType.id = id;
 
                         callback();
                     });
@@ -53,7 +61,7 @@ module.exports = function(router) {
             ], function(err) {
                 if(err) return next(err);
 
-                res.status(201).send({id: wId});
+                res.status(201).send({id: weaponType.id});
             });
         });
 
@@ -92,22 +100,8 @@ module.exports = function(router) {
         });
 
     generic.get(router, tableName, sql);
-
-    router.route('/:id')
-        .put(function(req, res, next) {
-            var id = req.params.id,
-                name = req.body.name,
-                description = req.body.description,
-                icon = req.body.icon;
-
-            weaponTypes.put(req.user, id, name, description, icon, function(err) {
-                if(err) return next(err);
-
-                res.status(204).send();
-            });
-        });
-
-    generic.delete(router, tableName, false, true);
+    generic.put(router, tableName, options);
+    generic.delete(router, tableName, options);
     generic.canon(router, tableName);
     generic.clone(router, tableName);
     generic.comments(router, tableName);

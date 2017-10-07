@@ -2,11 +2,15 @@
 
 var generic = require('../../lib/helper/generic'),
     relations = require('../../lib/helper/relations'),
-    sequel = require('../../lib/sql/sequel'),
-    backgrounds = require('../../lib/tables/backgrounds');
+    sequel = require('../../lib/sql/sequel');
 
 module.exports = function(router) {
-    var tableName = 'background';
+    var tableName = 'background',
+        options = {
+            userOwned: true,
+            combinations: ['manifestation', 'species'],
+            updatedField: true
+        };
 
     var sql = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id ' +
@@ -14,22 +18,7 @@ module.exports = function(router) {
         'LEFT JOIN ' + tableName + '_is_species ON ' + tableName + '_is_species.' + tableName + '_id = ' + tableName + '.id';
 
     generic.root(router, tableName, sql);
-
-    router.route('/')
-        .post(function(req, res, next) {
-            var name = req.body.name,
-                description = req.body.description,
-                icon = req.body.icon,
-                manifestationId = req.body.manifestation_id,
-                speciesId = req.body.species_id;
-
-            backgrounds.post(req.user, name, description, icon, manifestationId, speciesId, function(err, id) {
-                if(err) return next(err);
-
-                res.status(201).send({id: id});
-            })
-        });
-
+    generic.post(router, tableName, options);
     generic.deleted(router, tableName, sql);
 
     router.route('/manifestation/:manifestationId')
@@ -49,23 +38,7 @@ module.exports = function(router) {
         });
 
     generic.get(router, tableName, sql);
-
-    router.route('/:id')
-        .put(function(req, res, next) {
-            var id = req.params.id,
-                name = req.body.name,
-                description = req.body.description,
-                icon = req.body.icon,
-                manifestationId = req.body.manifestation_id,
-                speciesId = req.body.species_id;
-
-            backgrounds.put(req.user, id, name, description, icon, manifestationId, speciesId, function(err) {
-                if(err) return next(err);
-
-                res.status(204).send();
-            });
-        });
-
+    generic.put(router, tableName, options);
     generic.delete(router, tableName, false, true);
     generic.canon(router, tableName);
     generic.clone(router, tableName);

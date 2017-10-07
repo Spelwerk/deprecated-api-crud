@@ -3,12 +3,16 @@
 var async = require('async');
 
 var generic = require('../../lib/helper/generic'),
-    relations = require('../../lib/helper/relations'),
-    augmentations = require('../../lib/tables/augmentations'),
-    weapons = require('../../lib/tables/weapons');
+    elemental = require('../../lib/sql/elemental'),
+    relations = require('../../lib/helper/relations');
 
 module.exports = function(router) {
-    var tableName = 'augmentation';
+    var tableName = 'augmentation',
+        options = {
+            userOwned: true,
+            combinations: ['corporation'],
+            updatedField: true
+        };
 
     var sql = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id ' +
@@ -18,64 +22,55 @@ module.exports = function(router) {
 
     router.route('/')
         .post(function(req, res, next) {
-            var aId,
-                name = req.body.name,
-                description = req.body.description,
-                legal = req.body.legal,
-                price = req.body.price,
-                hackingDifficulty = req.body.hacking_difficulty,
-                corporationId = req.body.corporation_id;
+            var augmentation = {
+                name: req.body.name,
+                description: req.body.description,
+                legal: !!req.body.legal,
+                price: req.body.price,
+                hacking_difficulty: req.body.hacking_difficulty,
+                corporation_id: req.body.corporation_id
+            };
 
-            var weaponType = req.body.weapon_type || null,
-                damageDice = req.body.damage_dice,
-                damageBonus = req.body.damage_bonus,
-                criticalDice = req.body.critical_dice,
-                criticalBonus = req.body.critical_bonus,
-                distance = req.body.distance;
+            var weapon = {
+                name: req.body.name,
+                description: req.body.description,
+                weapontype_id: req.body.weapontype_id,
+                legal: !!req.body.legal,
+                price: req.body.price,
+                damage_dice: req.body.damage_dice,
+                damage_bonus: req.body.damage_bonus,
+                critical_dice: req.body.critical_dice,
+                critical_bonus: req.body.critical_bonus,
+                distance: req.body.distance
+            };
 
             async.series([
                 function(callback) {
-                    augmentations.post(req.user, name, description, legal, price, hackingDifficulty, corporationId, function(err, id) {
+                    elemental.post(req.user, augmentation, 'augmentation', {userOwned: true, combinations: ['corporation']}, function(err, id) {
                         if(err) return callback(err);
 
-                        aId = id;
+                        augmentation.id = id;
+                        weapon.augmentation_id = id;
 
                         callback();
                     });
                 },
                 function(callback) {
-                    if(!weaponType) return callback();
+                    if(!weapon.weapontype_id) return callback();
 
-                    weapons.post(req.user, name, description, weaponType, legal, price, damageDice, damageBonus, criticalDice, criticalBonus, distance, aId, null, corporationId, callback);
+                    elemental.post(req.user, weapon, 'weapon', {userOwned: true, combinations: ['augmentation', 'corporation']}, callback);
                 }
             ], function(err) {
                 if(err) return next(err);
 
-                res.status(201).send({id: aId});
+                res.status(201).send({id: augmentation.id});
             });
         });
 
     generic.deleted(router, tableName, sql);
     generic.get(router, tableName, sql);
-
-    router.route('/:id')
-        .put(function(req, res, next) {
-            var id = req.params.id,
-                name = req.body.name,
-                description = req.body.description,
-                legal = req.body.legal,
-                price = req.body.price,
-                hackingDifficulty = req.body.hacking_difficulty,
-                corporationId = req.body.corporation_id;
-
-            augmentations.put(req.user, id, name, description, legal, price, hackingDifficulty, corporationId, function(err) {
-                if(err) return next(err);
-
-                res.status(204).send();
-            });
-        });
-
-    generic.delete(router, tableName, false, true);
+    generic.put(router, tableName, options);
+    generic.delete(router, tableName, options);
     generic.canon(router, tableName);
     generic.clone(router, tableName);
     generic.comments(router, tableName);

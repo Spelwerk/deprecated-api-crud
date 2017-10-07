@@ -1,11 +1,14 @@
 'use strict';
 
 var generic = require('../../lib/helper/generic'),
-    sequel = require('../../lib/sql/sequel'),
-    expertises = require('../../lib/tables/expertises');
+    sequel = require('../../lib/sql/sequel');
 
 module.exports = function(router) {
-    var tableName = 'expertise';
+    var tableName = 'expertise',
+        options = {
+            userOwned: true,
+            updatedField: true
+        };
 
     var sql = 'SELECT ' +
         'expertise.id, ' +
@@ -28,22 +31,7 @@ module.exports = function(router) {
         'LEFT JOIN skill ON skill.id = expertise.skill_id';
 
     generic.root(router, tableName, sql);
-
-    router.route('/')
-        .post(function(req, res, next) {
-            var name = req.body.name,
-                description = req.body.description,
-                skillId = req.body.skill_id,
-                manifestationId = req.body.manifestation_id,
-                speciesId = req.body.species_id;
-
-            expertises.post(req.user, name, description, skillId, manifestationId, speciesId, function(err, id) {
-                if(err) return next(err);
-
-                res.status(201).send({id: id});
-            });
-        });
-
+    generic.post(router, tableName, options);
     generic.deleted(router, tableName, sql);
 
     router.route('/manifestation/:manifestationId')
@@ -89,24 +77,8 @@ module.exports = function(router) {
         });
 
     generic.get(router, tableName, sql);
-
-    router.route('/:id')
-        .put(function(req, res, next) {
-            var id = req.params.id,
-                name = req.body.name,
-                description = req.body.description,
-                skillId = req.body.skill_id,
-                manifestationId = req.body.manifestation_id,
-                speciesId = req.body.species_id;
-
-            expertises.put(req.user, id, name, description, skillId, manifestationId, speciesId, function(err) {
-                if(err) return next(err);
-
-                res.status(204).send();
-            });
-        });
-
-    generic.delete(router, tableName, false, true);
+    generic.put(router, tableName, options);
+    generic.delete(router, tableName, options);
     generic.canon(router, tableName);
     generic.clone(router, tableName);
     generic.comments(router, tableName);
