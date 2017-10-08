@@ -6,10 +6,7 @@ var generic = require('../../lib/helper/generic'),
 
 module.exports = function(router) {
     var tableName = 'weapon',
-        options = {
-            userOwned: true,
-            updatedField: true
-        };
+        options = { updatedField: true };
 
     var sql = 'SELECT ' +
         'weapon.id, ' +
@@ -31,7 +28,7 @@ module.exports = function(router) {
         'weapontype.icon, ' +
         'weapontype.attribute_id, ' +
         'weapontype.expertise_id, ' +
-        'weapon_is_copy.original_id, ' +
+        'weapon_is_copy.copy_id, ' +
         'weapon_is_augmentation.augmentation_id, ' +
         'weapon_is_species.species_id, ' +
         'weapon_is_corporation.corporation_id ' +

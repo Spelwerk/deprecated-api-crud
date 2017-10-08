@@ -6,11 +6,7 @@ var generic = require('../../lib/helper/generic'),
 
 module.exports = function(router) {
     var tableName = 'bionic',
-        options = {
-            userOwned: true,
-            combinations: ['corporation'],
-            updatedField: true
-        };
+        options = { updatedField: true };
 
     var sql = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id ' +

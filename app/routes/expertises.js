@@ -5,10 +5,7 @@ var generic = require('../../lib/helper/generic'),
 
 module.exports = function(router) {
     var tableName = 'expertise',
-        options = {
-            userOwned: true,
-            updatedField: true
-        };
+        options = { updatedField: true };
 
     var sql = 'SELECT ' +
         'expertise.id, ' +
@@ -21,7 +18,7 @@ module.exports = function(router) {
         'expertise.updated, ' +
         'expertise.deleted, ' +
         'skill.icon, ' +
-        'expertise_is_copy.original_id, ' +
+        'expertise_is_copy.copy_id, ' +
         'expertise_is_manifestation.manifestation_id, ' +
         'expertise_is_species.species_id ' +
         'FROM expertise ' +

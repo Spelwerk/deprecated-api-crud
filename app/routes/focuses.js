@@ -6,7 +6,6 @@ var generic = require('../../lib/helper/generic'),
 module.exports = function(router) {
     var tableName = 'focus',
         options = {
-            userOwned: true,
             ownership: ['manifestation'],
             updatedField: true
         };

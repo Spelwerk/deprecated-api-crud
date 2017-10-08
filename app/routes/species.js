@@ -12,10 +12,7 @@ var defaults = yaml.readSync('./../../config/defaults.yml');
 
 module.exports = function(router) {
     var tableName = 'species',
-        options = {
-            userOwned: true,
-            updatedField: true
-        };
+        options = { updatedField: true };
 
     var sql = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';

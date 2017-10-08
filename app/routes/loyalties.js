@@ -4,10 +4,7 @@ var generic = require('../../lib/helper/generic');
 
 module.exports = function(router) {
     var tableName = 'loyalty',
-        options = {
-            adminRestricted: true,
-            updatedField: true
-        };
+        options = { updatedField: true };
 
     var sql = 'SELECT * FROM ' + tableName;
 

@@ -82,18 +82,6 @@ describe('/worlds', function() {
                 });
         });
 
-        it('/:id/clone should create a copy', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/clone')
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
-        });
-
         it('/:id/comments should create a new comment', function(done) {
             app.post(baseRoute + '/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)

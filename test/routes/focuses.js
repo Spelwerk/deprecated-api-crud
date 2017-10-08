@@ -94,7 +94,7 @@ describe('/focuses', function() {
 
     });
 
-    xdescribe('PUT', function() {
+    describe('PUT', function() {
 
         it('/:focusId should update the item with new values', function(done) {
             var payload = {
@@ -115,7 +115,7 @@ describe('/focuses', function() {
 
     });
 
-    xdescribe('GET', function() {
+    describe('GET', function() {
 
         it('/ should return a list', function(done) {
             app.get(baseRoute)
