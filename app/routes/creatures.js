@@ -105,7 +105,7 @@ module.exports = function(router) {
     generic.clone(router, tableName);
     generic.comments(router, tableName);
     generic.labels(router, tableName);
-    generic.ownership(router, tableName);
+    generic.permissions(router, tableName);
     generic.revive(router, tableName);
 
     // RELATIONS

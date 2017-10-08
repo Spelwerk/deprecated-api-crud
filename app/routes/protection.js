@@ -36,7 +36,7 @@ module.exports = function(router) {
     generic.comments(router, tableName);
     generic.images(router, tableName);
     generic.labels(router, tableName);
-    generic.ownership(router, tableName);
+    generic.permissions(router, tableName);
     generic.revive(router, tableName);
 
     // Relations

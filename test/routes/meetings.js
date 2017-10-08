@@ -156,8 +156,8 @@ describe('/meetings', function() {
                 });
         });
 
-        it('/:id/ownership should return ownership status', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/ownership').expect(200).end(function(err, res) { verifier.ownership(err, res, done); });
+        it('/:id/permissions should return user permissions', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/permissions').expect(200).end(function(err, res) { verifier.ownership(err, res, done); });
         });
 
         it('/:id/comments should get all available comments', function(done) {
