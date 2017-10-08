@@ -1,5 +1,7 @@
 'use strict';
 
+var Err = require('../../lib/errors/index');
+
 var async = require('async'),
     nconf = require('nconf'),
     moment = require('moment'),
@@ -7,7 +9,6 @@ var async = require('async'),
 
 var query = require('../../lib/sql/query'),
     sequel = require('../../lib/sql/sequel'),
-    hasher = require('../../lib/hasher'),
     mailer = require('../../lib/mailer'),
     onion = require('../../lib/onion'),
     users = require('../../lib/helper/users');
@@ -117,7 +118,7 @@ module.exports = function(router) {
 
     router.route('/info')
         .get(function(req, res, next) {
-            if(!req.user) return next({status: 403, message: 'Forbidden', error: 'User is not logged in'});
+            if(!req.user) return next(Err.User.NotLoggedInError());
 
             res.status(200).send({
                 id: req.user.id,
@@ -131,7 +132,7 @@ module.exports = function(router) {
 
     router.route('/tokens')
         .get(function(req, res, next) {
-            if(!req.user.id) return next({status: 403, message: 'Forbidden', error: 'User is not logged in'});
+            if(!req.user.id) return next(Err.User.NotLoggedInError());
 
             query('SELECT * FROM user_token WHERE user_id = ?', [req.user.id], function(err, results, fields) {
                 if(err) return next(err);
@@ -142,18 +143,18 @@ module.exports = function(router) {
 
     router.route('/tokens/:tokenId')
         .get(function(req, res, next) {
-            if(!req.user.id) return next({status: 403, message: 'Forbidden', error: 'User is not logged in'});
+            if(!req.user.id) return next(Err.User.NotLoggedInError());
 
             query('SELECT * FROM user_token WHERE user_id = ? AND id = ?', [req.user.id, req.params.tokenId], function(err, results, fields) {
                 if(err) return next(err);
 
-                if(!results[0]) return next({status: 404, message: 'Not Found', error: 'The requested object was not found.'});
+                if(!results[0]) return next(Err.User.InvalidTokenError());
 
                 res.status(200).send({result: results[0], fields: fields});
             })
         })
         .delete(function(req, res, next) {
-            if(!req.user.id) return next({status: 403, message: 'Forbidden', error: 'User is not logged in'});
+            if(!req.user.id) return next(Err.User.NotLoggedInError());
 
             query('DELETE FROM user_token WHERE user_id = ? AND id = ?', [req.user.id, req.params.tokenId], function(err) {
                 if(err) return next(err);
@@ -177,12 +178,12 @@ module.exports = function(router) {
                     query('SELECT id, password FROM user WHERE email = ? AND deleted IS NULL', [insert.email], function(err, result) {
                         if(err) return callback(err);
 
-                        if(result.length === 0) return callback({status: 403, message: 'Forbidden', error: 'Missing Email'});
+                        if(result.length === 0) return callback(Err.Custom.CustomError(404, 'Email missing'));
 
                         user.id = result[0].id;
                         user.password = result[0].password;
 
-                        if(user.password === null) return callback({status: 403, message: 'Forbidden', error: 'Password not set, verify your account.'});
+                        if(user.password === null) return callback(Err.Custom.CustomError(400, 'Password not set'));
 
                         callback();
                     });
@@ -264,7 +265,7 @@ module.exports = function(router) {
                     query('SELECT user_id AS id, timeout FROM user_login WHERE secret = ?', [user.secret], function(err, result) {
                         if(err) return callback(err);
 
-                        if(!result[0]) return callback({status: 403, message: 'Forbidden', error: 'The secret provided was not correct'});
+                        if(!result[0]) return callback(Err.User.InvalidSecretError());
 
                         user.id = result[0].id;
                         user.timeout = result[0].timeout;
@@ -273,7 +274,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    if(moment(user.timeout).isBefore(moment())) return callback({status: 403, message: 'Forbidden', error: 'Timeout Expired'});
+                    if(moment(user.timeout).isBefore(moment())) return callback(Err.User.TimeoutExceededError());
 
                     callback();
                 },
@@ -355,7 +356,7 @@ module.exports = function(router) {
                     query('SELECT user_id AS id, timeout FROM user_verification WHERE secret = ?', [user.secret], function(err, result) {
                         if(err) return callback(err);
 
-                        if(!result[0]) return callback({status: 403, message: 'Forbidden', error: 'The secret provided was not correct'});
+                        if(!result[0]) return callback(Err.User.InvalidSecretError());
 
                         user.id = result[0].id;
                         user.timeout = result[0].timeout;
@@ -364,7 +365,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    if(moment(user.timeout).isBefore(moment())) return callback({status: 403, message: 'Forbidden', error: 'Timeout Expired'});
+                    if(moment(user.timeout).isBefore(moment())) return callback(Err.User.TimeoutExceededError());
 
                     callback();
                 },
@@ -445,7 +446,7 @@ module.exports = function(router) {
                     query('SELECT user_id AS id, timeout FROM user_email WHERE secret = ?', [user.secret], function(err, result) {
                         if(err) return callback(err);
 
-                        if(!result[0]) return callback({status: 403, message: 'Forbidden', error: 'The secret provided was not correct'});
+                        if(!result[0]) return callback(Err.User.InvalidSecretError());
 
                         user.id = result[0].id;
                         user.timeout = result[0].timeout;
@@ -463,7 +464,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    if(moment(user.timeout).isBefore(moment())) return callback({status: 403, message: 'Forbidden', error: 'Timeout Expired'});
+                    if(moment(user.timeout).isBefore(moment())) return callback(Err.User.TimeoutExceededError());
 
                     callback();
                 },
@@ -562,7 +563,7 @@ module.exports = function(router) {
                     query('SELECT user_id AS id, timeout FROM user_reset WHERE secret = ?', [user.secret], function(err, result) {
                         if(err) return callback(err);
 
-                        if(!result[0]) return callback({status: 403, message: 'Forbidden', error: 'The secret provided was not correct'});
+                        if(!result[0]) return callback(Err.User.InvalidSecretError());
 
                         user.id = result[0].id;
                         user.timeout = result[0].timeout;
@@ -580,7 +581,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    if(moment(user.timeout).isBefore(moment())) return callback({status: 403, message: 'Forbidden', error: 'Timeout Expired'});
+                    if(moment(user.timeout).isBefore(moment())) return callback(Err.User.TimeoutExceededError());
 
                     callback();
                 },
@@ -624,7 +625,7 @@ module.exports = function(router) {
             sequel.get(req, res, next, call, [req.params.id], true);
         })
         .put(function(req, res, next) {
-            if(!req.user.id) return next({status: 403, message: 'Forbidden', error: 'User is not logged in'});
+            if(!req.user.id) return next(Err.User.NotLoggedInError());
 
             var user = {};
 
@@ -632,7 +633,7 @@ module.exports = function(router) {
             user.firstname = req.body.firstname;
             user.lastname = req.body.lastname;
 
-            if(!req.user.admin && req.user.id !== user.id) return next({status: 403, message: 'Forbidden', error: 'User is not administrator and may not edit other users'});
+            if(!req.user.admin && req.user.id !== user.id) return next(Err.User.NotAdministratorError());
 
             query('UPDATE user SET firstname = ?, lastname = ? WHERE id = ? AND deleted IS NULL', [user.displayname, user.firstname, user.lastname, user.id], function(err) {
                 if(err) return next(err);
@@ -646,7 +647,7 @@ module.exports = function(router) {
                 email: 'DELETED {{' + req.params.id + '}}'
             };
 
-            if(!req.user.admin && req.user.id !== user.id) return next({status: 403, message: 'Forbidden', error: 'User is not administrator and may not remove other users'});
+            if(!req.user.admin && req.user.id !== user.id) return next(Err.User.NotAdministratorError());
 
             query('UPDATE user SET email = ?, admin = 0, verified = 0, displayname = NULL, password = NULL, firstname = NULL, surname = NULL, deleted = CURRENT_TIMESTAMP WHERE id = ?', [user.email, user.id], function(err) {
                 if(err) return next(err);
@@ -657,7 +658,7 @@ module.exports = function(router) {
 
     router.route('/:id/admin')
         .put(function(req, res, next) {
-            if(!req.user.admin) return next({status: 403, message: 'Forbidden.', error: 'User is not administrator'});
+            if(!req.user.admin) return next(Err.User.NotAdministratorError());
 
             var user = {
                 id: parseInt(req.params.id),

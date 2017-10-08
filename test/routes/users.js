@@ -73,6 +73,10 @@ describe('/users', function() {
                 });
         });
 
+    });
+
+    xdescribe('LOGIN', function() {
+
         it('/login/password should return a token', function(done) {
             var payload = {
                 email: email,

@@ -1,5 +1,7 @@
 'use strict';
 
+var Err = require('../../lib/errors/index');
+
 var async = require('async');
 
 var sequel = require('../../lib/sql/sequel'),
@@ -17,7 +19,7 @@ module.exports = function(router) {
             sequel.get(req, res, next, call);
         })
         .post(function(req, res, next) {
-            if(!req.user.id) return next({status: 403, message: 'Forbidden', error: 'User is not logged in'});
+            if(!req.user.id) return next(Err.User.NotLoggedInError());
 
             var id = null,
                 path = req.body.path;
@@ -68,7 +70,7 @@ module.exports = function(router) {
         .delete(function(req, res, next) {
             async.series([
                 function(callback) {
-                    if(!req.user.id) return next({status: 403, message: 'Forbidden', error: 'User is not logged in'});
+                    if(!req.user.id) return next(Err.User.NotLoggedInError());
 
                     if(req.user.admin) return callback();
 
@@ -77,7 +79,7 @@ module.exports = function(router) {
 
                         req.user.owner = !!result[0].id;
 
-                        if(!req.user.owner) return callback({status: 403, message: 'Forbidden', error: 'User is not owner or administrator and may not change this row'});
+                        if(!req.user.owner) return callback(Err.User.NotAdministratorError());
 
                         callback();
                     });
@@ -94,7 +96,7 @@ module.exports = function(router) {
 
     router.route('/:id/revive')
         .put(function(req, res, next) {
-            if(!req.user.admin) return next({status: 403, message: 'Forbidden', error: 'User is not administrator'});
+            if(!req.user.admin) return next(Err.User.NotAdministratorError());
 
             query('UPDATE ' + tableName + ' SET deleted = NULL WHERE id = ?', [req.params.id], function(err) {
                 if(err) return next(err);

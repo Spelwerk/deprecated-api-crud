@@ -1,29 +1,23 @@
 'use strict';
 
-var uuid = require('uuid/v1');
-
 module.exports = function(app, callback) {
     var logger = require(appRoot + '/lib/logger');
 
     // Return error information as response
     app.use(function(err, req, res, next) {
-        err.id = uuid();
         err.status = err.status || 500;
-        err.message = err.message || 'Server encountered an error';
+        err.title = err.title || 'Error';
+        err.message = err.message || 'The server encountered an error';
+        err.details = err.details || null;
         err.error = err.error || 'Contact an administrator if the error persists.';
 
-        var fullInformation = {id: err.id, message: err.message, error: err.error, stackTrace: err.stackTrace, environment: environment, method: req.method, url: req.url},
-            basicInformation = {id: err.id, message: err.message, error: err.error};
+        req.log.error = err;
 
-        var sendError = environment !== 'production'
-            ? fullInformation
-            : basicInformation;
+        logger.error(req.log);
 
-        logger.error(fullInformation);
+        if(environment !== 'production') console.error(req.log);
 
-        if(environment !== 'production') console.error(fullInformation);
-
-        res.status(err.status).send(sendError);
+        res.status(err.status).send({id: req.log.id, title: err.title, message: err.message, details: err.details});
     });
 
     callback();

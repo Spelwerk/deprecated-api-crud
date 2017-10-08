@@ -1,5 +1,7 @@
 'use strict';
 
+var Err = require('../../lib/errors/index');
+
 var sequel = require('../../lib/sql/sequel'),
     query = require('../../lib/sql/query');
 
@@ -21,7 +23,7 @@ module.exports = function(router) {
             sequel.get(req, res, next, call, [req.params.id]);
         })
         .post(function(req, res, next) {
-            if(!req.user.admin) return next({status: 403, message: 'Forbidden.', error: 'User is not administrator'});
+            if(!req.user.admin) return next(Err.User.NotAdministratorError());
 
             query('INSERT INTO ' + tableName + '_has_' + relationName + ' (' + tableName + '_id,' + relationName + '_id) VALUES (?,?)', [req.params.id, req.body.insert_id], function(err) {
                 if(err) return next(err);
@@ -32,7 +34,7 @@ module.exports = function(router) {
 
     router.route('/:id/lastnames/:name')
         .delete(function(req, res, next) {
-            if(!req.user.admin) return next({status: 403, message: 'Forbidden.', error: 'User is not administrator'});
+            if(!req.user.admin) return next(Err.User.NotAdministratorError());
 
             query('DELETE FROM ' + tableName + '_has_' + relationName + ' WHERE ' + tableName + '_id = ? AND ' + relationName + '_id = ?', [req.params.id, req.params.name], function(err) {
                 if(err) return next(err);

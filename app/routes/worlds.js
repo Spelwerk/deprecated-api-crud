@@ -1,5 +1,7 @@
 'use strict';
 
+var Err = require('../../lib/errors/index');
+
 var async = require('async');
 
 var generic = require('../../lib/helper/generic'),
@@ -18,7 +20,7 @@ module.exports = function(router) {
 
     router.route('/')
         .post(function(req, res, next) {
-            if(!req.user.id) return next({status: 403, message: 'Forbidden', error: 'User is not logged in'});
+            if(!req.user.id) return next(Err.User.NotLoggedInError());
 
             var world = {
                 name: req.body.name,
