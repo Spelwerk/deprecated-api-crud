@@ -9,7 +9,6 @@ module.exports = function(app, callback) {
         err.title = err.title || 'Error';
         err.message = err.message || 'The server encountered an error';
         err.details = err.details || null;
-        err.error = err.error || 'Contact an administrator if the error persists.';
 
         req.log.error = err;
 
