@@ -28,7 +28,8 @@ describe('/focuses', function() {
             .end(function(err, res) {
                 if(err) return done(err);
 
-                manifestationId = res.body.results[0].id;
+                var length = res.body.length - 1;
+                manifestationId = res.body.results[length].id;
 
                 done();
             });
@@ -93,7 +94,7 @@ describe('/focuses', function() {
 
     });
 
-    describe('PUT', function() {
+    xdescribe('PUT', function() {
 
         it('/:focusId should update the item with new values', function(done) {
             var payload = {
@@ -114,7 +115,7 @@ describe('/focuses', function() {
 
     });
 
-    describe('GET', function() {
+    xdescribe('GET', function() {
 
         it('/ should return a list', function(done) {
             app.get(baseRoute)
