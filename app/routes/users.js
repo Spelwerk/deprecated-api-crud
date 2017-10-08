@@ -178,12 +178,12 @@ module.exports = function(router) {
                     query('SELECT id, password FROM user WHERE email = ? AND deleted IS NULL', [insert.email], function(err, result) {
                         if(err) return callback(err);
 
-                        if(result.length === 0) return callback(Err.Custom.CustomError(404, 'Email missing'));
+                        if(result.length === 0) return callback(Err.CustomError(404, 'Email missing'));
 
                         user.id = result[0].id;
                         user.password = result[0].password;
 
-                        if(user.password === null) return callback(Err.Custom.CustomError(400, 'Password not set'));
+                        if(user.password === null) return callback(Err.CustomError(400, 'Password not set'));
 
                         callback();
                     });
@@ -274,7 +274,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    if(moment(user.timeout).isBefore(moment())) return callback(Err.User.TimeoutExceededError());
+                    if(moment(user.timeout).isBefore(moment())) return callback(Err.User.ExpiredTimeoutError());
 
                     callback();
                 },
@@ -365,7 +365,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    if(moment(user.timeout).isBefore(moment())) return callback(Err.User.TimeoutExceededError());
+                    if(moment(user.timeout).isBefore(moment())) return callback(Err.User.ExpiredTimeoutError());
 
                     callback();
                 },
@@ -464,7 +464,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    if(moment(user.timeout).isBefore(moment())) return callback(Err.User.TimeoutExceededError());
+                    if(moment(user.timeout).isBefore(moment())) return callback(Err.User.ExpiredTimeoutError());
 
                     callback();
                 },
@@ -581,7 +581,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    if(moment(user.timeout).isBefore(moment())) return callback(Err.User.TimeoutExceededError());
+                    if(moment(user.timeout).isBefore(moment())) return callback(Err.User.ExpiredTimeoutError());
 
                     callback();
                 },
