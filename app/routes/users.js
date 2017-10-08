@@ -1,6 +1,7 @@
 'use strict';
 
-var Err = require('../../lib/errors/index');
+var CustomError = require('../../lib/errors/custom-error'),
+    UserError = require('../../lib/errors/user-error');
 
 var async = require('async'),
     nconf = require('nconf'),
@@ -118,7 +119,7 @@ module.exports = function(router) {
 
     router.route('/info')
         .get(function(req, res, next) {
-            if(!req.user) return next(Err.User.NotLoggedInError());
+            if(!req.user) return next(UserError.NotLoggedInError());
 
             res.status(200).send({
                 id: req.user.id,
@@ -132,7 +133,7 @@ module.exports = function(router) {
 
     router.route('/tokens')
         .get(function(req, res, next) {
-            if(!req.user.id) return next(Err.User.NotLoggedInError());
+            if(!req.user.id) return next(UserError.NotLoggedInError());
 
             query('SELECT * FROM user_token WHERE user_id = ?', [req.user.id], function(err, results, fields) {
                 if(err) return next(err);
@@ -143,18 +144,18 @@ module.exports = function(router) {
 
     router.route('/tokens/:tokenId')
         .get(function(req, res, next) {
-            if(!req.user.id) return next(Err.User.NotLoggedInError());
+            if(!req.user.id) return next(UserError.NotLoggedInError());
 
             query('SELECT * FROM user_token WHERE user_id = ? AND id = ?', [req.user.id, req.params.tokenId], function(err, results, fields) {
                 if(err) return next(err);
 
-                if(!results[0]) return next(Err.User.InvalidTokenError());
+                if(!results[0]) return next(UserError.InvalidTokenError());
 
                 res.status(200).send({result: results[0], fields: fields});
             })
         })
         .delete(function(req, res, next) {
-            if(!req.user.id) return next(Err.User.NotLoggedInError());
+            if(!req.user.id) return next(UserError.NotLoggedInError());
 
             query('DELETE FROM user_token WHERE user_id = ? AND id = ?', [req.user.id, req.params.tokenId], function(err) {
                 if(err) return next(err);
@@ -178,12 +179,12 @@ module.exports = function(router) {
                     query('SELECT id, password FROM user WHERE email = ? AND deleted IS NULL', [insert.email], function(err, result) {
                         if(err) return callback(err);
 
-                        if(result.length === 0) return callback(Err.CustomError(404, 'Email missing'));
+                        if(result.length === 0) return callback(CustomError(404, 'Email missing'));
 
                         user.id = result[0].id;
                         user.password = result[0].password;
 
-                        if(user.password === null) return callback(Err.CustomError(400, 'Password not set'));
+                        if(user.password === null) return callback(CustomError(400, 'Password not set'));
 
                         callback();
                     });
@@ -265,7 +266,7 @@ module.exports = function(router) {
                     query('SELECT user_id AS id, timeout FROM user_login WHERE secret = ?', [user.secret], function(err, result) {
                         if(err) return callback(err);
 
-                        if(!result[0]) return callback(Err.User.InvalidSecretError());
+                        if(!result[0]) return callback(UserError.InvalidSecretError());
 
                         user.id = result[0].id;
                         user.timeout = result[0].timeout;
@@ -274,7 +275,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    if(moment(user.timeout).isBefore(moment())) return callback(Err.User.ExpiredTimeoutError());
+                    if(moment(user.timeout).isBefore(moment())) return callback(UserError.ExpiredTimeoutError());
 
                     callback();
                 },
@@ -356,7 +357,7 @@ module.exports = function(router) {
                     query('SELECT user_id AS id, timeout FROM user_verification WHERE secret = ?', [user.secret], function(err, result) {
                         if(err) return callback(err);
 
-                        if(!result[0]) return callback(Err.User.InvalidSecretError());
+                        if(!result[0]) return callback(UserError.InvalidSecretError());
 
                         user.id = result[0].id;
                         user.timeout = result[0].timeout;
@@ -365,7 +366,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    if(moment(user.timeout).isBefore(moment())) return callback(Err.User.ExpiredTimeoutError());
+                    if(moment(user.timeout).isBefore(moment())) return callback(UserError.ExpiredTimeoutError());
 
                     callback();
                 },
@@ -446,7 +447,7 @@ module.exports = function(router) {
                     query('SELECT user_id AS id, timeout FROM user_email WHERE secret = ?', [user.secret], function(err, result) {
                         if(err) return callback(err);
 
-                        if(!result[0]) return callback(Err.User.InvalidSecretError());
+                        if(!result[0]) return callback(UserError.InvalidSecretError());
 
                         user.id = result[0].id;
                         user.timeout = result[0].timeout;
@@ -464,7 +465,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    if(moment(user.timeout).isBefore(moment())) return callback(Err.User.ExpiredTimeoutError());
+                    if(moment(user.timeout).isBefore(moment())) return callback(UserError.ExpiredTimeoutError());
 
                     callback();
                 },
@@ -563,7 +564,7 @@ module.exports = function(router) {
                     query('SELECT user_id AS id, timeout FROM user_reset WHERE secret = ?', [user.secret], function(err, result) {
                         if(err) return callback(err);
 
-                        if(!result[0]) return callback(Err.User.InvalidSecretError());
+                        if(!result[0]) return callback(UserError.InvalidSecretError());
 
                         user.id = result[0].id;
                         user.timeout = result[0].timeout;
@@ -581,7 +582,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    if(moment(user.timeout).isBefore(moment())) return callback(Err.User.ExpiredTimeoutError());
+                    if(moment(user.timeout).isBefore(moment())) return callback(UserError.ExpiredTimeoutError());
 
                     callback();
                 },
@@ -625,7 +626,7 @@ module.exports = function(router) {
             sequel.get(req, res, next, call, [req.params.id], true);
         })
         .put(function(req, res, next) {
-            if(!req.user.id) return next(Err.User.NotLoggedInError());
+            if(!req.user.id) return next(UserError.NotLoggedInError());
 
             var user = {};
 
@@ -633,7 +634,7 @@ module.exports = function(router) {
             user.firstname = req.body.firstname;
             user.lastname = req.body.lastname;
 
-            if(!req.user.admin && req.user.id !== user.id) return next(Err.User.NotAdministratorError());
+            if(!req.user.admin && req.user.id !== user.id) return next(UserError.NotAdministratorError());
 
             query('UPDATE user SET firstname = ?, lastname = ? WHERE id = ? AND deleted IS NULL', [user.displayname, user.firstname, user.lastname, user.id], function(err) {
                 if(err) return next(err);
@@ -647,7 +648,7 @@ module.exports = function(router) {
                 email: 'DELETED {{' + req.params.id + '}}'
             };
 
-            if(!req.user.admin && req.user.id !== user.id) return next(Err.User.NotAdministratorError());
+            if(!req.user.admin && req.user.id !== user.id) return next(UserError.NotAdministratorError());
 
             query('UPDATE user SET email = ?, admin = 0, verified = 0, displayname = NULL, password = NULL, firstname = NULL, surname = NULL, deleted = CURRENT_TIMESTAMP WHERE id = ?', [user.email, user.id], function(err) {
                 if(err) return next(err);
@@ -658,7 +659,7 @@ module.exports = function(router) {
 
     router.route('/:id/admin')
         .put(function(req, res, next) {
-            if(!req.user.admin) return next(Err.User.NotAdministratorError());
+            if(!req.user.admin) return next(UserError.NotAdministratorError());
 
             var user = {
                 id: parseInt(req.params.id),

@@ -1,6 +1,6 @@
 'use strict';
 
-var Err = require('../../lib/errors/index');
+var UserError = require('../../lib/errors/user-error');
 
 var async = require('async');
 
@@ -20,7 +20,7 @@ module.exports = function(router) {
 
     router.route('/')
         .post(function(req, res, next) {
-            if(!req.user.id) return next(Err.User.NotLoggedInError());
+            if(!req.user.id) return next(UserError.NotLoggedInError());
 
             var world = {
                 name: req.body.name,

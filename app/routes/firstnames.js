@@ -1,6 +1,6 @@
 'use strict';
 
-var Err = require('../../lib/errors/index');
+var UserError = require('../../lib/errors/user-error');
 
 var async = require('async');
 
@@ -17,7 +17,7 @@ module.exports = function(router) {
             sequel.get(req, res, next, sql);
         })
         .post(function(req, res, next) {
-            if(!req.user.id) return next(Err.User.NotLoggedInError());
+            if(!req.user.id) return next(UserError.NotLoggedInError());
 
             var id,
                 name = req.body.name,
@@ -60,7 +60,7 @@ module.exports = function(router) {
             sequel.get(req, res, next, call, [req.params.id], true);
         })
         .delete(function(req, res, next) {
-            if(!req.user.admin) return next(Err.User.NotAdministratorError());
+            if(!req.user.admin) return next(UserError.NotAdministratorError());
 
             query('DELETE FROM ' + tableName + ' WHERE id = ?', [req.params.id], function(err) {
                 if(err) return next(err);
