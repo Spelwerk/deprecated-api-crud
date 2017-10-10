@@ -48,10 +48,10 @@ async.series([
     }
 ], function(err) {
     if (err) {
-        console.error('[APP] Initialization failed', err);
-        logger.error('[APP] Initialization failed', err);
+        console.error('[APP] [CRUD] Initialization failed', err);
+        logger.error('[APP] [CRUD] Initialization failed', err);
     } else {
-        console.info('[APP] Initialized successfully in ' + environment + ' environment');
-        logger.info('[APP] Initialized successfully in ' + environment + ' environment');
+        console.info('[APP] [CRUD] Initialized successfully in ' + environment + ' environment');
+        logger.info('[APP] [CRUD] Initialized successfully in ' + environment + ' environment');
     }
 });
