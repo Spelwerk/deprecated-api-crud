@@ -14,7 +14,7 @@ module.exports = function(app, callback) {
 
         if(!credentials) return next(new AppError(401, "Missing Credentials", "Credentials are missing in the header"));
 
-        if(credentials.name !== apiKeyId || credentials.pass !== apiKeySecret) return next(new AppError(403, "Faulty API Credentials", "The API key provided was not correct."));
+        if(credentials.name !== apiKeyId || credentials.pass !== apiKeySecret) return next(new AppError(401, "Faulty API Credentials", "The API key provided was not correct."));
 
         next();
     });
