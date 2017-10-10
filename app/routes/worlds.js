@@ -1,6 +1,6 @@
 'use strict';
 
-var UserError = require('../../lib/errors/user-error');
+let UserNotLoggedInError = require('../../lib/errors/user-not-logged-in-error');
 
 var async = require('async');
 
@@ -20,7 +20,7 @@ module.exports = function(router) {
 
     router.route('/')
         .post(function(req, res, next) {
-            if(!req.user.id) return next(UserError.NotLoggedInError());
+            if(!req.user.id) return next(new UserNotLoggedInError);
 
             var world = {
                 name: req.body.name,
@@ -56,7 +56,7 @@ module.exports = function(router) {
                     query('SELECT id,minimum,maximum FROM attribute WHERE optional = 0', null, function(err, results) {
                         if(err) return callback(err);
 
-                        for(var i in results) {
+                        for(let i in results) {
                             attributeQuery += '(' + world.id + ',' + results[i].id + ',' + results[i].minimum + ',' + results[i].minimum + ',' + results[i].maximum + '),';
                         }
 
@@ -72,7 +72,7 @@ module.exports = function(router) {
                     query('SELECT id FROM skill WHERE optional = 0', null, function(err, results) {
                         if(err) return callback(err);
 
-                        for(var i in results) {
+                        for(let i in results) {
                             skillQuery += '(' + world.id + ',' + results[i].id + '),';
                         }
 

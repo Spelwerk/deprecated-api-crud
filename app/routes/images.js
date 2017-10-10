@@ -1,6 +1,7 @@
 'use strict';
 
-var UserError = require('../../lib/errors/user-error');
+let UserNotAdministratorError = require('../../lib/errors/user-not-administrator-error'),
+    UserNotLoggedInError = require('../../lib/errors/user-not-logged-in-error');
 
 var async = require('async');
 
@@ -19,7 +20,7 @@ module.exports = function(router) {
             sequel.get(req, res, next, call);
         })
         .post(function(req, res, next) {
-            if(!req.user.id) return next(UserError.NotLoggedInError());
+            if(!req.user.id) return next(new UserNotLoggedInError);
 
             var id = null,
                 path = req.body.path;
@@ -70,7 +71,7 @@ module.exports = function(router) {
         .delete(function(req, res, next) {
             async.series([
                 function(callback) {
-                    if(!req.user.id) return next(UserError.NotLoggedInError());
+                    if(!req.user.id) return next(new UserNotLoggedInError);
 
                     if(req.user.admin) return callback();
 
@@ -79,7 +80,7 @@ module.exports = function(router) {
 
                         req.user.owner = !!result[0].id;
 
-                        if(!req.user.owner) return callback(UserError.NotAdministratorError());
+                        if(!req.user.owner) return callback(new UserNotAdministratorError);
 
                         callback();
                     });
@@ -96,7 +97,7 @@ module.exports = function(router) {
 
     router.route('/:id/revive')
         .put(function(req, res, next) {
-            if(!req.user.admin) return next(UserError.NotAdministratorError());
+            if(!req.user.admin) return next(new UserNotAdministratorError);
 
             query('UPDATE ' + tableName + ' SET deleted = NULL WHERE id = ?', [req.params.id], function(err) {
                 if(err) return next(err);

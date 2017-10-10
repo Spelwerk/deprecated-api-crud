@@ -28,8 +28,8 @@ function connect(callback) {
     pool.query("SELECT table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' AND table_schema = '" + nconf.get('database:database') + "'", function(err, results) {
         if(err) return callback(err);
 
-        for(var i in results) {
-            var tableName = results[i].table_name;
+        for(let i in results) {
+            let tableName = results[i].table_name;
 
             tables.push(tableName);
         }

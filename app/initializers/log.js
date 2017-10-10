@@ -14,7 +14,7 @@ module.exports = function(app, callback) {
             body: {}
         };
 
-        for(var key in req.body) {
+        for(let key in req.body) {
             if(key === 'password') continue;
 
             req.log.body[key] = req.body[key];
