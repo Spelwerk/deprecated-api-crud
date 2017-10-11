@@ -4,16 +4,16 @@ var validator = require('validator'),
 
 function generic(item) {
     assert.isNumber(item.id);
-    assert.isNumber(item.user_id);
-    assert.isBoolean(item.canon);
+    if(item.user_id) assert.isNumber(item.user_id);
+    if(item.canon) assert.isBoolean(item.canon);
 
     if(item.name) assert.isString(item.name);
     if(item.description) assert.isString(item.description);
     if(item.icon) assert.equal(validator.isURL(item.icon), true);
 
-    assert.isString(item.created);
+    if(item.created) assert.isString(item.created);
     if(item.updated) assert.isString(item.updated);
-    assert.isNull(item.deleted);
+    if(item.deleted) assert.isNull(item.deleted);
 }
 
 module.exports.generic = generic;

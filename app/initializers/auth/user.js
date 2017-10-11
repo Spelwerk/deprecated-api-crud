@@ -9,7 +9,6 @@ let tokens = require('./../../../lib/tokens'),
     query = require('./../../../lib/sql/query');
 
 module.exports = function(app, callback) {
-
     app.use(function(req, res, next) {
         req.user = {
             id: null,

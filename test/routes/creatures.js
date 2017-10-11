@@ -340,47 +340,12 @@ describe('/creatures', function() {
     });
 
     describe('/bionics', function() {
-        var relationRoute = 'bionics',
-            relationId;
+        let relationRoute = 'bionics',
+            bionicId,
+            augmentationId;
 
         before(function(done) {
             app.get('/' + relationRoute)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    var length = res.body.length - 1;
-                    relationId = res.body.results[length].id;
-
-                    done();
-                });
-        });
-
-        it('POST / should add an item to the creature', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
-        });
-
-        it('PUT /:id should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {value: 4, custom: hasher(20)}).expect(204).end(done);
-        });
-
-        it('GET / should get a list of items', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
-        });
-
-        it('GET /:id should display an item', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId).expect(200).end(function(err, res) { verifier.relation(err, res, done); });
-        });
-
-    });
-
-    describe('/augmentations', function() {
-        var relationRoute = 'augmentations',
-            bionicId,
-            relationId;
-
-        before(function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/bionics')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -393,36 +358,48 @@ describe('/creatures', function() {
         });
 
         before(function(done) {
-            app.get('/' + relationRoute)
+            app.get('/bionics/' + bionicId + '/augmentations')
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
-                    relationId = res.body.results[length].id;
+                    let length = res.body.length - 1;
+                    augmentationId = res.body.results[length].augmentation_id;
 
                     done();
                 });
         });
 
         it('POST / should add an item to the creature', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {bionic_id: bionicId, insert_id: relationId}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: bionicId}).expect(201).end(done);
+        });
+
+        it('PUT /:id should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + bionicId, {value: 4, custom: hasher(20)}).expect(204).end(done);
         });
 
         it('GET / should get a list of items', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
         });
 
-        it('GET /:id/bionic/:bionic should display an item', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/bionic/' + bionicId).expect(200).end(function(err, res) { verifier.relation(err, res, done); });
+        it('GET /:id should display an item', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + bionicId).expect(200).end(function(err, res) { verifier.relation(err, res, done); });
+        });
+
+        it('POST /:id/augmentations should add an item to the creature', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + bionicId + '/augmentations', {bionic_id: bionicId, insert_id: augmentationId}).expect(204).end(done);
+        });
+
+        it('GET /:id/augmentations should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + bionicId + '/augmentations').expect(200).end(function(err, res) { verifier.relations(err, res, done); });
         });
 
         it('EQUIP /:id/bionic/:bionic/equip/1 should equip the item to the creature', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/bionic/' + bionicId + '/equip/1').expect(204).end(done);
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + bionicId + '/augmentations/' + augmentationId + '/equip/1').expect(204).end(done);
         });
 
         it('UNEQUIP /:id/bionic/:bionic/equip/0 should equip the item to the creature', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/bionic/' + bionicId + '/equip/0').expect(204).end(done);
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + bionicId + '/augmentations/' + augmentationId + '/equip/0').expect(204).end(done);
         });
 
     });
@@ -1003,7 +980,6 @@ describe('/creatures', function() {
 
                 _.each(res.body.results, function(result) {
                     assert.isNumber(result.id);
-                    assert.isNumber(result.creature_id);
                     assert.isNumber(result.value);
                     assert.isString(result.name);
                 });
@@ -1034,7 +1010,6 @@ describe('/creatures', function() {
 
                 assert.isObject(res.body.result);
                 assert.isNumber(res.body.result.id);
-                assert.isNumber(res.body.result.creature_id);
                 assert.isNumber(res.body.result.value);
                 assert.isString(res.body.result.name);
 
@@ -1069,7 +1044,6 @@ describe('/creatures', function() {
 
                 _.each(res.body.results, function(result) {
                     assert.isNumber(result.id);
-                    assert.isNumber(result.creature_id);
                     assert.isNumber(result.value);
                     assert.isString(result.name);
                 });
@@ -1100,7 +1074,6 @@ describe('/creatures', function() {
 
                 assert.isObject(res.body.result);
                 assert.isNumber(res.body.result.id);
-                assert.isNumber(res.body.result.creature_id);
                 assert.isNumber(res.body.result.value);
                 assert.isString(res.body.result.name);
 
@@ -1135,7 +1108,6 @@ describe('/creatures', function() {
 
                 _.each(res.body.results, function(result) {
                     assert.isNumber(result.id);
-                    assert.isNumber(result.creature_id);
                     assert.isNumber(result.value);
                     assert.isString(result.name);
                 });
@@ -1166,7 +1138,6 @@ describe('/creatures', function() {
 
                 assert.isObject(res.body.result);
                 assert.isNumber(res.body.result.id);
-                assert.isNumber(res.body.result.creature_id);
                 assert.isNumber(res.body.result.value);
                 assert.isString(res.body.result.name);
 

@@ -110,7 +110,6 @@ module.exports = function(router) {
 
     creatures.assets(router);
     creatures.attributes(router);
-    creatures.augmentations(router);
     creatures.backgrounds(router);
     creatures.bionics(router);
     creatures.doctrines(router);
