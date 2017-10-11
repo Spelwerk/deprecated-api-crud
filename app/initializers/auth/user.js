@@ -3,9 +3,9 @@
 let UserInvalidTokenError = require('../../../lib/errors/user-invalid-token-error'),
     UserNotFoundError = require('../../../lib/errors/user-not-found-error');
 
-var async = require('async');
+let async = require('async');
 
-var tokens = require('./../../../lib/tokens'),
+let tokens = require('./../../../lib/tokens'),
     query = require('./../../../lib/sql/query');
 
 module.exports = function(app, callback) {

@@ -1,13 +1,12 @@
 'use strict';
 
-var generic = require('../../lib/helper/generic'),
+let generic = require('../../lib/helper/generic'),
     creatures = require('../../lib/helper/creatures');
 
 module.exports = function(router) {
-    var tableName = 'creature';
+    const tableName = 'creature';
 
-    var sql = 'SELECT * FROM creature ' +
-
+    let sql = 'SELECT * FROM creature ' +
         'LEFT JOIN creature_appearance ON creature_appearance.creature_id = creature.id ' +
         'LEFT JOIN creature_age ON creature_age.creature_id = creature.id ' +
         'LEFT JOIN creature_biography ON creature_biography.creature_id = creature.id ' +
@@ -20,7 +19,6 @@ module.exports = function(router) {
         'LEFT JOIN creature_pride ON creature_pride.creature_id = creature.id ' +
         'LEFT JOIN creature_problem ON creature_problem.creature_id = creature.id ' +
         'LEFT JOIN creature_shame ON creature_shame.creature_id = creature.id ' +
-
         'LEFT JOIN creature_is_copy ON creature_is_copy.creature_id = creature.id ' +
         'LEFT JOIN creature_is_corporation ON creature_is_corporation.creature_id = creature.id ' +
         'LEFT JOIN creature_is_country ON creature_is_country.creature_id = creature.id ' +
