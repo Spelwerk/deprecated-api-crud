@@ -19,12 +19,7 @@ module.exports = function(router) {
         'LEFT JOIN creature_pride ON creature_pride.creature_id = creature.id ' +
         'LEFT JOIN creature_problem ON creature_problem.creature_id = creature.id ' +
         'LEFT JOIN creature_shame ON creature_shame.creature_id = creature.id ' +
-        'LEFT JOIN creature_is_copy ON creature_is_copy.creature_id = creature.id ' +
-        'LEFT JOIN creature_is_corporation ON creature_is_corporation.creature_id = creature.id ' +
-        'LEFT JOIN creature_is_country ON creature_is_country.creature_id = creature.id ' +
-        'LEFT JOIN creature_is_identity ON creature_is_identity.creature_id = creature.id ' +
-        'LEFT JOIN creature_is_nature ON creature_is_nature.creature_id = creature.id ' +
-        'LEFT JOIN creature_is_wealth ON creature_is_wealth.creature_id = creature.id';
+        'LEFT JOIN creature_is_copy ON creature_is_copy.creature_id = creature.id';
 
     generic.root(router, tableName, sql);
 
@@ -126,6 +121,15 @@ module.exports = function(router) {
     creatures.species(router);
     creatures.software(router);
     creatures.weapons(router);
+
+    // COMBINATIONS
+
+    creatures.corporation(router);
+    creatures.country(router);
+    creatures.identity(router);
+    creatures.nature(router);
+    creatures.wealth(router);
+    creatures.world(router);
 
     // WOUNDS
 
