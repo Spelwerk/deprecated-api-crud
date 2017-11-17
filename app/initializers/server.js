@@ -1,13 +1,13 @@
 'use strict';
 
-var express = require('express'),
+let express = require('express'),
     nconf = require('nconf'),
     bodyParser = require('body-parser'),
     async = require('async');
 
-var logger = require(appRoot + '/lib/logger');
+let logger = require(appRoot + '/lib/logger');
 
-var app;
+let app;
 
 function start(callback) {
     async.series([

@@ -6,19 +6,48 @@ let generic = require('../../lib/helper/generic'),
 module.exports = function(router) {
     const tableName = 'creature';
 
-    let sql = 'SELECT * FROM creature ' +
-        'LEFT JOIN creature_appearance ON creature_appearance.creature_id = creature.id ' +
+    let sql = 'SELECT ' +
+        'id, ' +
+        'copy_id, ' +
+        'user_id, ' +
+        'canon, ' +
+        'updated, ' +
+        'calculated, ' +
+        'manifestation, ' +
+        'firstname, ' +
+        'nickname, ' +
+        'middlename, ' +
+        'lastname, ' +
+        'age, ' +
+        'gender, ' +
+        'occupation, ' +
+        'appearance, ' +
+        'biography, ' +
+        'description, ' +
+        'personality, ' +
+        'drive, ' +
+        'pride, ' +
+        'problem, ' +
+        'shame, ' +
+        'point_doctrine, ' +
+        'point_expertise, ' +
+        'point_gift, ' +
+        'point_imperfection, ' +
+        'point_milestone, ' +
+        'point_skill ' +
+        'FROM creature ' +
         'LEFT JOIN creature_age ON creature_age.creature_id = creature.id ' +
-        'LEFT JOIN creature_biography ON creature_biography.creature_id = creature.id ' +
-        'LEFT JOIN creature_description ON creature_description.creature_id = creature.id ' +
-        'LEFT JOIN creature_drive ON creature_drive.creature_id = creature.id ' +
         'LEFT JOIN creature_gender ON creature_gender.creature_id = creature.id ' +
         'LEFT JOIN creature_occupation ON creature_occupation.creature_id = creature.id ' +
+        'LEFT JOIN creature_appearance ON creature_appearance.creature_id = creature.id ' +
+        'LEFT JOIN creature_biography ON creature_biography.creature_id = creature.id ' +
+        'LEFT JOIN creature_description ON creature_description.creature_id = creature.id ' +
         'LEFT JOIN creature_personality ON creature_personality.creature_id = creature.id ' +
-        'LEFT JOIN creature_points ON creature_points.creature_id = creature.id ' +
+        'LEFT JOIN creature_drive ON creature_drive.creature_id = creature.id ' +
         'LEFT JOIN creature_pride ON creature_pride.creature_id = creature.id ' +
         'LEFT JOIN creature_problem ON creature_problem.creature_id = creature.id ' +
         'LEFT JOIN creature_shame ON creature_shame.creature_id = creature.id ' +
+        'LEFT JOIN creature_points ON creature_points.creature_id = creature.id ' +
         'LEFT JOIN creature_is_copy ON creature_is_copy.creature_id = creature.id';
 
     generic.root(router, tableName, sql);
