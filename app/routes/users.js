@@ -1,12 +1,12 @@
 'use strict';
 
-let AppError = require('../../lib/errors/app-error'),
-    UserExpiredTimeoutError = require('../../lib/errors/user-expired-timeout-error'),
+let UserExpiredTimeoutError = require('../../lib/errors/user-expired-timeout-error'),
+    UserInvalidEmailError = require('../../lib/errors/user-invalid-email-error'),
+    UserInvalidPasswordError = require('../../lib/errors/user-invalid-password-error'),
     UserInvalidSecretError = require('../../lib/errors/user-invalid-secret-error'),
     UserInvalidTokenError = require('../../lib/errors/user-invalid-token-error'),
     UserNotAdministratorError = require('../../lib/errors/user-not-administrator-error'),
     UserNotLoggedInError = require('../../lib/errors/user-not-logged-in-error'),
-    UserInvalidPasswordError = require('../../lib/errors/user-invalid-password-error'),
     UserPasswordNotSetError = require('../../lib/errors/user-password-not-set-error');
 
 let async = require('async'),
@@ -209,7 +209,7 @@ module.exports = function(router) {
                     query('SELECT id, password FROM user WHERE email = ? AND deleted IS NULL', [body.email], function(err, result) {
                         if(err) return callback(err);
 
-                        if(result.length === 0) return callback(new AppError(404, 'Email missing'));
+                        if(result.length === 0) return callback(new UserInvalidEmailError);
 
                         user.id = result[0].id;
                         select.password = result[0].password;
