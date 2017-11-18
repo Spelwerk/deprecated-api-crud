@@ -6,7 +6,8 @@ let AppError = require('../../lib/errors/app-error'),
     UserInvalidTokenError = require('../../lib/errors/user-invalid-token-error'),
     UserNotAdministratorError = require('../../lib/errors/user-not-administrator-error'),
     UserNotLoggedInError = require('../../lib/errors/user-not-logged-in-error'),
-    UserInvalidPasswordError = require('../../lib/errors/user-invalid-password-error');
+    UserInvalidPasswordError = require('../../lib/errors/user-invalid-password-error'),
+    UserPasswordNotSetError = require('../../lib/errors/user-password-not-set-error');
 
 let async = require('async'),
     nconf = require('nconf'),
@@ -213,7 +214,7 @@ module.exports = function(router) {
                         user.id = result[0].id;
                         select.password = result[0].password;
 
-                        if(select.password === null) return callback(new AppError(400, 'Password not set. User is only able to log in via Email.'));
+                        if(select.password === null) return callback(new UserPasswordNotSetError);
 
                         callback();
                     });
@@ -232,7 +233,7 @@ module.exports = function(router) {
                         ? require('../../lib/templates/user-login-password-error')()
                         : require('../../lib/templates/user-login-password')();
 
-                    mailer(user.email, 'User Verification', text, callback);
+                    mailer(user.email, 'User Login Notification', text, callback);
                 },
                 function(callback) {
                     if(!user.passwordError) return callback();
