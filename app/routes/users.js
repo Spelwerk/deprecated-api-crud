@@ -99,6 +99,15 @@ module.exports = function(router) {
             });
         });
 
+    // List administrators
+
+    router.route('/administrators')
+        .get(function(req, res, next) {
+            let call = sql + ' WHERE admin = 1 AND deleted is NULL';
+
+            sequel.get(req, res, next, call);
+        });
+
     // Verifying that a user exists
 
     router.route('/exists/email/:email')
@@ -106,10 +115,10 @@ module.exports = function(router) {
             let email = req.params.email.toLowerCase(),
                 exists = false;
 
-            query('SELECT id FROM user WHERE LOWER(email) = ? AND deleted IS NULL', [email], function(err, results) {
+            query('SELECT id FROM user WHERE LOWER(email) = ?', [email], function(err, results) {
                 if(err) return next(err);
 
-                exists = !!results[0].id;
+                exists = !!results[0];
 
                 res.status(200).send({exists: exists});
             });
@@ -120,16 +129,16 @@ module.exports = function(router) {
             let displayName = req.params.name.toLowerCase(),
                 exists = false;
 
-            query('SELECT id FROM user WHERE LOWER(displayname) = ? AND deleted IS NULL', [displayName], function(err, results) {
+            query('SELECT id FROM user WHERE LOWER(displayname) = ?', [displayName], function(err, results) {
                 if(err) return next(err);
 
-                exists = !!results[0].id;
+                exists = !!results[0];
 
                 res.status(200).send({exists: exists});
             });
         });
 
-    // Information about current user
+    // Information about current logged in user
 
     router.route('/info')
         .get(function(req, res, next) {
@@ -142,7 +151,7 @@ module.exports = function(router) {
             });
         });
 
-    // Tokens belonging to current user
+    // Tokens belonging to current logged in user
 
     router.route('/tokens')
         .get(function(req, res, next) {
@@ -191,7 +200,7 @@ module.exports = function(router) {
             });
         });
 
-    // Logging in
+    // Login
 
     router.route('/login/password')
         .post(function(req, res, next) {
@@ -335,7 +344,7 @@ module.exports = function(router) {
             });
         });
 
-    // Verifying user
+    // Verifying
 
     router.route('/verify/email')
         .post(function(req, res, next) {
@@ -427,7 +436,7 @@ module.exports = function(router) {
             });
         });
 
-    // Changing email
+    // Email
 
     router.route('/email/email')
         .post(function(req, res, next) {
@@ -531,7 +540,7 @@ module.exports = function(router) {
             });
         });
 
-    // Changing password
+    // Password
 
     router.route('/password/email')
         .post(function(req, res, next) {
@@ -630,7 +639,7 @@ module.exports = function(router) {
             });
         });
 
-    // User
+    // Specific User
 
     router.route('/:id')
         .get(function(req, res, next) {
@@ -641,12 +650,12 @@ module.exports = function(router) {
         .put(function(req, res, next) {
             if(!req.user.id) return next(new UserNotLoggedInError);
 
-            let user = {};
-
-            user.id = parseInt(req.params.id);
-            user.displayname = req.body.displayname;
-            user.firstname = req.body.firstname;
-            user.lastname = req.body.lastname;
+            let user = {
+                id: parseInt(req.params.id),
+                displayname: req.body.displayname,
+                firstname: req.body.firstname,
+                lastname: req.body.lastname
+            };
 
             if(!req.user.admin && req.user.id !== user.id) return next(new UserNotAdministratorError);
 
@@ -681,6 +690,19 @@ module.exports = function(router) {
             };
 
             query('UPDATE user SET admin = ? WHERE id = ? AND deleted IS NULL', [user.admin, user.id], function(err) {
+                if(err) return next(err);
+
+                res.status(204).send();
+            });
+        });
+
+    router.route('/:id/password/reset')
+        .put(function(req, res, next) {
+            if(!req.user.admin) return next(new UserNotAdministratorError);
+
+            let id = parseInt(req.params.id);
+
+            query('UPDATE user SET password = NULL WHERE id = ?', [id], function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();
