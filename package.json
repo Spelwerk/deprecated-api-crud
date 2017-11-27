@@ -1,6 +1,6 @@
 {
   "name": "spelwerk-api-crud",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "CRUD API server for spelwerk to connect to MYSQL database and deliver all information to frontend via JSON",
   "author": "Jonn Nilsson <jonn@spelwerk.se>",
