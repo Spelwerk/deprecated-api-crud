@@ -167,3 +167,7 @@ module.exports = function(router) {
     creatures.traumas(router);
 
 };
+
+//todo has_form
+//todo has_spell
+//todo has_tactic

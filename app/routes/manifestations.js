@@ -1,25 +1,25 @@
 'use strict';
 
-var async = require('async'),
+let async = require('async'),
     yaml = require('node-yaml');
 
-var generic = require('../../lib/helper/generic'),
+let generic = require('../../lib/helper/generic'),
     elemental = require('../../lib/sql/elemental');
 
-var defaults = yaml.readSync('./../../config/defaults.yml');
+let defaults = yaml.readSync('./../../config/defaults.yml');
 
 module.exports = function(router) {
-    var tableName = 'manifestation',
+    let tableName = 'manifestation',
         options = { updatedField: true };
 
-    var sql = 'SELECT * FROM ' + tableName + ' ' +
+    let sql = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
 
     generic.root(router, tableName, sql);
 
     router.route('/')
         .post(function(req, res, next) {
-            var attribute = {
+            let attribute = {
                 name: req.body.power,
                 description: 'Power attribute for: ' + req.body.name,
                 icon: req.body.icon,
@@ -29,13 +29,13 @@ module.exports = function(router) {
                 maximum: req.body.maximum
             };
 
-            var manifestation = {
+            let manifestation = {
                 name: req.body.name,
                 description: req.body.description,
                 icon: req.body.icon
             };
 
-            var skill = {
+            let skill = {
                 name: req.body.skill,
                 description: 'Skill for: ' + req.body.name,
                 icon: req.body.icon
@@ -89,3 +89,6 @@ module.exports = function(router) {
     generic.permissions(router, tableName);
     generic.revive(router, tableName);
 };
+
+//todo manifestation_has_attribute
+//todo manifestation_has_spell

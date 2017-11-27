@@ -106,3 +106,6 @@ module.exports = function(router) {
     generic.permissions(router, tableName);
     generic.revive(router, tableName);
 };
+
+//todo manifestation boolean
+//todo form boolean

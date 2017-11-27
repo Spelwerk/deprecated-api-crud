@@ -85,3 +85,6 @@ module.exports = function(router) {
     relations(router, tableName, 'mods', 'weaponmod');
     relations(router, tableName, 'skills', 'skill');
 };
+
+//todo is_form
+//todo is_manifestation
