@@ -79,15 +79,17 @@ module.exports = function(router) {
                     query('INSERT INTO user (email,displayname,password,firstname,lastname) VALUES (?,?,?,?,?)', [user.email, user.displayname, user.encrypted, user.firstname, user.lastname], function(err, result) {
 
                         // If there's an error, and the code is DUP_ENTRY we probably have an issue with email or displayname
-                        if(err && err.code === 'ER_DUP_ENTRY' && err.details.indexOf('email_UNIQUE') !== -1) {
-                            return callback(new UserDisplaynameAlreadyExistsError)
-
-                        } else if(err && err.code === 'ER_DUP_ENTRY' && err.details.indexOf('displayname_UNIQUE') !== -1) {
+                        if(err && err.uniqueKey === 'email') {
                             return callback(new UserEmailAlreadyExistsError)
+
+                        } else if(err && err.uniqueKey === 'displayname') {
+                            return callback(new UserDisplaynameAlreadyExistsError)
 
                         } else if(err) {
                             return callback(err);
                         }
+
+                        if(err) return callback(err);
 
                         user.id = result.insertId;
 
