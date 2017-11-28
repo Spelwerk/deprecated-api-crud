@@ -79,8 +79,6 @@ module.exports = function(router) {
 
                         user.id = result.insertId;
 
-                        object.user = user.id;
-
                         callback();
                     });
                 },
@@ -93,7 +91,7 @@ module.exports = function(router) {
                     mailer(user.email, 'User Verification', text, callback);
                 },
                 function(callback) {
-                    users.token(object, function(err, result) {
+                    users.token(user.id, object, function(err, result) {
                         if(err) return callback(err);
 
                         user.token = result;
@@ -180,7 +178,7 @@ module.exports = function(router) {
             query('SELECT * FROM user_token WHERE user_id = ? AND id = ?', [req.user.id, req.params.tokenId], function(err, results, fields) {
                 if(err) return next(err);
 
-                if(!results[0]) return next(new UserInvalidTokenError);
+                if(results.length === 0) return next(new UserInvalidTokenError);
 
                 res.status(200).send({result: results[0], fields: fields});
             })
@@ -214,15 +212,10 @@ module.exports = function(router) {
     router.route('/login/password')
         .post(function(req, res, next) {
             let user = {
-                    passwordError: false
-                };
-
-            let select = {};
-
-            let body = {
-                    email: req.body.email,
-                    password: req.body.password
-                };
+                email: req.body.email.toLowerCase(),
+                password: req.body.password,
+                passwordError: false
+            };
 
             let object = {
                 browser: req.body.browser,
@@ -232,23 +225,21 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    query('SELECT id, password FROM user WHERE email = ? AND deleted IS NULL', [body.email], function(err, result) {
+                    query('SELECT id, password FROM user WHERE LOWER(email) = ? AND deleted IS NULL', [user.email], function(err, result) {
                         if(err) return callback(err);
 
                         if(result.length === 0) return callback(new UserInvalidEmailError);
 
                         user.id = result[0].id;
-                        select.password = result[0].password;
+                        user.select = result[0].password;
 
-                        object.user = user.id;
-
-                        if(select.password === null) return callback(new UserPasswordNotSetError);
+                        if(user.select === null) return callback(new UserPasswordNotSetError);
 
                         callback();
                     });
                 },
                 function(callback) {
-                    onion.decrypt(body.password, select.password, function(err, result) {
+                    onion.decrypt(user.password, user.select, function(err, result) {
                         if(err) return callback(err);
 
                         if(!result) user.passwordError = true;
@@ -269,7 +260,7 @@ module.exports = function(router) {
                     callback(new UserInvalidPasswordError);
                 },
                 function(callback) {
-                    users.token(object, function(err, result) {
+                    users.token(user.id, object, function(err, result) {
                         if(err) return callback(err);
 
                         user.token = result;
@@ -338,7 +329,6 @@ module.exports = function(router) {
                         if(results.length === 0) return callback(new UserNotFoundError);
 
                         user.id = results[0].id;
-                        object.user = user.id;
 
                         callback();
                     });
@@ -363,7 +353,7 @@ module.exports = function(router) {
                     callback();
                 },
                 function(callback) {
-                    users.token(object, function(err, result) {
+                    users.token(user.id, object, function(err, result) {
                         if(err) return callback(err);
 
                         user.token = result;
@@ -445,7 +435,7 @@ module.exports = function(router) {
                     query('SELECT timeout FROM user_verification WHERE user_id = ? AND secret = ?', [user.id, user.secret], function(err, results) {
                         if(err) return callback(err);
 
-                        if(!results[0]) return callback(new UserInvalidSecretError(user.secret));
+                        if(results.length === 0) return callback(new UserInvalidSecretError(user.secret));
 
                         user.timeout = results[0].timeout;
 
@@ -541,7 +531,6 @@ module.exports = function(router) {
                         if(results.length === 0) return callback(new UserNotFoundError);
 
                         user.id = results[0].id;
-                        object.user = user.id;
 
                         callback();
                     });
@@ -579,7 +568,7 @@ module.exports = function(router) {
                     mailer(user.newEmail, 'Email Changed', text, callback);
                 },
                 function(callback) {
-                    users.token(object, function(err, result) {
+                    users.token(user.id, object, function(err, result) {
                         if(err) return callback(err);
 
                         user.token = result;
