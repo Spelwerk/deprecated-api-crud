@@ -6,18 +6,19 @@ let UserExpiredTimeoutError = require('../../lib/errors/user-expired-timeout-err
     UserInvalidSecretError = require('../../lib/errors/user-invalid-secret-error'),
     UserInvalidTokenError = require('../../lib/errors/user-invalid-token-error'),
     UserNotAdministratorError = require('../../lib/errors/user-not-administrator-error'),
+    UserNotFoundError = require('../../lib/errors/user-not-found-error'),
     UserNotLoggedInError = require('../../lib/errors/user-not-logged-in-error'),
     UserPasswordNotSetError = require('../../lib/errors/user-password-not-set-error');
 
 let async = require('async'),
     nconf = require('nconf'),
-    moment = require('moment'),
-    uuid = require('uuid/v4');
+    moment = require('moment');
 
 let query = require('../../lib/sql/query'),
     sequel = require('../../lib/sql/sequel'),
     mailer = require('../../lib/mailer'),
     onion = require('../../lib/onion'),
+    hasher = require('../../lib/hasher'),
     users = require('../../lib/helper/users');
 
 module.exports = function(router) {
@@ -50,8 +51,14 @@ module.exports = function(router) {
                 encrypted: null,
                 firstname: req.body.firstname || null,
                 lastname: req.body.lastname || null,
-                secret: uuid(),
+                secret: hasher(256),
                 timeout: moment().add(nconf.get('timeouts:user:verify:amount'), nconf.get('timeouts:user:verify:time')).format("YYYY-MM-DD HH:mm:ss")
+            };
+
+            let object = {
+                browser: req.body.browser,
+                ip: req.body.ip || req.connection.remoteAddress,
+                os: req.body.os
             };
 
             async.series([
@@ -72,6 +79,8 @@ module.exports = function(router) {
 
                         user.id = result.insertId;
 
+                        object.user = user.id;
+
                         callback();
                     });
                 },
@@ -84,7 +93,7 @@ module.exports = function(router) {
                     mailer(user.email, 'User Verification', text, callback);
                 },
                 function(callback) {
-                    users.token(req, user.id, function(err, result) {
+                    users.token(object, function(err, result) {
                         if(err) return callback(err);
 
                         user.token = result;
@@ -206,12 +215,20 @@ module.exports = function(router) {
         .post(function(req, res, next) {
             let user = {
                     passwordError: false
-                },
-                select = {},
-                body = {
+                };
+
+            let select = {};
+
+            let body = {
                     email: req.body.email,
                     password: req.body.password
                 };
+
+            let object = {
+                browser: req.body.browser,
+                ip: req.body.ip || req.connection.remoteAddress,
+                os: req.body.os
+            };
 
             async.series([
                 function(callback) {
@@ -222,6 +239,8 @@ module.exports = function(router) {
 
                         user.id = result[0].id;
                         select.password = result[0].password;
+
+                        object.user = user.id;
 
                         if(select.password === null) return callback(new UserPasswordNotSetError);
 
@@ -250,7 +269,7 @@ module.exports = function(router) {
                     callback(new UserInvalidPasswordError);
                 },
                 function(callback) {
-                    users.token(req, select.id, function(err, result) {
+                    users.token(object, function(err, result) {
                         if(err) return callback(err);
 
                         user.token = result;
@@ -269,7 +288,7 @@ module.exports = function(router) {
         .post(function(req, res, next) {
             let user = {
                 email: req.body.email.toLowerCase(),
-                secret: uuid(),
+                secret: hasher(256),
                 timeout: moment().add(nconf.get('timeouts:user:login:amount'), nconf.get('timeouts:user:login:time')).format("YYYY-MM-DD HH:mm:ss")
             };
 
@@ -301,18 +320,36 @@ module.exports = function(router) {
     router.route('/login/verify')
         .post(function(req, res, next) {
             let user = {
+                email: req.body.email.toLowerCase(),
                 secret: req.body.secret
+            };
+
+            let object = {
+                browser: req.body.browser,
+                ip: req.body.ip || req.connection.remoteAddress,
+                os: req.body.os
             };
 
             async.series([
                 function(callback) {
-                    query('SELECT user_id AS id, timeout FROM user_login WHERE secret = ?', [user.secret], function(err, result) {
+                    query('SELECT id FROM user WHERE LOWER(email) = ?', [user.email], function(err, results) {
                         if(err) return callback(err);
 
-                        if(!result[0]) return callback(new UserInvalidSecretError(user.secret));
+                        if(results.length === 0) return callback(new UserNotFoundError);
 
-                        user.id = result[0].id;
-                        user.timeout = result[0].timeout;
+                        user.id = results[0].id;
+                        object.user = user.id;
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    query('SELECT timeout FROM user_login WHERE user_id = ? AND secret = ?', [user.id, user.secret], function(err, results) {
+                        if(err) return callback(err);
+
+                        if(results.length === 0) return callback(new UserInvalidSecretError(user.secret));
+
+                        user.timeout = results[0].timeout;
 
                         callback();
                     });
@@ -326,7 +363,7 @@ module.exports = function(router) {
                     callback();
                 },
                 function(callback) {
-                    users.token(req, user.id, function(err, result) {
+                    users.token(object, function(err, result) {
                         if(err) return callback(err);
 
                         user.token = result;
@@ -350,7 +387,7 @@ module.exports = function(router) {
         .post(function(req, res, next) {
             let user = {
                 email: req.body.email.toLowerCase(),
-                secret: uuid(),
+                secret: hasher(256),
                 timeout: moment().add(nconf.get('timeouts:user:verify:amount'), nconf.get('timeouts:user:verify:time')).format("YYYY-MM-DD HH:mm:ss")
             };
 
@@ -382,6 +419,7 @@ module.exports = function(router) {
     router.route('/verify/verify')
         .post(function(req, res, next) {
             let user = {
+                email: req.body.email.toLowerCase(),
                 displayname: req.body.displayname.toLowerCase(),
                 password: req.body.password || null,
                 encrypted: null,
@@ -393,13 +431,23 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    query('SELECT user_id AS id, timeout FROM user_verification WHERE secret = ?', [user.secret], function(err, result) {
+                    query('SELECT id FROM user WHERE LOWER(email) = ?', [user.email], function(err, results) {
                         if(err) return callback(err);
 
-                        if(!result[0]) return callback(new UserInvalidSecretError(user.secret));
+                        if(results.length === 0) return callback(new UserNotFoundError);
 
-                        user.id = result[0].id;
-                        user.timeout = result[0].timeout;
+                        user.id = results[0].id;
+
+                        callback();
+                    });
+                },
+                function(callback) {
+                    query('SELECT timeout FROM user_verification WHERE user_id = ? AND secret = ?', [user.id, user.secret], function(err, results) {
+                        if(err) return callback(err);
+
+                        if(!results[0]) return callback(new UserInvalidSecretError(user.secret));
+
+                        user.timeout = results[0].timeout;
 
                         callback();
                     });
@@ -424,7 +472,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    query('UPDATE user SET displayname = ?, password = ?, firstname = ?, lastname = ?, verified = 1 WHERE id = ?', [user.displayname, user.encrypted, user.firstname, user.lastname], callback);
+                    query('UPDATE user SET displayname = ?, password = ?, firstname = ?, lastname = ?, verified = 1 WHERE id = ?', [user.displayname, user.encrypted, user.firstname, user.lastname, user.id], callback);
                 },
                 function(callback) {
                     query('DELETE FROM user_verification WHERE user_id = ?', [user.id], callback);
@@ -442,7 +490,7 @@ module.exports = function(router) {
         .post(function(req, res, next) {
             let user = {
                 email: req.body.email.toLowerCase(),
-                secret: uuid(),
+                secret: hasher(256),
                 timeout: moment().add(nconf.get('timeouts:user:email:amount'), nconf.get('timeouts:user:email:time')).format("YYYY-MM-DD HH:mm:ss")
             };
 
@@ -474,28 +522,37 @@ module.exports = function(router) {
     router.route('/email/verify')
         .post(function(req, res, next) {
             let user = {
+                email: req.body.email.toLowerCase(),
                 secret: req.body.secret,
-                email: req.body.email.toLowerCase()
+                newEmail: req.body.newEmail.toLowerCase()
+            };
+
+            let object = {
+                browser: req.body.browser,
+                ip: req.body.ip || req.connection.remoteAddress,
+                os: req.body.os
             };
 
             async.series([
                 function(callback) {
-                    query('SELECT user_id AS id, timeout FROM user_email WHERE secret = ?', [user.secret], function(err, result) {
+                    query('SELECT id FROM user WHERE LOWER(email) = ?', [user.email], function(err, results) {
                         if(err) return callback(err);
 
-                        if(!result[0]) return callback(new UserInvalidSecretError(user.secret));
+                        if(results.length === 0) return callback(new UserNotFoundError);
 
-                        user.id = result[0].id;
-                        user.timeout = result[0].timeout;
+                        user.id = results[0].id;
+                        object.user = user.id;
 
                         callback();
                     });
                 },
                 function(callback) {
-                    query('SELECT email FROM user WHERE id = ?', [user.id], function(err, results) {
+                    query('SELECT timeout FROM user_email WHERE user_id = ? AND secret = ?', [user.id, user.secret], function(err, results) {
                         if(err) return callback(err);
 
-                        user.old = results[0].email;
+                        if(results.length === 0) return callback(new UserInvalidSecretError(user.secret));
+
+                        user.timeout = results[0].timeout;
 
                         callback();
                     });
@@ -509,29 +566,29 @@ module.exports = function(router) {
                     callback();
                 },
                 function(callback) {
-                    query('UPDATE user SET email = ? WHERE id = ?', [user.email, user.id], callback);
+                    query('UPDATE user SET email = ? WHERE id = ?', [user.newEmail, user.id], callback);
                 },
                 function(callback) {
-                    query('DELETE FROM user_email WHERE user_id = ?', [user.id], callback);
-                },
-                function(callback) {
-                    let text = require('../../lib/templates/user-reset-email-confirmation')(user.email);
-
-                    mailer(user.old, 'Email Changed', text, callback);
-                },
-                function(callback) {
-                    let text = require('../../lib/templates/user-reset-email-confirmation')(user.email);
+                    let text = require('../../lib/templates/user-reset-email-confirmation')(user.newEmail);
 
                     mailer(user.email, 'Email Changed', text, callback);
                 },
                 function(callback) {
-                    users.token(req, user.id, function(err, result) {
+                    let text = require('../../lib/templates/user-reset-email-confirmation')(user.newEmail);
+
+                    mailer(user.newEmail, 'Email Changed', text, callback);
+                },
+                function(callback) {
+                    users.token(object, function(err, result) {
                         if(err) return callback(err);
 
                         user.token = result;
 
                         callback();
                     });
+                },
+                function(callback) {
+                    query('DELETE FROM user_email WHERE user_id = ?', [user.id], callback);
                 }
             ], function(err) {
                 if(err) return next(err);
@@ -546,7 +603,7 @@ module.exports = function(router) {
         .post(function(req, res, next) {
             let user = {
                 email: req.body.email.toLowerCase(),
-                secret: uuid(),
+                secret: hasher(256),
                 timeout: moment().add(nconf.get('timeouts:user:password:amount'), nconf.get('timeouts:user:password:time')).format("YYYY-MM-DD HH:mm:ss")
             };
 
@@ -578,28 +635,30 @@ module.exports = function(router) {
     router.route('/password/verify')
         .post(function(req, res, next) {
             let user = {
+                email: req.body.email.toLowerCase(),
                 secret: req.body.secret,
                 password: req.body.password
             };
 
             async.series([
                 function(callback) {
-                    query('SELECT user_id AS id, timeout FROM user_reset WHERE secret = ?', [user.secret], function(err, result) {
+                    query('SELECT id FROM user WHERE LOWER(email) = ?', [user.email], function(err, results) {
                         if(err) return callback(err);
 
-                        if(!result[0]) return callback(new UserInvalidSecretError(user.secret));
+                        if(results.length === 0) return callback(new UserNotFoundError);
 
-                        user.id = result[0].id;
-                        user.timeout = result[0].timeout;
+                        user.id = results[0].id;
 
                         callback();
                     });
                 },
                 function(callback) {
-                    query('SELECT email FROM user WHERE id = ?', [user.id], function(err, results) {
+                    query('SELECT timeout FROM user_reset WHERE user_id = ? AND secret = ?', [user.id, user.secret], function(err, results) {
                         if(err) return callback(err);
 
-                        user.email = results[0].email;
+                        if(results.length === 0) return callback(new UserInvalidSecretError(user.secret));
+
+                        user.timeout = results[0].timeout;
 
                         callback();
                     });
@@ -625,12 +684,12 @@ module.exports = function(router) {
                     query('UPDATE user SET password = ? WHERE id = ?', [user.encrypted, user.id], callback);
                 },
                 function(callback) {
-                    query('DELETE FROM user_reset WHERE user_id = ?', [user.id], callback);
-                },
-                function(callback) {
                     let text = require('../../lib/templates/user-reset-password-confirmation')();
 
                     mailer(user.email, 'Password Reset', text, callback);
+                },
+                function(callback) {
+                    query('DELETE FROM user_reset WHERE user_id = ?', [user.id], callback);
                 }
             ], function(err) {
                 if(err) return next(err);
