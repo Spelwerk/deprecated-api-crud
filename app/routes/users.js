@@ -1,6 +1,8 @@
 'use strict';
 
-let UserExpiredTimeoutError = require('../../lib/errors/user-expired-timeout-error'),
+let UserDisplaynameAlreadyExistsError = require('../../lib/errors/user-displayname-already-exists-error'),
+    UserEmailAlreadyExistsError = require('../../lib/errors/user-email-already-exists-error'),
+    UserExpiredTimeoutError = require('../../lib/errors/user-expired-timeout-error'),
     UserInvalidEmailError = require('../../lib/errors/user-invalid-email-error'),
     UserInvalidPasswordError = require('../../lib/errors/user-invalid-password-error'),
     UserInvalidSecretError = require('../../lib/errors/user-invalid-secret-error'),
@@ -75,7 +77,17 @@ module.exports = function(router) {
                 },
                 function(callback) {
                     query('INSERT INTO user (email,displayname,password,firstname,lastname) VALUES (?,?,?,?,?)', [user.email, user.displayname, user.encrypted, user.firstname, user.lastname], function(err, result) {
-                        if(err) return callback(err);
+
+                        // If there's an error, and the code is DUP_ENTRY we probably have an issue with email or displayname
+                        if(err && err.code === 'ER_DUP_ENTRY' && err.details.indexOf('email_UNIQUE') !== -1) {
+                            return callback(new UserDisplaynameAlreadyExistsError)
+
+                        } else if(err && err.code === 'ER_DUP_ENTRY' && err.details.indexOf('displayname_UNIQUE') !== -1) {
+                            return callback(new UserEmailAlreadyExistsError)
+
+                        } else if(err) {
+                            return callback(err);
+                        }
 
                         user.id = result.insertId;
 
