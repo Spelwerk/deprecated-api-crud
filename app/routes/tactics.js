@@ -3,7 +3,7 @@
 let generic = require('../../lib/helper/generic');
 
 module.exports = function(router) {
-    let tableName = 'language',
+    let tableName = 'tactic',
         options = {};
 
     let sql = 'SELECT * FROM ' + tableName + ' ' +
@@ -19,6 +19,7 @@ module.exports = function(router) {
     generic.clone(router, tableName);
     generic.comments(router, tableName);
     generic.labels(router, tableName);
+    generic.images(router, tableName);
     generic.permissions(router, tableName);
     generic.revive(router, tableName);
 };

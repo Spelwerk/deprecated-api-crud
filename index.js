@@ -36,7 +36,7 @@ async.series([
         let database = require('./app/initializers/database');
 
         // Initialize DB Connection
-        database.connect(callback);
+        database.setup(callback);
     },
     function(callback) {
         logger.info('[APP] Initializing server configuration');
@@ -44,7 +44,7 @@ async.series([
         let server = require('./app/initializers/server');
 
         // Start Server
-        server.start(callback);
+        server.setup(callback);
     }
 ], function(err) {
     if (err) {

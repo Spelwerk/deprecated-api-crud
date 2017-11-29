@@ -11,7 +11,7 @@ let defaults = yaml.readSync('./../../config/defaults.yml');
 
 module.exports = function(router) {
     let tableName = 'manifestation',
-        options = { updatedField: true };
+        options = {};
 
     let sql = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
@@ -44,7 +44,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    elemental.post(req.user, attribute, 'attribute', {userOwned: true}, function(err, id) {
+                    elemental.post(req.user, attribute, 'attribute', null, function(err, id) {
                         if(err) return callback(err);
 
                         attribute.id = id;
@@ -54,7 +54,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    elemental.post(req.user, manifestation, 'manifestation', {userOwned: true}, function(err, id) {
+                    elemental.post(req.user, manifestation, 'manifestation', null, function(err, id) {
                         if(err) return callback(err);
 
                         manifestation.id = id;
@@ -64,7 +64,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    elemental.post(req.user, skill, 'skill', {userOwned: true, combinations: ['manifestation']}, function(err, id) {
+                    elemental.post(req.user, skill, 'skill', null, function(err, id) {
                         if(err) return callback(err);
 
                         skill.id = id;
@@ -93,6 +93,7 @@ module.exports = function(router) {
     // Relations
 
     relations(router, tableName, 'attributes', 'attribute');
+    relations(router, tableName, 'focuses', 'focus');
     relations(router, tableName, 'forms', 'form');
     relations(router, tableName, 'spells', 'spell');
 };

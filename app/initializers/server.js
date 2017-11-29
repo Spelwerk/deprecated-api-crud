@@ -9,7 +9,7 @@ let logger = require(appRoot + '/lib/logger');
 
 let app;
 
-function start(callback) {
+function setup(done) {
     async.series([
         function(callback) {
             logger.info('[SERVER] Setting up Express');
@@ -70,8 +70,8 @@ function start(callback) {
         // Listening on port
         app.listen(nconf.get('port'));
 
-        callback();
+        done();
     });
 }
 
-module.exports.start = start;
+module.exports.setup = setup;

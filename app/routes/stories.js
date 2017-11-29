@@ -5,10 +5,7 @@ let generic = require('../../lib/helper/generic'),
 
 module.exports = function(router) {
     let tableName = 'story',
-        options = {
-            userOwned: true,
-            updatedField: true
-        };
+        options = {};
 
     let sql = 'SELECT * FROM ' + tableName;
 
@@ -27,11 +24,14 @@ module.exports = function(router) {
 
     // Relations
 
+    relations(router, tableName, 'assets', 'asset');
+    relations(router, tableName, 'augmentations', 'augmentation');
+    relations(router, tableName, 'bionics', 'bionic');
+    relations(router, tableName, 'creatures', 'creature');
     relations(router, tableName, 'locations', 'location');
-
-    // Creatures
-
-    //todo special for creatures (player col)
+    relations(router, tableName, 'protections', 'protection');
+    relations(router, tableName, 'software', 'software');
+    relations(router, tableName, 'weapons', 'weapon');
+    relations(router, tableName, 'weaponmods', 'weaponmod');
 };
 
-//todo story_has_asset || story_has_protection || story_has_weapon || story_has_weaponmod || story_has_bionic || story_has_augmentation || story_has_software

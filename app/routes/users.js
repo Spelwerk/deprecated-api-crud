@@ -322,7 +322,7 @@ module.exports = function(router) {
             });
         });
 
-    router.route('/login/verify')
+    router.route('/login/secret')
         .post(function(req, res, next) {
             let user = {
                 email: req.body.email.toLowerCase(),
@@ -420,7 +420,7 @@ module.exports = function(router) {
             });
         });
 
-    router.route('/verify/verify')
+    router.route('/verify/secret')
         .post(function(req, res, next) {
             let user = {
                 email: req.body.email.toLowerCase(),
@@ -523,7 +523,7 @@ module.exports = function(router) {
             });
         });
 
-    router.route('/email/verify')
+    router.route('/email/secret')
         .post(function(req, res, next) {
             let user = {
                 email: req.body.email.toLowerCase(),
@@ -635,7 +635,7 @@ module.exports = function(router) {
             });
         });
 
-    router.route('/password/verify')
+    router.route('/password/secret')
         .post(function(req, res, next) {
             let user = {
                 email: req.body.email.toLowerCase(),
@@ -773,7 +773,6 @@ module.exports = function(router) {
 
     // Relations
 
-    users.relation(router, 'assetgroups', 'assetgroup');
     users.relation(router, 'assets', 'asset');
     users.relation(router, 'assettypes', 'assettype');
     users.relation(router, 'attributes', 'attribute');
@@ -781,15 +780,19 @@ module.exports = function(router) {
     users.relation(router, 'backgrounds', 'background');
     users.relation(router, 'bionics', 'bionic');
     users.relation(router, 'bodyparts', 'bodypart');
+    users.relation(router, 'corporations', 'corporation');
     users.relation(router, 'countries', 'country');
+    users.relation(router, 'creatures', 'creature');
+    users.relation(router, 'currencies', 'currency');
     users.relation(router, 'doctrines', 'doctrine');
     users.relation(router, 'expertises', 'expertise');
     users.relation(router, 'focuses', 'focus');
+    users.relation(router, 'forms', 'form');
     users.relation(router, 'gifts', 'gift');
     users.relation(router, 'identities', 'identity');
     users.relation(router, 'imperfections', 'imperfection');
     users.relation(router, 'languages', 'language');
-    users.relation(router, 'loyalties', 'loyalty');
+    users.relation(router, 'locations', 'location');
     users.relation(router, 'manifestations', 'manifestation');
     users.relation(router, 'milestones', 'milestone');
     users.relation(router, 'natures', 'nature');
@@ -797,7 +800,11 @@ module.exports = function(router) {
     users.relation(router, 'skills', 'skill');
     users.relation(router, 'software', 'software');
     users.relation(router, 'species', 'species');
+    users.relation(router, 'spells', 'spell');
+    users.relation(router, 'tactics', 'tactic');
+    users.relation(router, 'wealth', 'wealth');
     users.relation(router, 'weaponmods', 'weaponmod');
     users.relation(router, 'weapons', 'weapon');
     users.relation(router, 'weapontypes', 'weapontype');
+    users.relation(router, 'worlds', 'world');
 };

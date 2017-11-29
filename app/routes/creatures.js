@@ -58,14 +58,14 @@ module.exports = function(router) {
                 worldId = req.body.world_id,
                 speciesId = req.body.species_id;
 
-            let options = {
+            let optional = {
                 nickName: req.body.nickname,
                 middleName: req.body.middlename,
                 lastName: req.body.lastname,
                 description: req.body.description
             };
 
-            creatures.post(req.user, firstName, worldId, speciesId, options, function(err, id) {
+            creatures.post(req.user, firstName, worldId, speciesId, optional, function(err, id) {
                 if(err) return next(err);
 
                 res.status(201).send({id: id});

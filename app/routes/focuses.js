@@ -1,14 +1,10 @@
 'use strict';
 
-let generic = require('../../lib/helper/generic'),
-    sequel = require('../../lib/sql/sequel');
+let generic = require('../../lib/helper/generic');
 
 module.exports = function(router) {
     let tableName = 'focus',
-        options = {
-            ownership: ['manifestation'],
-            updatedField: true
-        };
+        options = {};
 
     let sql = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
@@ -16,15 +12,6 @@ module.exports = function(router) {
     generic.root(router, tableName, sql);
     generic.post(router, tableName, options);
     generic.deleted(router, tableName, sql);
-
-    router.route('/manifestation/:manifestationId')
-        .get(function(req, res, next) {
-            let call = sql + ' WHERE deleted IS NULL AND ' +
-                'manifestation_id = ?';
-
-            sequel.get(req, res, next, call, [req.params.manifestationId]);
-        });
-
     generic.get(router, tableName, sql);
     generic.put(router, tableName, options);
     generic.delete(router, tableName, options);

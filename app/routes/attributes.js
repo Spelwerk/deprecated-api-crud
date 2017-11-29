@@ -5,7 +5,7 @@ let generic = require('../../lib/helper/generic'),
 
 module.exports = function(router) {
     let tableName = 'attribute',
-        options = { updatedField: true };
+        options = {};
 
     let sql = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';

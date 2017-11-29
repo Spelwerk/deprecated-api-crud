@@ -4,7 +4,7 @@ let generic = require('../../lib/helper/generic');
 
 module.exports = function(router) {
     let tableName = 'softwaretype',
-        options = { updatedField: true };
+        options = {};
 
     let sql = 'SELECT * FROM ' + tableName;
 

@@ -6,7 +6,7 @@ let generic = require('../../lib/helper/generic'),
 
 module.exports = function(router) {
     let tableName = 'weapon',
-        options = { updatedField: true };
+        options = {};
 
     let sql = 'SELECT ' +
         'weapon.id, ' +
