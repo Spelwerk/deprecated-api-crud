@@ -35,5 +35,4 @@ module.exports = function(router) {
                 res.status(204).send();
             });
         });
-
 };
