@@ -1,21 +1,21 @@
-var async = require('async'),
+let async = require('async'),
     _ = require('underscore'),
     chai = require('chai'),
     validator = require('validator');
 
-var should = chai.should(),
+let should = chai.should(),
     assert = chai.assert,
     expect = chai.expect;
 
-var app = require('./../app'),
+let app = require('./../app'),
     verifier = require('./../verifier'),
     hasher = require('./../../lib/hasher');
 
 describe('/assettypes', function() {
 
-    var baseRoute = '/assettypes';
+    let baseRoute = '/assettypes';
 
-    var temporaryId;
+    let temporaryId;
 
     before(function(done) {
         app.login(done);
@@ -44,7 +44,7 @@ describe('/assettypes', function() {
     describe('POST', function() {
 
         it('/ should create a new item', function(done) {
-            var payload = {
+            let payload = {
                 name: hasher(20)
             };
 
@@ -66,7 +66,7 @@ describe('/assettypes', function() {
     describe('PUT', function() {
 
         it('/:id should update the item with new values', function(done) {
-            var payload = {name: hasher(20)};
+            let payload = {name: hasher(20)};
 
             app.put(baseRoute + '/' + temporaryId, payload)
                 .expect(204)

@@ -1,6 +1,6 @@
 'use strict';
 
-var logger = require(appRoot + '/lib/logger');
+let logger = require(appRoot + '/lib/logger');
 
 module.exports = function(app, callback) {
     // Return error information as response

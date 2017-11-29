@@ -1,9 +1,10 @@
 'use strict';
 
-let generic = require('../../lib/helper/generic');
+let generic = require('../../lib/helper/generic'),
+    relations = require('../../lib/helper/relations');
 
 module.exports = function(router) {
-    let tableName = 'assettype',
+    let tableName = 'form',
         options = { updatedField: true };
 
     let sql = 'SELECT * FROM ' + tableName + ' ' +
@@ -19,6 +20,12 @@ module.exports = function(router) {
     generic.clone(router, tableName);
     generic.comments(router, tableName);
     generic.labels(router, tableName);
+    generic.images(router, tableName);
     generic.permissions(router, tableName);
     generic.revive(router, tableName);
+
+    // Relations
+
+    relations(router, tableName, 'attributes', 'attribute');
+    relations(router, tableName, 'skills', 'skill');
 };

@@ -1,21 +1,21 @@
-var async = require('async'),
+let async = require('async'),
     _ = require('underscore'),
     chai = require('chai'),
     validator = require('validator');
 
-var should = chai.should(),
+let should = chai.should(),
     assert = chai.assert,
     expect = chai.expect;
 
-var app = require('../app'),
+let app = require('../app'),
     verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
 describe('/problems', function() {
 
-    var baseRoute = '/problem';
+    let baseRoute = '/problem';
 
-    var temporaryId;
+    let temporaryId;
 
     before(function(done) {
         app.login(done);

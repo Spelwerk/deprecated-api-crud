@@ -1,16 +1,16 @@
 'use strict';
 
-var generic = require('../../lib/helper/generic'),
+let generic = require('../../lib/helper/generic'),
     relations = require('../../lib/helper/relations');
 
 module.exports = function(router) {
-    var tableName = 'story',
+    let tableName = 'story',
         options = {
             userOwned: true,
             updatedField: true
         };
 
-    var sql = 'SELECT * FROM ' + tableName;
+    let sql = 'SELECT * FROM ' + tableName;
 
     generic.root(router, tableName, sql);
     generic.post(router, tableName, options);

@@ -1,32 +1,32 @@
 'use strict';
 
-var async = require('async');
+let async = require('async');
 
-var generic = require('../../lib/helper/generic'),
+let generic = require('../../lib/helper/generic'),
     elemental = require('../../lib/sql/elemental'),
     sequel = require('../../lib/sql/sequel');
 
 module.exports = function(router) {
-    var tableName = 'weapontype',
+    let tableName = 'weapontype',
         options = { updatedField: true };
 
-    var sql = 'SELECT * FROM ' + tableName + ' ' +
+    let sql = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
 
     generic.root(router, tableName, sql);
 
     router.route('/')
         .post(function(req, res, next) {
-            var expertise = {
+            let expertise = {
                 name: req.body.name + ' Mastery',
                 description: req.body.description,
                 skill_id: req.body.skill_id,
                 species_id: req.body.species_id
             };
 
-            var equipable = !!req.body.augmentation || !!req.body.species_id;
+            let equipable = !!req.body.augmentation || !!req.body.species_id;
 
-            var weaponType = {
+            let weaponType = {
                 name: req.body.name,
                 description: req.body.description,
                 icon: req.body.icon,
@@ -66,7 +66,7 @@ module.exports = function(router) {
 
     router.route('/augmentation/:augmentation')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE deleted IS NULL AND ' +
+            let call = sql + ' WHERE deleted IS NULL AND ' +
                 'augmentation = ?';
 
             sequel.get(req, res, next, call, [req.params.augmentation]);
@@ -74,7 +74,7 @@ module.exports = function(router) {
 
     router.route('/damage/:damageId')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE deleted IS NULL AND ' +
+            let call = sql + ' WHERE deleted IS NULL AND ' +
                 'attribute_id = ?';
 
             sequel.get(req, res, next, call, [req.params.damageId]);
@@ -82,7 +82,7 @@ module.exports = function(router) {
 
     router.route('/expertise/:expertiseId')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE deleted IS NULL AND ' +
+            let call = sql + ' WHERE deleted IS NULL AND ' +
                 'expertise_id = ?';
 
             sequel.get(req, res, next, call, [req.params.expertiseId]);
@@ -90,7 +90,7 @@ module.exports = function(router) {
 
     router.route('/species/:species')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE deleted IS NULL AND ' +
+            let call = sql + ' WHERE deleted IS NULL AND ' +
                 'species = ?';
 
             sequel.get(req, res, next, call, [req.params.species]);

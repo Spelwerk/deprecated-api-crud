@@ -1,21 +1,21 @@
-var async = require('async'),
+let async = require('async'),
     _ = require('underscore'),
     chai = require('chai'),
     validator = require('validator');
 
-var should = chai.should(),
+let should = chai.should(),
     assert = chai.assert,
     expect = chai.expect;
 
-var app = require('../app'),
+let app = require('../app'),
     verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
 describe('/images', function() {
 
-    var baseRoute = '/images';
+    let baseRoute = '/images';
 
-    var temporaryId;
+    let temporaryId;
 
     before(function(done) {
         app.login(done);
@@ -50,7 +50,7 @@ describe('/images', function() {
     describe('POST', function() {
 
         it('/ should create a new item', function(done) {
-            var payload = {
+            let payload = {
                 path: 'http://fakeimage.com/' + hasher(20) + '.png'
             };
 

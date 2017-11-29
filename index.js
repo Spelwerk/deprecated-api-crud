@@ -1,13 +1,13 @@
 'use strict';
 
-var nconf = require('nconf'),
+let nconf = require('nconf'),
     async = require('async'),
     path = require('path');
 
 global.appRoot = path.resolve(__dirname);
 global.environment = process.env.NODE_ENV || 'development';
 
-var logger = require('./lib/logger');
+let logger = require('./lib/logger');
 
 async.series([
     function(callback) {
@@ -33,7 +33,7 @@ async.series([
     function(callback) {
         logger.info('[APP] Initializing database configuration');
 
-        var database = require('./app/initializers/database');
+        let database = require('./app/initializers/database');
 
         // Initialize DB Connection
         database.connect(callback);
@@ -41,7 +41,7 @@ async.series([
     function(callback) {
         logger.info('[APP] Initializing server configuration');
 
-        var server = require('./app/initializers/server');
+        let server = require('./app/initializers/server');
 
         // Start Server
         server.start(callback);

@@ -3,15 +3,15 @@
 let UserNotAdministratorError = require('../../lib/errors/user-not-administrator-error'),
     UserNotLoggedInError = require('../../lib/errors/user-not-logged-in-error');
 
-var async = require('async');
+let async = require('async');
 
-var sequel = require('../../lib/sql/sequel'),
+let sequel = require('../../lib/sql/sequel'),
     query = require('../../lib/sql/query');
 
 module.exports = function(router) {
-    var tableName = 'firstname';
+    let tableName = 'firstname';
 
-    var sql = 'SELECT * FROM ' + tableName;
+    let sql = 'SELECT * FROM ' + tableName;
 
     router.route('/')
         .get(function(req, res, next) {
@@ -20,7 +20,7 @@ module.exports = function(router) {
         .post(function(req, res, next) {
             if(!req.user.id) return next(new UserNotLoggedInError);
 
-            var id,
+            let id,
                 name = req.body.name,
                 feminine = req.body.feminine;
 
@@ -56,7 +56,7 @@ module.exports = function(router) {
 
     router.route('/:id')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE id = ?';
+            let call = sql + ' WHERE id = ?';
 
             sequel.get(req, res, next, call, [req.params.id], true);
         })

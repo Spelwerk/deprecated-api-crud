@@ -1,14 +1,14 @@
 'use strict';
 
-var generic = require('../../lib/helper/generic'),
+let generic = require('../../lib/helper/generic'),
     relations = require('../../lib/helper/relations'),
     sequel = require('../../lib/sql/sequel');
 
 module.exports = function(router) {
-    var tableName = 'weapon',
+    let tableName = 'weapon',
         options = { updatedField: true };
 
-    var sql = 'SELECT ' +
+    let sql = 'SELECT ' +
         'weapon.id, ' +
         'weapon.user_id, ' +
         'weapon.canon, ' +
@@ -45,7 +45,7 @@ module.exports = function(router) {
 
     router.route('/augmentation/:augmentationId')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE weapon.deleted IS NULL AND ' +
+            let call = sql + ' WHERE weapon.deleted IS NULL AND ' +
                 'augmentation_id = ?';
 
             sequel.get(req, res, next, call, [req.params.augmentationId]);
@@ -53,7 +53,7 @@ module.exports = function(router) {
 
     router.route('/species/:speciesId')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE weapon.deleted IS NULL AND ' +
+            let call = sql + ' WHERE weapon.deleted IS NULL AND ' +
                 'species_id = ?';
 
             sequel.get(req, res, next, call, [req.params.speciesId]);
@@ -61,7 +61,7 @@ module.exports = function(router) {
 
     router.route('/type/:typeId')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE weapon.deleted IS NULL AND ' +
+            let call = sql + ' WHERE weapon.deleted IS NULL AND ' +
                 'weapontype_id = ?';
 
             sequel.get(req, res, next, call, [req.params.typeId]);

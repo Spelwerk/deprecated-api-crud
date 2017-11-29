@@ -1,14 +1,14 @@
 'use strict';
 
-var generic = require('../../lib/helper/generic'),
+let generic = require('../../lib/helper/generic'),
     relations = require('../../lib/helper/relations'),
     sequel = require('../../lib/sql/sequel');
 
 module.exports = function(router) {
-    var tableName = 'imperfection',
+    let tableName = 'imperfection',
         options = { updatedField: true };
 
-    var sql = 'SELECT * FROM ' + tableName + ' ' +
+    let sql = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id ' +
         'LEFT JOIN ' + tableName + '_is_manifestation ON ' + tableName + '_is_manifestation.' + tableName + '_id = ' + tableName + '.id ' +
         'LEFT JOIN ' + tableName + '_is_species ON ' + tableName + '_is_species.' + tableName + '_id = ' + tableName + '.id';
@@ -19,7 +19,7 @@ module.exports = function(router) {
 
     router.route('/manifestation/:manifestationId')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE deleted IS NULL AND ' +
+            let call = sql + ' WHERE deleted IS NULL AND ' +
                 'manifestation_id = ?';
 
             sequel.get(req, res, next, call, [req.params.manifestationId]);
@@ -27,7 +27,7 @@ module.exports = function(router) {
 
     router.route('/species/:speciesId')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE deleted IS NULL AND ' +
+            let call = sql + ' WHERE deleted IS NULL AND ' +
                 'species_id = ?';
 
             sequel.get(req, res, next, call, [req.params.speciesId]);

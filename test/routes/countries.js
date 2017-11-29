@@ -1,27 +1,27 @@
-var async = require('async'),
+let async = require('async'),
     _ = require('underscore'),
     chai = require('chai'),
     validator = require('validator');
 
-var should = chai.should(),
+let should = chai.should(),
     assert = chai.assert,
     expect = chai.expect;
 
-var app = require('../app'),
+let app = require('../app'),
     verifier = require('./../verifier'),
     hasher = require('../../lib/hasher');
 
 describe('/countries', function() {
 
-    var baseRoute = '/countries';
+    let baseRoute = '/countries';
 
-    var temporaryId;
+    let temporaryId;
 
     before(function(done) {
         app.login(done);
     });
 
-    var languageId;
+    let languageId;
     before(function(done) {
         app.get('/languages')
             .expect(200)
@@ -34,7 +34,7 @@ describe('/countries', function() {
             });
     });
 
-    var firstnameGroupId;
+    let firstnameGroupId;
     before(function(done) {
         app.get('/firstnamegroups')
             .expect(200)
@@ -47,7 +47,7 @@ describe('/countries', function() {
             });
     });
 
-    var nicknameGroupId;
+    let nicknameGroupId;
     before(function(done) {
         app.get('/nicknamegroups')
             .expect(200)
@@ -60,7 +60,7 @@ describe('/countries', function() {
             });
     });
 
-    var lastnameGroupId;
+    let lastnameGroupId;
     before(function(done) {
         app.get('/lastnamegroups')
             .expect(200)
@@ -101,7 +101,7 @@ describe('/countries', function() {
     describe('POST', function() {
 
         it('/ should create a new item', function(done) {
-            var payload = {
+            let payload = {
                 name: hasher(20),
                 description: hasher(20),
                 language_id: languageId,
@@ -152,7 +152,7 @@ describe('/countries', function() {
     describe('PUT', function() {
 
         it('/:id should update the item with new values', function(done) {
-            var payload = {
+            let payload = {
                 name: hasher(20),
                 description: hasher(20)
             };

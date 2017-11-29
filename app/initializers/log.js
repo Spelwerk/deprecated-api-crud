@@ -1,6 +1,6 @@
 'use strict';
 
-var uuid = require('uuid/v1');
+let uuid = require('uuid/v1');
 
 module.exports = function(app, callback) {
 

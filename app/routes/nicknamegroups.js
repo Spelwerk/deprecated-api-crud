@@ -2,20 +2,20 @@
 
 let UserNotAdministratorError = require('../../lib/errors/user-not-administrator-error');
 
-var sequel = require('../../lib/sql/sequel'),
+let sequel = require('../../lib/sql/sequel'),
     query = require('../../lib/sql/query');
 
-var unique = require('../../lib/helper/unique');
+let unique = require('../../lib/helper/unique');
 
 module.exports = function(router) {
-    var tableName = 'nicknamegroup',
+    let tableName = 'nicknamegroup',
         relationName = 'nickname';
 
     unique(router, tableName, true);
 
     router.route('/:id/nicknames')
         .get(function(req, res, next) {
-            var call = 'SELECT * FROM ' + tableName + '_has_' + relationName + ' ' +
+            let call = 'SELECT * FROM ' + tableName + '_has_' + relationName + ' ' +
                 'LEFT JOIN ' + relationName + ' ON ' + relationName + '.id = ' + tableName + '_has_' + relationName + '.' + relationName + '_id ' +
                 'WHERE ' +
                 tableName + '_has_' + relationName + '.' + tableName + '_id = ?';

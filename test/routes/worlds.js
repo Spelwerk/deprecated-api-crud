@@ -1,21 +1,21 @@
-var async = require('async'),
+let async = require('async'),
     _ = require('underscore'),
     chai = require('chai'),
     validator = require('validator');
 
-var should = chai.should(),
+let should = chai.should(),
     assert = chai.assert,
     expect = chai.expect;
 
-var app = require('../app'),
+let app = require('../app'),
     verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
 describe('/worlds', function() {
 
-    var baseRoute = '/worlds';
+    let baseRoute = '/worlds';
 
-    var temporaryId;
+    let temporaryId;
 
     before(function(done) {
         app.login(done);
@@ -47,7 +47,7 @@ describe('/worlds', function() {
     describe('POST', function() {
 
         it('/ should create a new item', function(done) {
-            var payload = {
+            let payload = {
                 name: hasher(20),
                 description: hasher(20),
                 icon: 'http://fakeicon.com/' + hasher(20) + '.png',
@@ -99,7 +99,7 @@ describe('/worlds', function() {
     describe('PUT', function() {
 
         it('/:id should update the item with new values', function(done) {
-            var payload = {
+            let payload = {
                 name: hasher(20),
                 description: hasher(20)
             };
@@ -169,7 +169,7 @@ describe('/worlds', function() {
 
 
     describe('/assets', function() {
-        var relationRoute = 'assets',
+        let relationRoute = 'assets',
             relationId;
 
         before(function(done) {
@@ -178,7 +178,7 @@ describe('/worlds', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -196,7 +196,7 @@ describe('/worlds', function() {
     });
 
     describe('/backgrounds', function() {
-        var relationRoute = 'backgrounds',
+        let relationRoute = 'backgrounds',
             relationId;
 
         before(function(done) {
@@ -205,7 +205,7 @@ describe('/worlds', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -223,7 +223,7 @@ describe('/worlds', function() {
     });
 
     describe('/bionics', function() {
-        var relationRoute = 'bionics',
+        let relationRoute = 'bionics',
             relationId;
 
         before(function(done) {
@@ -232,7 +232,7 @@ describe('/worlds', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -250,7 +250,7 @@ describe('/worlds', function() {
     });
 
     describe('/expertises', function() {
-        var relationRoute = 'expertises',
+        let relationRoute = 'expertises',
             relationId;
 
         before(function(done) {
@@ -259,7 +259,7 @@ describe('/worlds', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -277,7 +277,7 @@ describe('/worlds', function() {
     });
 
     describe('/gifts', function() {
-        var relationRoute = 'gifts',
+        let relationRoute = 'gifts',
             relationId;
 
         before(function(done) {
@@ -286,7 +286,7 @@ describe('/worlds', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -304,7 +304,7 @@ describe('/worlds', function() {
     });
 
     describe('/identities', function() {
-        var relationRoute = 'identities',
+        let relationRoute = 'identities',
             relationId;
 
         before(function(done) {
@@ -313,7 +313,7 @@ describe('/worlds', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -331,7 +331,7 @@ describe('/worlds', function() {
     });
 
     describe('/imperfections', function() {
-        var relationRoute = 'imperfections',
+        let relationRoute = 'imperfections',
             relationId;
 
         before(function(done) {
@@ -340,7 +340,7 @@ describe('/worlds', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -358,7 +358,7 @@ describe('/worlds', function() {
     });
 
     describe('/manifestations', function() {
-        var relationRoute = 'manifestations',
+        let relationRoute = 'manifestations',
             relationId;
 
         before(function(done) {
@@ -367,7 +367,7 @@ describe('/worlds', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -385,7 +385,7 @@ describe('/worlds', function() {
     });
 
     describe('/milestones', function() {
-        var relationRoute = 'milestones',
+        let relationRoute = 'milestones',
             relationId;
 
         before(function(done) {
@@ -394,7 +394,7 @@ describe('/worlds', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -412,7 +412,7 @@ describe('/worlds', function() {
     });
 
     describe('/natures', function() {
-        var relationRoute = 'natures',
+        let relationRoute = 'natures',
             relationId;
 
         before(function(done) {
@@ -421,7 +421,7 @@ describe('/worlds', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -439,7 +439,7 @@ describe('/worlds', function() {
     });
 
     describe('/protection', function() {
-        var relationRoute = 'protection',
+        let relationRoute = 'protection',
             relationId;
 
         before(function(done) {
@@ -448,7 +448,7 @@ describe('/worlds', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -466,7 +466,7 @@ describe('/worlds', function() {
     });
 
     describe('/software', function() {
-        var relationRoute = 'software',
+        let relationRoute = 'software',
             relationId;
 
         before(function(done) {
@@ -475,7 +475,7 @@ describe('/worlds', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -493,7 +493,7 @@ describe('/worlds', function() {
     });
 
     describe('/species', function() {
-        var relationRoute = 'species',
+        let relationRoute = 'species',
             relationId;
 
         before(function(done) {
@@ -502,7 +502,7 @@ describe('/worlds', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -520,7 +520,7 @@ describe('/worlds', function() {
     });
 
     describe('/weapons', function() {
-        var relationRoute = 'weapons',
+        let relationRoute = 'weapons',
             relationId;
 
         before(function(done) {
@@ -529,7 +529,7 @@ describe('/worlds', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();

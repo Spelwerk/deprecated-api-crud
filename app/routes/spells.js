@@ -3,7 +3,7 @@
 let generic = require('../../lib/helper/generic');
 
 module.exports = function(router) {
-    let tableName = 'assettype',
+    let tableName = 'spell',
         options = { updatedField: true };
 
     let sql = 'SELECT * FROM ' + tableName + ' ' +

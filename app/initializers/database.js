@@ -1,9 +1,9 @@
 'use strict';
 
-var mysql = require('mysql'),
+let mysql = require('mysql'),
     nconf = require('nconf');
 
-var pool,
+let pool,
     tables = [];
 
 function connect(callback) {

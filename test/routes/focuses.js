@@ -1,21 +1,21 @@
-var async = require('async'),
+let async = require('async'),
     _ = require('underscore'),
     chai = require('chai'),
     validator = require('validator');
 
-var should = chai.should(),
+let should = chai.should(),
     assert = chai.assert,
     expect = chai.expect;
 
-var app = require('../app'),
+let app = require('../app'),
     verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
 describe('/focuses', function() {
 
-    var baseRoute = '/focuses';
+    let baseRoute = '/focuses';
 
-    var temporaryId,
+    let temporaryId,
         manifestationId;
 
     before(function(done) {
@@ -28,7 +28,7 @@ describe('/focuses', function() {
             .end(function(err, res) {
                 if(err) return done(err);
 
-                var length = res.body.length - 1;
+                let length = res.body.length - 1;
                 manifestationId = res.body.results[length].id;
 
                 done();
@@ -60,7 +60,7 @@ describe('/focuses', function() {
     describe('POST', function() {
 
         it('/ should create a new item', function(done) {
-            var payload = {
+            let payload = {
                 name: hasher(20),
                 description: hasher(20),
                 manifestation_id: manifestationId,
@@ -97,7 +97,7 @@ describe('/focuses', function() {
     describe('PUT', function() {
 
         it('/:focusId should update the item with new values', function(done) {
-            var payload = {
+            let payload = {
                 name: hasher(20),
                 description: hasher(20)
             };

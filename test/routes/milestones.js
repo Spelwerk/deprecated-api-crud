@@ -1,27 +1,27 @@
-var async = require('async'),
+let async = require('async'),
     _ = require('underscore'),
     chai = require('chai'),
     validator = require('validator');
 
-var should = chai.should(),
+let should = chai.should(),
     assert = chai.assert,
     expect = chai.expect;
 
-var app = require('../app'),
+let app = require('../app'),
     verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
 describe('/milestones', function() {
 
-    var baseRoute = '/milestones';
+    let baseRoute = '/milestones';
 
-    var temporaryId;
+    let temporaryId;
 
     before(function(done) {
         app.login(done);
     });
 
-    var backgroundId;
+    let backgroundId;
     before(function(done) {
         app.get('/backgrounds')
             .expect(200)
@@ -34,7 +34,7 @@ describe('/milestones', function() {
             });
     });
 
-    var manifestationId;
+    let manifestationId;
     before(function(done) {
         app.get('/manifestations')
             .expect(200)
@@ -47,7 +47,7 @@ describe('/milestones', function() {
             });
     });
 
-    var speciesId;
+    let speciesId;
     before(function(done) {
         app.get('/species')
             .expect(200)
@@ -86,7 +86,7 @@ describe('/milestones', function() {
     describe('POST', function() {
 
         it('/ should create a new item', function(done) {
-            var payload = {
+            let payload = {
                 name: hasher(20),
                 description: hasher(20),
                 background_id: backgroundId,
@@ -124,7 +124,7 @@ describe('/milestones', function() {
     describe('PUT', function() {
 
         it('/:id should update the item with new values', function(done) {
-            var payload = {
+            let payload = {
                 name: hasher(20),
                 description: hasher(20)
             };
@@ -218,7 +218,7 @@ describe('/milestones', function() {
 
 
     describe('/assets', function() {
-        var relationRoute = 'assets',
+        let relationRoute = 'assets',
             relationId;
 
         before(function(done) {
@@ -227,7 +227,7 @@ describe('/milestones', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -249,7 +249,7 @@ describe('/milestones', function() {
     });
 
     describe('/attributes', function() {
-        var relationRoute = 'attributes',
+        let relationRoute = 'attributes',
             relationId;
 
         before(function(done) {
@@ -258,7 +258,7 @@ describe('/milestones', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -280,7 +280,7 @@ describe('/milestones', function() {
     });
 
     describe('/bionics', function() {
-        var relationRoute = 'bionics',
+        let relationRoute = 'bionics',
             relationId;
 
         before(function(done) {
@@ -289,7 +289,7 @@ describe('/milestones', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -311,7 +311,7 @@ describe('/milestones', function() {
     });
 
     describe('/doctrines', function() {
-        var relationRoute = 'doctrines',
+        let relationRoute = 'doctrines',
             relationId;
 
         before(function(done) {
@@ -320,7 +320,7 @@ describe('/milestones', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -342,7 +342,7 @@ describe('/milestones', function() {
     });
 
     describe('/loyalties', function() {
-        var relationRoute = 'loyalties',
+        let relationRoute = 'loyalties',
             relationId,
             wealthId,
             uqId;
@@ -353,7 +353,7 @@ describe('/milestones', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -366,7 +366,7 @@ describe('/milestones', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     wealthId = res.body.results[length].id;
 
                     done();
@@ -409,7 +409,7 @@ describe('/milestones', function() {
     });
 
     describe('/skills', function() {
-        var relationRoute = 'skills',
+        let relationRoute = 'skills',
             relationId;
 
         before(function(done) {
@@ -418,7 +418,7 @@ describe('/milestones', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -440,7 +440,7 @@ describe('/milestones', function() {
     });
 
     describe('/weapons', function() {
-        var relationRoute = 'weapons',
+        let relationRoute = 'weapons',
             relationId;
 
         before(function(done) {
@@ -449,7 +449,7 @@ describe('/milestones', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();

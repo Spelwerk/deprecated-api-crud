@@ -54,11 +54,11 @@ module.exports = function(router) {
 
     router.route('/')
         .post(function(req, res, next) {
-            var firstName = req.body.firstname,
+            let firstName = req.body.firstname,
                 worldId = req.body.world_id,
                 speciesId = req.body.species_id;
 
-            var options = {
+            let options = {
                 nickName: req.body.nickname,
                 middleName: req.body.middlename,
                 lastName: req.body.lastname,
@@ -77,9 +77,9 @@ module.exports = function(router) {
 
     router.route('/:id')
         .put(function(req, res, next) {
-            var id = req.params.id;
+            let id = req.params.id;
 
-            var options = {
+            let options = {
                 firstName: req.body.firstname,
                 nickName: req.body.nickname,
                 middleName: req.body.middlename,

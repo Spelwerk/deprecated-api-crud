@@ -1,11 +1,11 @@
 'use strict';
 
-var async = require('async'),
+let async = require('async'),
     mysql = require('mysql'),
     nconf = require('nconf');
 
 // Set environment
-var environment = process.env.NODE_ENV || 'development';
+let environment = process.env.NODE_ENV || 'development';
 
 // Load configuration from file
 nconf.file({
@@ -14,10 +14,10 @@ nconf.file({
 });
 
 // Load onion
-var onion = require('./../lib/onion');
+let onion = require('./../lib/onion');
 
 // Create the connection pool
-var pool = mysql.createPool({
+let pool = mysql.createPool({
     host: nconf.get('database:host'),
     database: nconf.get('database:database'),
     user: nconf.get('database:username'),
@@ -30,7 +30,7 @@ var pool = mysql.createPool({
     connect_timeout: 10
 });
 
-var email = nconf.get('superuser:email'),
+let email = nconf.get('superuser:email'),
     password = nconf.get('superuser:password'),
     encrypted;
 
@@ -45,8 +45,8 @@ async.series([
         });
     },
     function(callback) {
-        var query = 'INSERT INTO user (id,email,password,displayname,admin,verified) VALUES (1,?,?,?,1,1) ON DUPLICATE KEY UPDATE email = ?, password = ?, displayname = ?, admin = 1, verified = 1';
-        var array = [email, encrypted, 'administrator'];
+        let query = 'INSERT INTO user (id,email,password,displayname,admin,verified) VALUES (1,?,?,?,1,1) ON DUPLICATE KEY UPDATE email = ?, password = ?, displayname = ?, admin = 1, verified = 1';
+        let array = [email, encrypted, 'administrator'];
 
         query = mysql.format(query, array);
         query = mysql.format(query, array);

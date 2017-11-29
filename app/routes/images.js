@@ -3,26 +3,26 @@
 let UserNotAdministratorError = require('../../lib/errors/user-not-administrator-error'),
     UserNotLoggedInError = require('../../lib/errors/user-not-logged-in-error');
 
-var async = require('async');
+let async = require('async');
 
-var sequel = require('../../lib/sql/sequel'),
+let sequel = require('../../lib/sql/sequel'),
     query = require('../../lib/sql/query');
 
 module.exports = function(router) {
-    var tableName = 'image';
+    let tableName = 'image';
 
-    var sql = 'SELECT * FROM ' + tableName;
+    let sql = 'SELECT * FROM ' + tableName;
 
     router.route('/')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE deleted IS NULL';
+            let call = sql + ' WHERE deleted IS NULL';
 
             sequel.get(req, res, next, call);
         })
         .post(function(req, res, next) {
             if(!req.user.id) return next(new UserNotLoggedInError);
 
-            var id = null,
+            let id = null,
                 path = req.body.path;
 
             async.series([
@@ -57,14 +57,14 @@ module.exports = function(router) {
 
     router.route('/deleted')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE deleted IS NOT NULL';
+            let call = sql + ' WHERE deleted IS NOT NULL';
 
             sequel.get(req, res, next, call);
         });
 
     router.route('/:id')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE deleted IS NULL AND id = ?';
+            let call = sql + ' WHERE deleted IS NULL AND id = ?';
 
             sequel.get(req, res, next, call, [req.params.id], true);
         })

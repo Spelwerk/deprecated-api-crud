@@ -1,10 +1,10 @@
 'use strict';
 
-var express = require('express'),
+let express = require('express'),
     path = require('path'),
     fs = require('fs');
 
-var logger = require(appRoot + '/lib/logger');
+let logger = require(appRoot + '/lib/logger');
 
 module.exports = function(app, folderName, callback) {
     fs.readdir(folderName, function(err, files) {
@@ -22,15 +22,15 @@ module.exports = function(app, folderName, callback) {
             })
             .forEach(function(file) {
                 // Parsing filename without ext
-                var fileName = path.parse(file).name;
+                let fileName = path.parse(file).name;
 
                 logger.info('[ROUTES] Setting up router path for /' + fileName);
 
                 // Load express router
-                var router = express.Router();
+                let router = express.Router();
 
                 // Join foldername + filename into full path
-                var fullPath = path.join(folderName, fileName);
+                let fullPath = path.join(folderName, fileName);
 
                 // Initialize the route to add its functionality to router
                 require(fullPath)(router);

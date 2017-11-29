@@ -1,4 +1,4 @@
-var validator = require('validator'),
+let validator = require('validator'),
     _ = require('underscore'),
     assert = require('chai').assert;
 

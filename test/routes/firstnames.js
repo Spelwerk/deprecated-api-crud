@@ -1,21 +1,21 @@
-var async = require('async'),
+let async = require('async'),
     _ = require('underscore'),
     chai = require('chai'),
     validator = require('validator');
 
-var should = chai.should(),
+let should = chai.should(),
     assert = chai.assert,
     expect = chai.expect;
 
-var app = require('../app'),
+let app = require('../app'),
     verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
 describe('/firstnames', function() {
 
-    var baseRoute = '/firstnames';
+    let baseRoute = '/firstnames';
 
-    var temporaryId;
+    let temporaryId;
 
     before(function(done) {
         app.login(done);
@@ -45,7 +45,7 @@ describe('/firstnames', function() {
 
     describe('POST', function() {
 
-        var feminine = [true,false][Math.round(Math.random())];
+        let feminine = [true,false][Math.round(Math.random())];
 
         it('/ should create a new item', function(done) {
             app.post(baseRoute, { name: hasher(20), feminine: feminine })

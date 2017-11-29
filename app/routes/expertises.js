@@ -1,13 +1,13 @@
 'use strict';
 
-var generic = require('../../lib/helper/generic'),
+let generic = require('../../lib/helper/generic'),
     sequel = require('../../lib/sql/sequel');
 
 module.exports = function(router) {
-    var tableName = 'expertise',
+    let tableName = 'expertise',
         options = { updatedField: true };
 
-    var sql = 'SELECT ' +
+    let sql = 'SELECT ' +
         'expertise.id, ' +
         'expertise.user_id, ' +
         'expertise.canon, ' +
@@ -33,7 +33,7 @@ module.exports = function(router) {
 
     router.route('/manifestation/:manifestationId')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE expertise.deleted IS NULL AND ' +
+            let call = sql + ' WHERE expertise.deleted IS NULL AND ' +
                 'manifestation_id = ?';
 
             sequel.get(req, res, next, call, [req.params.manifestationId]);
@@ -41,7 +41,7 @@ module.exports = function(router) {
 
     router.route('/skill/:skillId')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE expertise.deleted IS NULL AND ' +
+            let call = sql + ' WHERE expertise.deleted IS NULL AND ' +
                 'skill_id = ?';
 
             sequel.get(req, res, next, call, [req.params.skillId]);
@@ -49,7 +49,7 @@ module.exports = function(router) {
 
     router.route('/species/:speciesId')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE expertise.deleted IS NULL AND ' +
+            let call = sql + ' WHERE expertise.deleted IS NULL AND ' +
                 'species_id = ?';
 
             sequel.get(req, res, next, call, [req.params.speciesId]);
@@ -57,7 +57,7 @@ module.exports = function(router) {
 
     router.route('/skill/:skillId/manifestation/:manifestationId')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE expertise.deleted IS NULL AND ' +
+            let call = sql + ' WHERE expertise.deleted IS NULL AND ' +
                 'skill_id = ? AND ' +
                 'manifestation_id = ?';
 
@@ -66,7 +66,7 @@ module.exports = function(router) {
 
     router.route('/skill/:skillId/species/:speciesId')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE expertise.deleted IS NULL AND ' +
+            let call = sql + ' WHERE expertise.deleted IS NULL AND ' +
                 'skill_id = ? AND ' +
                 'species_id = ?';
 

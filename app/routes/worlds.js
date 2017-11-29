@@ -2,18 +2,18 @@
 
 let UserNotLoggedInError = require('../../lib/errors/user-not-logged-in-error');
 
-var async = require('async');
+let async = require('async');
 
-var generic = require('../../lib/helper/generic'),
+let generic = require('../../lib/helper/generic'),
     elemental = require('../../lib/sql/elemental'),
     relations = require('../../lib/helper/relations'),
     query = require('../../lib/sql/query');
 
 module.exports = function(router) {
-    var tableName = 'world',
+    let tableName = 'world',
         options = { updatedField: true };
 
-    var sql = 'SELECT * FROM ' + tableName + ' ' +
+    let sql = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
 
     generic.root(router, tableName, sql);
@@ -22,7 +22,7 @@ module.exports = function(router) {
         .post(function(req, res, next) {
             if(!req.user.id) return next(new UserNotLoggedInError);
 
-            var world = {
+            let world = {
                 name: req.body.name,
                 description: req.body.description,
                 augmentation: req.body.augmentation,
@@ -39,7 +39,7 @@ module.exports = function(router) {
                 split_skill: req.body.split_skill
             };
 
-            var attributeQuery = 'INSERT INTO world_has_attribute (world_id,attribute_id,value,minimum,maximum) VALUES ',
+            let attributeQuery = 'INSERT INTO world_has_attribute (world_id,attribute_id,value,minimum,maximum) VALUES ',
                 skillQuery = 'INSERT INTO world_has_skill (world_id,skill_id) VALUES ';
 
             async.series([

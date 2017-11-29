@@ -1,27 +1,27 @@
-var async = require('async'),
+let async = require('async'),
     _ = require('underscore'),
     chai = require('chai'),
     validator = require('validator');
 
-var should = chai.should(),
+let should = chai.should(),
     assert = chai.assert,
     expect = chai.expect;
 
-var app = require('../app'),
+let app = require('../app'),
     verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
 describe('/gifts', function() {
 
-    var baseRoute = '/gifts';
+    let baseRoute = '/gifts';
 
-    var temporaryId;
+    let temporaryId;
 
     before(function(done) {
         app.login(done);
     });
 
-    var manifestationId;
+    let manifestationId;
     before(function(done) {
         app.get('/manifestations')
             .expect(200)
@@ -34,7 +34,7 @@ describe('/gifts', function() {
             });
     });
 
-    var speciesId;
+    let speciesId;
     before(function(done) {
         app.get('/species')
             .expect(200)
@@ -73,7 +73,7 @@ describe('/gifts', function() {
     describe('POST', function() {
 
         it('/ should create a new item', function(done) {
-            var payload = {
+            let payload = {
                 name: hasher(20),
                 description: hasher(20),
                 manifestation_id: manifestationId,
@@ -110,7 +110,7 @@ describe('/gifts', function() {
     describe('PUT', function() {
 
         it('/:id should update the item with new values', function(done) {
-            var payload = {
+            let payload = {
                 name: hasher(20),
                 description: hasher(20)
             };
@@ -204,7 +204,7 @@ describe('/gifts', function() {
 
 
     describe('/attributes', function() {
-        var relationRoute = 'attributes',
+        let relationRoute = 'attributes',
             relationId;
 
         before(function(done) {
@@ -213,7 +213,7 @@ describe('/gifts', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -235,7 +235,7 @@ describe('/gifts', function() {
     });
 
     describe('/skills', function() {
-        var relationRoute = 'skills',
+        let relationRoute = 'skills',
             relationId;
 
         before(function(done) {
@@ -244,7 +244,7 @@ describe('/gifts', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();

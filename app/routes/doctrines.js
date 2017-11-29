@@ -1,34 +1,34 @@
 'use strict';
 
-var async = require('async');
+let async = require('async');
 
-var generic = require('../../lib/helper/generic'),
+let generic = require('../../lib/helper/generic'),
     elemental = require('../../lib/sql/elemental'),
     sequel = require('../../lib/sql/sequel'),
     query = require('../../lib/sql/query'),
     ownership = require('../../lib/sql/ownership');
 
 module.exports = function(router) {
-    var tableName = 'doctrine',
+    let tableName = 'doctrine',
         options = { updatedField: true };
 
-    var sql = 'SELECT * FROM ' + tableName + ' ' +
+    let sql = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
 
     generic.root(router, tableName, sql);
 
     router.route('/')
         .post(function(req, res, next) {
-            var manifestation = {
+            let manifestation = {
                 id: req.body.manifestation_id
             };
 
-            var expertise = {
+            let expertise = {
                 name: req.body.name + ' Mastery',
                 manifestation_id: req.body.manifestation_id
             };
 
-            var doctrine = {
+            let doctrine = {
                 name: req.body.name,
                 description: req.body.description,
                 icon: req.body.icon,
@@ -78,7 +78,7 @@ module.exports = function(router) {
 
     router.route('/manifestation/:manifestationId')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE deleted IS NULL AND ' +
+            let call = sql + ' WHERE deleted IS NULL AND ' +
                 'manifestation_id = ?';
 
             sequel.get(req, res, next, call, [req.params.manifestationId]);

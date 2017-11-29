@@ -1,12 +1,12 @@
 'use strict';
 
-var generic = require('../../lib/helper/generic');
+let generic = require('../../lib/helper/generic');
 
 module.exports = function(router) {
-    var tableName = 'corporation',
+    let tableName = 'corporation',
         options = { updatedField: true };
 
-    var sql = 'SELECT * FROM ' + tableName + ' ' +
+    let sql = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
 
     generic.root(router, tableName, sql);

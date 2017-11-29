@@ -1,27 +1,27 @@
-var async = require('async'),
+let async = require('async'),
     _ = require('underscore'),
     chai = require('chai'),
     validator = require('validator');
 
-var should = chai.should(),
+let should = chai.should(),
     assert = chai.assert,
     expect = chai.expect;
 
-var app = require('./../app'),
+let app = require('./../app'),
     verifier = require('./../verifier'),
     hasher = require('./../../lib/hasher');
 
 describe('/assets', function() {
 
-    var baseRoute = '/assets';
+    let baseRoute = '/assets';
 
-    var temporaryId;
+    let temporaryId;
 
     before(function(done) {
         app.login(done);
     });
 
-    var typeId;
+    let typeId;
     before(function(done) {
         app.get('/assettypes')
             .expect(200)
@@ -62,7 +62,7 @@ describe('/assets', function() {
     describe('POST', function() {
 
         it('/ should create a new item', function(done) {
-            var payload = {
+            let payload = {
                 name: hasher(20),
                 description: hasher(20),
                 assettype_id: typeId,
@@ -113,7 +113,7 @@ describe('/assets', function() {
     describe('PUT', function() {
 
         it('/:id should update the item with new values', function(done) {
-            var payload = {
+            let payload = {
                 name: hasher(20),
                 description: hasher(20)
             };
@@ -195,7 +195,7 @@ describe('/assets', function() {
 
 
     describe('/attributes', function() {
-        var relationRoute = 'attributes',
+        let relationRoute = 'attributes',
             relationId;
 
         before(function(done) {
@@ -204,7 +204,7 @@ describe('/assets', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -226,7 +226,7 @@ describe('/assets', function() {
     });
 
     describe('/doctrines', function() {
-        var relationRoute = 'doctrines',
+        let relationRoute = 'doctrines',
             relationId;
 
         before(function(done) {
@@ -235,7 +235,7 @@ describe('/assets', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -257,7 +257,7 @@ describe('/assets', function() {
     });
 
     describe('/skills', function() {
-        var relationRoute = 'skills',
+        let relationRoute = 'skills',
             relationId;
 
         before(function(done) {
@@ -266,7 +266,7 @@ describe('/assets', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();

@@ -1,17 +1,17 @@
-var async = require('async'),
+let async = require('async'),
     _ = require('underscore'),
     chai = require('chai');
 
-var should = chai.should(),
+let should = chai.should(),
     assert = chai.assert,
     expect = chai.expect;
 
-var app = require('./../app'),
+let app = require('./../app'),
     hasher = require('./../../lib/hasher');
 
 describe('/users', function() {
 
-    var baseRoute = '/users',
+    let baseRoute = '/users',
         id,
         token,
         email = hasher(20) + '@fakemail.com',
@@ -53,7 +53,7 @@ describe('/users', function() {
         it('/ should create a new item', function(done) {
             this.timeout = 6000;
 
-            var payload = {
+            let payload = {
                 email: email,
                 password: password
             };
@@ -78,7 +78,7 @@ describe('/users', function() {
     xdescribe('LOGIN', function() {
 
         it('/login/password should return a token', function(done) {
-            var payload = {
+            let payload = {
                 email: email,
                 password: password
             };
@@ -140,7 +140,7 @@ describe('/users', function() {
     xdescribe('PUT', function() {
 
         it('/:userId should change the user information', function(done) {
-            var payload = {
+            let payload = {
                 displayname: hasher(20),
                 firstname: hasher(20),
                 surname: hasher(20)

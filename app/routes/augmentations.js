@@ -1,16 +1,16 @@
 'use strict';
 
-var async = require('async');
+let async = require('async');
 
-var generic = require('../../lib/helper/generic'),
+let generic = require('../../lib/helper/generic'),
     elemental = require('../../lib/sql/elemental'),
     relations = require('../../lib/helper/relations');
 
 module.exports = function(router) {
-    var tableName = 'augmentation',
+    let tableName = 'augmentation',
         options = { updatedField: true };
 
-    var sql = 'SELECT * FROM ' + tableName + ' ' +
+    let sql = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id ' +
         'LEFT JOIN ' + tableName + '_is_corporation ON ' + tableName + '_is_corporation.' + tableName + '_id = ' + tableName + '.id';
 
@@ -18,7 +18,7 @@ module.exports = function(router) {
 
     router.route('/')
         .post(function(req, res, next) {
-            var augmentation = {
+            let augmentation = {
                 name: req.body.name,
                 description: req.body.description,
                 legal: !!req.body.legal,
@@ -27,7 +27,7 @@ module.exports = function(router) {
                 corporation_id: req.body.corporation_id
             };
 
-            var weapon = {
+            let weapon = {
                 name: req.body.name,
                 description: req.body.description,
                 weapontype_id: req.body.weapontype_id,

@@ -1,27 +1,27 @@
-var async = require('async'),
+let async = require('async'),
     _ = require('underscore'),
     chai = require('chai'),
     validator = require('validator');
 
-var should = chai.should(),
+let should = chai.should(),
     assert = chai.assert,
     expect = chai.expect;
 
-var app = require('../app'),
+let app = require('../app'),
     verifier = require('./../verifier'),
     hasher = require('../../lib/hasher');
 
 describe('/stories', function() {
 
-    var baseRoute = '/stories';
+    let baseRoute = '/stories';
 
-    var temporaryId;
+    let temporaryId;
 
     before(function(done) {
         app.login(done);
     });
 
-    var worldId;
+    let worldId;
     before(function(done) {
         app.get('/worlds')
             .expect(200)
@@ -57,7 +57,7 @@ describe('/stories', function() {
     describe('POST', function() {
 
         it('/ should create a new item', function(done) {
-            var payload = {
+            let payload = {
                 name: hasher(20),
                 description: hasher(20),
                 world_id: worldId,

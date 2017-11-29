@@ -4,6 +4,7 @@ let async = require('async'),
     yaml = require('node-yaml');
 
 let generic = require('../../lib/helper/generic'),
+    relations = require('../../lib/helper/relations'),
     elemental = require('../../lib/sql/elemental');
 
 let defaults = yaml.readSync('./../../config/defaults.yml');
@@ -88,7 +89,10 @@ module.exports = function(router) {
     generic.labels(router, tableName);
     generic.permissions(router, tableName);
     generic.revive(router, tableName);
-};
 
-//todo manifestation_has_attribute
-//todo manifestation_has_spell
+    // Relations
+
+    relations(router, tableName, 'attributes', 'attribute');
+    relations(router, tableName, 'forms', 'form');
+    relations(router, tableName, 'spells', 'spell');
+};

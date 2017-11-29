@@ -1,16 +1,16 @@
-var supertest = require('supertest');
+let supertest = require('supertest');
 
-var base = 'http://localhost:4000';
+let base = 'http://localhost:4000';
 
-var adminToken = '',
+let adminToken = '',
     adminEmail = 'admin@spelwerk.se',
     adminPassword = 'admin';
 
-var apiId = 'id',
+let apiId = 'id',
     apiSecret = 'secret';
 
 exports.login = function(callback) {
-    var request = supertest(base);
+    let request = supertest(base);
 
     request
         .post('/users/login/password')
@@ -32,7 +32,7 @@ exports.login = function(callback) {
 exports.get = function(path, token) {
     token = token || adminToken;
 
-    var request = supertest(base);
+    let request = supertest(base);
 
     return request
         .get(path)
@@ -45,7 +45,7 @@ exports.get = function(path, token) {
 exports.post = function(path, data, token) {
     token = token || adminToken;
 
-    var request = supertest(base);
+    let request = supertest(base);
 
     data = data || null;
 
@@ -61,7 +61,7 @@ exports.post = function(path, data, token) {
 exports.put = function(path, data, token) {
     token = token || adminToken;
 
-    var request = supertest(base);
+    let request = supertest(base);
 
     data = data || null;
 
@@ -77,7 +77,7 @@ exports.put = function(path, data, token) {
 exports.delete = function(path, token) {
     token = token || adminToken;
 
-    var request = supertest(base);
+    let request = supertest(base);
 
     return request
         .delete(path)

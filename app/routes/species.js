@@ -1,27 +1,27 @@
 'use strict';
 
-var async = require('async'),
+let async = require('async'),
     yaml = require('node-yaml');
 
-var generic = require('../../lib/helper/generic'),
+let generic = require('../../lib/helper/generic'),
     elemental = require('../../lib/sql/elemental'),
     relations = require('../../lib/helper/relations'),
     sequel = require('../../lib/sql/sequel');
 
-var defaults = yaml.readSync('./../../config/defaults.yml');
+let defaults = yaml.readSync('./../../config/defaults.yml');
 
 module.exports = function(router) {
-    var tableName = 'species',
+    let tableName = 'species',
         options = { updatedField: true };
 
-    var sql = 'SELECT * FROM ' + tableName + ' ' +
+    let sql = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
 
     generic.root(router, tableName, sql);
 
     router.route('/')
         .post(function(req, res, next) {
-            var species = {
+            let species = {
                 name: req.body.name,
                 description: req.body.description,
                 icon: req.body.icon,
@@ -33,7 +33,7 @@ module.exports = function(router) {
                 multiply_skill: req.body.multiply_skill
             };
 
-            var weapon = {
+            let weapon = {
                 name: req.body.weapon || 'Brawl',
                 description: 'Unarmed combat for the species: ' + req.body.name,
                 weapontype_id: defaults.weaponType.unarmed,
@@ -71,7 +71,7 @@ module.exports = function(router) {
 
     router.route('/playable/:playable')
         .get(function(req, res, next) {
-            var call = sql + ' WHERE deleted IS NULL AND ' +
+            let call = sql + ' WHERE deleted IS NULL AND ' +
                 'playable = ?';
 
             sequel.get(req, res, next, call, [req.params.playable]);

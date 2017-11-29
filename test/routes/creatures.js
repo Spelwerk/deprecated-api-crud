@@ -1,27 +1,27 @@
-var async = require('async'),
+let async = require('async'),
     _ = require('underscore'),
     chai = require('chai'),
     validator = require('validator');
 
-var should = chai.should(),
+let should = chai.should(),
     assert = chai.assert,
     expect = chai.expect;
 
-var app = require('./../app'),
+let app = require('./../app'),
     verifier = require('./../verifier'),
     hasher = require('./../../lib/hasher');
 
 describe('/creatures', function() {
 
-    var baseRoute = '/creatures';
+    let baseRoute = '/creatures';
 
-    var temporaryId;
+    let temporaryId;
 
     before(function(done) {
         app.login(done);
     });
 
-    var speciesId;
+    let speciesId;
     before(function(done) {
         app.get('/species')
             .expect(200)
@@ -34,7 +34,7 @@ describe('/creatures', function() {
             });
     });
 
-    var worldId;
+    let worldId;
     before(function(done) {
         app.get('/worlds')
             .expect(200)
@@ -71,7 +71,7 @@ describe('/creatures', function() {
     describe('POST', function() {
 
         it('/ should create a new item', function(done) {
-            var payload = {
+            let payload = {
                 firstname: hasher(20),
                 nickname: hasher(20),
                 middlename: hasher(20),
@@ -123,7 +123,7 @@ describe('/creatures', function() {
     describe('PUT', function() {
 
         it('/:id should update the item with new values', function(done) {
-            var payload = {
+            let payload = {
                 firstname: hasher(20),
                 nickname: hasher(20),
                 middlename: hasher(20),
@@ -227,7 +227,7 @@ describe('/creatures', function() {
 
 
     describe('/assets', function() {
-        var relationRoute = 'assets',
+        let relationRoute = 'assets',
             relationId;
 
         before(function(done) {
@@ -236,7 +236,7 @@ describe('/creatures', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -270,7 +270,7 @@ describe('/creatures', function() {
     });
 
     describe('/attributes', function() {
-        var relationRoute = 'attributes',
+        let relationRoute = 'attributes',
             relationId;
 
         before(function(done) {
@@ -279,7 +279,7 @@ describe('/creatures', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -305,7 +305,7 @@ describe('/creatures', function() {
     });
 
     describe('/backgrounds', function() {
-        var relationRoute = 'backgrounds',
+        let relationRoute = 'backgrounds',
             relationId;
 
         before(function(done) {
@@ -314,7 +314,7 @@ describe('/creatures', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -350,7 +350,7 @@ describe('/creatures', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     bionicId = res.body.results[length].id;
 
                     done();
@@ -405,7 +405,7 @@ describe('/creatures', function() {
     });
 
     describe('/doctrines', function() {
-        var relationRoute = 'doctrines',
+        let relationRoute = 'doctrines',
             relationId;
 
         before(function(done) {
@@ -414,7 +414,7 @@ describe('/creatures', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -440,7 +440,7 @@ describe('/creatures', function() {
     });
 
     describe('/expertises', function() {
-        var relationRoute = 'expertises',
+        let relationRoute = 'expertises',
             relationId;
 
         before(function(done) {
@@ -449,7 +449,7 @@ describe('/creatures', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -475,7 +475,7 @@ describe('/creatures', function() {
     });
 
     describe('/gifts', function() {
-        var relationRoute = 'gifts',
+        let relationRoute = 'gifts',
             relationId;
 
         before(function(done) {
@@ -484,7 +484,7 @@ describe('/creatures', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -510,7 +510,7 @@ describe('/creatures', function() {
     });
 
     describe('/imperfections', function() {
-        var relationRoute = 'imperfections',
+        let relationRoute = 'imperfections',
             relationId;
 
         before(function(done) {
@@ -519,7 +519,7 @@ describe('/creatures', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -545,7 +545,7 @@ describe('/creatures', function() {
     });
 
     describe('/languages', function() {
-        var relationRoute = 'languages',
+        let relationRoute = 'languages',
             relationId;
 
         before(function(done) {
@@ -554,7 +554,7 @@ describe('/creatures', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -580,7 +580,7 @@ describe('/creatures', function() {
     });
 
     describe('/loyalties', function() {
-        var relationRoute = 'loyalties',
+        let relationRoute = 'loyalties',
             relationId,
             wealthId,
             uqId;
@@ -591,7 +591,7 @@ describe('/creatures', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -604,7 +604,7 @@ describe('/creatures', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     wealthId = res.body.results[length].id;
 
                     done();
@@ -662,7 +662,7 @@ describe('/creatures', function() {
     });
 
     describe('/manifestations', function() {
-        var relationRoute = 'manifestations',
+        let relationRoute = 'manifestations',
             relationId,
             focusId;
 
@@ -672,7 +672,7 @@ describe('/creatures', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -685,7 +685,7 @@ describe('/creatures', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     focusId = res.body.results[length].id;
 
                     done();
@@ -711,7 +711,7 @@ describe('/creatures', function() {
     });
 
     describe('/milestones', function() {
-        var relationRoute = 'milestones',
+        let relationRoute = 'milestones',
             relationId;
 
         before(function(done) {
@@ -720,7 +720,7 @@ describe('/creatures', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -746,7 +746,7 @@ describe('/creatures', function() {
     });
 
     describe('/protections', function() {
-        var relationRoute = 'protection',
+        let relationRoute = 'protection',
             relationId;
 
         before(function(done) {
@@ -755,7 +755,7 @@ describe('/creatures', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -789,7 +789,7 @@ describe('/creatures', function() {
     });
 
     describe('/skills', function() {
-        var relationRoute = 'skills',
+        let relationRoute = 'skills',
             relationId;
 
         before(function(done) {
@@ -798,7 +798,7 @@ describe('/creatures', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -824,7 +824,7 @@ describe('/creatures', function() {
     });
 
     describe('/species', function() {
-        var relationRoute = 'species',
+        let relationRoute = 'species',
             relationId;
 
         before(function(done) {
@@ -833,7 +833,7 @@ describe('/creatures', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -859,7 +859,7 @@ describe('/creatures', function() {
     });
 
     describe('/software', function() {
-        var relationRoute = 'software',
+        let relationRoute = 'software',
             relationId;
 
         before(function(done) {
@@ -868,7 +868,7 @@ describe('/creatures', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -890,7 +890,7 @@ describe('/creatures', function() {
     });
 
     describe('/weapons', function() {
-        var relationRoute = 'weapons',
+        let relationRoute = 'weapons',
             relationId,
             modId;
 
@@ -900,7 +900,7 @@ describe('/creatures', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -913,7 +913,7 @@ describe('/creatures', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     modId = res.body.results[length].id;
 
                     done();
@@ -956,7 +956,7 @@ describe('/creatures', function() {
 
 
     describe('/dementations', function() {
-        var relationRoute = 'dementations',
+        let relationRoute = 'dementations',
             relationId;
 
         it('POST / should add an item to the creature', function(done) {
@@ -1020,7 +1020,7 @@ describe('/creatures', function() {
     });
 
     describe('/diseases', function() {
-        var relationRoute = 'diseases',
+        let relationRoute = 'diseases',
             relationId;
 
         it('POST / should add an item to the creature', function(done) {
@@ -1084,7 +1084,7 @@ describe('/creatures', function() {
     });
 
     describe('/traumas', function() {
-        var relationRoute = 'traumas',
+        let relationRoute = 'traumas',
             relationId;
 
         it('POST / should add an item to the creature', function(done) {

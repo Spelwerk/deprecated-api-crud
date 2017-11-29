@@ -1,21 +1,21 @@
-var async = require('async'),
+let async = require('async'),
     _ = require('underscore'),
     chai = require('chai'),
     validator = require('validator');
 
-var should = chai.should(),
+let should = chai.should(),
     assert = chai.assert,
     expect = chai.expect;
 
-var app = require('../app'),
+let app = require('../app'),
     verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
 describe('/weaponmods', function() {
 
-    var baseRoute = '/weaponmods';
+    let baseRoute = '/weaponmods';
 
-    var temporaryId;
+    let temporaryId;
 
     before(function(done) {
         app.login(done);
@@ -52,7 +52,7 @@ describe('/weaponmods', function() {
     describe('POST', function() {
 
         it('/ should create a new item', function(done) {
-            var payload = {
+            let payload = {
                 name: hasher(20),
                 description: hasher(20),
                 short: hasher(2),
@@ -94,7 +94,7 @@ describe('/weaponmods', function() {
     describe('PUT', function() {
 
         it('/:id should update the item with new values', function(done) {
-            var payload = {
+            let payload = {
                 name: hasher(20),
                 description: hasher(20)
             };
@@ -164,7 +164,7 @@ describe('/weaponmods', function() {
 
 
     describe('/attributes', function() {
-        var relationRoute = 'attributes',
+        let relationRoute = 'attributes',
             relationId;
 
         before(function(done) {
@@ -173,7 +173,7 @@ describe('/weaponmods', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();

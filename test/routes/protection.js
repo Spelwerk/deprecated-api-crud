@@ -1,27 +1,27 @@
-var async = require('async'),
+let async = require('async'),
     _ = require('underscore'),
     chai = require('chai'),
     validator = require('validator');
 
-var should = chai.should(),
+let should = chai.should(),
     assert = chai.assert,
     expect = chai.expect;
 
-var app = require('../app'),
+let app = require('../app'),
     verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
 describe('/protection', function() {
 
-    var baseRoute = '/protection';
+    let baseRoute = '/protection';
 
-    var temporaryId;
+    let temporaryId;
 
     before(function(done) {
         app.login(done);
     });
 
-    var bodyPartId;
+    let bodyPartId;
     before(function(done) {
         app.get('/bodyparts')
             .expect(200)
@@ -60,7 +60,7 @@ describe('/protection', function() {
     describe('POST', function() {
 
         it('/ should create a new item', function(done) {
-            var payload = {
+            let payload = {
                 name: hasher(20),
                 description: hasher(20),
                 bodypart_id: bodyPartId,
@@ -97,7 +97,7 @@ describe('/protection', function() {
     describe('PUT', function() {
 
         it('/:id should update the item with new values', function(done) {
-            var payload = {
+            let payload = {
                 name: hasher(20),
                 description: hasher(20)
             };
@@ -179,7 +179,7 @@ describe('/protection', function() {
 
 
     describe('/attributes', function() {
-        var relationRoute = 'attributes',
+        let relationRoute = 'attributes',
             relationId;
 
         before(function(done) {
@@ -188,7 +188,7 @@ describe('/protection', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -210,7 +210,7 @@ describe('/protection', function() {
     });
 
     describe('/doctrines', function() {
-        var relationRoute = 'doctrines',
+        let relationRoute = 'doctrines',
             relationId;
 
         before(function(done) {
@@ -219,7 +219,7 @@ describe('/protection', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -241,7 +241,7 @@ describe('/protection', function() {
     });
 
     describe('/skills', function() {
-        var relationRoute = 'skills',
+        let relationRoute = 'skills',
             relationId;
 
         before(function(done) {
@@ -250,7 +250,7 @@ describe('/protection', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    var length = res.body.length - 1;
+                    let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
 
                     done();
