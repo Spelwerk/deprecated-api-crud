@@ -122,7 +122,7 @@ module.exports = function(router) {
             });
         });
 
-    generic.delete(router, tableName, false, true);
+    generic.delete(router, tableName);
     generic.canon(router, tableName);
     generic.clone(router, tableName);
     generic.comments(router, tableName);

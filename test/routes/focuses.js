@@ -15,24 +15,10 @@ describe('/focuses', function() {
 
     let baseRoute = '/focuses';
 
-    let temporaryId,
-        manifestationId;
+    let temporaryId;
 
     before(function(done) {
         app.login(done);
-    });
-
-    before(function(done) {
-        app.get('/manifestations')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                let length = res.body.length - 1;
-                manifestationId = res.body.results[length].id;
-
-                done();
-            });
     });
 
     function verifyList(body) {
@@ -52,8 +38,6 @@ describe('/focuses', function() {
 
     function verifyItem(item) {
         verifier.generic(item);
-
-        assert.isNumber(item.manifestation_id);
     }
 
 
@@ -63,7 +47,6 @@ describe('/focuses', function() {
             let payload = {
                 name: hasher(20),
                 description: hasher(20),
-                manifestation_id: manifestationId,
                 icon: 'http://fakeicon.com/' + hasher(20) + '.png'
             };
 

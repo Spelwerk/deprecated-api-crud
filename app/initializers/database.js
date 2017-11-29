@@ -51,11 +51,12 @@ function setup(done) {
             });
         },
         function(callback) {
-            logger.info('[DATABASE] Creating list of fields for table objects');
+            logger.info('[DATABASE] Creating Table Schema');
 
             async.eachLimit(tablesArray, 1, function(tableName, next) {
                 // Set up the table object
                 tables[tableName] = {
+                    topTable: false,
                     adminRestriction: false,
                     userOwned: false,
                     updateField: false,
@@ -64,6 +65,9 @@ function setup(done) {
                     combinations: [],
                     relations: []
                 };
+
+                // If the table has no underscores it is a top table
+                if(tableName.indexOf('_') === -1) tables[tableName].topTable = true;
 
                 pool.query("SELECT column_name FROM information_schema.columns WHERE table_name = '" + tableName + "' AND table_schema = '" + nconf.get('database:database') + "'", function(err, results) {
                     if(err) return next(err);
@@ -88,6 +92,8 @@ function setup(done) {
             // Loop through all Tables
             for(let i in tablesArray) {
                 let tableName = tablesArray[i];
+
+                if(tables[tableName].topTable) logger.info('[DATABASE] Setting up schema for ' + tableName);
 
                 // Compare each table against all other tables.
                 for(let x in tablesArray) {
@@ -143,10 +149,6 @@ function getPool() {
     return pool;
 }
 
-function getTables() {
-    return tables;
-}
-
 function getTable(tableName) {
     return tables[tableName];
 }
@@ -154,4 +156,3 @@ function getTable(tableName) {
 module.exports.setup = setup;
 module.exports.getPool = getPool;
 module.exports.getTable = getTable;
-module.exports.getTables = getTables;
