@@ -79,7 +79,7 @@ module.exports = function(router) {
         .put(function(req, res, next) {
             let id = req.params.id;
 
-            let options = {
+            let optional = {
                 firstName: req.body.firstname,
                 nickName: req.body.nickname,
                 middleName: req.body.middlename,
@@ -115,7 +115,7 @@ module.exports = function(router) {
                 pointSkill: req.body.point_skill
             };
 
-            creatures.put(req.user, id, options, function(err) {
+            creatures.put(req.user, id, optional, function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();

@@ -4,8 +4,7 @@ let generic = require('../../lib/helper/generic'),
     sequel = require('../../lib/sql/sequel');
 
 module.exports = function(router) {
-    let tableName = 'expertise',
-        options = {};
+    let tableName = 'expertise';
 
     let sql = 'SELECT ' +
         'expertise.id, ' +
@@ -28,7 +27,7 @@ module.exports = function(router) {
         'LEFT JOIN skill ON skill.id = expertise.skill_id';
 
     generic.root(router, tableName, sql);
-    generic.post(router, tableName, options);
+    generic.post(router, tableName);
     generic.deleted(router, tableName, sql);
 
     router.route('/manifestation/:manifestationId')
@@ -74,7 +73,7 @@ module.exports = function(router) {
         });
 
     generic.get(router, tableName, sql);
-    generic.put(router, tableName, options);
+    generic.put(router, tableName);
 
     generic.automatic(router, tableName);
 };

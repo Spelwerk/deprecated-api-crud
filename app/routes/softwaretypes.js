@@ -3,17 +3,16 @@
 let generic = require('../../lib/helper/generic');
 
 module.exports = function(router) {
-    let tableName = 'softwaretype',
-        options = {};
+    let tableName = 'softwaretype';
 
     let sql = 'SELECT * FROM ' + tableName;
 
     generic.root(router, tableName, sql);
-    generic.post(router, tableName, options);
+    generic.post(router, tableName);
     generic.deleted(router, tableName, sql);
 
     generic.get(router, tableName, sql);
-    generic.put(router, tableName, options);
+    generic.put(router, tableName);
 
     generic.automatic(router, tableName);
 };

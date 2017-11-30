@@ -10,8 +10,7 @@ let generic = require('../../lib/helper/generic'),
 let defaults = yaml.readSync('./../../config/defaults.yml');
 
 module.exports = function(router) {
-    let tableName = 'manifestation',
-        options = {};
+    let tableName = 'manifestation';
 
     let sql = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
@@ -81,7 +80,7 @@ module.exports = function(router) {
 
     generic.deleted(router, tableName, sql);
     generic.get(router, tableName, sql);
-    generic.put(router, tableName, options);
+    generic.put(router, tableName);
 
     generic.automatic(router, tableName);
 

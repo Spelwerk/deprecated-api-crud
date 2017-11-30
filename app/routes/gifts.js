@@ -5,8 +5,7 @@ let generic = require('../../lib/helper/generic'),
     sequel = require('../../lib/sql/sequel');
 
 module.exports = function(router) {
-    let tableName = 'gift',
-        options = {};
+    let tableName = 'gift';
 
     let sql = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id ' +
@@ -14,7 +13,7 @@ module.exports = function(router) {
         'LEFT JOIN ' + tableName + '_is_species ON ' + tableName + '_is_species.' + tableName + '_id = ' + tableName + '.id';
 
     generic.root(router, tableName, sql);
-    generic.post(router, tableName, options);
+    generic.post(router, tableName);
     generic.deleted(router, tableName, sql);
 
     router.route('/manifestation/:manifestationId')
@@ -34,7 +33,7 @@ module.exports = function(router) {
         });
 
     generic.get(router, tableName, sql);
-    generic.put(router, tableName, options);
+    generic.put(router, tableName);
 
     generic.automatic(router, tableName);
 

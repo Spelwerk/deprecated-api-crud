@@ -9,8 +9,7 @@ let generic = require('../../lib/helper/generic'),
     ownership = require('../../lib/sql/ownership');
 
 module.exports = function(router) {
-    let tableName = 'doctrine',
-        options = {};
+    let tableName = 'doctrine';
 
     let sql = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
@@ -85,7 +84,7 @@ module.exports = function(router) {
         });
 
     generic.get(router, tableName, sql);
-    generic.put(router, tableName, options);
+    generic.put(router, tableName);
 
     generic.automatic(router, tableName);
 };
