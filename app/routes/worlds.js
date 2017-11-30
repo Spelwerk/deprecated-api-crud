@@ -10,7 +10,7 @@ let generic = require('../../lib/helper/generic'),
     query = require('../../lib/sql/query');
 
 module.exports = function(router) {
-    let tableName = 'world';
+    const tableName = 'world';
 
     let sql = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';

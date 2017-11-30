@@ -4,7 +4,7 @@ let generic = require('../../lib/helper/generic'),
     sequel = require('../../lib/sql/sequel');
 
 module.exports = function(router) {
-    let tableName = 'expertise';
+    const tableName = 'expertise';
 
     let sql = 'SELECT ' +
         'expertise.id, ' +

@@ -4,7 +4,7 @@ let generic = require('../../lib/helper/generic'),
     relations = require('../../lib/helper/relations');
 
 module.exports = function(router) {
-    let tableName = 'story';
+    const tableName = 'story';
 
     let sql = 'SELECT * FROM ' + tableName;
 

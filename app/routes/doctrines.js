@@ -9,7 +9,7 @@ let generic = require('../../lib/helper/generic'),
     ownership = require('../../lib/sql/ownership');
 
 module.exports = function(router) {
-    let tableName = 'doctrine';
+    const tableName = 'doctrine';
 
     let sql = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';

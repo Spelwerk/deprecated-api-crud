@@ -9,7 +9,7 @@ let sequel = require('../../lib/sql/sequel'),
     query = require('../../lib/sql/query');
 
 module.exports = function(router) {
-    let tableName = 'firstname';
+    const tableName = 'firstname';
 
     let sql = 'SELECT * FROM ' + tableName;
 

@@ -8,7 +8,7 @@ let sequel = require('../../lib/sql/sequel'),
 let unique = require('../../lib/helper/unique');
 
 module.exports = function(router) {
-    let tableName = 'nicknamegroup',
+    const tableName = 'nicknamegroup',
         relationName = 'nickname';
 
     unique(router, tableName, true);

@@ -3,7 +3,7 @@
 let generic = require('../../lib/helper/generic');
 
 module.exports = function(router) {
-    let tableName = 'loyalty';
+    const tableName = 'loyalty';
 
     let sql = 'SELECT * FROM ' + tableName;
 
