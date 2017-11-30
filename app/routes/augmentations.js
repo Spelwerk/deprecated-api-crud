@@ -41,7 +41,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    elemental.post(req.user, augmentation, 'augmentation', null, function(err, id) {
+                    elemental.post(req.user, augmentation, 'augmentation', function(err, id) {
                         if(err) return callback(err);
 
                         augmentation.id = id;
@@ -53,7 +53,7 @@ module.exports = function(router) {
                 function(callback) {
                     if(!weapon.weapontype_id) return callback();
 
-                    elemental.post(req.user, weapon, 'weapon', null, callback);
+                    elemental.post(req.user, weapon, 'weapon', callback);
                 }
             ], function(err) {
                 if(err) return next(err);

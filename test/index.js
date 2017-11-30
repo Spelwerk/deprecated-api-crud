@@ -25,6 +25,7 @@ require('./routes/dementations');
 require('./routes/traumas');
 require('./routes/labels');
 
+require('./routes/spells');
 require('./routes/focuses');
 require('./routes/manifestations');
 

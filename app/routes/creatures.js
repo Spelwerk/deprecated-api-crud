@@ -132,6 +132,7 @@ module.exports = function(router) {
     creatures.bionics(router);
     creatures.doctrines(router);
     creatures.expertises(router);
+    creatures.forms(router);
     creatures.gifts(router);
     creatures.imperfections(router);
     creatures.languages(router);
@@ -142,6 +143,7 @@ module.exports = function(router) {
     creatures.relations(router);
     creatures.skills(router);
     creatures.species(router);
+    creatures.spells(router);
     creatures.software(router);
     creatures.weapons(router);
 

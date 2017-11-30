@@ -37,7 +37,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    elemental.post(req.user, expertise, 'expertise', null, function(err, id) {
+                    elemental.post(req.user, expertise, 'expertise', function(err, id) {
                         if(err) return callback(err);
 
                         weaponType.expertise_id = id;
@@ -46,7 +46,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    elemental.post(req.user, weaponType, 'weapontype', null, function(err, id) {
+                    elemental.post(req.user, weaponType, 'weapontype', function(err, id) {
                         if(err) return callback(err);
 
                         weaponType.id = id;

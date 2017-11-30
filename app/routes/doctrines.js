@@ -49,7 +49,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    elemental.post(req.user, expertise, 'expertise', null, function(err, id) {
+                    elemental.post(req.user, expertise, 'expertise', function(err, id) {
                         if(err) return callback(err);
 
                         doctrine.expertise_id = id;
@@ -58,7 +58,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    elemental.post(req.user, doctrine, 'doctrine', null, function(err, id) {
+                    elemental.post(req.user, doctrine, 'doctrine', function(err, id) {
                         if(err) return callback(err);
 
                         doctrine.id = id;

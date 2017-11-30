@@ -43,7 +43,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    elemental.post(req.user, attribute, 'attribute', null, function(err, id) {
+                    elemental.post(req.user, attribute, 'attribute', function(err, id) {
                         if(err) return callback(err);
 
                         attribute.id = id;
@@ -53,7 +53,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    elemental.post(req.user, manifestation, 'manifestation', null, function(err, id) {
+                    elemental.post(req.user, manifestation, 'manifestation', function(err, id) {
                         if(err) return callback(err);
 
                         manifestation.id = id;
@@ -63,7 +63,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    elemental.post(req.user, skill, 'skill', null, function(err, id) {
+                    elemental.post(req.user, skill, 'skill', function(err, id) {
                         if(err) return callback(err);
 
                         skill.id = id;

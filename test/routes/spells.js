@@ -11,9 +11,9 @@ let app = require('../app'),
     verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
-describe('/doctrine', function() {
+describe('/spell', function() {
 
-    let baseRoute = '/doctrines';
+    let baseRoute = '/spells';
 
     let temporaryId;
 
@@ -21,14 +21,14 @@ describe('/doctrine', function() {
         app.login(done);
     });
 
-    let manifestationId;
+    let attributeId;
     before(function(done) {
-        app.get('/manifestations')
+        app.get('/attributes')
             .expect(200)
             .end(function(err, res) {
                 if(err) return done(err);
 
-                manifestationId = res.body.results[0].id;
+                attributeId = res.body.results[0].id;
 
                 done();
             });
@@ -52,8 +52,14 @@ describe('/doctrine', function() {
     function verifyItem(item) {
         verifier.generic(item);
 
-        assert.isNumber(item.manifestation_id);
-        assert.isNumber(item.expertise_id);
+        assert.isNumber(item.effect_dice);
+        assert.isNumber(item.effect_bonus);
+        assert.isNumber(item.damage_dice);
+        assert.isNumber(item.damage_bonus);
+        assert.isNumber(item.critical_dice);
+        assert.isNumber(item.critical_bonus);
+        assert.isNumber(item.distance);
+        assert.isNumber(item.cost);
     }
 
 
@@ -63,8 +69,17 @@ describe('/doctrine', function() {
             let payload = {
                 name: hasher(20),
                 description: hasher(20),
-                manifestation_id: manifestationId,
-                icon: 'http://fakeicon.com/' + hasher(20) + '.png'
+                icon: 'http://fakeicon.com/' + hasher(20) + '.png',
+                effect: hasher(20),
+                effect_dice: 1,
+                effect_bonus: 2,
+                attribute_id: attributeId,
+                damage_dice: 3,
+                damage_bonus: 4,
+                critical_dice: 5,
+                critical_bonus: 6,
+                distance: 7,
+                cost: 8
             };
 
             app.post(baseRoute, payload)
@@ -99,7 +114,8 @@ describe('/doctrine', function() {
         it('/:id should update the item with new values', function(done) {
             let payload = {
                 name: hasher(20),
-                description: hasher(20)
+                description: hasher(20),
+                effect: hasher(20)
             };
 
             app.put(baseRoute + '/' + temporaryId, payload)

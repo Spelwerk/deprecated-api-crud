@@ -11,9 +11,9 @@ let app = require('../app'),
     verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
-describe('/doctrine', function() {
+describe('/forms', function() {
 
-    let baseRoute = '/doctrines';
+    let baseRoute = '/forms';
 
     let temporaryId;
 
@@ -21,14 +21,14 @@ describe('/doctrine', function() {
         app.login(done);
     });
 
-    let manifestationId;
+    let speciesId;
     before(function(done) {
-        app.get('/manifestations')
+        app.get('/species')
             .expect(200)
             .end(function(err, res) {
                 if(err) return done(err);
 
-                manifestationId = res.body.results[0].id;
+                speciesId = res.body.results[0].id;
 
                 done();
             });
@@ -52,8 +52,7 @@ describe('/doctrine', function() {
     function verifyItem(item) {
         verifier.generic(item);
 
-        assert.isNumber(item.manifestation_id);
-        assert.isNumber(item.expertise_id);
+        assert.isNumber(item.species_id);
     }
 
 
@@ -63,8 +62,9 @@ describe('/doctrine', function() {
             let payload = {
                 name: hasher(20),
                 description: hasher(20),
-                manifestation_id: manifestationId,
-                icon: 'http://fakeicon.com/' + hasher(20) + '.png'
+                species_id: speciesId,
+                icon: 'http://fakeicon.com/' + hasher(20) + '.png',
+                appearance: hasher(20)
             };
 
             app.post(baseRoute, payload)
@@ -164,6 +164,70 @@ describe('/doctrine', function() {
         });
 
     });
+
+
+    describe('/attributes', function() {
+        let relationRoute = 'attributes',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    let length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
+
+                    done();
+                });
+        });
+
+        it('POST / should add an item', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(201).end(done);
+        });
+
+        it('PUT /:id should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {value: 4}).expect(204).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+    });
+
+    describe('/skills', function() {
+        let relationRoute = 'skills',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    let length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
+
+                    done();
+                });
+        });
+
+        it('POST / should add an item', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(201).end(done);
+        });
+
+        it('PUT /:id should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {value: 4}).expect(204).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+    });
+
 
     describe('CLONE', function() {
 

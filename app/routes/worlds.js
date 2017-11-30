@@ -43,7 +43,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    elemental.post(req.user, world, 'world', null, function(err, id) {
+                    elemental.post(req.user, world, 'world', function(err, id) {
                         if(err) return callback(err);
 
                         world.id = id;
