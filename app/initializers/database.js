@@ -57,13 +57,23 @@ function setup(done) {
                 // Set up the table object
                 tables[tableName] = {
                     topTable: false,
-                    adminRestriction: false,
-                    userOwned: false,
-                    updateField: false,
+                    restriction: {
+                        user: false,
+                        admin: false
+                    },
+                    has: {
+                        comments: false,
+                        copies: false,
+                        images: false,
+                        labels: false,
+                        canon: false,
+                        updated: false,
+                        deleted: false
+                    },
                     columns: [],
                     fields: [],
                     combinations: [],
-                    relations: []
+                    relations: [],
                 };
 
                 // If the table has no underscores it is a top table
@@ -101,7 +111,7 @@ function setup(done) {
 
                     // If there's a table called user_has_* then the table can be owned by users
                     if(compareName === 'user_has_' + tableName) {
-                        tables[tableName].userOwned = true;
+                        tables[tableName].restriction.user = true;
                     }
 
                     // If there's a table called tableName_is_* then a nullable combination table exists
@@ -117,18 +127,44 @@ function setup(done) {
 
                         tables[tableName].relations.push(relationName);
                     }
+
+                    if(compareName === tableName + '_has_comment') {
+                        tables[tableName].has.comments = true;
+                    }
+
+                    if(compareName === tableName + '_is_copy') {
+                        tables[tableName].has.copies = true;
+                    }
+
+                    if(compareName === tableName + '_has_image') {
+                        tables[tableName].has.images = true;
+                    }
+
+                    if(compareName === tableName + '_has_label') {
+                        tables[tableName].has.labels = true;
+                    }
                 }
 
                 // Setting admin restriction to the opposite of userOwned
-                tables[tableName].adminRestriction = !tables[tableName].userOwned;
+                tables[tableName].restriction.admin= !tables[tableName].restriction.user;
 
                 let columnsArray = tables[tableName].columns;
 
                 for(let i in columnsArray) {
 
                     // Verify if updated field exists in columns
+                    if(columnsArray[i] === 'canon') {
+                        tables[tableName].has.canon = true;
+                    }
+
+                    // Verify if updated field exists in columns
                     if(columnsArray[i] === 'updated') {
-                        tables[tableName].updateField = true;
+                        tables[tableName].has.updated = true;
+                    }
+
+                    // Verify if deleted field exists in columns
+                    if(columnsArray[i] === 'deleted') {
+                        tables[tableName].has.deleted = true;
                     }
 
                     // If the field is part of the restricted columns, don't add it to the fields list
@@ -141,6 +177,9 @@ function setup(done) {
             callback();
         }
     ], function(err) {
+        //todo commented out, used for verification. delete when happy.
+        //console.log(tables['weapon']);
+
         done(err);
     });
 }

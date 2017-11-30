@@ -36,7 +36,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    elemental.post(req.user, skill, 'skill', {userOwned: true, combinations: ['manifestation', 'species']}, function(err, id) {
+                    elemental.post(req.user, skill, 'skill', null, function(err, id) {
                         if(err) return callback(err);
 
                         skill.id = id;
@@ -46,7 +46,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    elemental.post(req.user, expertise, 'expertise', {userOwned: true, combinations: ['manifestation', 'species']}, callback);
+                    elemental.post(req.user, expertise, 'expertise', null, callback);
                 }
             ], function(err) {
                 if(err) return next(err);
@@ -75,11 +75,6 @@ module.exports = function(router) {
 
     generic.get(router, tableName, sql);
     generic.put(router, tableName, options);
-    generic.delete(router, tableName, options);
-    generic.canon(router, tableName);
-    generic.clone(router, tableName);
-    generic.comments(router, tableName);
-    generic.labels(router, tableName);
-    generic.permissions(router, tableName);
-    generic.revive(router, tableName);
+
+    generic.automatic(router, tableName);
 };

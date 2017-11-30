@@ -122,13 +122,7 @@ module.exports = function(router) {
             });
         });
 
-    generic.delete(router, tableName);
-    generic.canon(router, tableName);
-    generic.clone(router, tableName);
-    generic.comments(router, tableName);
-    generic.labels(router, tableName);
-    generic.permissions(router, tableName);
-    generic.revive(router, tableName);
+    generic.automatic(router, tableName);
 
     // RELATIONS
 

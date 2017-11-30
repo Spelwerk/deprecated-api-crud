@@ -15,14 +15,8 @@ module.exports = function(router) {
     generic.deleted(router, tableName, sql);
     generic.get(router, tableName, sql);
     generic.put(router, tableName, options);
-    generic.delete(router, tableName, options);
-    generic.canon(router, tableName);
-    generic.clone(router, tableName);
-    generic.comments(router, tableName);
-    generic.labels(router, tableName);
-    generic.images(router, tableName);
-    generic.permissions(router, tableName);
-    generic.revive(router, tableName);
+
+    generic.automatic(router, tableName);
 
     // Relations
 

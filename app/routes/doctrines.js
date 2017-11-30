@@ -50,7 +50,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    elemental.post(req.user, expertise, 'expertise', {userOwned: true, combinations: ['manifestation']}, function(err, id) {
+                    elemental.post(req.user, expertise, 'expertise', null, function(err, id) {
                         if(err) return callback(err);
 
                         doctrine.expertise_id = id;
@@ -59,7 +59,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    elemental.post(req.user, doctrine, 'doctrine', {userOwned: true}, function(err, id) {
+                    elemental.post(req.user, doctrine, 'doctrine', null, function(err, id) {
                         if(err) return callback(err);
 
                         doctrine.id = id;
@@ -86,12 +86,6 @@ module.exports = function(router) {
 
     generic.get(router, tableName, sql);
     generic.put(router, tableName, options);
-    generic.delete(router, tableName, options);
-    generic.canon(router, tableName);
-    generic.clone(router, tableName);
-    generic.comments(router, tableName);
-    generic.images(router, tableName);
-    generic.labels(router, tableName);
-    generic.permissions(router, tableName);
-    generic.revive(router, tableName);
+
+    generic.automatic(router, tableName);
 };

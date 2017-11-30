@@ -38,7 +38,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    elemental.post(req.user, expertise, 'expertise', {userOwned: true, combinations: ['species']}, function(err, id) {
+                    elemental.post(req.user, expertise, 'expertise', null, function(err, id) {
                         if(err) return callback(err);
 
                         weaponType.expertise_id = id;
@@ -47,7 +47,7 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    elemental.post(req.user, weaponType, 'weapontype', {userOwned: true}, function(err, id) {
+                    elemental.post(req.user, weaponType, 'weapontype', null, function(err, id) {
                         if(err) return callback(err);
 
                         weaponType.id = id;
@@ -98,13 +98,8 @@ module.exports = function(router) {
 
     generic.get(router, tableName, sql);
     generic.put(router, tableName, options);
-    generic.delete(router, tableName, options);
-    generic.canon(router, tableName);
-    generic.clone(router, tableName);
-    generic.comments(router, tableName);
-    generic.labels(router, tableName);
-    generic.permissions(router, tableName);
-    generic.revive(router, tableName);
+
+    generic.automatic(router, tableName);
 };
 
 //todo manifestation boolean

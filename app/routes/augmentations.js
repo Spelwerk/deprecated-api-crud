@@ -42,7 +42,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    elemental.post(req.user, augmentation, 'augmentation', {userOwned: true, combinations: ['corporation']}, function(err, id) {
+                    elemental.post(req.user, augmentation, 'augmentation', null, function(err, id) {
                         if(err) return callback(err);
 
                         augmentation.id = id;
@@ -54,7 +54,7 @@ module.exports = function(router) {
                 function(callback) {
                     if(!weapon.weapontype_id) return callback();
 
-                    elemental.post(req.user, weapon, 'weapon', {userOwned: true, combinations: ['augmentation', 'corporation']}, callback);
+                    elemental.post(req.user, weapon, 'weapon', null, callback);
                 }
             ], function(err) {
                 if(err) return next(err);
@@ -66,14 +66,8 @@ module.exports = function(router) {
     generic.deleted(router, tableName, sql);
     generic.get(router, tableName, sql);
     generic.put(router, tableName, options);
-    generic.delete(router, tableName, options);
-    generic.canon(router, tableName);
-    generic.clone(router, tableName);
-    generic.comments(router, tableName);
-    generic.images(router, tableName);
-    generic.labels(router, tableName);
-    generic.permissions(router, tableName);
-    generic.revive(router, tableName);
+
+    generic.automatic(router, tableName);
 
     // Relations
 

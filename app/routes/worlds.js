@@ -44,7 +44,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    elemental.post(req.user, world, 'world', {userOwned: true}, function(err, id) {
+                    elemental.post(req.user, world, 'world', null, function(err, id) {
                         if(err) return callback(err);
 
                         world.id = id;
@@ -94,13 +94,8 @@ module.exports = function(router) {
     generic.deleted(router, tableName, sql);
     generic.get(router, tableName, sql);
     generic.put(router, tableName, options);
-    generic.delete(router, tableName, options);
-    generic.canon(router, tableName);
-    generic.clone(router, tableName);
-    generic.comments(router, tableName);
-    generic.labels(router, tableName);
-    generic.permissions(router, tableName);
-    generic.revive(router, tableName);
+
+    generic.automatic(router, tableName);
 
     // Relations
 
