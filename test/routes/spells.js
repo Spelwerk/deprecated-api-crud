@@ -34,6 +34,34 @@ describe('/spell', function() {
             });
     });
 
+    let expertiseId;
+    before(function(done) {
+        app.get('/expertises')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                let length = res.body.length - 1;
+                expertiseId = res.body.results[length].id;
+
+                done();
+            });
+    });
+
+    let manifestationId;
+    before(function(done) {
+        app.get('/manifestations')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                let length = res.body.length - 1;
+                manifestationId = res.body.results[length].id;
+
+                done();
+            });
+    });
+
     function verifyList(body) {
         assert.isNumber(body.length);
 
@@ -70,16 +98,17 @@ describe('/spell', function() {
                 name: hasher(20),
                 description: hasher(20),
                 icon: 'http://fakeicon.com/' + hasher(20) + '.png',
+                manifestation_id: manifestationId,
                 effect: hasher(20),
                 effect_dice: 1,
                 effect_bonus: 2,
-                attribute_id: attributeId,
                 damage_dice: 3,
                 damage_bonus: 4,
                 critical_dice: 5,
                 critical_bonus: 6,
                 distance: 7,
-                cost: 8
+                cost: 8,
+                attribute_id: attributeId
             };
 
             app.post(baseRoute, payload)

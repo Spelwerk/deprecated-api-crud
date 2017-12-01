@@ -21,6 +21,20 @@ describe('/focuses', function() {
         app.login(done);
     });
 
+    let manifestationId;
+    before(function(done) {
+        app.get('/manifestations')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                let length = res.body.length - 1;
+                manifestationId = res.body.results[length].id;
+
+                done();
+            });
+    });
+
     function verifyList(body) {
         assert.isNumber(body.length);
 
@@ -47,7 +61,8 @@ describe('/focuses', function() {
             let payload = {
                 name: hasher(20),
                 description: hasher(20),
-                icon: 'http://fakeicon.com/' + hasher(20) + '.png'
+                icon: 'http://fakeicon.com/' + hasher(20) + '.png',
+                manifestation_id: manifestationId
             };
 
             app.post(baseRoute, payload)

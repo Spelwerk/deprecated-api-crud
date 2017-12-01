@@ -1,5 +1,7 @@
 'use strict';
 
+let AppError = require('../../lib/errors/app-error');
+
 let async = require('async');
 
 let generic = require('../../lib/helper/generic'),
@@ -27,13 +29,7 @@ module.exports = function(router) {
                 manifestation_id: req.body.manifestation_id
             };
 
-            let doctrine = {
-                name: req.body.name,
-                description: req.body.description,
-                icon: req.body.icon,
-                manifestation_id: req.body.manifestation_id,
-                effects: req.body.effects
-            };
+            let doctrineId;
 
             async.series([
                 function(callback) {
@@ -42,6 +38,8 @@ module.exports = function(router) {
                 function(callback) {
                     query('SELECT skill_id AS id FROM skill_is_manifestation WHERE manifestation_id = ?', [manifestation.id], function(err, results) {
                         if(err) return callback(err);
+
+                        if(results.length === 0) return callback(new AppError(500, "Skill not found", "Skill not found", "Skill not found"));
 
                         expertise.skill_id = results[0].id;
 
@@ -52,16 +50,16 @@ module.exports = function(router) {
                     elemental.post(req.user, expertise, 'expertise', function(err, id) {
                         if(err) return callback(err);
 
-                        doctrine.expertise_id = id;
+                        req.body.expertise_id = id;
 
                         callback();
                     });
                 },
                 function(callback) {
-                    elemental.post(req.user, doctrine, 'doctrine', function(err, id) {
+                    elemental.post(req.user, req.body, 'doctrine', function(err, id) {
                         if(err) return callback(err);
 
-                        doctrine.id = id;
+                        doctrineId = id;
 
                         callback();
                     });
@@ -69,7 +67,7 @@ module.exports = function(router) {
             ], function(err) {
                 if(err) return next(err);
 
-                res.status(201).send({id: doctrine.id});
+                res.status(201).send({id: doctrineId});
             });
         });
 

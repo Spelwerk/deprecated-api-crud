@@ -21,6 +21,20 @@ describe('/forms', function() {
         app.login(done);
     });
 
+    let manifestationId;
+    before(function(done) {
+        app.get('/manifestations')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                let length = res.body.length - 1;
+                manifestationId = res.body.results[length].id;
+
+                done();
+            });
+    });
+
     let speciesId;
     before(function(done) {
         app.get('/species')
@@ -28,7 +42,8 @@ describe('/forms', function() {
             .end(function(err, res) {
                 if(err) return done(err);
 
-                speciesId = res.body.results[0].id;
+                let length = res.body.length - 1;
+                speciesId = res.body.results[length].id;
 
                 done();
             });
@@ -62,8 +77,9 @@ describe('/forms', function() {
             let payload = {
                 name: hasher(20),
                 description: hasher(20),
-                species_id: speciesId,
                 icon: 'http://fakeicon.com/' + hasher(20) + '.png',
+                manifestation_id: manifestationId,
+                species_id: speciesId,
                 appearance: hasher(20)
             };
 

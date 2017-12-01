@@ -87,7 +87,4 @@ module.exports = function(router) {
     // Relations
 
     relations(router, tableName, 'attributes', 'attribute');
-    relations(router, tableName, 'focuses', 'focus');
-    relations(router, tableName, 'forms', 'form');
-    relations(router, tableName, 'spells', 'spell');
 };

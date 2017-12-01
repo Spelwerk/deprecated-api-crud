@@ -23,33 +23,25 @@ module.exports = function(router) {
                 species_id: req.body.species_id
             };
 
-            let equipable = !!req.body.augmentation || !!req.body.species_id;
+            let weaponTypeId;
 
-            let weaponType = {
-                name: req.body.name,
-                description: req.body.description,
-                icon: req.body.icon,
-                attribute_id: req.body.attribute_id,
-                augmentation: !!req.body.augmentation,
-                species: !!req.body.species_id,
-                equipable: equipable
-            };
+            req.body.equipable = !!req.body.augmentation || !!req.body.species_id;
 
             async.series([
                 function(callback) {
                     elemental.post(req.user, expertise, 'expertise', function(err, id) {
                         if(err) return callback(err);
 
-                        weaponType.expertise_id = id;
+                        req.body.expertise_id = id;
 
                         callback();
                     });
                 },
                 function(callback) {
-                    elemental.post(req.user, weaponType, 'weapontype', function(err, id) {
+                    elemental.post(req.user, req.body, 'weapontype', function(err, id) {
                         if(err) return callback(err);
 
-                        weaponType.id = id;
+                        weaponTypeId = id;
 
                         callback();
                     });
@@ -57,7 +49,7 @@ module.exports = function(router) {
             ], function(err) {
                 if(err) return next(err);
 
-                res.status(201).send({id: weaponType.id});
+                res.status(201).send({id: weaponTypeId});
             });
         });
 

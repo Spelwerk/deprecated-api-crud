@@ -28,6 +28,7 @@ describe('/doctrine', function() {
             .end(function(err, res) {
                 if(err) return done(err);
 
+                let length = res.body.length - 1;
                 manifestationId = res.body.results[0].id;
 
                 done();
@@ -63,8 +64,10 @@ describe('/doctrine', function() {
             let payload = {
                 name: hasher(20),
                 description: hasher(20),
+                icon: 'http://fakeicon.com/' + hasher(20) + '.png',
                 manifestation_id: manifestationId,
-                icon: 'http://fakeicon.com/' + hasher(20) + '.png'
+                maximum: 5,
+                effect: hasher(20)
             };
 
             app.post(baseRoute, payload)
