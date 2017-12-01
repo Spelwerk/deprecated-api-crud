@@ -51,6 +51,7 @@ require('./routes/protection');
 require('./routes/weapontypes');
 require('./routes/weaponmods');
 require('./routes/weapons');
+require('./routes/tactics');
 
 require('./routes/backgrounds');
 require('./routes/milestones');

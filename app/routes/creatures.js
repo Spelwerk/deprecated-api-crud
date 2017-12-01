@@ -144,6 +144,7 @@ module.exports = function(router) {
     creatures.species(router);
     creatures.spells(router);
     creatures.software(router);
+    creatures.tactics(router);
     creatures.weapons(router);
 
     // COMBINATIONS
