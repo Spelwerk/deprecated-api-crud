@@ -129,7 +129,6 @@ describe('/creatures', function() {
                 middlename: hasher(20),
                 lastname: hasher(20),
                 calculated: true,
-                manifestation: true,
                 appearance: hasher(20),
                 age: 50,
                 biography: hasher(20),
@@ -141,7 +140,7 @@ describe('/creatures', function() {
                 pride: hasher(20),
                 problem: hasher(20),
                 shame: hasher(20),
-                point_doctrine: 1,
+                point_primal: 1,
                 point_expertise: 2,
                 point_gift: 3,
                 point_imperfection: 4,
@@ -400,41 +399,6 @@ describe('/creatures', function() {
 
         it('UNEQUIP /:id/bionic/:bionic/equip/0 should equip the item to the creature', function(done) {
             app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + bionicId + '/augmentations/' + augmentationId + '/equip/0').expect(204).end(done);
-        });
-
-    });
-
-    describe('/doctrines', function() {
-        let relationRoute = 'doctrines',
-            relationId;
-
-        before(function(done) {
-            app.get('/' + relationRoute)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    let length = res.body.length - 1;
-                    relationId = res.body.results[length].id;
-
-                    done();
-                });
-        });
-
-        it('POST / should add an item to the creature', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 1}).expect(201).end(done);
-        });
-
-        it('PUT /:id should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {value: 4}).expect(204).end(done);
-        });
-
-        it('GET / should get a list of items', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
-        });
-
-        it('GET /:id should display an item', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId).expect(200).end(function(err, res) { verifier.relation(err, res, done); });
         });
 
     });
@@ -764,6 +728,41 @@ describe('/creatures', function() {
 
         it('PUT /:id should change the value of the item', function(done) {
             app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {custom: hasher(20)}).expect(204).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+        it('GET /:id should display an item', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId).expect(200).end(function(err, res) { verifier.relation(err, res, done); });
+        });
+
+    });
+
+    describe('/primals', function() {
+        let relationRoute = 'primals',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    let length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
+
+                    done();
+                });
+        });
+
+        it('POST / should add an item to the creature', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 1}).expect(201).end(done);
+        });
+
+        it('PUT /:id should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {value: 4}).expect(204).end(done);
         });
 
         it('GET / should get a list of items', function(done) {

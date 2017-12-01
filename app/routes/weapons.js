@@ -74,7 +74,7 @@ module.exports = function(router) {
     // Relations
 
     relations(router, tableName, 'attributes', 'attribute');
-    relations(router, tableName, 'doctrines', 'doctrine');
+    relations(router, tableName, 'primals', 'primal');
     relations(router, tableName, 'mods', 'weaponmod');
     relations(router, tableName, 'skills', 'skill');
 };

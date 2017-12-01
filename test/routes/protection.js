@@ -209,8 +209,8 @@ describe('/protection', function() {
 
     });
 
-    describe('/doctrines', function() {
-        let relationRoute = 'doctrines',
+    describe('/primals', function() {
+        let relationRoute = 'primals',
             relationId;
 
         before(function(done) {

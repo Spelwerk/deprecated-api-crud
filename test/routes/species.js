@@ -63,7 +63,7 @@ describe('/species', function() {
                 playable: true,
                 manifestation: true,
                 max_age: 100,
-                multiply_doctrine: 10,
+                multiply_primal: 10,
                 multiply_expertise: 10,
                 multiply_skill: 10,
                 icon: 'http://fakeicon.com/' + hasher(20) + '.png'

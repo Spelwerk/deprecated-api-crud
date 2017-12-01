@@ -27,7 +27,7 @@ module.exports = function(router) {
                 playable: req.body.playable,
                 manifestation: req.body.manifestation,
                 max_age: req.body.max_age,
-                multiply_doctrine: req.body.multiply_doctrine,
+                multiply_primal: req.body.multiply_primal,
                 multiply_expertise: req.body.multiply_expertise,
                 multiply_skill: req.body.multiply_skill
             };

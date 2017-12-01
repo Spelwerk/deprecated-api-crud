@@ -784,7 +784,7 @@ module.exports = function(router) {
     users.relation(router, 'countries', 'country');
     users.relation(router, 'creatures', 'creature');
     users.relation(router, 'currencies', 'currency');
-    users.relation(router, 'doctrines', 'doctrine');
+    users.relation(router, 'primals', 'primal');
     users.relation(router, 'expertises', 'expertise');
     users.relation(router, 'focuses', 'focus');
     users.relation(router, 'forms', 'form');

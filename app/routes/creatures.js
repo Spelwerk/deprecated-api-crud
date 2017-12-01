@@ -13,7 +13,6 @@ module.exports = function(router) {
         'canon, ' +
         'updated, ' +
         'calculated, ' +
-        'manifestation, ' +
         'firstname, ' +
         'nickname, ' +
         'middlename, ' +
@@ -29,11 +28,11 @@ module.exports = function(router) {
         'pride, ' +
         'problem, ' +
         'shame, ' +
-        'point_doctrine, ' +
         'point_expertise, ' +
         'point_gift, ' +
         'point_imperfection, ' +
         'point_milestone, ' +
+        'point_primal, ' +
         'point_skill ' +
         'FROM creature ' +
         'LEFT JOIN creature_age ON creature_age.creature_id = creature.id ' +
@@ -107,7 +106,7 @@ module.exports = function(router) {
                 natureId: req.body.nature_id,
                 wealthId: req.body.wealth_id,
 
-                pointDoctrine: req.body.point_doctrine,
+                pointDoctrine: req.body.point_primal,
                 pointExpertise: req.body.point_expertise,
                 pointGift: req.body.point_gift,
                 pointImperfection: req.body.point_imperfection,
@@ -130,7 +129,6 @@ module.exports = function(router) {
     creatures.attributes(router);
     creatures.backgrounds(router);
     creatures.bionics(router);
-    creatures.doctrines(router);
     creatures.expertises(router);
     creatures.forms(router);
     creatures.gifts(router);
@@ -139,6 +137,7 @@ module.exports = function(router) {
     creatures.loyalties(router);
     creatures.manifestations(router);
     creatures.milestones(router);
+    creatures.primals(router);
     creatures.protection(router);
     creatures.relations(router);
     creatures.skills(router);

@@ -55,7 +55,7 @@ module.exports = function(router) {
     relations(router, tableName, 'assets', 'asset');
     relations(router, tableName, 'attributes', 'attribute');
     relations(router, tableName, 'bionics', 'bionic');
-    relations(router, tableName, 'doctrines', 'doctrine');
+    relations(router, tableName, 'primals', 'primal');
     relations(router, tableName, 'skills', 'skill');
     relations(router, tableName, 'weapons', 'weapon');
 };

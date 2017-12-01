@@ -25,15 +25,16 @@ require('./routes/dementations');
 require('./routes/traumas');
 require('./routes/labels');
 
-require('./routes/spells');
-require('./routes/focuses');
 require('./routes/manifestations');
+require('./routes/focuses');
 
 require('./routes/species');
 
 require('./routes/skills');
 require('./routes/expertises');
-require('./routes/doctrines');
+require('./routes/primals');
+require('./routes/spells');
+require('./routes/forms');
 
 require('./routes/gifts');
 require('./routes/imperfections');

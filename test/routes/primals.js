@@ -11,9 +11,9 @@ let app = require('../app'),
     verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
-describe('/doctrine', function() {
+describe('/primal', function() {
 
-    let baseRoute = '/doctrines';
+    let baseRoute = '/primals';
 
     let temporaryId;
 

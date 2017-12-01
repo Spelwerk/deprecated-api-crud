@@ -31,6 +31,6 @@ module.exports = function(router) {
     // RELATIONS
 
     relations(router, tableName, 'attributes', 'attribute');
-    relations(router, tableName, 'doctrines', 'doctrine');
+    relations(router, tableName, 'primals', 'primal');
     relations(router, tableName, 'skills', 'skill');
 };

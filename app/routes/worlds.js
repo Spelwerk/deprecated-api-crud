@@ -29,10 +29,10 @@ module.exports = function(router) {
                 corporation: req.body.corporation,
                 manifestation: req.body.manifestation,
                 software: req.body.software,
-                max_doctrine: req.body.max_doctrine,
+                max_primal: req.body.max_primal,
                 max_expertise: req.body.max_expertise,
                 max_skill: req.body.max_skill,
-                split_doctrine: req.body.split_doctrine,
+                split_primal: req.body.split_primal,
                 split_expertise: req.body.split_expertise,
                 split_milestone: req.body.split_milestone,
                 split_skill: req.body.split_skill

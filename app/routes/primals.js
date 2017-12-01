@@ -11,7 +11,7 @@ let generic = require('../../lib/helper/generic'),
     ownership = require('../../lib/sql/ownership');
 
 module.exports = function(router) {
-    const tableName = 'doctrine';
+    const tableName = 'primal';
 
     let sql = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
@@ -29,7 +29,7 @@ module.exports = function(router) {
                 manifestation_id: req.body.manifestation_id
             };
 
-            let doctrineId;
+            let primalId;
 
             async.series([
                 function(callback) {
@@ -56,10 +56,10 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    elemental.post(req.user, req.body, 'doctrine', function(err, id) {
+                    elemental.post(req.user, req.body, 'primal', function(err, id) {
                         if(err) return callback(err);
 
-                        doctrineId = id;
+                        primalId = id;
 
                         callback();
                     });
@@ -67,7 +67,7 @@ module.exports = function(router) {
             ], function(err) {
                 if(err) return next(err);
 
-                res.status(201).send({id: doctrineId});
+                res.status(201).send({id: primalId});
             });
         });
 
