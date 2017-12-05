@@ -73,7 +73,10 @@ function setup(done) {
                     columns: [],
                     fields: [],
                     combinations: [],
-                    relations: [],
+                    relations: {
+                        clones: [],
+                        creatures: []
+                    },
                 };
 
                 // If the table has no underscores it is a top table
@@ -122,10 +125,12 @@ function setup(done) {
                     }
 
                     // If there's a table called tableName_has_* then a relation table exists
-                    if(compareName.indexOf(tableName + '_has_') !== -1 && compareName.indexOf('has_comment') === -1) {
+                    if(compareName.indexOf(tableName + '_has_') !== -1) {
                         let relationName = compareName.split('_has_')[1];
 
-                        tables[tableName].relations.push(relationName);
+                        if(relationName === 'comment') continue;
+
+                        tables[tableName].relations.clones.push(relationName);
                     }
 
                     if(compareName === tableName + '_has_comment') {
@@ -178,7 +183,7 @@ function setup(done) {
         }
     ], function(err) {
         //todo commented out, used for verification. delete when happy.
-        //console.log(tables['weapon']);
+        console.log(tables['weapon']);
 
         done(err);
     });

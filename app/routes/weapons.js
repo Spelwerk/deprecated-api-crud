@@ -31,12 +31,16 @@ module.exports = function(router) {
         'weapontype.expertise_id, ' +
         'weapon_is_copy.copy_id, ' +
         'weapon_is_augmentation.augmentation_id, ' +
+        'weapon_is_form.form_id, ' +
+        'weapon_is_manifestation.manifestation_id, ' +
         'weapon_is_species.species_id, ' +
         'weapon_is_corporation.corporation_id ' +
         'FROM weapon ' +
         'LEFT JOIN weapontype ON weapontype.id = weapon.weapontype_id ' +
         'LEFT JOIN weapon_is_copy ON weapon_is_copy.weapon_id = weapon.id ' +
         'LEFT JOIN weapon_is_augmentation ON weapon_is_augmentation.weapon_id = weapon.id ' +
+        'LEFT JOIN weapon_is_form ON weapon_is_form.weapon_id = weapon.id ' +
+        'LEFT JOIN weapon_is_manifestation ON weapon_is_manifestation.weapon_id = weapon.id ' +
         'LEFT JOIN weapon_is_species ON weapon_is_species.weapon_id = weapon.id ' +
         'LEFT JOIN weapon_is_corporation ON weapon_is_corporation.weapon_id = weapon.id';
 
@@ -50,6 +54,22 @@ module.exports = function(router) {
                 'augmentation_id = ?';
 
             sequel.get(req, res, next, call, [req.params.augmentationId]);
+        });
+
+    router.route('/form/:formId')
+        .get(function(req, res, next) {
+            let call = sql + ' WHERE weapon.deleted IS NULL AND ' +
+                'form_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.formId]);
+        });
+
+    router.route('/manifestation/:manifestationId')
+        .get(function(req, res, next) {
+            let call = sql + ' WHERE weapon.deleted IS NULL AND ' +
+                'manifestation_id = ?';
+
+            sequel.get(req, res, next, call, [req.params.manifestationId]);
         });
 
     router.route('/species/:speciesId')
