@@ -61,6 +61,8 @@ describe('/weaponmods', function() {
                 damage_bonus: 3,
                 critical_dice: 4,
                 critical_bonus: 5,
+                hit: 6,
+                hands: 7,
                 distance: 50
             };
 
@@ -163,7 +165,7 @@ describe('/weaponmods', function() {
     });
 
 
-    describe('/attributes', function() {
+    xdescribe('/attributes', function() {
         let relationRoute = 'attributes',
             relationId;
 

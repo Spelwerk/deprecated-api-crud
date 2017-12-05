@@ -11,9 +11,9 @@ let app = require('../app'),
     verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
-describe('/weapons', function() {
+describe('/shields', function() {
 
-    let baseRoute = '/weapons';
+    let baseRoute = '/shields';
 
     let temporaryId;
 
@@ -21,43 +21,29 @@ describe('/weapons', function() {
         app.login(done);
     });
 
-    let weaponTypeId;
+    let attributeId;
     before(function(done) {
-        app.get('/weapontypes')
+        app.get('/attributes')
             .expect(200)
             .end(function(err, res) {
                 if(err) return done(err);
 
                 let length = res.body.length - 1;
-                weaponTypeId = res.body.results[length].id;
+                attributeId = res.body.results[length].id;
 
                 done();
             });
     });
 
-    let augmentationId;
+    let expertiseId;
     before(function(done) {
-        app.get('/augmentations')
+        app.get('/expertises')
             .expect(200)
             .end(function(err, res) {
                 if(err) return done(err);
 
                 let length = res.body.length - 1;
-                augmentationId = res.body.results[length].id;
-
-                done();
-            });
-    });
-
-    let speciesId;
-    before(function(done) {
-        app.get('/species')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                let length = res.body.length - 1;
-                speciesId = res.body.results[length].id;
+                expertiseId = res.body.results[length].id;
 
                 done();
             });
@@ -81,19 +67,13 @@ describe('/weapons', function() {
     function verifyItem(item) {
         verifier.generic(item);
 
-        assert.isNumber(item.weapontype_id);
+        assert.isNumber(item.price);
         assert.isNumber(item.attribute_id);
         assert.isNumber(item.expertise_id);
-        if(item.species_id) assert.isNumber(item.species_id);
-        if(item.augmentation_id) assert.isNumber(item.augmentation_id);
-
-        assert.isBoolean(item.legal);
-        assert.isNumber(item.price);
         assert.isNumber(item.damage_dice);
         assert.isNumber(item.damage_bonus);
         assert.isNumber(item.critical_dice);
         assert.isNumber(item.critical_bonus);
-        assert.isNumber(item.distance);
     }
 
 
@@ -103,16 +83,13 @@ describe('/weapons', function() {
             let payload = {
                 name: hasher(20),
                 description: hasher(20),
-                weapontype_id: weaponTypeId,
-                legal: true,
-                price: 8,
-                damage_dice: 2,
-                damage_bonus: 3,
-                critical_dice: 4,
-                critical_bonus: 5,
-                hit: 6,
-                hands: 7,
-                distance: 100
+                price: 10,
+                attribute_id: attributeId,
+                expertise_id: expertiseId,
+                damage_dice: 1,
+                damage_bonus: 2,
+                critical_dice: 3,
+                critical_bonus: 4
             };
 
             app.post(baseRoute, payload)
@@ -138,6 +115,18 @@ describe('/weapons', function() {
 
                     done();
                 });
+        });
+
+        it('/:id/labels should create a label', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/labels', { label: hasher(20) })
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.id);
+
+                    done();
+                })
         });
 
     });
@@ -181,42 +170,6 @@ describe('/weapons', function() {
 
         it('/deleted should return a list of deleted items', function(done) {
             app.get(baseRoute + '/deleted')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyList(res.body);
-
-                    done();
-                });
-        });
-
-        it('/augmentation/:augmentationId should return a list', function(done) {
-            app.get('/weapons/augmentation/' + augmentationId)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyList(res.body);
-
-                    done();
-                });
-        });
-
-        it('/species/:speciesId should return a list', function(done) {
-            app.get('/weapons/species/' + speciesId)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifyList(res.body);
-
-                    done();
-                });
-        });
-
-        it('/type/:typeId should return a list', function(done) {
-            app.get('/weapons/type/' + weaponTypeId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -335,33 +288,6 @@ describe('/weapons', function() {
 
         it('PUT /:id should change the value of the item', function(done) {
             app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {value: 4}).expect(204).end(done);
-        });
-
-        it('GET / should get a list of items', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
-        });
-
-    });
-
-    describe('/mods', function() {
-        let relationRoute = 'mods',
-            relationId;
-
-        before(function(done) {
-            app.get('/weaponmods')
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    let length = res.body.length - 1;
-                    relationId = res.body.results[length].id;
-
-                    done();
-                });
-        });
-
-        it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
         });
 
         it('GET / should get a list of items', function(done) {

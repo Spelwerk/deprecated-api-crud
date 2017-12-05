@@ -28,7 +28,8 @@ describe('/weapontypes', function() {
             .end(function(err, res) {
                 if(err) return done(err);
 
-                attributeId = res.body.results[0].id;
+                let length = res.body.length - 1;
+                attributeId = res.body.results[length].id;
 
                 done();
             });
@@ -41,7 +42,8 @@ describe('/weapontypes', function() {
             .end(function(err, res) {
                 if(err) return done(err);
 
-                expertiseId = res.body.results[0].id;
+                let length = res.body.length - 1;
+                expertiseId = res.body.results[length].id;
 
                 done();
             });
@@ -54,7 +56,8 @@ describe('/weapontypes', function() {
             .end(function(err, res) {
                 if(err) return done(err);
 
-                skillId = res.body.results[0].id;
+                let length = res.body.length - 1;
+                skillId = res.body.results[length].id;
 
                 done();
             });
@@ -67,7 +70,8 @@ describe('/weapontypes', function() {
             .end(function(err, res) {
                 if(err) return done(err);
 
-                speciesId = res.body.results[0].id;
+                let length = res.body.length - 1;
+                speciesId = res.body.results[length].id;
 
                 done();
             });

@@ -140,6 +140,7 @@ module.exports = function(router) {
     creatures.primals(router);
     creatures.protection(router);
     creatures.relations(router);
+    creatures.shields(router);
     creatures.skills(router);
     creatures.species(router);
     creatures.spells(router);
@@ -163,7 +164,3 @@ module.exports = function(router) {
     creatures.traumas(router);
 
 };
-
-//todo has_form
-//todo has_spell
-//todo has_tactic

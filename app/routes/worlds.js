@@ -113,6 +113,7 @@ module.exports = function(router) {
     relations(router, tableName, 'milestones', 'milestone');
     relations(router, tableName, 'natures', 'nature');
     relations(router, tableName, 'protection', 'protection');
+    relations(router, tableName, 'shields', 'shield');
     relations(router, tableName, 'skills', 'skill');
     relations(router, tableName, 'software', 'software');
     relations(router, tableName, 'species', 'species');

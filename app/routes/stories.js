@@ -24,6 +24,7 @@ module.exports = function(router) {
     relations(router, tableName, 'creatures', 'creature');
     relations(router, tableName, 'locations', 'location');
     relations(router, tableName, 'protections', 'protection');
+    relations(router, tableName, 'shields', 'shield');
     relations(router, tableName, 'software', 'software');
     relations(router, tableName, 'weapons', 'weapon');
     relations(router, tableName, 'weaponmods', 'weaponmod');

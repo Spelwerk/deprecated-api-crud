@@ -28,7 +28,8 @@ describe('/creatures', function() {
             .end(function(err, res) {
                 if(err) return done(err);
 
-                speciesId = res.body.results[0].id;
+                let length = res.body.length - 1;
+                speciesId = res.body.results[length].id;
 
                 done();
             });
@@ -41,7 +42,8 @@ describe('/creatures', function() {
             .end(function(err, res) {
                 if(err) return done(err);
 
-                worldId = res.body.results[0].id;
+                let length = res.body.length - 1;
+                worldId = res.body.results[length].id;
 
                 done();
             });
@@ -818,6 +820,49 @@ describe('/creatures', function() {
 
     });
 
+    describe('/shields', function() {
+        let relationRoute = 'shields',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    let length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
+
+                    done();
+                });
+        });
+
+        it('POST / should add an item to the creature', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 1}).expect(201).end(done);
+        });
+
+        it('PUT /:id should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {value: 4, custom: hasher(20)}).expect(204).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+        it('GET /:id should display an item', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId).expect(200).end(function(err, res) { verifier.relation(err, res, done); });
+        });
+
+        it('EQUIP /:id/equip/1 should equip the item to the creature', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/equip/1').expect(204).end(done);
+        });
+
+        it('UNEQUIP /:id/equip/0 should equip the item to the creature', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/equip/0').expect(204).end(done);
+        });
+
+    });
+
     describe('/skills', function() {
         let relationRoute = 'skills',
             relationId;
@@ -853,9 +898,11 @@ describe('/creatures', function() {
 
     });
 
-    describe('/species', function() {
+    xdescribe('/species', function() {
         let relationRoute = 'species',
             relationId;
+
+        // special. adds 2nd to last species
 
         before(function(done) {
             app.get('/' + relationRoute)
@@ -863,7 +910,7 @@ describe('/creatures', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    let length = res.body.length - 1;
+                    let length = res.body.length - 2;
                     relationId = res.body.results[length].id;
 
                     done();

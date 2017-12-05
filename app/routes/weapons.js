@@ -20,6 +20,8 @@ module.exports = function(router) {
         'weapon.damage_bonus, ' +
         'weapon.critical_dice, ' +
         'weapon.critical_bonus, ' +
+        'weapon.hit, ' +
+        'weapon.hands, ' +
         'weapon.distance, ' +
         'weapon.created, ' +
         'weapon.updated, ' +

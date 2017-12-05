@@ -29,7 +29,7 @@ describe('/primal', function() {
                 if(err) return done(err);
 
                 let length = res.body.length - 1;
-                manifestationId = res.body.results[0].id;
+                manifestationId = res.body.results[length].id;
 
                 done();
             });
