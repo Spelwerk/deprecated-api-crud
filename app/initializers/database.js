@@ -126,27 +126,35 @@ function setup(done) {
 
                     // If there's a table called tableName_has_* then a relation table exists
                     if(compareName.indexOf(tableName + '_has_') !== -1) {
-                        let relationName = compareName.split('_has_')[1];
+                        let relationName = compareName.split('_has_')[1],
+                            addToClones = true,
+                            addToCreatures = true;
 
-                        if(relationName === 'comment') continue;
+                        if(relationName === 'comment') {
+                            tables[tableName].has.comments = true;
 
-                        tables[tableName].relations.clones.push(relationName);
+                            addToClones = false;
+                            addToCreatures = false;
+                        }
+
+                        if(relationName === 'image') {
+                            tables[tableName].has.images = true;
+
+                            addToCreatures = false;
+                        }
+
+                        if(relationName === 'label') {
+                            tables[tableName].has.labels = true;
+
+                            addToCreatures = false;
+                        }
+
+                        if(addToClones) tables[tableName].relations.clones.push(relationName);
+                        if(addToCreatures) tables[tableName].relations.creatures.push(relationName);
                     }
 
-                    if(compareName === tableName + '_has_comment') {
-                        tables[tableName].has.comments = true;
-                    }
-
-                    if(compareName === tableName + '_is_copy') {
+                    if(compareName.indexOf(tableName + '_is_copy') !== -1) {
                         tables[tableName].has.copies = true;
-                    }
-
-                    if(compareName === tableName + '_has_image') {
-                        tables[tableName].has.images = true;
-                    }
-
-                    if(compareName === tableName + '_has_label') {
-                        tables[tableName].has.labels = true;
                     }
                 }
 
@@ -183,7 +191,7 @@ function setup(done) {
         }
     ], function(err) {
         //todo commented out, used for verification. delete when happy.
-        console.log(tables['weapon']);
+        //console.log(tables['weapon']);
 
         done(err);
     });

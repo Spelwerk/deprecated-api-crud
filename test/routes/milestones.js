@@ -300,10 +300,6 @@ describe('/milestones', function() {
             app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
         });
 
-        it('PUT /:id should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {value: 4}).expect(204).end(done);
-        });
-
         it('GET / should get a list of items', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
         });
@@ -458,10 +454,6 @@ describe('/milestones', function() {
 
         it('POST / should add an item', function(done) {
             app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
-        });
-
-        it('PUT /:id should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {value: 4}).expect(204).end(done);
         });
 
         it('GET / should get a list of items', function(done) {
