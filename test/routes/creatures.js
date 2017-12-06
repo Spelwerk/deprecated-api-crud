@@ -260,12 +260,12 @@ describe('/creatures', function() {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId).expect(200).end(function(err, res) { verifier.relation(err, res, done); });
         });
 
-        it('EQUIP /:id/equip/1 should equip the item to the creature', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/equip/1').expect(204).end(done);
+        it('EQUIP /:id/equip should equip the item to the creature', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/equip').expect(204).end(done);
         });
 
-        it('UNEQUIP /:id/equip/0 should equip the item to the creature', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/equip/0').expect(204).end(done);
+        it('UNEQUIP /:id/unequip should equip the item to the creature', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/unequip').expect(204).end(done);
         });
 
     });
@@ -353,7 +353,7 @@ describe('/creatures', function() {
         });
 
         it('POST /:id/augmentations should add an item to the creature', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + bionicId + '/augmentations', {bionic_id: bionicId, insert_id: augmentationId}).expect(204).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + bionicId + '/augmentations', {bionic_id: bionicId, insert_id: augmentationId}).expect(201).end(done);
         });
 
         it('GET /:id/augmentations should get a list of items', function(done) {
@@ -802,12 +802,12 @@ describe('/creatures', function() {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId).expect(200).end(function(err, res) { verifier.relation(err, res, done); });
         });
 
-        it('EQUIP /:id/equip/1 should equip the item to the creature', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/equip/1').expect(204).end(done);
+        it('EQUIP /:id/equip should equip the item to the creature', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/equip').expect(204).end(done);
         });
 
-        it('UNEQUIP /:id/equip/0 should equip the item to the creature', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/equip/0').expect(204).end(done);
+        it('UNEQUIP /:id/unequip should equip the item to the creature', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/unequip').expect(204).end(done);
         });
 
     });
@@ -845,12 +845,12 @@ describe('/creatures', function() {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId).expect(200).end(function(err, res) { verifier.relation(err, res, done); });
         });
 
-        it('EQUIP /:id/equip/1 should equip the item to the creature', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/equip/1').expect(204).end(done);
+        it('EQUIP /:id/equip should equip the item to the creature', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/equip').expect(204).end(done);
         });
 
-        it('UNEQUIP /:id/equip/0 should equip the item to the creature', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/equip/0').expect(204).end(done);
+        it('UNEQUIP /:id/unequip should equip the item to the creature', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/unequip').expect(204).end(done);
         });
 
     });
@@ -1031,7 +1031,7 @@ describe('/creatures', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    let length = res.body.length - 1;
+                    let length = res.body.length - 2;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -1039,7 +1039,7 @@ describe('/creatures', function() {
         });
 
         before(function(done) {
-            app.get('/weaponmods')
+            app.get('/weaponmods/weapon/' + relationId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
@@ -1067,12 +1067,12 @@ describe('/creatures', function() {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId).expect(200).end(function(err, res) { verifier.relation(err, res, done); });
         });
 
-        it('EQUIP /:id/equip/1 should equip the item to the creature', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/equip/1').expect(204).end(done);
+        it('EQUIP /:id/equip should equip the item to the creature', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/equip').expect(204).end(done);
         });
 
-        it('UNEQUIP /:id/equip/0 should equip the item to the creature', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/equip/0').expect(204).end(done);
+        it('UNEQUIP /:id/unequip should equip the item to the creature', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/unequip').expect(204).end(done);
         });
 
         it('POST /:id/mods should add a mod to the weapon', function(done) {

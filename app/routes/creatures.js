@@ -139,7 +139,6 @@ module.exports = function(router) {
     creatures.milestones(router);
     creatures.primals(router);
     creatures.protection(router);
-    creatures.relations(router);
     creatures.shields(router);
     creatures.skills(router);
     creatures.species(router);
