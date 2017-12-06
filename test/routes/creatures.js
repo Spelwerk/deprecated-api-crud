@@ -227,6 +227,49 @@ describe('/creatures', function() {
     });
 
 
+    describe('/armours', function() {
+        let relationRoute = 'armours',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    let length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
+
+                    done();
+                });
+        });
+
+        it('POST / should add an item to the creature', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+        });
+
+        it('PUT /:id should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {custom: hasher(20)}).expect(204).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+        it('GET /:id should display an item', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId).expect(200).end(function(err, res) { verifier.relation(err, res, done); });
+        });
+
+        it('EQUIP /:id/equip should equip the item to the creature', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/equip').expect(204).end(done);
+        });
+
+        it('UNEQUIP /:id/unequip should equip the item to the creature', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/unequip').expect(204).end(done);
+        });
+
+    });
+
     describe('/assets', function() {
         let relationRoute = 'assets',
             relationId;
@@ -769,49 +812,6 @@ describe('/creatures', function() {
 
     });
 
-    describe('/protections', function() {
-        let relationRoute = 'protection',
-            relationId;
-
-        before(function(done) {
-            app.get('/' + relationRoute)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    let length = res.body.length - 1;
-                    relationId = res.body.results[length].id;
-
-                    done();
-                });
-        });
-
-        it('POST / should add an item to the creature', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
-        });
-
-        it('PUT /:id should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {custom: hasher(20)}).expect(204).end(done);
-        });
-
-        it('GET / should get a list of items', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
-        });
-
-        it('GET /:id should display an item', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId).expect(200).end(function(err, res) { verifier.relation(err, res, done); });
-        });
-
-        it('EQUIP /:id/equip should equip the item to the creature', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/equip').expect(204).end(done);
-        });
-
-        it('UNEQUIP /:id/unequip should equip the item to the creature', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/unequip').expect(204).end(done);
-        });
-
-    });
-
     describe('/shields', function() {
         let relationRoute = 'shields',
             relationId;
@@ -1022,8 +1022,7 @@ describe('/creatures', function() {
 
     describe('/weapons', function() {
         let relationRoute = 'weapons',
-            relationId,
-            modId;
+            relationId;
 
         before(function(done) {
             app.get('/' + relationRoute)
@@ -1033,19 +1032,6 @@ describe('/creatures', function() {
 
                     let length = res.body.length - 2;
                     relationId = res.body.results[length].id;
-
-                    done();
-                });
-        });
-
-        before(function(done) {
-            app.get('/weaponmods/weapon/' + relationId)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    let length = res.body.length - 1;
-                    modId = res.body.results[length].id;
 
                     done();
                 });
@@ -1074,6 +1060,21 @@ describe('/creatures', function() {
         it('UNEQUIP /:id/unequip should equip the item to the creature', function(done) {
             app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/unequip').expect(204).end(done);
         });
+/*
+        let modId;
+
+        before(function(done) {
+            app.get('/weaponmods')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    let length = res.body.length - 1;
+                    modId = res.body.results[length].id;
+
+                    done();
+                });
+        });
 
         it('POST /:id/mods should add a mod to the weapon', function(done) {
             app.post(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/mods', {insert_id: modId}).expect(201).end(done);
@@ -1082,7 +1083,7 @@ describe('/creatures', function() {
         it('GET /:id/mods should display a list of items', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/mods').expect(200).end(function(err, res) { verifier.relations(err, res, done); });
         });
-
+*/
     });
 
 

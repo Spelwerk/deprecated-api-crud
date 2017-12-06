@@ -98,6 +98,7 @@ module.exports = function(router) {
 
     // Relations
 
+    relations(router, tableName, 'armours', 'armour');
     relations(router, tableName, 'assets', 'asset');
     relations(router, tableName, 'attributes', 'attribute');
     relations(router, tableName, 'backgrounds', 'background');
@@ -112,7 +113,6 @@ module.exports = function(router) {
     relations(router, tableName, 'manifestations', 'manifestation');
     relations(router, tableName, 'milestones', 'milestone');
     relations(router, tableName, 'natures', 'nature');
-    relations(router, tableName, 'protection', 'protection');
     relations(router, tableName, 'shields', 'shield');
     relations(router, tableName, 'skills', 'skill');
     relations(router, tableName, 'software', 'software');

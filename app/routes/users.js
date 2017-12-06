@@ -796,7 +796,7 @@ module.exports = function(router) {
     users.relation(router, 'manifestations', 'manifestation');
     users.relation(router, 'milestones', 'milestone');
     users.relation(router, 'natures', 'nature');
-    users.relation(router, 'protection', 'protection');
+    users.relation(router, 'armour', 'armour');
     users.relation(router, 'skills', 'skill');
     users.relation(router, 'software', 'software');
     users.relation(router, 'species', 'species');

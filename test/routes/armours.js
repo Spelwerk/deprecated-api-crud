@@ -11,9 +11,9 @@ let app = require('../app'),
     verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
-describe('/protection', function() {
+describe('/armours', function() {
 
-    let baseRoute = '/protection';
+    let baseRoute = '/armours';
 
     let temporaryId;
 
@@ -144,7 +144,7 @@ describe('/protection', function() {
         });
 
         it('/bodypart/:bodyPartId should return a list', function(done) {
-            app.get('/protection/bodypart/' + bodyPartId)
+            app.get(baseRoute + '/bodypart/' + bodyPartId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);

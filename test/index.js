@@ -46,7 +46,7 @@ require('./routes/software');
 require('./routes/augmentations');
 require('./routes/bionics');
 
-require('./routes/protection');
+require('./routes/armours');
 require('./routes/shields');
 
 require('./routes/weapontypes');

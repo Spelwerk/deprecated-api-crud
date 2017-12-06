@@ -125,6 +125,7 @@ module.exports = function(router) {
 
     // RELATIONS
 
+    creatures.armours(router);
     creatures.assets(router);
     creatures.attributes(router);
     creatures.backgrounds(router);
@@ -138,7 +139,6 @@ module.exports = function(router) {
     creatures.manifestations(router);
     creatures.milestones(router);
     creatures.primals(router);
-    creatures.protection(router);
     creatures.shields(router);
     creatures.skills(router);
     creatures.species(router);

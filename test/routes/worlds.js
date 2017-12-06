@@ -168,6 +168,33 @@ describe('/worlds', function() {
     });
 
 
+    describe('/armours', function() {
+        let relationRoute = 'armours',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    let length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
+
+                    done();
+                });
+        });
+
+        it('POST / should add an item', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+    });
+
     describe('/assets', function() {
         let relationRoute = 'assets',
             relationId;
@@ -413,33 +440,6 @@ describe('/worlds', function() {
 
     describe('/natures', function() {
         let relationRoute = 'natures',
-            relationId;
-
-        before(function(done) {
-            app.get('/' + relationRoute)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    let length = res.body.length - 1;
-                    relationId = res.body.results[length].id;
-
-                    done();
-                });
-        });
-
-        it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
-        });
-
-        it('GET / should get a list of items', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
-        });
-
-    });
-
-    describe('/protection', function() {
-        let relationRoute = 'protection',
             relationId;
 
         before(function(done) {
