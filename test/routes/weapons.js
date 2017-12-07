@@ -15,7 +15,8 @@ describe('/weapons', function() {
 
     let baseRoute = '/weapons';
 
-    let temporaryId;
+    let temporaryId,
+        temporaryId2;
 
     before(function(done) {
         app.login(done);
@@ -128,6 +129,35 @@ describe('/weapons', function() {
                 });
         });
 
+        it('/ should create another new item', function(done) {
+            let payload = {
+                name: hasher(20),
+                description: hasher(20),
+                weapontype_id: weaponTypeId,
+                legal: true,
+                price: 8,
+                damage_dice: 2,
+                damage_bonus: 3,
+                critical_dice: 4,
+                critical_bonus: 5,
+                hit: 6,
+                hands: 7,
+                distance: 100
+            };
+
+            app.post(baseRoute, payload)
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.id);
+
+                    temporaryId2 = res.body.id;
+
+                    done();
+                });
+        });
+
         it('/:id/comments should create a new comment', function(done) {
             app.post(baseRoute + '/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
@@ -157,6 +187,10 @@ describe('/weapons', function() {
 
         it('/:id/canon/:canon should update the canon status', function(done) {
             app.put(baseRoute + '/' + temporaryId + '/canon/1').expect(204).end(done);
+        });
+
+        it('/:id/canon/:canon should update the canon status', function(done) {
+            app.put(baseRoute + '/' + temporaryId2 + '/canon/1').expect(204).end(done);
         });
 
         it('/:id/permissions/favorite/1 should set it as favorite', function(done) {
@@ -362,6 +396,10 @@ describe('/weapons', function() {
 
         it('POST / should add an item', function(done) {
             app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+        });
+
+        it('POST / should add an item for the other weapon', function(done) {
+            app.post(baseRoute + '/' + temporaryId2 + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
         });
 
         it('GET / should get a list of items', function(done) {

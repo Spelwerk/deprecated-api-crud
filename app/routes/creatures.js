@@ -53,18 +53,7 @@ module.exports = function(router) {
 
     router.route('/')
         .post(function(req, res, next) {
-            let firstName = req.body.firstname,
-                worldId = req.body.world_id,
-                speciesId = req.body.species_id;
-
-            let optional = {
-                nickName: req.body.nickname,
-                middleName: req.body.middlename,
-                lastName: req.body.lastname,
-                description: req.body.description
-            };
-
-            creatures.post(req.user, firstName, worldId, speciesId, optional, function(err, id) {
+            creatures.post(req.user, req.body, function(err, id) {
                 if(err) return next(err);
 
                 res.status(201).send({id: id});
@@ -76,45 +65,9 @@ module.exports = function(router) {
 
     router.route('/:id')
         .put(function(req, res, next) {
-            let id = req.params.id;
+            let creatureId = parseInt(req.params.id);
 
-            let optional = {
-                firstName: req.body.firstname,
-                nickName: req.body.nickname,
-                middleName: req.body.middlename,
-                lastName: req.body.lastname,
-
-                calculated: req.body.calculated,
-                manifestation: req.body.manifestation,
-                appearance: req.body.appearance,
-
-                age: req.body.age,
-
-                biography: req.body.biography,
-                description: req.body.description,
-                drive: req.body.drive,
-                gender: req.body.gender,
-                occupation: req.body.occupation,
-                personality: req.body.personality,
-                pride: req.body.pride,
-                problem: req.body.problem,
-                shame: req.body.shame,
-
-                corporationId: req.body.corporation_id,
-                countryId: req.body.country_id,
-                identityId: req.body.identity_id,
-                natureId: req.body.nature_id,
-                wealthId: req.body.wealth_id,
-
-                pointDoctrine: req.body.point_primal,
-                pointExpertise: req.body.point_expertise,
-                pointGift: req.body.point_gift,
-                pointImperfection: req.body.point_imperfection,
-                pointMilestone: req.body.point_milestone,
-                pointSkill: req.body.point_skill
-            };
-
-            creatures.put(req.user, id, optional, function(err) {
+            creatures.put(req.user, creatureId, req.body, function(err) {
                 if(err) return next(err);
 
                 res.status(204).send();

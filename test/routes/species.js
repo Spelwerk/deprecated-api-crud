@@ -15,7 +15,8 @@ describe('/species', function() {
 
     let baseRoute = '/species';
 
-    let temporaryId;
+    let temporaryId,
+        temporaryId2;
 
     before(function(done) {
         app.login(done);
@@ -82,6 +83,32 @@ describe('/species', function() {
                 });
         });
 
+        it('/ should create another new item', function(done) {
+            let payload = {
+                name: hasher(20),
+                description: hasher(20),
+                playable: true,
+                manifestation: true,
+                max_age: 100,
+                multiply_primal: 10,
+                multiply_expertise: 10,
+                multiply_skill: 10,
+                icon: 'http://fakeicon.com/' + hasher(20) + '.png'
+            };
+
+            app.post(baseRoute, payload)
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.id);
+
+                    temporaryId2 = res.body.id;
+
+                    done();
+                });
+        });
+
         it('/:id/comments should create a new comment', function(done) {
             app.post(baseRoute + '/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)
@@ -111,6 +138,10 @@ describe('/species', function() {
 
         it('/:id/canon/:canon should update the canon status', function(done) {
             app.put(baseRoute + '/' + temporaryId + '/canon/1').expect(204).end(done);
+        });
+
+        it('/:id/canon/:canon should update the canon status for the second species', function(done) {
+            app.put(baseRoute + '/' + temporaryId2 + '/canon/1').expect(204).end(done);
         });
 
         it('/:id/permissions/favorite/1 should set it as favorite', function(done) {

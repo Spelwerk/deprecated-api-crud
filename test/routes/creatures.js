@@ -79,8 +79,27 @@ describe('/creatures', function() {
                 middlename: hasher(20),
                 lastname: hasher(20),
                 world_id: worldId,
+
                 species_id: speciesId,
-                description: hasher(40)
+
+                corporation_id: 1,
+                country_id: 1,
+                identity_id: 1,
+                nature_id: 1,
+                wealth_id: 1,
+
+                appearance: hasher(20),
+                age: 150,
+                biography: hasher(20),
+                death: 100,
+                description: hasher(40),
+                drive: hasher(20),
+                gender: hasher(20),
+                occupation: hasher(20),
+                personality: hasher(20),
+                pride: hasher(20),
+                problem: hasher(20),
+                shame: hasher(20)
             };
 
             app.post(baseRoute, payload)
@@ -130,25 +149,25 @@ describe('/creatures', function() {
                 nickname: hasher(20),
                 middlename: hasher(20),
                 lastname: hasher(20),
-                calculated: true,
+
+                corporation_id: 1,
+                country_id: 1,
+                identity_id: 1,
+                nature_id: 1,
+                wealth_id: 1,
+
                 appearance: hasher(20),
-                age: 50,
+                age: 200,
                 biography: hasher(20),
-                description: hasher(20),
+                death: 16,
+                description: hasher(40),
                 drive: hasher(20),
                 gender: hasher(20),
                 occupation: hasher(20),
                 personality: hasher(20),
                 pride: hasher(20),
                 problem: hasher(20),
-                shame: hasher(20),
-                point_primal: 1,
-                point_expertise: 2,
-                point_gift: 3,
-                point_imperfection: 4,
-                point_milestone: 5,
-                point_skill: 6,
-                wealth_id: 1
+                shame: hasher(20)
             };
 
             app.put(baseRoute + '/' + temporaryId, payload)
@@ -891,11 +910,10 @@ describe('/creatures', function() {
 
     });
 
-    xdescribe('/species', function() {
+    // special adding -2
+    describe('/species', function() {
         let relationRoute = 'species',
             relationId;
-
-        // special. adds 2nd to last species
 
         before(function(done) {
             app.get('/' + relationRoute)
@@ -1062,7 +1080,7 @@ describe('/creatures', function() {
         it('UNEQUIP /:id/unequip should equip the item to the creature', function(done) {
             app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/unequip').expect(204).end(done);
         });
-/*
+
         let modId;
 
         before(function(done) {
@@ -1085,9 +1103,8 @@ describe('/creatures', function() {
         it('GET /:id/mods should display a list of items', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId + '/mods').expect(200).end(function(err, res) { verifier.relations(err, res, done); });
         });
-*/
-    });
 
+    });
 
     describe('/dementations', function() {
         let relationRoute = 'dementations',
