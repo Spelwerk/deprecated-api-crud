@@ -191,7 +191,7 @@ function setup(done) {
         }
     ], function(err) {
         //todo commented out, used for verification. delete when happy.
-        //console.log(tables['weapon']);
+        //console.log(tables['creature']);
 
         done(err);
     });
