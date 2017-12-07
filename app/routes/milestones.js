@@ -52,10 +52,12 @@ module.exports = function(router) {
 
     // Relations
 
+    relations(router, tableName, 'armours', 'armour');
     relations(router, tableName, 'assets', 'asset');
     relations(router, tableName, 'attributes', 'attribute');
     relations(router, tableName, 'bionics', 'bionic');
     relations(router, tableName, 'primals', 'primal');
+    relations(router, tableName, 'shields', 'shield');
     relations(router, tableName, 'skills', 'skill');
     relations(router, tableName, 'weapons', 'weapon');
 };

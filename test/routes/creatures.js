@@ -812,6 +812,7 @@ describe('/creatures', function() {
 
     });
 
+    // special adding -2
     describe('/shields', function() {
         let relationRoute = 'shields',
             relationId;
@@ -822,7 +823,7 @@ describe('/creatures', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    let length = res.body.length - 1;
+                    let length = res.body.length - 2;
                     relationId = res.body.results[length].id;
 
                     done();
@@ -1020,6 +1021,7 @@ describe('/creatures', function() {
 
     });
 
+    // special adding -2
     describe('/weapons', function() {
         let relationRoute = 'weapons',
             relationId;
