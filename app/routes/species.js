@@ -67,6 +67,7 @@ module.exports = function(router) {
         });
 
     generic.deleted(router, tableName, sql);
+    generic.schema(router, tableName);
 
     router.route('/playable/:playable')
         .get(function(req, res, next) {

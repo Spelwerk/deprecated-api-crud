@@ -73,6 +73,7 @@ module.exports = function(router) {
         });
 
     generic.deleted(router, tableName, sql);
+    generic.schema(router, tableName);
 
     router.route('/manifestation/:manifestationId')
         .get(function(req, res, next) {

@@ -54,6 +54,7 @@ module.exports = function(router) {
         });
 
     generic.deleted(router, tableName, sql);
+    generic.schema(router, tableName);
 
     router.route('/augmentation/:augmentation')
         .get(function(req, res, next) {

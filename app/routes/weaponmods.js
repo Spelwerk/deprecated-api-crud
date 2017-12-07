@@ -14,6 +14,7 @@ module.exports = function(router) {
     generic.root(router, tableName, sql);
     generic.post(router, tableName);
     generic.deleted(router, tableName, sql);
+    generic.schema(router, tableName);
 
     router.route('/weapon/:weaponId')
         .get(function(req, res, next) {

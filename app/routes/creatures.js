@@ -61,6 +61,7 @@ module.exports = function(router) {
         });
 
     generic.deleted(router, tableName, sql);
+    generic.schema(router, tableName);
     generic.get(router, tableName, sql);
 
     router.route('/:id')
@@ -75,6 +76,8 @@ module.exports = function(router) {
         });
 
     generic.automatic(router, tableName);
+
+    // todo clones
 
     // RELATIONS
 

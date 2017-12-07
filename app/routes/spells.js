@@ -81,6 +81,7 @@ module.exports = function(router) {
         });
 
     generic.deleted(router, tableName, sql);
+    generic.schema(router, tableName);
     generic.get(router, tableName, sql);
     generic.put(router, tableName);
 
