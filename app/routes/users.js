@@ -262,11 +262,11 @@ module.exports = function(router) {
                     });
                 },
                 function(callback) {
-                    let text = user.passwordError
-                        ? require('../../lib/templates/user-login-password-error')()
-                        : require('../../lib/templates/user-login-password')();
+                    if(!user.passwordError) return callback();
 
-                    mailer(user.email, 'User Login Notification', text, callback);
+                    let text = require('../../lib/templates/user-login-password-error')();
+
+                    mailer(user.email, 'Erroneous User Login Notification', text, callback);
                 },
                 function(callback) {
                     if(!user.passwordError) return callback();

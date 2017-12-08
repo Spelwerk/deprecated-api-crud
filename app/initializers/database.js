@@ -9,6 +9,170 @@ let logger = require(appRoot + '/lib/logger');
 let pool,
     tables = {};
 
+const restrictedFields = ['id', 'user_id', 'canon', 'created', 'deleted', 'updated'];
+
+/**
+ * Returns a list of tables associated with the database
+ *
+ * @param callback
+ * @returns callback(err, array)
+ */
+function getTables(callback) {
+    logger.info('[DATABASE] Populating Tables Array');
+
+    let array = [];
+
+    pool.query("SELECT table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' AND table_schema = '" + nconf.get('database:database') + "'", function(err, results) {
+        if(err) return callback(err);
+
+        for(let i in results) {
+            let tableName = results[i].table_name;
+
+            array.push(tableName);
+        }
+
+        callback(null, array);
+    });
+}
+
+/**
+ * Bootstraps schema object for a table
+ *
+ * @param tableName String
+ * @param callback
+ * @returns callback(err, schema)
+ */
+function bootstrapSchema(tableName, callback) {
+    logger.info('[DATABASE] Bootstrapping schema for ' + tableName);
+
+    let schema = {
+        topTable: false,
+
+        // Table changes is restricted to admin or requires a logged in user
+        security: {
+            admin: false,
+            user: false
+        },
+
+        // The table supports the following extra relations
+        supports: {
+            comments: false,
+            copies: false,
+            images: false,
+            labels: false
+        },
+
+        // Fields
+        fields: {
+            // The table has the following special fields
+            canon: false,
+            updated: false,
+            deleted: false,
+
+            // List of all fields
+            all: [],
+
+            // List of all fields that are allowed to be changed
+            accepted: []
+        },
+
+        // Relational Tables
+        tables: {
+            hasMany: [],
+            isOne: [],
+            withData: []
+        }
+    };
+
+    if(tableName.indexOf('_') === -1) schema.topTable = true;
+
+    pool.query("SELECT column_name FROM information_schema.columns WHERE table_name = '" + tableName + "' AND table_schema = '" + nconf.get('database:database') + "'", function(err, results) {
+        if(err) return callback(err);
+
+        for(let i in results) {
+            let columnName = results[i].column_name;
+
+            schema.fields.all.push(columnName);
+
+            if(columnName === 'canon') schema.fields.canon = true;
+            if(columnName === 'updated') schema.fields.updated = true;
+            if(columnName === 'deleted') schema.fields.deleted = true;
+
+            if(restrictedFields.indexOf(columnName) === -1) schema.fields.accepted.push(columnName);
+        }
+
+        callback(null, schema);
+    });
+}
+
+/**
+ * Loops through tablesArray and populates schema with relational information
+ *
+ * @param tablesArray Array
+ * @param tableName String
+ * @param temp Object
+ * @returns {schema}
+ */
+function schemaRelations(tablesArray, tableName, schema) {
+    for(let i in tablesArray) {
+        let compareName = tablesArray[i];
+
+        if(compareName === tableName) continue;
+        if(compareName.indexOf(tableName) === -1) continue;
+
+        // Setting User Security
+        if(compareName === 'user_has_' + tableName) {
+            schema.security.user = true;
+        }
+
+        // Setting "many to many" relations
+        if(compareName.indexOf(tableName + '_has_') !== -1) {
+            let pushName = compareName.split('_has_')[1];
+
+            if(pushName === 'comment') {
+                schema.supports.comments = true;
+            }
+
+            if(pushName === 'image') {
+                schema.supports.images = true;
+            }
+
+            if(pushName === 'label') {
+                schema.supports.labels = true;
+            }
+
+            if(['comment', 'image', 'label'].indexOf(pushName) === -1) {
+                //console.log(compareName);
+                schema.tables.hasMany.push(pushName);
+            }
+        }
+
+        // Setting "one to one" relations
+        if(compareName.indexOf(tableName + '_is_') !== -1) {
+            let pushName = compareName.split('_is_')[1];
+
+            if(pushName === 'copy') {
+                schema.supports.copies = true;
+            }
+
+            if(pushName !== 'copy') {
+                schema.tables.isOne.push(pushName);
+            }
+        }
+
+        // Setting "with data" relations
+        if(compareName.indexOf(tableName + '_with_') !== -1) {
+            let pushName = compareName.split('_with_')[1];
+
+            schema.tables.withData.push(pushName);
+        }
+    }
+
+    schema.security.admin = !schema.security.user;
+
+    return schema;
+}
+
 function setup(done) {
     let tablesArray = [];
 
@@ -36,16 +200,10 @@ function setup(done) {
             callback();
         },
         function(callback) {
-            logger.info('[DATABASE] Populating Tables Array');
-
-            pool.query("SELECT table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' AND table_schema = '" + nconf.get('database:database') + "'", function(err, results) {
+            getTables(function(err, array) {
                 if(err) return callback(err);
 
-                for(let i in results) {
-                    let tableName = results[i].table_name;
-
-                    tablesArray.push(tableName);
-                }
+                tablesArray = array;
 
                 callback();
             });
@@ -54,42 +212,10 @@ function setup(done) {
             logger.info('[DATABASE] Creating Table Schema');
 
             async.eachLimit(tablesArray, 1, function(tableName, next) {
-                // Set up the table object
-                tables[tableName] = {
-                    topTable: false,
-                    restriction: {
-                        user: false,
-                        admin: false
-                    },
-                    has: {
-                        comments: false,
-                        copies: false,
-                        images: false,
-                        labels: false,
-                        canon: false,
-                        updated: false,
-                        deleted: false
-                    },
-                    columns: [],
-                    fields: [],
-                    combinations: [],
-                    relations: {
-                        clones: [],
-                        creatures: []
-                    },
-                };
-
-                // If the table has no underscores it is a top table
-                if(tableName.indexOf('_') === -1) tables[tableName].topTable = true;
-
-                pool.query("SELECT column_name FROM information_schema.columns WHERE table_name = '" + tableName + "' AND table_schema = '" + nconf.get('database:database') + "'", function(err, results) {
+                bootstrapSchema(tableName, function(err, schema) {
                     if(err) return next(err);
 
-                    for(let i in results) {
-                        let columnName = results[i].column_name;
-
-                        tables[tableName].columns.push(columnName);
-                    }
+                    tables[tableName] = schema;
 
                     next();
                 });
@@ -100,91 +226,11 @@ function setup(done) {
         function(callback) {
             logger.info('[DATABASE] Looping Tables');
 
-            let restrictedArray = ['id', 'user_id', 'canon', 'created', 'deleted', 'updated'];
-
-            // Loop through all Tables
             for(let i in tablesArray) {
-                let tableName = tablesArray[i];
+                let tableName = tablesArray[i],
+                    schema = tables[tableName];
 
-                if(tables[tableName].topTable) logger.info('[DATABASE] Setting up schema for ' + tableName);
-
-                // Compare each table against all other tables.
-                for(let x in tablesArray) {
-                    let compareName = tablesArray[x];
-
-                    // If there's a table called user_has_* then the table can be owned by users
-                    if(compareName === 'user_has_' + tableName) {
-                        tables[tableName].restriction.user = true;
-                    }
-
-                    // If there's a table called tableName_is_* then a nullable combination table exists
-                    if(compareName.indexOf(tableName + '_is_') !== -1 && compareName.indexOf('is_copy') === -1) {
-                        let combinationName = compareName.split('_is_')[1];
-
-                        tables[tableName].combinations.push(combinationName);
-                    }
-
-                    // If there's a table called tableName_has_* then a relation table exists
-                    if(compareName.indexOf(tableName + '_has_') !== -1) {
-                        let relationName = compareName.split('_has_')[1],
-                            addToClones = true,
-                            addToCreatures = true;
-
-                        if(relationName === 'comment') {
-                            tables[tableName].has.comments = true;
-
-                            addToClones = false;
-                            addToCreatures = false;
-                        }
-
-                        if(relationName === 'image') {
-                            tables[tableName].has.images = true;
-
-                            addToCreatures = false;
-                        }
-
-                        if(relationName === 'label') {
-                            tables[tableName].has.labels = true;
-
-                            addToCreatures = false;
-                        }
-
-                        if(addToClones) tables[tableName].relations.clones.push(relationName);
-                        if(addToCreatures) tables[tableName].relations.creatures.push(relationName);
-                    }
-
-                    if(compareName.indexOf(tableName + '_is_copy') !== -1) {
-                        tables[tableName].has.copies = true;
-                    }
-                }
-
-                // Setting admin restriction to the opposite of userOwned
-                tables[tableName].restriction.admin= !tables[tableName].restriction.user;
-
-                let columnsArray = tables[tableName].columns;
-
-                for(let i in columnsArray) {
-
-                    // Verify if updated field exists in columns
-                    if(columnsArray[i] === 'canon') {
-                        tables[tableName].has.canon = true;
-                    }
-
-                    // Verify if updated field exists in columns
-                    if(columnsArray[i] === 'updated') {
-                        tables[tableName].has.updated = true;
-                    }
-
-                    // Verify if deleted field exists in columns
-                    if(columnsArray[i] === 'deleted') {
-                        tables[tableName].has.deleted = true;
-                    }
-
-                    // If the field is part of the restricted columns, don't add it to the fields list
-                    if(restrictedArray.indexOf(columnsArray[i]) === -1) {
-                        tables[tableName].fields.push(columnsArray[i]);
-                    }
-                }
+                tables[tableName] = schemaRelations(tablesArray, tableName, schema);
             }
 
             callback();
@@ -201,10 +247,10 @@ function getPool() {
     return pool;
 }
 
-function getTable(tableName) {
+function getSchema(tableName) {
     return tables[tableName];
 }
 
 module.exports.setup = setup;
 module.exports.getPool = getPool;
-module.exports.getTable = getTable;
+module.exports.getSchema = getSchema;

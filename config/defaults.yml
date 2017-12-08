@@ -12,7 +12,7 @@ weaponType:
 
 dice:
   amount: 2
-  value: 12
+  value: 6
 
 icon:
   augmentation: http://cdn.spelwerk.com/file/773d3d0695e7f5ef448ce7ea0fdcaab14f4e7f1d.png
@@ -21,14 +21,24 @@ icon:
   milestone: http://cdn.spelwerk.com/file/f0ba5d18c543b0a767832c0be49a96503fc8f75d.png
   software: http://cdn.spelwerk.com/file/e7a54531e7a664d7ac0b683017b30e46d4d856b0.png
 
-  sanity:
+  dementation:
     icon: http://cdn.spelwerk.com/file/9bc8f45b21ffb3ef3ebd179309e1266a140db646.png
     heal: http://cdn.spelwerk.com/file/a473858b0c13007cfbbd302e938cebb1648ad234.png
-
-  wound:
-    icon: http://cdn.spelwerk.com/file/40a4cce284ae3b6fd26e9ad69997edb82bcdfd86.png
-    heal: http://cdn.spelwerk.com/file/bf981642d36525ead935fb42755b01e1dc538b77.png
 
   disease:
     icon: http://cdn.spelwerk.com/file/cbc688bfcfe3cec3cdf30ea25e29b42ac68262aa.png
     heal: http://cdn.spelwerk.com/file/b61c98d02352d2329f931296be237fa5a8770d2d.png
+
+  trauma:
+    icon: http://cdn.spelwerk.com/file/40a4cce284ae3b6fd26e9ad69997edb82bcdfd86.png
+    heal: http://cdn.spelwerk.com/file/bf981642d36525ead935fb42755b01e1dc538b77.png
+
+points:
+  expertise: 10
+  form: 1
+  gift: 1
+  imperfection: 1
+  milestone: 1
+  primal: 10
+  skill: 20
+  spell: 10
