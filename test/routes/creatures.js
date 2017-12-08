@@ -632,6 +632,7 @@ describe('/creatures', function() {
         let relationRoute = 'loyalties',
             relationId,
             wealthId,
+            speciesId,
             uqId;
 
         before(function(done) {
@@ -655,6 +656,19 @@ describe('/creatures', function() {
 
                     let length = res.body.length - 1;
                     wealthId = res.body.results[length].id;
+
+                    done();
+                });
+        });
+
+        before(function(done) {
+            app.get('/species')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    let length = res.body.length - 1;
+                    speciesId = res.body.results[length].id;
 
                     done();
                 });
@@ -703,6 +717,16 @@ describe('/creatures', function() {
                 assert.isNumber(res.body.result.wealth_id);
                 if(res.body.result.name) assert.isString(res.body.result.name);
                 assert.isString(res.body.result.occupation);
+
+                done();
+            });
+        });
+
+        it('POST /:id/create should create a new creature and add it to a list of relations', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + uqId + '/create', {species_id: speciesId}).expect(201).end(function(err, res) {
+                if(err) return done(err);
+
+                assert.isNumber(res.body.id);
 
                 done();
             });
@@ -825,6 +849,15 @@ describe('/creatures', function() {
 
         it('GET /:id should display an item', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId).expect(200).end(function(err, res) { verifier.relation(err, res, done); });
+        });
+
+    });
+
+    describe('/relations', function() {
+        let relationRoute = 'relations';
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
         });
 
     });
