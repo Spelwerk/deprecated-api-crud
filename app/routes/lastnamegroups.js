@@ -2,7 +2,7 @@
 
 let UserNotAdministratorError = require('../../lib/errors/user-not-administrator-error');
 
-let sequel = require('../../lib/sql/sequel'),
+let sequel = require('../../lib/helper/sequel'),
     query = require('../../lib/sql/query');
 
 let unique = require('../../lib/helper/unique');

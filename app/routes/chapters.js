@@ -1,7 +1,7 @@
 'use strict';
 
 let generic = require('../../lib/helper/generic'),
-    sequel = require('../../lib/sql/sequel'),
+    sequel = require('../../lib/helper/sequel'),
     chapters = require('../../lib/helper/chapters');
 
 module.exports = function(router) {

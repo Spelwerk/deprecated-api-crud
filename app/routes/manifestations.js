@@ -87,5 +87,5 @@ module.exports = function(router) {
 
     // Relations
 
-    relations(router, tableName, 'attributes', 'attribute');
+    relations.route(router, tableName, 'attributes', 'attribute');
 };

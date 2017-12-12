@@ -6,7 +6,7 @@ let async = require('async');
 
 let generic = require('../../lib/helper/generic'),
     elemental = require('../../lib/sql/elemental'),
-    sequel = require('../../lib/sql/sequel'),
+    sequel = require('../../lib/helper/sequel'),
     query = require('../../lib/sql/query'),
     ownership = require('../../lib/sql/ownership');
 

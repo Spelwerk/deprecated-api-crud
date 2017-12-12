@@ -5,7 +5,7 @@ let UserNotAdministratorError = require('../../lib/errors/user-not-administrator
 
 let async = require('async');
 
-let sequel = require('../../lib/sql/sequel'),
+let sequel = require('../../lib/helper/sequel'),
     query = require('../../lib/sql/query');
 
 module.exports = function(router) {

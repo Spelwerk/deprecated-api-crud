@@ -21,7 +21,7 @@ module.exports = function(router) {
 
     // Relations
 
-    relations(router, tableName, 'attributes', 'attribute');
-    relations(router, tableName, 'primals', 'primal');
-    relations(router, tableName, 'skills', 'skill');
+    relations.route(router, tableName, 'attributes', 'attribute');
+    relations.route(router, tableName, 'primals', 'primal');
+    relations.route(router, tableName, 'skills', 'skill');
 };

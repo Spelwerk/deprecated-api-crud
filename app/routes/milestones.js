@@ -2,7 +2,7 @@
 
 let generic = require('../../lib/helper/generic'),
     relations = require('../../lib/helper/relations'),
-    sequel = require('../../lib/sql/sequel'),
+    sequel = require('../../lib/helper/sequel'),
     milestones = require('../../lib/helper/milestones');
 
 module.exports = function(router) {
@@ -53,12 +53,12 @@ module.exports = function(router) {
 
     // Relations
 
-    relations(router, tableName, 'armours', 'armour');
-    relations(router, tableName, 'assets', 'asset');
-    relations(router, tableName, 'attributes', 'attribute');
-    relations(router, tableName, 'bionics', 'bionic');
-    relations(router, tableName, 'primals', 'primal');
-    relations(router, tableName, 'shields', 'shield');
-    relations(router, tableName, 'skills', 'skill');
-    relations(router, tableName, 'weapons', 'weapon');
+    relations.route(router, tableName, 'armours', 'armour');
+    relations.route(router, tableName, 'assets', 'asset');
+    relations.route(router, tableName, 'attributes', 'attribute');
+    relations.route(router, tableName, 'bionics', 'bionic');
+    relations.route(router, tableName, 'primals', 'primal');
+    relations.route(router, tableName, 'shields', 'shield');
+    relations.route(router, tableName, 'skills', 'skill');
+    relations.route(router, tableName, 'weapons', 'weapon');
 };

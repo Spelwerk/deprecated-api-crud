@@ -72,9 +72,9 @@ module.exports = function(router) {
 
     // Relations
 
-    relations(router, tableName, 'attributes', 'attribute');
-    relations(router, tableName, 'countries', 'country');
-    relations(router, tableName, 'identities', 'identity');
-    relations(router, tableName, 'locations', 'location');
-    relations(router, tableName, 'natures', 'nature');
+    relations.route(router, tableName, 'attributes', 'attribute');
+    relations.route(router, tableName, 'countries', 'country');
+    relations.route(router, tableName, 'identities', 'identity');
+    relations.route(router, tableName, 'locations', 'location');
+    relations.route(router, tableName, 'natures', 'nature');
 };

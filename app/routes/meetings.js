@@ -1,6 +1,6 @@
 'use strict';
 
-let sequel = require('../../lib/sql/sequel'),
+let sequel = require('../../lib/helper/sequel'),
     meetings = require('../../lib/helper/meetings');
 
 module.exports = function(router) {

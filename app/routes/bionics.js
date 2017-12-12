@@ -2,7 +2,7 @@
 
 let generic = require('../../lib/helper/generic'),
     relations = require('../../lib/helper/relations'),
-    sequel = require('../../lib/sql/sequel');
+    sequel = require('../../lib/helper/sequel');
 
 module.exports = function(router) {
     const tableName = 'bionic';
@@ -31,8 +31,8 @@ module.exports = function(router) {
 
     // Relations
 
-    relations(router, tableName, 'attributes', 'attribute');
-    relations(router, tableName, 'augmentations', 'augmentation');
-    relations(router, tableName, 'skills', 'skill');
-    relations(router, tableName, 'software', 'software');
+    relations.route(router, tableName, 'attributes', 'attribute');
+    relations.route(router, tableName, 'augmentations', 'augmentation');
+    relations.route(router, tableName, 'skills', 'skill');
+    relations.route(router, tableName, 'software', 'software');
 };

@@ -2,7 +2,7 @@
 
 let generic = require('../../lib/helper/generic'),
     relations = require('../../lib/helper/relations'),
-    sequel = require('../../lib/sql/sequel');
+    sequel = require('../../lib/helper/sequel');
 
 module.exports = function(router) {
     const tableName = 'weapon';
@@ -96,10 +96,10 @@ module.exports = function(router) {
 
     // Relations
 
-    relations(router, tableName, 'attributes', 'attribute');
-    relations(router, tableName, 'primals', 'primal');
-    relations(router, tableName, 'mods', 'weaponmod');
-    relations(router, tableName, 'skills', 'skill');
+    relations.route(router, tableName, 'attributes', 'attribute');
+    relations.route(router, tableName, 'primals', 'primal');
+    relations.route(router, tableName, 'mods', 'weaponmod');
+    relations.route(router, tableName, 'skills', 'skill');
 };
 
 //todo is_form

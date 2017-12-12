@@ -17,7 +17,7 @@ let async = require('async'),
     moment = require('moment');
 
 let query = require('../../lib/sql/query'),
-    sequel = require('../../lib/sql/sequel'),
+    sequel = require('../../lib/helper/sequel'),
     mailer = require('../../lib/mailer'),
     onion = require('../../lib/onion'),
     hasher = require('../../lib/hasher'),

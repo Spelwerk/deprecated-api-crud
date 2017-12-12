@@ -6,7 +6,7 @@ let async = require('async'),
 let generic = require('../../lib/helper/generic'),
     elemental = require('../../lib/sql/elemental'),
     relations = require('../../lib/helper/relations'),
-    sequel = require('../../lib/sql/sequel');
+    sequel = require('../../lib/helper/sequel');
 
 let defaults = yaml.readSync('./../../config/defaults.yml');
 
@@ -74,5 +74,5 @@ module.exports = function(router) {
 
     // Relations
 
-    relations(router, tableName, 'attributes', 'attribute');
+    relations.route(router, tableName, 'attributes', 'attribute');
 };

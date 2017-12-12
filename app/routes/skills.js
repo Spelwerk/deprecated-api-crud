@@ -4,7 +4,7 @@ let async = require('async');
 
 let generic = require('../../lib/helper/generic'),
     elemental = require('../../lib/sql/elemental'),
-    sequel = require('../../lib/sql/sequel');
+    sequel = require('../../lib/helper/sequel');
 
 module.exports = function(router) {
     const tableName = 'skill';
