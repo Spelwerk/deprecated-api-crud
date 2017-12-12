@@ -1,7 +1,6 @@
 'use strict';
 
 let generic = require('../../lib/helper/generic'),
-    relations = require('../../lib/helper/relations'),
     sequel = require('../../lib/sql/sequel');
 
 module.exports = function(router) {
@@ -31,9 +30,4 @@ module.exports = function(router) {
     generic.put(router, tableName);
 
     generic.automatic(router, tableName);
-
-    // Relations
-
-    //relations(router, tableName, 'attributes', 'attribute');
-
 };

@@ -21,32 +21,16 @@ module.exports = function(router) {
         .post(function(req, res, next) {
             if(!req.user.id) return next(new UserNotLoggedInError);
 
-            let world = {
-                name: req.body.name,
-                description: req.body.description,
-                augmentation: req.body.augmentation,
-                bionic: req.body.bionic,
-                corporation: req.body.corporation,
-                manifestation: req.body.manifestation,
-                software: req.body.software,
-                max_primal: req.body.max_primal,
-                max_expertise: req.body.max_expertise,
-                max_skill: req.body.max_skill,
-                split_primal: req.body.split_primal,
-                split_expertise: req.body.split_expertise,
-                split_milestone: req.body.split_milestone,
-                split_skill: req.body.split_skill
-            };
+            let worldId;
 
-            let attributeQuery = 'INSERT INTO world_has_attribute (world_id,attribute_id,value,minimum,maximum) VALUES ',
-                skillQuery = 'INSERT INTO world_has_skill (world_id,skill_id) VALUES ';
+            let attributeQuery = 'INSERT INTO world_has_attribute (world_id,attribute_id,value,minimum,maximum) VALUES ';
 
             async.series([
                 function(callback) {
-                    elemental.post(req.user, world, 'world', function(err, id) {
+                    elemental.post(req.user, req.body, tableName, function(err, id) {
                         if(err) return callback(err);
 
-                        world.id = id;
+                        worldId = id;
 
                         callback();
                     });
@@ -56,7 +40,12 @@ module.exports = function(router) {
                         if(err) return callback(err);
 
                         for(let i in results) {
-                            attributeQuery += '(' + world.id + ',' + results[i].id + ',' + results[i].minimum + ',' + results[i].minimum + ',' + results[i].maximum + '),';
+                            let attributeId = parseInt(results[i].id),
+                                value = parseInt(results[i].minimum),
+                                minimum = parseInt(results[i].minimum),
+                                maximum = parseInt(results[i].maximum);
+
+                            attributeQuery += '(' + worldId + ',' + attributeId + ',' + value + ',' + minimum + ',' + maximum + '),';
                         }
 
                         attributeQuery = attributeQuery.slice(0, -1);
@@ -66,27 +55,11 @@ module.exports = function(router) {
                 },
                 function(callback) {
                     query(attributeQuery, null, callback);
-                },
-                function(callback) {
-                    query('SELECT id FROM skill WHERE optional = 0', null, function(err, results) {
-                        if(err) return callback(err);
-
-                        for(let i in results) {
-                            skillQuery += '(' + world.id + ',' + results[i].id + '),';
-                        }
-
-                        skillQuery = skillQuery.slice(0, -1);
-
-                        callback();
-                    });
-                },
-                function(callback) {
-                    query(skillQuery, null, callback);
                 }
             ], function(err) {
                 if(err) return next(err);
 
-                res.status(201).send({id: world.id});
+                res.status(201).send({id: worldId});
             });
         });
 
@@ -99,25 +72,9 @@ module.exports = function(router) {
 
     // Relations
 
-    relations(router, tableName, 'armours', 'armour');
-    relations(router, tableName, 'assets', 'asset');
     relations(router, tableName, 'attributes', 'attribute');
-    relations(router, tableName, 'backgrounds', 'background');
-    relations(router, tableName, 'bionics', 'bionic');
-    relations(router, tableName, 'corporations', 'corporation');
     relations(router, tableName, 'countries', 'country');
-    relations(router, tableName, 'expertises', 'expertise');
-    relations(router, tableName, 'gifts', 'gift');
     relations(router, tableName, 'identities', 'identity');
-    relations(router, tableName, 'imperfections', 'imperfection');
     relations(router, tableName, 'locations', 'location');
-    relations(router, tableName, 'manifestations', 'manifestation');
-    relations(router, tableName, 'milestones', 'milestone');
     relations(router, tableName, 'natures', 'nature');
-    relations(router, tableName, 'shields', 'shield');
-    relations(router, tableName, 'skills', 'skill');
-    relations(router, tableName, 'software', 'software');
-    relations(router, tableName, 'species', 'species');
-    relations(router, tableName, 'wealth', 'wealth');
-    relations(router, tableName, 'weapons', 'weapon');
 };

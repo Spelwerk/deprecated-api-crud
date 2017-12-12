@@ -94,6 +94,26 @@ describe('/skills', function() {
                 });
         });
 
+        it('/ should create another new item', function(done) {
+            let payload = {
+                name: hasher(20),
+                description: hasher(20),
+                icon: 'http://fakeicon.com/' + hasher(20) + '.png'
+            };
+
+            app.post(baseRoute, payload)
+                .expect(201)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    assert.isNumber(res.body.id);
+
+                    temporaryId = res.body.id;
+
+                    done();
+                });
+        });
+
         it('/:id/comments should create a new comment', function(done) {
             app.post(baseRoute + '/' + temporaryId + '/comments', { comment: hasher(20) })
                 .expect(201)

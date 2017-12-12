@@ -7,13 +7,13 @@ let should = chai.should(),
     assert = chai.assert,
     expect = chai.expect;
 
-let app = require('../app'),
-    verifier = require('../verifier'),
-    hasher = require('../../lib/hasher');
+let app = require('./../app'),
+    verifier = require('./../verifier'),
+    hasher = require('./../../lib/hasher');
 
-describe('/weaponmods', function() {
+describe('/creaturetypes', function() {
 
-    let baseRoute = '/weaponmods';
+    let baseRoute = '/creaturetypes';
 
     let temporaryId;
 
@@ -38,14 +38,6 @@ describe('/weaponmods', function() {
 
     function verifyItem(item) {
         verifier.generic(item);
-
-        assert.isString(item.short);
-        assert.isNumber(item.price);
-        assert.isNumber(item.damage_dice);
-        assert.isNumber(item.damage_bonus);
-        assert.isNumber(item.critical_dice);
-        assert.isNumber(item.critical_bonus);
-        assert.isNumber(item.distance);
     }
 
 
@@ -53,17 +45,7 @@ describe('/weaponmods', function() {
 
         it('/ should create a new item', function(done) {
             let payload = {
-                name: hasher(20),
-                description: hasher(20),
-                short: hasher(2),
-                price: 1,
-                damage_dice: 2,
-                damage_bonus: 3,
-                critical_dice: 4,
-                critical_bonus: 5,
-                hit: 6,
-                hands: 7,
-                distance: 50
+                name: hasher(20)
             };
 
             app.post(baseRoute, payload)
@@ -79,27 +61,12 @@ describe('/weaponmods', function() {
                 });
         });
 
-        it('/:id/comments should create a new comment', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/comments', { comment: hasher(20) })
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
-        });
-
     });
 
     describe('PUT', function() {
 
         it('/:id should update the item with new values', function(done) {
-            let payload = {
-                name: hasher(20),
-                description: hasher(20)
-            };
+            let payload = {name: hasher(20)};
 
             app.put(baseRoute + '/' + temporaryId, payload)
                 .expect(204)
@@ -107,11 +74,9 @@ describe('/weaponmods', function() {
         });
 
         it('/:id/canon/:canon should update the canon status', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/canon/1').expect(204).end(done);
-        });
-
-        it('/:id/permissions/favorite/1 should set it as favorite', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/permissions/favorite/1').expect(204).end(done);
+            app.put(baseRoute + '/' + temporaryId + '/canon/1')
+                .expect(204)
+                .end(done);
         });
 
     });
@@ -152,30 +117,6 @@ describe('/weaponmods', function() {
 
                     done();
                 })
-        });
-
-        it('/:id/permissions should return user permissions', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/permissions').expect(200).end(function(err, res) { verifier.ownership(err, res, done); });
-        });
-
-        it('/:id/comments should get all available comments', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/comments').expect(200).end(function(err, res) { verifier.comments(err, res, done); });
-        });
-
-    });
-
-    describe('CLONE', function() {
-
-        it('/:id/clone should create a copy', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/clone')
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
         });
 
     });

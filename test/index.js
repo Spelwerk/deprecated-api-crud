@@ -1,4 +1,7 @@
 require('./routes/attributetypes');
+require('./routes/creaturetypes');
+require('./routes/softwaretypes');
+
 require('./routes/attributes');
 
 require('./routes/bodyparts');
@@ -6,7 +9,6 @@ require('./routes/identities');
 require('./routes/natures');
 require('./routes/languages');
 require('./routes/loyalties');
-require('./routes/softwaretypes');
 
 require('./routes/nicknames');
 require('./routes/nicknamegroups');
@@ -27,6 +29,11 @@ require('./routes/labels');
 
 require('./routes/manifestations');
 require('./routes/focuses');
+
+require('./routes/countries');
+require('./routes/locations');
+require('./routes/corporations');
+require('./routes/worlds');
 
 require('./routes/species');
 
@@ -57,10 +64,7 @@ require('./routes/tactics');
 require('./routes/backgrounds');
 require('./routes/milestones');
 
-require('./routes/countries');
-require('./routes/locations');
-require('./routes/corporations');
-require('./routes/worlds');
+require('./routes/epochs');
 
 require('./routes/creatures');
 

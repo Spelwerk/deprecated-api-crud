@@ -21,6 +21,20 @@ describe('/creatures', function() {
         app.login(done);
     });
 
+    let typeId;
+    before(function(done) {
+        app.get('/creaturetypes')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                let length = res.body.length - 1;
+                typeId = res.body.results[length].id;
+
+                done();
+            });
+    });
+
     let speciesId;
     before(function(done) {
         app.get('/species')
@@ -35,15 +49,15 @@ describe('/creatures', function() {
             });
     });
 
-    let worldId;
+    let epochId;
     before(function(done) {
-        app.get('/worlds')
+        app.get('/epochs')
             .expect(200)
             .end(function(err, res) {
                 if(err) return done(err);
 
                 let length = res.body.length - 1;
-                worldId = res.body.results[length].id;
+                epochId = res.body.results[length].id;
 
                 done();
             });
@@ -78,8 +92,9 @@ describe('/creatures', function() {
                 nickname: hasher(20),
                 middlename: hasher(20),
                 lastname: hasher(20),
-                world_id: worldId,
 
+                creaturetype_id: typeId,
+                epoch_id: epochId,
                 species_id: speciesId,
 
                 corporation_id: 1,

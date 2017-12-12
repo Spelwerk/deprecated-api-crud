@@ -20,17 +20,7 @@ module.exports = function(router) {
 
     router.route('/')
         .post(function(req, res, next) {
-            let species = {
-                name: req.body.name,
-                description: req.body.description,
-                icon: req.body.icon,
-                playable: req.body.playable,
-                manifestation: req.body.manifestation,
-                max_age: req.body.max_age,
-                multiply_primal: req.body.multiply_primal,
-                multiply_expertise: req.body.multiply_expertise,
-                multiply_skill: req.body.multiply_skill
-            };
+            let speciesId;
 
             let weapon = {
                 name: req.body.weapon || 'Brawl',
@@ -47,10 +37,10 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    elemental.post(req.user, species, 'species', function(err, id) {
+                    elemental.post(req.user, req.body, 'species', function(err, id) {
                         if(err) return callback(err);
 
-                        species.id = id;
+                        speciesId = id;
                         weapon.species_id = id;
 
                         callback();
@@ -62,19 +52,19 @@ module.exports = function(router) {
             ], function(err) {
                 if(err) return next(err);
 
-                res.status(201).send({id: species.id});
+                res.status(201).send({id: speciesId});
             });
         });
 
     generic.deleted(router, tableName, sql);
     generic.schema(router, tableName);
 
-    router.route('/playable/:playable')
+    router.route('/world/:worldId')
         .get(function(req, res, next) {
             let call = sql + ' WHERE deleted IS NULL AND ' +
-                'playable = ?';
+                'world_id = ?';
 
-            sequel.get(req, res, next, call, [req.params.playable]);
+            sequel.get(req, res, next, call, [req.params.worldId]);
         });
 
     generic.get(router, tableName, sql);

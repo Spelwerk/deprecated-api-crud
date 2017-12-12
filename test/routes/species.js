@@ -22,6 +22,21 @@ describe('/species', function() {
         app.login(done);
     });
 
+    let worldId;
+    before(function(done) {
+        app.get('/worlds')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                let length = res.body.length - 1;
+                worldId = res.body.results[length].id;
+
+                done();
+            });
+    });
+
+
     function verifyList(body) {
         assert.isNumber(body.length);
 
@@ -43,11 +58,13 @@ describe('/species', function() {
 
         assert.isString(item.name);
         if(item.description) assert.isString(item.description);
-        assert.isBoolean(item.playable);
-        assert.isNumber(item.max_age);
-        assert.isNumber(item.multiply_skill);
-        assert.isNumber(item.multiply_expertise);
+        if(item.history) assert.isString(item.history);
         if(item.icon) assert.equal(validator.isURL(item.icon), true);
+        assert.isNumber(item.world_id);
+        assert.isBoolean(item.playable);
+        assert.isBoolean(item.manifestation);
+        assert.isNumber(item.max_age);
+        assert.isNumber(item.multiply_points);
 
         assert.isString(item.created);
         if(item.updated) assert.isString(item.updated);
@@ -61,13 +78,13 @@ describe('/species', function() {
             let payload = {
                 name: hasher(20),
                 description: hasher(20),
+                history: hasher(20),
+                icon: 'http://fakeicon.com/' + hasher(20) + '.png',
+                world_id: worldId,
                 playable: true,
                 manifestation: true,
                 max_age: 100,
-                multiply_primal: 10,
-                multiply_expertise: 10,
-                multiply_skill: 10,
-                icon: 'http://fakeicon.com/' + hasher(20) + '.png'
+                multiply_points: 1
             };
 
             app.post(baseRoute, payload)
@@ -87,13 +104,13 @@ describe('/species', function() {
             let payload = {
                 name: hasher(20),
                 description: hasher(20),
+                history: hasher(20),
+                icon: 'http://fakeicon.com/' + hasher(20) + '.png',
+                world_id: worldId,
                 playable: true,
                 manifestation: true,
                 max_age: 100,
-                multiply_primal: 10,
-                multiply_expertise: 10,
-                multiply_skill: 10,
-                icon: 'http://fakeicon.com/' + hasher(20) + '.png'
+                multiply_points: 1
             };
 
             app.post(baseRoute, payload)

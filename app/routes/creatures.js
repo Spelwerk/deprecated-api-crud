@@ -93,6 +93,7 @@ module.exports = function(router) {
 
     creatures.corporation(router);
     creatures.country(router);
+    creatures.epoch(router);
     creatures.identity(router);
     creatures.nature(router);
     creatures.wealth(router);
