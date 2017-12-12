@@ -9,7 +9,7 @@ let logger = require(appRoot + '/lib/logger');
 let pool,
     tables = {};
 
-const restrictedFields = ['id', 'user_id', 'canon', 'created', 'deleted', 'updated'];
+const restrictedFields = ['id', 'user_id', 'canon', 'calculated', 'template', 'created', 'deleted', 'updated'];
 
 /**
  * Returns a list of tables associated with the database

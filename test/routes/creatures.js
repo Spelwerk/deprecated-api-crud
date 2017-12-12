@@ -56,8 +56,78 @@ describe('/creatures', function() {
             .end(function(err, res) {
                 if(err) return done(err);
 
-                let length = res.body.length - 1;
-                epochId = res.body.results[length].id;
+                let rand = app.randomNumber(1, res.body.length - 1);
+                epochId = res.body.results[rand].id;
+
+                done();
+            });
+    });
+
+    let corporationId;
+    before(function(done) {
+        app.get('/corporations')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                let rand = app.randomNumber(1, res.body.length - 1);
+                corporationId = res.body.results[rand].id;
+
+                done();
+            });
+    });
+
+    let countryId;
+    before(function(done) {
+        app.get('/countries')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                let rand = app.randomNumber(1, res.body.length - 1);
+                countryId = res.body.results[rand].id;
+
+                done();
+            });
+    });
+
+    let identityId;
+    before(function(done) {
+        app.get('/identities')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                let rand = app.randomNumber(1, res.body.length - 1);
+                identityId = res.body.results[rand].id;
+
+                done();
+            });
+    });
+
+    let natureId;
+    before(function(done) {
+        app.get('/natures')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                let rand = app.randomNumber(1, res.body.length - 1);
+                natureId = res.body.results[rand].id;
+
+                done();
+            });
+    });
+
+    let wealthId;
+    before(function(done) {
+        app.get('/wealth')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                let rand = app.randomNumber(1, res.body.length - 1);
+                wealthId = res.body.results[rand].id;
 
                 done();
             });
@@ -97,14 +167,14 @@ describe('/creatures', function() {
                 epoch_id: epochId,
                 species_id: speciesId,
 
-                corporation_id: 1,
-                country_id: 1,
-                identity_id: 1,
-                nature_id: 1,
-                wealth_id: 1,
+                corporation_id: corporationId,
+                country_id: countryId,
+                identity_id: identityId,
+                nature_id: natureId,
+                wealth_id: wealthId,
 
                 appearance: hasher(20),
-                age: 150,
+                age: app.randomNumber(15, 70),
                 biography: hasher(20),
                 description: hasher(40),
                 drive: hasher(20),
@@ -164,14 +234,8 @@ describe('/creatures', function() {
                 middlename: hasher(20),
                 lastname: hasher(20),
 
-                corporation_id: 1,
-                country_id: 1,
-                identity_id: 1,
-                nature_id: 1,
-                wealth_id: 1,
-
                 appearance: hasher(20),
-                age: 200,
+                age: app.randomNumber(20, 70),
                 biography: hasher(20),
                 description: hasher(40),
                 drive: hasher(20),
@@ -738,7 +802,7 @@ describe('/creatures', function() {
         });
 
         it('POST /:id/create should create a new creature and add it to a list of relations', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + uqId + '/create', {species_id: speciesId}).expect(201).end(function(err, res) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + uqId + '/create', {species_id: speciesId, age: app.randomNumber(10, 80)}).expect(201).end(function(err, res) {
                 if(err) return done(err);
 
                 assert.isNumber(res.body.id);

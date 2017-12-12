@@ -9,7 +9,7 @@ let adminToken = '',
 let apiId = 'id',
     apiSecret = 'secret';
 
-exports.login = function(callback) {
+module.exports.login = function(callback) {
     let request = supertest(base);
 
     request
@@ -29,7 +29,7 @@ exports.login = function(callback) {
         });
 };
 
-exports.get = function(path, token) {
+module.exports.get = function(path, token) {
     token = token || adminToken;
 
     let request = supertest(base);
@@ -42,7 +42,7 @@ exports.get = function(path, token) {
         });
 };
 
-exports.post = function(path, data, token) {
+module.exports.post = function(path, data, token) {
     token = token || adminToken;
 
     let request = supertest(base);
@@ -58,7 +58,7 @@ exports.post = function(path, data, token) {
         });
 };
 
-exports.put = function(path, data, token) {
+module.exports.put = function(path, data, token) {
     token = token || adminToken;
 
     let request = supertest(base);
@@ -74,7 +74,7 @@ exports.put = function(path, data, token) {
         });
 };
 
-exports.delete = function(path, token) {
+module.exports.delete = function(path, token) {
     token = token || adminToken;
 
     let request = supertest(base);
@@ -85,4 +85,8 @@ exports.delete = function(path, token) {
         .set({
             "x-user-token": token
         });
+};
+
+module.exports.randomNumber = function(min, max) {
+    return Math.floor(Math.random()*(max-min+1)+min);
 };
