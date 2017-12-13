@@ -42,8 +42,8 @@ describe('/creatures', function() {
             .end(function(err, res) {
                 if(err) return done(err);
 
-                let rand = app.randomNumber(0, res.body.length - 1);
-                speciesId = res.body.results[rand].id;
+                let length = res.body.length - 1;
+                speciesId = res.body.results[length].id;
 
                 done();
             });
