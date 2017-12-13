@@ -42,8 +42,8 @@ describe('/creatures', function() {
             .end(function(err, res) {
                 if(err) return done(err);
 
-                let length = res.body.length - 1;
-                speciesId = res.body.results[length].id;
+                let rand = app.randomNumber(0, res.body.length - 1);
+                speciesId = res.body.results[rand].id;
 
                 done();
             });
@@ -56,7 +56,7 @@ describe('/creatures', function() {
             .end(function(err, res) {
                 if(err) return done(err);
 
-                let rand = app.randomNumber(1, res.body.length - 1);
+                let rand = app.randomNumber(0, res.body.length - 1);
                 epochId = res.body.results[rand].id;
 
                 done();
@@ -70,7 +70,7 @@ describe('/creatures', function() {
             .end(function(err, res) {
                 if(err) return done(err);
 
-                let rand = app.randomNumber(1, res.body.length - 1);
+                let rand = app.randomNumber(0, res.body.length - 1);
                 corporationId = res.body.results[rand].id;
 
                 done();
@@ -84,7 +84,7 @@ describe('/creatures', function() {
             .end(function(err, res) {
                 if(err) return done(err);
 
-                let rand = app.randomNumber(1, res.body.length - 1);
+                let rand = app.randomNumber(0, res.body.length - 1);
                 countryId = res.body.results[rand].id;
 
                 done();
@@ -98,7 +98,7 @@ describe('/creatures', function() {
             .end(function(err, res) {
                 if(err) return done(err);
 
-                let rand = app.randomNumber(1, res.body.length - 1);
+                let rand = app.randomNumber(0, res.body.length - 1);
                 identityId = res.body.results[rand].id;
 
                 done();
@@ -112,7 +112,7 @@ describe('/creatures', function() {
             .end(function(err, res) {
                 if(err) return done(err);
 
-                let rand = app.randomNumber(1, res.body.length - 1);
+                let rand = app.randomNumber(0, res.body.length - 1);
                 natureId = res.body.results[rand].id;
 
                 done();
@@ -126,7 +126,7 @@ describe('/creatures', function() {
             .end(function(err, res) {
                 if(err) return done(err);
 
-                let rand = app.randomNumber(1, res.body.length - 1);
+                let rand = app.randomNumber(0, res.body.length - 1);
                 wealthId = res.body.results[rand].id;
 
                 done();

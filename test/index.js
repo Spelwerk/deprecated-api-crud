@@ -29,6 +29,7 @@ require('./routes/labels');
 
 require('./routes/manifestations');
 require('./routes/focuses');
+require('./routes/spelltypes');
 
 require('./routes/countries');
 require('./routes/locations');
@@ -39,9 +40,10 @@ require('./routes/species');
 
 require('./routes/skills');
 require('./routes/expertises');
+
+require('./routes/forms');
 require('./routes/primals');
 require('./routes/spells');
-require('./routes/forms');
 
 require('./routes/gifts');
 require('./routes/imperfections');

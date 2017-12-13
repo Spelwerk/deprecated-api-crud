@@ -62,8 +62,6 @@ module.exports = function(router) {
 
     generic.automatic(router, tableName);
 
-    // todo clones
-
     // RELATIONS
 
     creatures.armours(router);

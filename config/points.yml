@@ -26,4 +26,5 @@ maximum:
 
 cost:
   form: 10
+  gift: 10
   milestone: 10

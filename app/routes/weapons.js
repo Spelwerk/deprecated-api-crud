@@ -26,6 +26,7 @@ module.exports = function(router) {
         'weapon.created, ' +
         'weapon.updated, ' +
         'weapon.deleted, ' +
+        'weapontype.name AS weapontype_name, ' +
         'weapontype.icon, ' +
         'weapontype.attribute_id, ' +
         'weapontype.expertise_id, ' +
@@ -101,6 +102,3 @@ module.exports = function(router) {
     relations.route(router, tableName, 'mods', 'weaponmod');
     relations.route(router, tableName, 'skills', 'skill');
 };
-
-//todo is_form
-//todo is_manifestation

@@ -25,7 +25,7 @@ module.exports = function(router) {
 
             let weaponTypeId;
 
-            req.body.equipable = !!req.body.augmentation || !!req.body.species_id;
+            req.body.equipable = !!req.body.augmentation || !!req.body.form || !!req.body.manifestation || !!req.body.species_id;
 
             async.series([
                 function(callback) {
@@ -80,6 +80,22 @@ module.exports = function(router) {
             sequel.get(req, res, next, call, [req.params.expertiseId]);
         });
 
+    router.route('/form/:form')
+        .get(function(req, res, next) {
+            let call = sql + ' WHERE deleted IS NULL AND ' +
+                'form = ?';
+
+            sequel.get(req, res, next, call, [req.params.form]);
+        });
+
+    router.route('/manifestation/:manifestation')
+        .get(function(req, res, next) {
+            let call = sql + ' WHERE deleted IS NULL AND ' +
+                'manifestation = ?';
+
+            sequel.get(req, res, next, call, [req.params.manifestation]);
+        });
+
     router.route('/species/:species')
         .get(function(req, res, next) {
             let call = sql + ' WHERE deleted IS NULL AND ' +
@@ -93,6 +109,3 @@ module.exports = function(router) {
 
     generic.automatic(router, tableName);
 };
-
-//todo manifestation boolean
-//todo form boolean

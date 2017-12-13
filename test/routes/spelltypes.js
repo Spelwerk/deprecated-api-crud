@@ -11,41 +11,14 @@ let app = require('../app'),
     verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
-describe('/spell', function() {
+describe('/spelltypes', function() {
 
-    let baseRoute = '/spells';
+    let baseRoute = '/spelltypes';
 
     let temporaryId;
 
     before(function(done) {
         app.login(done);
-    });
-
-    let attributeId;
-    before(function(done) {
-        app.get('/attributes')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                attributeId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
-    let expertiseId;
-    before(function(done) {
-        app.get('/expertises')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                let length = res.body.length - 1;
-                expertiseId = res.body.results[length].id;
-
-                done();
-            });
     });
 
     let manifestationId;
@@ -57,20 +30,6 @@ describe('/spell', function() {
 
                 let length = res.body.length - 1;
                 manifestationId = res.body.results[length].id;
-
-                done();
-            });
-    });
-
-    let spellTypeId;
-    before(function(done) {
-        app.get('/spelltypes')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                let length = res.body.length - 1;
-                spellTypeId = res.body.results[length].id;
 
                 done();
             });
@@ -95,15 +54,7 @@ describe('/spell', function() {
         verifier.generic(item);
 
         assert.isNumber(item.manifestation_id);
-        assert.isNumber(item.spelltype_id);
-        assert.isNumber(item.effect_dice);
-        assert.isNumber(item.effect_bonus);
-        assert.isNumber(item.damage_dice);
-        assert.isNumber(item.damage_bonus);
-        assert.isNumber(item.critical_dice);
-        assert.isNumber(item.critical_bonus);
-        assert.isNumber(item.distance);
-        assert.isNumber(item.cost);
+        assert.isNumber(item.expertise_id);
     }
 
 
@@ -113,19 +64,7 @@ describe('/spell', function() {
             let payload = {
                 name: hasher(20),
                 description: hasher(20),
-                icon: 'http://fakeicon.com/' + hasher(20) + '.png',
-                manifestation_id: manifestationId,
-                spelltype_id: manifestationId,
-                effect: hasher(20),
-                effect_dice: 1,
-                effect_bonus: 2,
-                damage_dice: 3,
-                damage_bonus: 4,
-                critical_dice: 5,
-                critical_bonus: 6,
-                distance: 7,
-                cost: 8,
-                attribute_id: attributeId
+                manifestation_id: manifestationId
             };
 
             app.post(baseRoute, payload)
@@ -160,13 +99,10 @@ describe('/spell', function() {
         it('/:id should update the item with new values', function(done) {
             let payload = {
                 name: hasher(20),
-                description: hasher(20),
-                effect: hasher(20)
+                description: hasher(20)
             };
 
-            app.put(baseRoute + '/' + temporaryId, payload)
-                .expect(204)
-                .end(done);
+            app.put(baseRoute + '/' + temporaryId, payload).expect(204).end(done);
         });
 
         it('/:id/canon/:canon should update the canon status', function(done) {
@@ -195,6 +131,18 @@ describe('/spell', function() {
 
         it('/deleted should return a list of deleted items', function(done) {
             app.get(baseRoute + '/deleted')
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    verifyList(res.body);
+
+                    done();
+                });
+        });
+
+        it('/manifestation/:manifestationId should return a list', function(done) {
+            app.get('/weapontypes/manifestation/' + manifestationId)
                 .expect(200)
                 .end(function(err, res) {
                     if(err) return done(err);
