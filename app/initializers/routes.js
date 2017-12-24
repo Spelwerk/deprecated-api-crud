@@ -1,44 +1,34 @@
 'use strict';
 
-let express = require('express'),
-    path = require('path'),
-    fs = require('fs');
+const util = require('util');
+const fs = require('fs');
+const path = require('path');
+const express = require('express');
+const readDir = util.promisify(fs.readdir);
+const logger = require('../../lib/logger');
 
-let logger = require(appRoot + '/lib/logger');
+module.exports = async (app) => {
+    logger.info('[ROUTES] Initializing');
 
-module.exports = function(app, folderName, callback) {
-    fs.readdir(folderName, function(err, files) {
-        if(err) return callback(err);
+    const folder = appRoot + '/app/routes';
+    const files = await readDir(folder);
 
-        files
-            .map(function(file) {
-                return path.join(folderName, file);
-            })
-            .filter(function(file) {
-                return fs.statSync(file).isFile();
-            })
-            .filter(function(file) {
-                return path.parse(file).ext === '.js'
-            })
-            .forEach(function(file) {
-                // Parsing filename without ext
-                let fileName = path.parse(file).name;
+    for(let i in files) {
+        try {
+            let name = path.parse(files[i]).name,
+                ext = path.parse(files[i]).ext;
 
-                logger.info('[ROUTES] Setting up router path for /' + fileName);
+            if(ext !== '.js') continue;
 
-                // Load express router
-                let router = express.Router();
+            logger.info('[ROUTES] Setting up router path for /' + name);
 
-                // Join foldername + filename into full path
-                let fullPath = path.join(folderName, fileName);
+            const router = express.Router();
 
-                // Initialize the route to add its functionality to router
-                require(fullPath)(router);
+            require(path.join(folder, name))(router);
 
-                // Add router to the speficied route name in the app
-                app.use('/' + fileName, router);
-            });
-
-        callback();
-    });
+            app.use('/' + name, router);
+        } catch(e) {
+            throw e;
+        }
+    }
 };

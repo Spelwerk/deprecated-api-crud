@@ -1,8 +1,10 @@
 'use strict';
 
-let uuid = require('uuid/v1');
+const uuid = require('uuid/v1');
+const logger = require('../../lib/logger');
 
-module.exports = function(app, callback) {
+module.exports = (app) => {
+    logger.info('[LOG] Initializing');
 
     app.use(function(req, res, next) {
         req.log = {
@@ -24,6 +26,4 @@ module.exports = function(app, callback) {
 
         next();
     });
-
-    callback();
 };

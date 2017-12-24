@@ -1,51 +1,41 @@
 'use strict';
 
-let mysql = require('mysql'),
-    async = require('async'),
-    nconf = require('nconf');
+const oldMysql = require('mysql');
+let oldPool;
 
-let logger = require(appRoot + '/lib/logger');
-
-let pool,
-    tables = {};
+const mysql = require('mysql2/promise');
+const nconf = require('nconf');
+const logger = require('../../lib/logger');
 
 const restrictedFields = ['id', 'user_id', 'canon', 'calculated', 'template', 'created', 'deleted', 'updated'];
 
-/**
- * Returns a list of tables associated with the database
- *
- * @param callback
- * @returns callback(err, array)
- */
-function getTables(callback) {
-    logger.info('[DATABASE] Populating Tables Array');
+let pool;
+let dbSchema = {};
 
+async function getTablesArray() {
     let array = [];
 
-    pool.query("SELECT table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' AND table_schema = '" + nconf.get('database:database') + "'", function(err, results) {
-        if(err) return callback(err);
+    let sql = "SELECT table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' AND table_schema = ?";
+    let params = [nconf.get('database:database')];
 
-        for(let i in results) {
-            let tableName = results[i].table_name;
+    try {
+        let [rows] = await pool.execute(sql, params);
 
-            array.push(tableName);
+        for(let i in rows) {
+            let name = rows[i].table_name;
+
+            array.push(name);
         }
 
-        callback(null, array);
-    });
+        return array;
+    } catch(e) {
+        throw e;
+    }
+
 }
 
-/**
- * Bootstraps schema object for a table
- *
- * @param tableName String
- * @param callback
- * @returns callback(err, schema)
- */
-function bootstrapSchema(tableName, callback) {
-    logger.info('[DATABASE] Bootstrapping schema for ' + tableName);
-
-    let schema = {
+function bootstrapTableSchema() {
+    return {
         topTable: false,
 
         // Table changes is restricted to admin or requires a logged in user
@@ -83,46 +73,34 @@ function bootstrapSchema(tableName, callback) {
             withData: []
         }
     };
-
-    if(tableName.indexOf('_') === -1) schema.topTable = true;
-
-    pool.query("SELECT column_name FROM information_schema.columns WHERE table_name = '" + tableName + "' AND table_schema = '" + nconf.get('database:database') + "'", function(err, results) {
-        if(err) return callback(err);
-
-        for(let i in results) {
-            let columnName = results[i].column_name;
-
-            schema.fields.all.push(columnName);
-
-            if(columnName === 'canon') schema.fields.canon = true;
-            if(columnName === 'updated') schema.fields.updated = true;
-            if(columnName === 'deleted') schema.fields.deleted = true;
-
-            if(restrictedFields.indexOf(columnName) === -1) schema.fields.accepted.push(columnName);
-        }
-
-        callback(null, schema);
-    });
 }
 
-/**
- * Loops through tablesArray and populates schema with relational information
- *
- * @param tablesArray Array
- * @param tableName String
- * @param temp Object
- * @returns {schema}
- */
-function schemaRelations(tablesArray, tableName, schema) {
-    for(let i in tablesArray) {
-        let compareName = tablesArray[i];
+function getTableSchemaGeneral(tableSchema, rows) {
+    for(let i in rows) {
+        let columnName = rows[i].column_name;
+
+        tableSchema.fields.all.push(columnName);
+
+        if(columnName === 'canon') tableSchema.fields.canon = true;
+        if(columnName === 'updated') tableSchema.fields.updated = true;
+        if(columnName === 'deleted') tableSchema.fields.deleted = true;
+
+        if(restrictedFields.indexOf(columnName) === -1) tableSchema.fields.accepted.push(columnName);
+    }
+
+    return tableSchema;
+}
+
+function getTableSchemaRelations(tableName, tableSchema, array) {
+    for(let i in array) {
+        let compareName = array[i];
 
         if(compareName === tableName) continue;
         if(compareName.indexOf(tableName) === -1) continue;
 
         // Setting User Security
         if(compareName === 'user_has_' + tableName) {
-            schema.security.user = true;
+            tableSchema.security.user = true;
         }
 
         // Setting "many to many" relations
@@ -130,20 +108,19 @@ function schemaRelations(tablesArray, tableName, schema) {
             let pushName = compareName.split('_has_')[1];
 
             if(pushName === 'comment') {
-                schema.supports.comments = true;
+                tableSchema.supports.comments = true;
             }
 
             if(pushName === 'image') {
-                schema.supports.images = true;
+                tableSchema.supports.images = true;
             }
 
             if(pushName === 'label') {
-                schema.supports.labels = true;
+                tableSchema.supports.labels = true;
             }
 
             if(['comment', 'image', 'label'].indexOf(pushName) === -1) {
-                //console.log(compareName);
-                schema.tables.hasMany.push(pushName);
+                tableSchema.tables.hasMany.push(pushName);
             }
         }
 
@@ -152,11 +129,11 @@ function schemaRelations(tablesArray, tableName, schema) {
             let pushName = compareName.split('_is_')[1];
 
             if(pushName === 'copy') {
-                schema.supports.copies = true;
+                tableSchema.supports.copies = true;
             }
 
             if(pushName !== 'copy') {
-                schema.tables.isOne.push(pushName);
+                tableSchema.tables.isOne.push(pushName);
             }
         }
 
@@ -164,83 +141,86 @@ function schemaRelations(tablesArray, tableName, schema) {
         if(compareName.indexOf(tableName + '_with_') !== -1) {
             let pushName = compareName.split('_with_')[1];
 
-            schema.tables.withData.push(pushName);
+            tableSchema.tables.withData.push(pushName);
         }
     }
 
-    schema.security.admin = !schema.security.user;
-
-    return schema;
+    return tableSchema;
 }
 
-function setup(done) {
-    let tablesArray = [];
+async function getTableSchema(tableName, array) {
+    logger.info('[DATABASE] Getting schema for ' + tableName);
 
-    async.series([
-        function(callback) {
-            logger.info('[DATABASE] Creating connection pool');
+    // Bootstrap
+    let tableSchema = bootstrapTableSchema();
 
-            try {
-                pool = mysql.createPool({
-                    host: nconf.get('database:host'),
-                    database: nconf.get('database:database'),
-                    user: nconf.get('database:username'),
-                    password: nconf.get('database:password'),
-                    connectionLimit: 100,
-                    waitForConnections: true,
-                    queueLimit: 0,
-                    debug: false,
-                    wait_timeout: 28800,
-                    connect_timeout: 10
-                });
-            } catch(err) {
-                callback(err);
-            }
+    // Top Table
+    if(tableName.indexOf('_') === -1) tableSchema.topTable = true;
 
-            callback();
-        },
-        function(callback) {
-            getTables(function(err, array) {
-                if(err) return callback(err);
+    // SQL
+    let sql = "SELECT column_name FROM information_schema.columns WHERE table_name = ? AND table_schema = ?";
+    let params = [tableName, nconf.get('database:database')];
 
-                tablesArray = array;
+    try {
+        let [rows] = await pool.execute(sql, params);
 
-                callback();
-            });
-        },
-        function(callback) {
-            logger.info('[DATABASE] Creating Table Schema');
+        // General Schema
+        tableSchema = getTableSchemaGeneral(tableSchema, rows);
 
-            async.eachLimit(tablesArray, 1, function(tableName, next) {
-                bootstrapSchema(tableName, function(err, schema) {
-                    if(err) return next(err);
+        // Relations Schema
+        tableSchema = getTableSchemaRelations(tableName, tableSchema, array);
 
-                    tables[tableName] = schema;
+        // Admin Restriction
+        tableSchema.security.admin = !tableSchema.security.user;
 
-                    next();
-                });
-            }, function(err) {
-                callback(err);
-            });
-        },
-        function(callback) {
-            logger.info('[DATABASE] Looping Tables');
+        return tableSchema;
+    } catch(e) {
+        throw e;
+    }
+}
 
-            for(let i in tablesArray) {
-                let tableName = tablesArray[i],
-                    schema = tables[tableName];
+async function getDatabaseSchema(array) {
+    let object = {};
 
-                tables[tableName] = schemaRelations(tablesArray, tableName, schema);
-            }
+    for(let i in array) {
+        let tableName = array[i];
 
-            callback();
+        try {
+            object[tableName] = await getTableSchema(tableName, array);
+        } catch(e) {
+            throw e;
         }
-    ], function(err) {
-        //todo commented out, used for verification. delete when happy.
-        //console.log(tables['creature']);
+    }
 
-        done(err);
-    });
+    return object;
+}
+
+async function setup() {
+    logger.info('[DATABASE] Initializing');
+
+    try {
+        let config = {
+            host: nconf.get('database:host'),
+            database: nconf.get('database:database'),
+            user: nconf.get('database:username'),
+            password: nconf.get('database:password'),
+            connectionLimit: 100,
+            waitForConnections: true,
+            queueLimit: 0,
+            debug: false,
+            wait_timeout: 28800,
+            connect_timeout: 10
+        };
+
+        pool = mysql.createPool(config);
+        oldPool = oldMysql.createPool(config);
+
+        let array = await getTablesArray();
+
+        dbSchema = await getDatabaseSchema(array);
+    } catch(e) {
+        throw e;
+    }
 }
 
 function getPool() {
@@ -248,9 +228,23 @@ function getPool() {
 }
 
 function getSchema(tableName) {
-    return tables[tableName];
+    return dbSchema[tableName];
 }
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+// EXPORTS
+// ////////////////////////////////////////////////////////////////////////////////// //
 
 module.exports.setup = setup;
 module.exports.getPool = getPool;
 module.exports.getSchema = getSchema;
+
+// ////////////////////////////////////////////////////////////////////////////////// //
+// DEPRECATED
+// ////////////////////////////////////////////////////////////////////////////////// //
+
+function getOldPool() {
+    return oldPool;
+}
+
+module.exports.getOldPool = getOldPool;

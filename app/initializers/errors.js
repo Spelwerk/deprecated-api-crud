@@ -1,9 +1,10 @@
 'use strict';
 
-let logger = require(appRoot + '/lib/logger');
+const logger = require('../../lib/logger');
 
-module.exports = function(app, callback) {
-    // Return error information as response
+module.exports = (app) => {
+    logger.info('[ERRORS] Initializing');
+
     app.use(function(err, req, res, next) {
         err.status = err.status || 500;
         err.title = err.title || "Error";
@@ -17,6 +18,4 @@ module.exports = function(app, callback) {
 
         res.status(err.status).send({title: err.title, message: err.message});
     });
-
-    callback();
 };
