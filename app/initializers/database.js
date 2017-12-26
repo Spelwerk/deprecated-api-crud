@@ -10,29 +10,9 @@ const logger = require('../../lib/logger');
 const restrictedFields = ['id', 'user_id', 'canon', 'calculated', 'template', 'created', 'deleted', 'updated'];
 
 let pool;
+let dbArray = [];
 let dbSchema = {};
 
-async function getTablesArray() {
-    let array = [];
-
-    let sql = "SELECT table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' AND table_schema = ?";
-    let params = [nconf.get('database:database')];
-
-    try {
-        let [rows] = await pool.execute(sql, params);
-
-        for(let i in rows) {
-            let name = rows[i].table_name;
-
-            array.push(name);
-        }
-
-        return array;
-    } catch(e) {
-        throw e;
-    }
-
-}
 
 function bootstrapTableSchema() {
     return {
@@ -63,7 +43,10 @@ function bootstrapTableSchema() {
             all: [],
 
             // List of all fields that are allowed to be changed
-            accepted: []
+            accepted: [],
+
+            // Extra Fields in withData
+            extra: {}
         },
 
         // Relational Tables
@@ -75,32 +58,125 @@ function bootstrapTableSchema() {
     };
 }
 
-function getTableSchemaGeneral(tableSchema, rows) {
-    for(let i in rows) {
-        let columnName = rows[i].column_name;
+async function getColumnNames(tableName) {
+    logger.info('[DATABASE] getting column names for ' + tableName);
 
-        tableSchema.fields.all.push(columnName);
+    let array = [];
 
-        if(columnName === 'canon') tableSchema.fields.canon = true;
-        if(columnName === 'updated') tableSchema.fields.updated = true;
-        if(columnName === 'deleted') tableSchema.fields.deleted = true;
+    let sql = "SELECT column_name FROM information_schema.columns WHERE table_name = ? AND table_schema = ?";
+    let params = [tableName, nconf.get('database:database')];
 
-        if(restrictedFields.indexOf(columnName) === -1) tableSchema.fields.accepted.push(columnName);
+    try {
+        let [rows] = await pool.execute(sql, params);
+
+        for(let i in rows) {
+            array.push(rows[i].column_name);
+        }
+
+        return array;
+    } catch(e) {
+        throw e;
     }
-
-    return tableSchema;
 }
 
-function getTableSchemaRelations(tableName, tableSchema, array) {
-    for(let i in array) {
-        let compareName = array[i];
+
+async function setDatabaseArray() {
+    logger.info('[DATABASE] setting database array');
+
+    let sql = "SELECT table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE' AND table_schema = ?";
+    let params = [nconf.get('database:database')];
+
+    try {
+        let [rows] = await pool.execute(sql, params);
+
+        for(let i in rows) {
+            dbArray.push(rows[i].table_name);
+        }
+
+        return null;
+    } catch(e) {
+        throw e;
+    }
+}
+
+async function setDatabaseSchema() {
+    logger.info('[DATABASE] setting database schema');
+
+    try {
+        for(let i in dbArray) {
+            let tableName = dbArray[i];
+
+            void await setTableSchema(tableName);
+        }
+
+        for(let i in dbArray) {
+            let tableName = dbArray[i];
+
+            setTableSchemaExtraFields(tableName);
+        }
+    } catch(e) {
+        throw e;
+    }
+}
+
+
+async function setTableSchema(tableName) {
+    logger.info('[DATABASE] setting table schema for ' + tableName);
+
+    // Bootstrap
+    dbSchema[tableName] = bootstrapTableSchema();
+
+    // Top Table
+    if(tableName.indexOf('_') === -1) dbSchema[tableName].topTable = true;
+
+    try {
+        // General Schema
+        void await setTableSchemaGeneral(tableName);
+
+        // Relations Schema
+        setTableSchemaRelations(tableName);
+
+        // Admin Restriction
+        dbSchema[tableName].security.admin = !dbSchema[tableName].security.user;
+    } catch(e) {
+        throw e;
+    }
+}
+
+async function setTableSchemaGeneral(tableName) {
+    logger.info('[DATABASE] setting general schema information for ' + tableName);
+
+    try {
+        let rows = await getColumnNames(tableName);
+
+        for(let i in rows) {
+            let columnName = rows[i];
+
+            dbSchema[tableName].fields.all.push(columnName);
+
+            if(columnName === 'canon') dbSchema[tableName].fields.canon = true;
+            if(columnName === 'updated') dbSchema[tableName].fields.updated = true;
+            if(columnName === 'deleted') dbSchema[tableName].fields.deleted = true;
+
+            if(restrictedFields.indexOf(columnName) === -1) dbSchema[tableName].fields.accepted.push(columnName);
+        }
+    } catch(e) {
+        throw e;
+    }
+}
+
+function setTableSchemaRelations(tableName) {
+    logger.info('[DATABASE] setting table schema relations for ' + tableName);
+
+    for(let i in dbArray) {
+        let compareName = dbArray[i];
 
         if(compareName === tableName) continue;
         if(compareName.indexOf(tableName) === -1) continue;
 
         // Setting User Security
         if(compareName === 'user_has_' + tableName) {
-            tableSchema.security.user = true;
+            dbSchema[tableName].security.user = true;
         }
 
         // Setting "many to many" relations
@@ -108,19 +184,19 @@ function getTableSchemaRelations(tableName, tableSchema, array) {
             let pushName = compareName.split('_has_')[1];
 
             if(pushName === 'comment') {
-                tableSchema.supports.comments = true;
+                dbSchema[tableName].supports.comments = true;
             }
 
             if(pushName === 'image') {
-                tableSchema.supports.images = true;
+                dbSchema[tableName].supports.images = true;
             }
 
             if(pushName === 'label') {
-                tableSchema.supports.labels = true;
+                dbSchema[tableName].supports.labels = true;
             }
 
             if(['comment', 'image', 'label'].indexOf(pushName) === -1) {
-                tableSchema.tables.hasMany.push(pushName);
+                dbSchema[tableName].tables.hasMany.push(pushName);
             }
         }
 
@@ -129,11 +205,11 @@ function getTableSchemaRelations(tableName, tableSchema, array) {
             let pushName = compareName.split('_is_')[1];
 
             if(pushName === 'copy') {
-                tableSchema.supports.copies = true;
+                dbSchema[tableName].supports.copies = true;
             }
 
             if(pushName !== 'copy') {
-                tableSchema.tables.isOne.push(pushName);
+                dbSchema[tableName].tables.isOne.push(pushName);
             }
         }
 
@@ -141,59 +217,31 @@ function getTableSchemaRelations(tableName, tableSchema, array) {
         if(compareName.indexOf(tableName + '_with_') !== -1) {
             let pushName = compareName.split('_with_')[1];
 
-            tableSchema.tables.withData.push(pushName);
+            dbSchema[tableName].tables.withData.push(pushName);
         }
     }
-
-    return tableSchema;
 }
 
-async function getTableSchema(tableName, array) {
-    logger.info('[DATABASE] Getting schema for ' + tableName);
+function setTableSchemaExtraFields(tableName) {
+    logger.info('[DATABASE] setting table schema extra fields for ' + tableName);
 
-    // Bootstrap
-    let tableSchema = bootstrapTableSchema();
-
-    // Top Table
-    if(tableName.indexOf('_') === -1) tableSchema.topTable = true;
-
-    // SQL
-    let sql = "SELECT column_name FROM information_schema.columns WHERE table_name = ? AND table_schema = ?";
-    let params = [tableName, nconf.get('database:database')];
-
-    try {
-        let [rows] = await pool.execute(sql, params);
-
-        // General Schema
-        tableSchema = getTableSchemaGeneral(tableSchema, rows);
-
-        // Relations Schema
-        tableSchema = getTableSchemaRelations(tableName, tableSchema, array);
-
-        // Admin Restriction
-        tableSchema.security.admin = !tableSchema.security.user;
-
-        return tableSchema;
-    } catch(e) {
-        throw e;
-    }
-}
-
-async function getDatabaseSchema(array) {
-    let object = {};
+    let array = dbSchema[tableName].tables.withData;
 
     for(let i in array) {
-        let tableName = array[i];
+        let extraName = array[i];
+        let table_with_extra = tableName + '_with_' + extraName;
+        let extraArray = dbSchema[table_with_extra].fields.accepted;
 
-        try {
-            object[tableName] = await getTableSchema(tableName, array);
-        } catch(e) {
-            throw e;
+        dbSchema[tableName].fields.extra[extraName] = [];
+
+        for(let i in extraArray) {
+            if(extraArray[i] === tableName + '_id') continue;
+
+            dbSchema[tableName].fields.extra[extraName].push(extraArray[i]);
         }
     }
-
-    return object;
 }
+
 
 async function setup() {
     logger.info('[DATABASE] Initializing');
@@ -215,9 +263,8 @@ async function setup() {
         pool = mysql.createPool(config);
         oldPool = oldMysql.createPool(config);
 
-        let array = await getTablesArray();
-
-        dbSchema = await getDatabaseSchema(array);
+        await setDatabaseArray();
+        await setDatabaseSchema();
     } catch(e) {
         throw e;
     }
@@ -239,10 +286,9 @@ module.exports.setup = setup;
 module.exports.getPool = getPool;
 module.exports.getSchema = getSchema;
 
-// ////////////////////////////////////////////////////////////////////////////////// //
-// DEPRECATED
-// ////////////////////////////////////////////////////////////////////////////////// //
-
+/**
+ * @deprecated
+ */
 function getOldPool() {
     return oldPool;
 }
