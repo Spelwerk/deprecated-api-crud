@@ -31,7 +31,7 @@ async function main() {
         require('./app/initializers/auth')(app);
         require('./app/initializers/user')(app);
 
-        //await require('./app/initializers/routes')(app);
+        await require('./app/initializers/routes')(app);
 
         require('./app/initializers/errors')(app);
 

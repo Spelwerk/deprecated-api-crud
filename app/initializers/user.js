@@ -27,22 +27,22 @@ module.exports = (app) => {
         req.user.email = req.user.decoded.email;
 
         try {
-            let data = await sql('SELECT user_id AS id FROM user_token WHERE token = ?', [req.user.token]);
+            let [rows] = await sql('SELECT user_id AS id FROM user_token WHERE token = ?', [req.user.token]);
 
-            if(data.length === 0) return next(new UserInvalidTokenError);
+            if(rows.length === 0) return next(new UserInvalidTokenError);
 
-            req.user.id = parseInt(data.rows[0].id);
+            req.user.id = parseInt(rows[0].id);
         } catch(e) {
             return next(e);
         }
 
         try {
-            let info = await sql('SELECT id,admin,verified FROM user WHERE id = ?', [req.user.id]);
+            let [rows] = await sql('SELECT id,admin,verified FROM user WHERE id = ?', [req.user.id]);
 
-            if(info.length === 0) return next(new UserNotFoundError);
+            if(rows.length === 0) return next(new UserNotFoundError);
 
-            req.user.admin = !!info.rows[0].admin;
-            req.user.verified = !!info.rows[0].verified;
+            req.user.admin = !!rows[0].admin;
+            req.user.verified = !!rows[0].verified;
         } catch(e) {
             return next(e);
         }
