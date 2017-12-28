@@ -1,111 +1,92 @@
 'use strict';
 
-let async = require('async');
+const routes = require('../../lib/generic/routes');
+const basic = require('../../lib/generic/basic');
+const elemental = require('../../lib/database/elemental');
 
-let generic = require('../../lib/helper/generic'),
-    elemental = require('../../lib/sql/elemental'),
-    sequel = require('../../lib/helper/sequel');
-
-module.exports = function(router) {
+module.exports = (router) => {
     const tableName = 'weapontype';
 
-    let sql = 'SELECT * FROM ' + tableName + ' ' +
+    let query = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
 
-    generic.root(router, tableName, sql);
+    routes.root(router, tableName, query);
 
     router.route('/')
-        .post(function(req, res, next) {
-            let expertise = {
-                name: req.body.name + ' Mastery',
-                description: req.body.description,
-                skill_id: req.body.skill_id,
-                species_id: req.body.species_id
-            };
+        .post(async (req, res, next) => {
+            try {
+                let expertise = {
+                    name: req.body.name + ' Mastery',
+                    description: req.body.description,
+                    skill_id: req.body.skill_id,
+                    species_id: req.body.species_id
+                };
 
-            let weaponTypeId;
+                req.body.equipable = !!req.body.augmentation || !!req.body.form || !!req.body.manifestation || !!req.body.species_id;
 
-            req.body.equipable = !!req.body.augmentation || !!req.body.form || !!req.body.manifestation || !!req.body.species_id;
+                req.body.expertise_id = await elemental.insert(req, expertise, 'expertise');
 
-            async.series([
-                function(callback) {
-                    elemental.post(req.user, expertise, 'expertise', function(err, id) {
-                        if(err) return callback(err);
+                let id = await elemental.insert(req, req.body, 'weapontype');
 
-                        req.body.expertise_id = id;
-
-                        callback();
-                    });
-                },
-                function(callback) {
-                    elemental.post(req.user, req.body, 'weapontype', function(err, id) {
-                        if(err) return callback(err);
-
-                        weaponTypeId = id;
-
-                        callback();
-                    });
-                }
-            ], function(err) {
-                if(err) return next(err);
-
-                res.status(201).send({id: weaponTypeId});
-            });
+                res.status(201).send({id: id});
+            } catch(e) {
+                next(e);
+            }
         });
 
-    generic.deleted(router, tableName, sql);
-    generic.schema(router, tableName);
+    routes.removed(router, tableName, query);
+    routes.schema(router, tableName);
 
-    router.route('/augmentation/:augmentation')
-        .get(function(req, res, next) {
-            let call = sql + ' WHERE deleted IS NULL AND ' +
+    router.route('/augmentation/:boolean')
+        .get(async (req, res, next) => {
+            let call = query + ' WHERE deleted IS NULL AND ' +
                 'augmentation = ?';
 
-            sequel.get(req, res, next, call, [req.params.augmentation]);
+            await basic.select(req, res, next, call, [req.params.boolean]);
         });
 
-    router.route('/damage/:damageId')
-        .get(function(req, res, next) {
-            let call = sql + ' WHERE deleted IS NULL AND ' +
+    router.route('/damage/:id')
+        .get(async (req, res, next) => {
+            let call = query + ' WHERE deleted IS NULL AND ' +
                 'attribute_id = ?';
 
-            sequel.get(req, res, next, call, [req.params.damageId]);
+            await basic.select(req, res, next, call, [req.params.id]);
         });
 
-    router.route('/expertise/:expertiseId')
-        .get(function(req, res, next) {
-            let call = sql + ' WHERE deleted IS NULL AND ' +
+    router.route('/expertise/:id')
+        .get(async (req, res, next) => {
+            let call = query + ' WHERE deleted IS NULL AND ' +
                 'expertise_id = ?';
 
-            sequel.get(req, res, next, call, [req.params.expertiseId]);
+            await basic.select(req, res, next, call, [req.params.id]);
         });
 
-    router.route('/form/:form')
-        .get(function(req, res, next) {
-            let call = sql + ' WHERE deleted IS NULL AND ' +
+    router.route('/form/:boolean')
+        .get(async (req, res, next) => {
+            let call = query + ' WHERE deleted IS NULL AND ' +
                 'form = ?';
 
-            sequel.get(req, res, next, call, [req.params.form]);
+            await basic.select(req, res, next, call, [req.params.boolean]);
         });
 
-    router.route('/manifestation/:manifestation')
-        .get(function(req, res, next) {
-            let call = sql + ' WHERE deleted IS NULL AND ' +
+    router.route('/manifestation/:boolean')
+        .get(async (req, res, next) => {
+            let call = query + ' WHERE deleted IS NULL AND ' +
                 'manifestation = ?';
 
-            sequel.get(req, res, next, call, [req.params.manifestation]);
+            await basic.select(req, res, next, call, [req.params.boolean]);
         });
 
-    router.route('/species/:species')
-        .get(function(req, res, next) {
-            let call = sql + ' WHERE deleted IS NULL AND ' +
+    router.route('/species/:boolean')
+        .get(async (req, res, next) => {
+            let call = query + ' WHERE deleted IS NULL AND ' +
                 'species = ?';
 
-            sequel.get(req, res, next, call, [req.params.species]);
+            await basic.select(req, res, next, call, [req.params.boolean]);
         });
 
-    generic.get(router, tableName, sql);
-    generic.put(router, tableName);
+    routes.single(router, tableName, query);
+    routes.update(router, tableName);
 
-    generic.automatic(router, tableName);
+    routes.automatic(router, tableName);
 };

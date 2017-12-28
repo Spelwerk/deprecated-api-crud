@@ -2,73 +2,55 @@
 
 let UserNotLoggedInError = require('../../lib/errors/user-not-logged-in-error');
 
-let async = require('async');
-
-let generic = require('../../lib/helper/generic'),
-    elemental = require('../../lib/sql/elemental'),
-    relations = require('../../lib/helper/relations'),
-    query = require('../../lib/sql/query');
+const routes = require('../../lib/generic/routes');
+const relations = require('../../lib/generic/relations');
+const elemental = require('../../lib/database/elemental');
+const sql = require('../../lib/database/sql');
 
 module.exports = function(router) {
     const tableName = 'world';
 
-    let sql = 'SELECT * FROM ' + tableName + ' ' +
+    let query = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
 
-    generic.root(router, tableName, sql);
+    routes.root(router, tableName, query);
 
     router.route('/')
-        .post(function(req, res, next) {
-            if(!req.user.id) return next(new UserNotLoggedInError);
+        .post(async (req, res, next) => {
+            try {
+                if(!req.user.id) return new UserNotLoggedInError;
 
-            let worldId;
+                let id = await elemental.insert(req, req.body, tableName);
 
-            let attributeQuery = 'INSERT INTO world_has_attribute (world_id,attribute_id,value,minimum,maximum) VALUES ';
+                let [rows] = await sql('SELECT id,minimum,maximum FROM attribute WHERE optional = 0');
 
-            async.series([
-                function(callback) {
-                    elemental.post(req.user, req.body, tableName, function(err, id) {
-                        if(err) return callback(err);
+                let attributeQuery = 'INSERT INTO world_has_attribute (world_id,attribute_id,value,minimum,maximum) VALUES ';
 
-                        worldId = id;
+                for(let i in rows) {
+                    let attributeId = parseInt(rows[i].id),
+                        value = parseInt(rows[i].minimum),
+                        minimum = parseInt(rows[i].minimum),
+                        maximum = parseInt(rows[i].maximum);
 
-                        callback();
-                    });
-                },
-                function(callback) {
-                    query('SELECT id,minimum,maximum FROM attribute WHERE optional = 0', null, function(err, results) {
-                        if(err) return callback(err);
-
-                        for(let i in results) {
-                            let attributeId = parseInt(results[i].id),
-                                value = parseInt(results[i].minimum),
-                                minimum = parseInt(results[i].minimum),
-                                maximum = parseInt(results[i].maximum);
-
-                            attributeQuery += '(' + worldId + ',' + attributeId + ',' + value + ',' + minimum + ',' + maximum + '),';
-                        }
-
-                        attributeQuery = attributeQuery.slice(0, -1);
-
-                        callback();
-                    });
-                },
-                function(callback) {
-                    query(attributeQuery, null, callback);
+                    attributeQuery += '(' + id + ',' + attributeId + ',' + value + ',' + minimum + ',' + maximum + '),';
                 }
-            ], function(err) {
-                if(err) return next(err);
 
-                res.status(201).send({id: worldId});
-            });
+                attributeQuery = attributeQuery.slice(0, -1);
+
+                await sql(attributeQuery);
+
+                res.status(201).send({id: id});
+            } catch(e) {
+                next(e);
+            }
         });
 
-    generic.deleted(router, tableName, sql);
-    generic.schema(router, tableName);
-    generic.get(router, tableName, sql);
-    generic.put(router, tableName);
+    routes.removed(router, tableName, query);
+    routes.schema(router, tableName);
+    routes.single(router, tableName, query);
+    routes.update(router, tableName);
 
-    generic.automatic(router, tableName);
+    routes.automatic(router, tableName);
 
     // Relations
 

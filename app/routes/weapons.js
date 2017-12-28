@@ -1,13 +1,13 @@
 'use strict';
 
-let generic = require('../../lib/helper/generic'),
-    relations = require('../../lib/helper/relations'),
-    sequel = require('../../lib/helper/sequel');
+const routes = require('../../lib/generic/routes');
+const relations = require('../../lib/generic/relations');
+const basic = require('../../lib/generic/basic');
 
-module.exports = function(router) {
+module.exports = (router) => {
     const tableName = 'weapon';
 
-    let sql = 'SELECT ' +
+    let query = 'SELECT ' +
         'weapon.id, ' +
         'weapon.user_id, ' +
         'weapon.canon, ' +
@@ -45,55 +45,55 @@ module.exports = function(router) {
         'LEFT JOIN weapon_is_species ON weapon_is_species.weapon_id = weapon.id ' +
         'LEFT JOIN weapon_is_corporation ON weapon_is_corporation.weapon_id = weapon.id';
 
-    generic.root(router, tableName, sql);
-    generic.post(router, tableName);
-    generic.deleted(router, tableName, sql);
-    generic.schema(router, tableName);
+    routes.root(router, tableName, query);
+    routes.insert(router, tableName);
+    routes.removed(router, tableName, query);
+    routes.schema(router, tableName);
 
-    router.route('/augmentation/:augmentationId')
-        .get(function(req, res, next) {
-            let call = sql + ' WHERE weapon.deleted IS NULL AND ' +
+    router.route('/augmentation/:id')
+        .get(async (req, res, next) => {
+            let call = query + ' WHERE weapon.deleted IS NULL AND ' +
                 'augmentation_id = ?';
 
-            sequel.get(req, res, next, call, [req.params.augmentationId]);
+            await basic.select(req, res, next, call, [req.params.id]);
         });
 
-    router.route('/form/:formId')
-        .get(function(req, res, next) {
-            let call = sql + ' WHERE weapon.deleted IS NULL AND ' +
+    router.route('/form/:id')
+        .get(async (req, res, next) => {
+            let call = query + ' WHERE weapon.deleted IS NULL AND ' +
                 'form_id = ?';
 
-            sequel.get(req, res, next, call, [req.params.formId]);
+            await basic.select(req, res, next, call, [req.params.id]);
         });
 
-    router.route('/manifestation/:manifestationId')
-        .get(function(req, res, next) {
-            let call = sql + ' WHERE weapon.deleted IS NULL AND ' +
+    router.route('/manifestation/:id')
+        .get(async (req, res, next) => {
+            let call = query + ' WHERE weapon.deleted IS NULL AND ' +
                 'manifestation_id = ?';
 
-            sequel.get(req, res, next, call, [req.params.manifestationId]);
+            await basic.select(req, res, next, call, [req.params.id]);
         });
 
-    router.route('/species/:speciesId')
-        .get(function(req, res, next) {
-            let call = sql + ' WHERE weapon.deleted IS NULL AND ' +
+    router.route('/species/:id')
+        .get(async (req, res, next) => {
+            let call = query + ' WHERE weapon.deleted IS NULL AND ' +
                 'species_id = ?';
 
-            sequel.get(req, res, next, call, [req.params.speciesId]);
+            await basic.select(req, res, next, call, [req.params.id]);
         });
 
-    router.route('/type/:typeId')
-        .get(function(req, res, next) {
-            let call = sql + ' WHERE weapon.deleted IS NULL AND ' +
+    router.route('/type/:id')
+        .get(async (req, res, next) => {
+            let call = query + ' WHERE weapon.deleted IS NULL AND ' +
                 'weapontype_id = ?';
 
-            sequel.get(req, res, next, call, [req.params.typeId]);
+            await basic.select(req, res, next, call, [req.params.id]);
         });
 
-    generic.get(router, tableName, sql);
-    generic.put(router, tableName);
+    routes.single(router, tableName, query);
+    routes.update(router, tableName);
 
-    generic.automatic(router, tableName);
+    routes.automatic(router, tableName);
 
     // Relations
 

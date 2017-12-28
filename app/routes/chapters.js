@@ -1,55 +1,62 @@
 'use strict';
 
-let generic = require('../../lib/helper/generic'),
-    sequel = require('../../lib/helper/sequel'),
-    chapters = require('../../lib/helper/chapters');
+const routes = require('../../lib/generic/routes');
+const basic = require('../../lib/generic/basic');
 
-module.exports = function(router) {
+const chapters = require('../../lib/helper/chapters');
+
+module.exports = (router) => {
     const tableName = 'chapter';
 
-    let sql = 'SELECT * FROM chapter';
+    let query = 'SELECT * FROM chapter';
 
-    generic.root(router, tableName, sql);
+    routes.root(router, tableName, query);
 
     router.route('/')
-        .post(function(req, res, next) {
-            chapters.post(req.user, req.body.story_id, req.body.plot, function(err, id) {
-                if(err) return next(err);
+        .post(async (req, res, next) => {
+            try {
+                let id = await chapters.insert(req, req.body);
 
                 res.status(201).send({id: id});
-            });
+            } catch(e) {
+                next(e);
+            }
         });
 
-    generic.deleted(router, tableName, sql);
-    generic.schema(router, tableName);
+    routes.removed(router, tableName, query);
+    routes.schema(router, tableName);
 
-    router.route('/story/:storyId')
-        .get(function(req, res, next) {
-            let call = sql + ' WHERE story_id = ?';
+    router.route('/story/:id')
+        .get(async (req, res, next) => {
+            let call = query + ' WHERE story_id = ?';
 
-            sequel.get(req, res, next, call, [req.params.storyId]);
+            await basic.select(req, res, next, call, [req.params.id]);
         });
 
     router.route('/:id')
-        .get(function(req, res, next) {
-            let call = sql + ' WHERE id = ?';
+        .get(async (req, res, next) => {
+            let call = query + ' WHERE id = ?';
 
-            sequel.get(req, res, next, call, [req.params.id]);
+            await basic.select(req, res, next, call, [req.params.id], true);
         })
-        .put(function(req, res, next) {
-            chapters.put(req.user, req.params.id, req.body.plot, function(err) {
-                if(err) return next(err);
+        .put(async (req, res, next) => {
+            try {
+                await chapters.update(req, req.body, req.params.id);
 
                 res.status(204).send();
-            });
+            } catch(e) {
+                next(e);
+            }
         })
-        .delete(function(req, res, next) {
-            chapters.delete(req.user, req.params.id, function(err) {
-                if(err) return next(err);
+        .delete(async (req, res, next) => {
+            try {
+                await chapters.remove(req, req.params.id);
 
                 res.status(204).send();
-            });
+            } catch(e) {
+                next(e);
+            }
         });
 
-    generic.revive(router, tableName);
+    routes.automatic(router, tableName);
 };

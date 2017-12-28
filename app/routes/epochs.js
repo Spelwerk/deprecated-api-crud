@@ -1,22 +1,22 @@
 'use strict';
 
-let generic = require('../../lib/helper/generic'),
-    relations = require('../../lib/helper/relations');
+const routes = require('../../lib/generic/routes');
+const relations = require('../../lib/generic/relations');
 
-module.exports = function(router) {
+module.exports = (router) => {
     const tableName = 'epoch';
 
-    let sql = 'SELECT * FROM ' + tableName + ' ' +
+    let query = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
 
-    generic.root(router, tableName, sql);
-    generic.post(router, tableName);
-    generic.deleted(router, tableName, sql);
-    generic.schema(router, tableName);
-    generic.get(router, tableName, sql);
-    generic.put(router, tableName);
+    routes.root(router, tableName, query);
+    routes.insert(router, tableName);
+    routes.removed(router, tableName, query);
+    routes.schema(router, tableName);
+    routes.single(router, tableName, query);
+    routes.update(router, tableName);
 
-    generic.automatic(router, tableName);
+    routes.automatic(router, tableName);
 
     // Relations
 

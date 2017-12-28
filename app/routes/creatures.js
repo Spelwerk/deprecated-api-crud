@@ -1,4 +1,4 @@
-'use strict';
+'use strict'; //todo ASYNC/AWAIT
 
 let generic = require('../../lib/helper/generic'),
     creatures = require('../../lib/helper/creatures');

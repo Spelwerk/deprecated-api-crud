@@ -1,22 +1,20 @@
 'use strict';
 
-let async = require('async');
+const routes = require('../../lib/generic/routes');
+const relations = require('../../lib/generic/relations');
+const elemental = require('../../lib/database/elemental');
 
-let generic = require('../../lib/helper/generic'),
-    elemental = require('../../lib/sql/elemental'),
-    relations = require('../../lib/helper/relations');
-
-module.exports = function(router) {
+module.exports = (router) => {
     const tableName = 'augmentation';
 
-    let sql = 'SELECT * FROM ' + tableName + ' ' +
+    let query = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id ' +
         'LEFT JOIN ' + tableName + '_is_corporation ON ' + tableName + '_is_corporation.' + tableName + '_id = ' + tableName + '.id';
 
-    generic.root(router, tableName, sql);
+    routes.root(router, tableName, query);
 
     router.route('/')
-        .post(function(req, res, next) {
+        .post(async (req, res, next) => {
             let augmentation = {
                 name: req.body.name,
                 description: req.body.description,
@@ -39,35 +37,27 @@ module.exports = function(router) {
                 distance: req.body.distance
             };
 
-            async.series([
-                function(callback) {
-                    elemental.post(req.user, augmentation, 'augmentation', function(err, id) {
-                        if(err) return callback(err);
+            try {
+                let id = await elemental.insert(req, augmentation, 'augmentation');
 
-                        augmentation.id = id;
-                        weapon.augmentation_id = id;
+                weapon.augmentation_id = id;
 
-                        callback();
-                    });
-                },
-                function(callback) {
-                    if(!weapon.weapontype_id) return callback();
-
-                    elemental.post(req.user, weapon, 'weapon', callback);
+                if(weapon.weapontype_id) {
+                    await elemental.insert(req, weapon, 'weapon');
                 }
-            ], function(err) {
-                if(err) return next(err);
 
-                res.status(201).send({id: augmentation.id});
-            });
+                res.status(201).send({id: id});
+            } catch(e) {
+                next(e);
+            }
         });
 
-    generic.deleted(router, tableName, sql);
-    generic.schema(router, tableName);
-    generic.get(router, tableName, sql);
-    generic.put(router, tableName);
+    routes.removed(router, tableName, query);
+    routes.schema(router, tableName);
+    routes.single(router, tableName, query);
+    routes.update(router, tableName);
 
-    generic.automatic(router, tableName);
+    routes.automatic(router, tableName);
 
     // Relations
 

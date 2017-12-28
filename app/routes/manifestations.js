@@ -1,89 +1,64 @@
 'use strict';
 
-let async = require('async'),
-    yaml = require('node-yaml');
+const routes = require('../../lib/generic/routes');
+const relations = require('../../lib/generic/relations');
+const elemental = require('../../lib/database/elemental');
 
-let generic = require('../../lib/helper/generic'),
-    relations = require('../../lib/helper/relations'),
-    elemental = require('../../lib/sql/elemental');
+const yaml = require('node-yaml');
+const defaults = yaml.readSync('./../../config/defaults.yml');
 
-let defaults = yaml.readSync('./../../config/defaults.yml');
-
-module.exports = function(router) {
+module.exports = (router) => {
     const tableName = 'manifestation';
 
-    let sql = 'SELECT * FROM ' + tableName + ' ' +
+    let query = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
 
-    generic.root(router, tableName, sql);
+    routes.root(router, tableName, query);
 
     router.route('/')
-        .post(function(req, res, next) {
-            let attribute = {
-                name: req.body.power,
-                description: 'Power attribute for: ' + req.body.name,
-                icon: req.body.icon,
-                attributetype_id: defaults.attributeType.power,
-                optional: 1,
-                minimum: 0,
-                maximum: req.body.maximum
-            };
+        .post(async (req, res, next) => {
+            try {
+                let attribute = {
+                    name: req.body.power,
+                    description: 'Power attribute for: ' + req.body.name,
+                    icon: req.body.icon,
+                    attributetype_id: defaults.attributeType.power,
+                    optional: 1,
+                    minimum: 0,
+                    maximum: req.body.maximum
+                };
 
-            let manifestation = {
-                name: req.body.name,
-                description: req.body.description,
-                icon: req.body.icon
-            };
+                let manifestation = {
+                    name: req.body.name,
+                    description: req.body.description,
+                    icon: req.body.icon
+                };
 
-            let skill = {
-                name: req.body.skill,
-                description: 'Skill for: ' + req.body.name,
-                icon: req.body.icon
-            };
+                let skill = {
+                    name: req.body.skill,
+                    description: 'Skill for: ' + req.body.name,
+                    icon: req.body.icon
+                };
 
-            async.series([
-                function(callback) {
-                    elemental.post(req.user, attribute, 'attribute', function(err, id) {
-                        if(err) return callback(err);
+                manifestation.attribute_id = await elemental.insert(req, attribute, 'attribute');
 
-                        attribute.id = id;
-                        manifestation.attribute_id = id;
+                let id = await elemental.insert(req, manifestation, 'manifestation');
+                skill.manifestation_id = id;
 
-                        callback();
-                    });
-                },
-                function(callback) {
-                    elemental.post(req.user, manifestation, 'manifestation', function(err, id) {
-                        if(err) return callback(err);
+                await elemental.insert(req, skill, 'skill');
 
-                        manifestation.id = id;
-                        skill.manifestation_id = id;
-
-                        callback();
-                    });
-                },
-                function(callback) {
-                    elemental.post(req.user, skill, 'skill', function(err, id) {
-                        if(err) return callback(err);
-
-                        skill.id = id;
-
-                        callback();
-                    });
-                }
-            ], function(err) {
-                if(err) return next(err);
-
-                res.status(201).send({id: manifestation.id});
-            });
+                res.status(201).send({id: id});
+            } catch(e) {
+                next(e);
+            }
         });
 
-    generic.deleted(router, tableName, sql);
-    generic.schema(router, tableName);
-    generic.get(router, tableName, sql);
-    generic.put(router, tableName);
+    routes.removed(router, tableName, query);
+    routes.schema(router, tableName);
+    routes.single(router, tableName, query);
+    routes.update(router, tableName);
 
-    generic.automatic(router, tableName);
+    routes.automatic(router, tableName);
 
     // Relations
 

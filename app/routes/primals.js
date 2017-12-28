@@ -1,89 +1,57 @@
 'use strict';
 
-let AppError = require('../../lib/errors/app-error');
+const routes = require('../../lib/generic/routes');
+const basic = require('../../lib/generic/basic');
+const elemental = require('../../lib/database/elemental');
+const sql = require('../../lib/database/sql');
+const permissions = require('../../lib/database/permissions');
 
-let async = require('async');
-
-let generic = require('../../lib/helper/generic'),
-    elemental = require('../../lib/sql/elemental'),
-    sequel = require('../../lib/helper/sequel'),
-    query = require('../../lib/sql/query'),
-    ownership = require('../../lib/sql/ownership');
-
-module.exports = function(router) {
+module.exports = (router) => {
     const tableName = 'primal';
 
-    let sql = 'SELECT * FROM ' + tableName + ' ' +
+    let query = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
 
-    generic.root(router, tableName, sql);
+    routes.root(router, tableName, query);
 
     router.route('/')
-        .post(function(req, res, next) {
-            let manifestation = {
-                id: req.body.manifestation_id
-            };
+        .post(async (req, res, next) => {
+            try {
+                let manifestationId = parseInt(req.body.manifestation_id);
 
-            let expertise = {
-                name: req.body.name + ' Mastery',
-                manifestation_id: req.body.manifestation_id
-            };
+                await permissions.verify(req, 'manifestation', manifestationId);
 
-            let primalId;
+                let expertise = {
+                    name: req.body.name + ' Mastery',
+                    manifestation_id: req.body.manifestation_id
+                };
 
-            async.series([
-                function(callback) {
-                    ownership(req.user, 'manifestation', manifestation.id, callback);
-                },
-                function(callback) {
-                    query('SELECT skill_id AS id FROM skill_is_manifestation WHERE manifestation_id = ?', [manifestation.id], function(err, results) {
-                        if(err) return callback(err);
+                let [rows] = await sql('SELECT skill_id AS id FROM skill_is_manifestation WHERE manifestation_id = ?', [manifestationId]);
+                expertise.skill_id = rows[0].id;
 
-                        if(results.length === 0) return callback(new AppError(500, "Skill not found", "Skill not found", "Skill not found"));
+                req.body.expertise_id = await elemental.insert(req, expertise, 'expertise');
 
-                        expertise.skill_id = results[0].id;
+                let id = await elemental.insert(req, req.body, 'primal');
 
-                        callback();
-                    });
-                },
-                function(callback) {
-                    elemental.post(req.user, expertise, 'expertise', function(err, id) {
-                        if(err) return callback(err);
-
-                        req.body.expertise_id = id;
-
-                        callback();
-                    });
-                },
-                function(callback) {
-                    elemental.post(req.user, req.body, 'primal', function(err, id) {
-                        if(err) return callback(err);
-
-                        primalId = id;
-
-                        callback();
-                    });
-                }
-            ], function(err) {
-                if(err) return next(err);
-
-                res.status(201).send({id: primalId});
-            });
+                res.status(201).send({id: id});
+            } catch(e) {
+                next(e);
+            }
         });
 
-    generic.deleted(router, tableName, sql);
-    generic.schema(router, tableName);
+    routes.removed(router, tableName, query);
+    routes.schema(router, tableName);
 
     router.route('/manifestation/:manifestationId')
-        .get(function(req, res, next) {
-            let call = sql + ' WHERE deleted IS NULL AND ' +
+        .get(async (req, res, next) => {
+            let call = query + ' WHERE deleted IS NULL AND ' +
                 'manifestation_id = ?';
 
-            sequel.get(req, res, next, call, [req.params.manifestationId]);
+            await basic.select(req, res, next, call, [req.params.id]);
         });
 
-    generic.get(router, tableName, sql);
-    generic.put(router, tableName);
+    routes.single(router, tableName, query);
+    routes.update(router, tableName);
 
-    generic.automatic(router, tableName);
+    routes.automatic(router, tableName);
 };

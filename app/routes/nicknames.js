@@ -1,7 +1,7 @@
 'use strict';
 
-let unique = require('../../lib/helper/unique');
+const routes = require('../../lib/generic/routes');
 
-module.exports = function(router) {
-    unique(router, 'nickname');
+module.exports = (router) => {
+    routes.unique(router, 'nickname');
 };

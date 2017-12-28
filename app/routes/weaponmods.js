@@ -1,33 +1,33 @@
 'use strict';
 
-let generic = require('../../lib/helper/generic'),
-    sequel = require('../../lib/helper/sequel');
+const routes = require('../../lib/generic/routes');
+const basic = require('../../lib/generic/basic');
 
-module.exports = function(router) {
+module.exports = (router) => {
     const tableName = 'weaponmod';
 
-    let sql = 'SELECT * FROM ' + tableName + ' ' +
+    let query = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id ' +
         'LEFT JOIN ' + tableName + '_is_corporation ON ' + tableName + '_is_corporation.' + tableName + '_id = ' + tableName + '.id';
 
-    generic.root(router, tableName, sql);
-    generic.post(router, tableName);
-    generic.deleted(router, tableName, sql);
-    generic.schema(router, tableName);
+    routes.root(router, tableName, query);
+    routes.insert(router, tableName);
+    routes.removed(router, tableName, query);
+    routes.schema(router, tableName);
 
-    router.route('/weapon/:weaponId')
-        .get(function(req, res, next) {
+    router.route('/weapon/:id')
+        .get(async (req, res, next) => {
             let call = 'SELECT * FROM weapon_has_weaponmod ' +
                 'LEFT JOIN weaponmod ON weaponmod.id = weapon_has_weaponmod.weaponmod_id ' +
                 'LEFT JOIN weaponmod_is_copy ON weaponmod_is_copy.weaponmod_id = weaponmod.id ' +
                 'LEFT JOIN weaponmod_is_corporation ON weaponmod_is_corporation.weaponmod_id = weaponmod.id ' +
                 'WHERE weapon_has_weaponmod.weapon_id = ? AND weaponmod.deleted IS NULL';
 
-            sequel.get(req, res, next, call, [req.params.weaponId]);
+            await basic.select(req, res, next, call, [req.params.id]);
         });
 
-    generic.get(router, tableName, sql);
-    generic.put(router, tableName);
+    routes.single(router, tableName, query);
+    routes.update(router, tableName);
 
-    generic.automatic(router, tableName);
+    routes.automatic(router, tableName);
 };

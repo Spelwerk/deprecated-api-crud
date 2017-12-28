@@ -1,38 +1,43 @@
 'use strict';
 
-let sequel = require('../../lib/helper/sequel'),
-    meetings = require('../../lib/helper/meetings');
+const basic = require('../../lib/generic/basic');
+
+const meetings = require('../../lib/helper/meetings');
 
 module.exports = function(router) {
-    let sql = 'SELECT * FROM meeting';
+    let query = 'SELECT * FROM meeting';
 
     router.route('/')
-        .post(function(req, res, next) {
-            meetings.post(req.user, req.body.story_id, req.body.notes, function(err, id) {
-                if(err) return next(err);
+        .post(async (req, res, next) => {
+            try {
+                let id = await meetings.insert(req, req.body);
 
                 res.status(201).send({id: id});
-            });
+            } catch(e) {
+                next(e);
+            }
         });
 
-    router.route('/story/:storyId')
-        .get(function(req, res, next) {
-            let call = sql + ' WHERE story_id = ?';
+    router.route('/story/:id')
+        .get(async (req, res, next) => {
+            let call = query + ' WHERE story_id = ?';
 
-            sequel.get(req, res, next, call, [req.params.storyId]);
+            await basic.select(req, res, next, call, [req.params.id]);
         });
 
     router.route('/:id')
-        .get(function(req, res, next) {
-            let call = sql + ' WHERE id = ?';
+        .get(async (req, res, next) => {
+            let call = query + ' WHERE id = ?';
 
-            sequel.get(req, res, next, call, [req.params.id]);
+            await basic.select(req, res, next, call, [req.params.id], true);
         })
-        .put(function(req, res, next) {
-            meetings.put(req.user, req.params.id, req.body.notes, function(err) {
-                if(err) return next(err);
+        .put(async (req, res, next) => {
+            try {
+                await meetings.update(req, req.body, req.params.id);
 
                 res.status(204).send();
-            });
+            } catch(e) {
+                next(e);
+            }
         });
 };

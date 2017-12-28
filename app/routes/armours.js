@@ -1,10 +1,10 @@
 'use strict';
 
-const basic = require('../../lib/generic/basic');
-const relations = require('../../lib/generic/relations');
 const routes = require('../../lib/generic/routes');
+const relations = require('../../lib/generic/relations');
+const basic = require('../../lib/generic/basic');
 
-module.exports = function(router) {
+module.exports = (router) => {
     const tableName = 'armour';
 
     let query = 'SELECT * FROM ' + tableName + ' ' +

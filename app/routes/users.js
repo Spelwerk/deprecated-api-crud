@@ -1,27 +1,29 @@
 'use strict';
 
-let UserDisplaynameAlreadyExistsError = require('../../lib/errors/user-displayname-already-exists-error'),
-    UserEmailAlreadyExistsError = require('../../lib/errors/user-email-already-exists-error'),
-    UserExpiredTimeoutError = require('../../lib/errors/user-expired-timeout-error'),
-    UserInvalidEmailError = require('../../lib/errors/user-invalid-email-error'),
-    UserInvalidPasswordError = require('../../lib/errors/user-invalid-password-error'),
-    UserInvalidSecretError = require('../../lib/errors/user-invalid-secret-error'),
-    UserInvalidTokenError = require('../../lib/errors/user-invalid-token-error'),
-    UserNotAdministratorError = require('../../lib/errors/user-not-administrator-error'),
-    UserNotFoundError = require('../../lib/errors/user-not-found-error'),
-    UserNotLoggedInError = require('../../lib/errors/user-not-logged-in-error'),
-    UserPasswordNotSetError = require('../../lib/errors/user-password-not-set-error');
+const UserDisplaynameAlreadyExistsError = require('../../lib/errors/user-displayname-already-exists-error');
+const UserEmailAlreadyExistsError = require('../../lib/errors/user-email-already-exists-error');
+const UserExpiredTimeoutError = require('../../lib/errors/user-expired-timeout-error');
+const UserInvalidEmailError = require('../../lib/errors/user-invalid-email-error');
+const UserInvalidPasswordError = require('../../lib/errors/user-invalid-password-error');
+const UserInvalidSecretError = require('../../lib/errors/user-invalid-secret-error');
+const UserInvalidTokenError = require('../../lib/errors/user-invalid-token-error');
+const UserNotAdministratorError = require('../../lib/errors/user-not-administrator-error');
+const UserNotFoundError = require('../../lib/errors/user-not-found-error');
+const UserNotLoggedInError = require('../../lib/errors/user-not-logged-in-error');
+const UserPasswordNotSetError = require('../../lib/errors/user-password-not-set-error');
 
-let async = require('async'),
-    nconf = require('nconf'),
-    moment = require('moment');
+const async = require('async');
+const nconf = require('nconf');
+const moment = require('moment');
 
-let query = require('../../lib/sql/query'),
-    sequel = require('../../lib/helper/sequel'),
-    mailer = require('../../lib/mailer'),
-    onion = require('../../lib/onion'),
-    hasher = require('../../lib/hasher'),
-    users = require('../../lib/helper/users');
+const query = require('../../lib/sql/query');
+
+const sequel = require('../../lib/helper/sequel');
+const users = require('../../lib/helper/users');
+
+const mailer = require('../../lib/mailer');
+const onion = require('../../lib/onion');
+const hasher = require('../../lib/hasher');
 
 module.exports = function(router) {
     let sql = 'SELECT ' +

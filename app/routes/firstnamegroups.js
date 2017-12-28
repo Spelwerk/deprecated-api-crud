@@ -1,4 +1,4 @@
-'use strict';
+'use strict'; //todo ASYNC/AWAIT
 
 let UserNotAdministratorError = require('../../lib/errors/user-not-administrator-error');
 

@@ -1,80 +1,55 @@
 'use strict';
 
-let async = require('async');
+const routes = require('../../lib/generic/routes');
+const basic = require('../../lib/generic/basic');
+const elemental = require('../../lib/database/elemental');
+const sql = require('../../lib/database/sql');
 
-let query = require('../../lib/sql/query'),
-    elemental = require('../../lib/sql/elemental'),
-    generic = require('../../lib/helper/generic'),
-    sequel = require('../../lib/helper/sequel');
-
-module.exports = function(router) {
+module.exports = (router) => {
     const tableName = 'spelltype';
 
-    let sql = 'SELECT * FROM ' + tableName + ' ' +
+    let query = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
 
-    generic.root(router, tableName, sql);
+    routes.root(router, tableName, query);
 
     router.route('/')
-        .post(function(req, res, next) {
-            let manifestationId = parseInt(req.body.manifestation_id);
+        .post(async (req, res, next) => {
+            try {
+                let manifestationId = parseInt(req.body.manifestation_id);
 
-            let expertise = {
-                name: req.body.name + ' Mastery',
-                description: req.body.description,
-                skill_id: null,
-            };
+                let expertise = {
+                    name: req.body.name + ' Mastery',
+                    description: req.body.description,
+                    skill_id: null,
+                };
 
-            let spellTypeId;
+                let [rows] = await sql('SELECT skill_id AS id FROM skill_is_manifestation WHERE manifestation_id = ?', [manifestationId]);
+                expertise.skill_id = parseInt(rows[0].id);
 
-            async.series([
-                function(callback) {
-                    query('SELECT skill_id AS id FROM skill_is_manifestation WHERE manifestation_id = ?', [manifestationId], function(err, results) {
-                        if(err) return callback(err);
+                req.body.expertise_id = await elemental.insert(req, expertise, 'expertise');
 
-                        expertise.skill_id = parseInt(results[0].id);
+                let id = await elemental.insert(req, req.body, 'spelltype');
 
-                        callback();
-                    });
-                },
-                function(callback) {
-                    elemental.post(req.user, expertise, 'expertise', function(err, id) {
-                        if(err) return callback(err);
-
-                        req.body.expertise_id = id;
-
-                        callback();
-                    });
-                },
-                function(callback) {
-                    elemental.post(req.user, req.body, 'spelltype', function(err, id) {
-                        if(err) return callback(err);
-
-                        spellTypeId = id;
-
-                        callback();
-                    });
-                }
-            ], function(err) {
-                if(err) return next(err);
-
-                res.status(201).send({id: spellTypeId});
-            });
+                res.status(201).send({id: id});
+            } catch(e) {
+                next(e);
+            }
         });
 
-    generic.deleted(router, tableName, sql);
-    generic.schema(router, tableName);
+    routes.removed(router, tableName, query);
+    routes.schema(router, tableName);
 
-    router.route('/manifestation/:manifestationId')
-        .get(function(req, res, next) {
-            let call = sql + ' WHERE deleted IS NULL AND ' +
+    router.route('/manifestation/:id')
+        .get(async (req, res, next) => {
+            let call = query + ' WHERE deleted IS NULL AND ' +
                 'manifestation_id = ?';
 
-            sequel.get(req, res, next, call, [req.params.manifestationId]);
+            await basic.select(req, res, next, call, [req.params.id]);
         });
 
-    generic.get(router, tableName, sql);
-    generic.put(router, tableName);
+    routes.single(router, tableName, query);
+    routes.update(router, tableName);
 
-    generic.automatic(router, tableName);
+    routes.automatic(router, tableName);
 };

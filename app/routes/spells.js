@@ -1,89 +1,54 @@
 'use strict';
 
-let AppError = require('../../lib/errors/app-error');
+const routes = require('../../lib/generic/routes');
+const elemental = require('../../lib/database/elemental');
+const sql = require('../../lib/database/sql');
+const permissions = require('../../lib/database/permissions');
 
-let async = require('async');
-
-let generic = require('../../lib/helper/generic'),
-    elemental = require('../../lib/sql/elemental'),
-    query = require('../../lib/sql/query'),
-    ownership = require('../../lib/sql/ownership');
-
-module.exports = function(router) {
+module.exports = (router) => {
     const tableName = 'spell';
 
-    let sql = 'SELECT * FROM ' + tableName + ' ' +
+    let query = 'SELECT * FROM ' + tableName + ' ' +
         'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
 
-    generic.root(router, tableName, sql);
+    routes.root(router, tableName, query);
 
     router.route('/')
-        .post(function(req, res, next) {
-            let manifestation = {
-                id: req.body.manifestation_id
-            };
+        .post(async (req, res, next) => {
+            try {
+                let manifestationId = parseInt(req.body.manifestation_id);
 
-            let expertise = {
-                id: req.body.expertise_id,
-                name: req.body.name + ' Mastery',
-                manifestation_id: req.body.manifestation_id
-            };
+                await permissions.verify(req, 'manifestation', manifestationId);
 
-            let spellId;
+                let expertise = {
+                    id: req.body.expertise_id,
+                    name: req.body.name + ' Mastery',
+                    manifestation_id: manifestationId
+                };
 
-            async.series([
-                function(callback) {
-                    ownership(req.user, 'manifestation', manifestation.id, callback);
-                },
-                function(callback) {
-                    if(!expertise.id) return callback();
-
-                    ownership(req.user, 'expertise', expertise.id, callback);
-                },
-                function(callback) {
-                    if(expertise.id) return callback();
-
-                    query('SELECT skill_id AS id FROM skill_is_manifestation WHERE manifestation_id = ?', [manifestation.id], function(err, results) {
-                        if(err) return callback(err);
-
-                        if(results.length === 0) return callback(new AppError(500, "Skill not found", "Skill not found", "Skill not found"));
-
-                        expertise.skill_id = results[0].id;
-
-                        callback();
-                    });
-                },
-                function(callback) {
-                    if(expertise.id) return callback();
-
-                    elemental.post(req.user, expertise, 'expertise', function(err, id) {
-                        if(err) return callback(err);
-
-                        req.body.expertise_id = id;
-
-                        callback();
-                    });
-                },
-                function(callback) {
-                    elemental.post(req.user, req.body, 'spell', function(err, id) {
-                        if(err) return callback(err);
-
-                        spellId = id;
-
-                        callback();
-                    });
+                if(expertise.id) {
+                    await permissions.verify(req, 'expertise', expertise.id);
                 }
-            ], function(err) {
-                if(err) return next(err);
 
-                res.status(201).send({id: spellId});
-            });
+                if(!expertise.id) {
+                    let [rows] = await sql('SELECT skill_id AS id FROM skill_is_manifestation WHERE manifestation_id = ?', [manifestationId]);
+                    expertise.skill_id = rows[0].id;
+
+                    req.body.expertise_id = await elemental.insert(req, expertise, 'expertise');
+                }
+
+                let id = await elemental.insert(req, req.body, 'spell');
+
+                res.status(201).send({id: id});
+            } catch(e) {
+                next(e);
+            }
         });
 
-    generic.deleted(router, tableName, sql);
-    generic.schema(router, tableName);
-    generic.get(router, tableName, sql);
-    generic.put(router, tableName);
+    routes.removed(router, tableName, query);
+    routes.schema(router, tableName);
+    routes.single(router, tableName, query);
+    routes.update(router, tableName);
 
-    generic.automatic(router, tableName);
+    routes.automatic(router, tableName);
 };
