@@ -45,6 +45,9 @@ function bootstrapTableSchema() {
             // List of all fields that are allowed to be changed
             accepted: [],
 
+            // List of options for all accepted fields
+            options: {},
+
             // Extra Fields in withData
             extra: {}
         },
@@ -61,19 +64,24 @@ function bootstrapTableSchema() {
 async function getColumnNames(tableName) {
     logger.info('[DATABASE] getting column names for ' + tableName);
 
-    let array = [];
+    let object = {};
 
-    let sql = "SELECT column_name FROM information_schema.columns WHERE table_name = ? AND table_schema = ?";
+    let query = "SELECT column_name AS name, data_type AS type, is_nullable AS nullable, character_maximum_length AS length FROM information_schema.columns WHERE table_name = ? AND table_schema = ?";
     let params = [tableName, nconf.get('database:database')];
 
     try {
-        let [rows] = await pool.execute(sql, params);
+        let [rows] = await pool.execute(query, params);
 
         for(let i in rows) {
-            array.push(rows[i].column_name);
+            let name = rows[i].name;
+            let type = rows[i].type;
+            let length = rows[i].length;
+            let nullable = rows[i].nullable === 'YES';
+
+            object[name] = {type: type, nullable: nullable, maximum: length};
         }
 
-        return array;
+        return object;
     } catch(e) {
         throw e;
     }
@@ -147,18 +155,22 @@ async function setTableSchemaGeneral(tableName) {
     logger.info('[DATABASE] setting general schema information for ' + tableName);
 
     try {
-        let rows = await getColumnNames(tableName);
+        let object = await getColumnNames(tableName);
 
-        for(let i in rows) {
-            let columnName = rows[i];
+        for(let key in object) {
+            let name = key;
+            let options = object[key];
 
-            dbSchema[tableName].fields.all.push(columnName);
+            dbSchema[tableName].fields.all.push(name);
 
-            if(columnName === 'canon') dbSchema[tableName].fields.canon = true;
-            if(columnName === 'updated') dbSchema[tableName].fields.updated = true;
-            if(columnName === 'deleted') dbSchema[tableName].fields.deleted = true;
+            if(name === 'canon') dbSchema[tableName].fields.canon = true;
+            if(name === 'updated') dbSchema[tableName].fields.updated = true;
+            if(name === 'deleted') dbSchema[tableName].fields.deleted = true;
 
-            if(restrictedFields.indexOf(columnName) === -1) dbSchema[tableName].fields.accepted.push(columnName);
+            if(restrictedFields.indexOf(name) === -1) {
+                dbSchema[tableName].fields.accepted.push(name);
+                dbSchema[tableName].fields.options[name] = options;
+            }
         }
     } catch(e) {
         throw e;
@@ -265,6 +277,8 @@ async function setup() {
 
         await setDatabaseArray();
         await setDatabaseSchema();
+
+        console.log(dbSchema['creature'].fields.options);
     } catch(e) {
         throw e;
     }

@@ -11,9 +11,9 @@ let app = require('./../app'),
     verifier = require('./../verifier'),
     hasher = require('./../../lib/hasher');
 
-describe('/creatures', function() {
+describe('/creature', function() {
 
-    let baseRoute = '/creatures';
+    let baseRoute = '/creature';
 
     let temporaryId;
 
