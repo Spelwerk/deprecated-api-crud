@@ -61,7 +61,7 @@ function bootstrapTableSchema() {
     };
 }
 
-async function getColumnNames(tableName) {
+async function getColumnInformation(tableName) {
     logger.info('[DATABASE] getting column names for ' + tableName);
 
     let object = {};
@@ -155,7 +155,7 @@ async function setTableSchemaGeneral(tableName) {
     logger.info('[DATABASE] setting general schema information for ' + tableName);
 
     try {
-        let object = await getColumnNames(tableName);
+        let object = await getColumnInformation(tableName);
 
         for(let key in object) {
             let name = key;
