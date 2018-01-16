@@ -3,6 +3,8 @@
 const logger = require('../../lib/logger');
 
 function loopBody(body) {
+    if(!body && body.length === 0) return null;
+
     let array = [];
 
     for(let key in body) {
