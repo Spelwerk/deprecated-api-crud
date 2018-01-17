@@ -12,10 +12,12 @@ module.exports = (app) => {
 
     app.use(function(req, res, next) {
         let credentials = basicAuth(req);
+        let keyId = nconf.get('api-key:id');
+        let keySecret = nconf.get('api-key:secret');
 
         if(!credentials) return next(new MissingCredentialsError);
 
-        if(credentials.name !== nconf.get('api-key:id') || credentials.pass !== nconf.get('api-key:secret')) return next(new InvalidCredentialsError);
+        if(credentials.name !== keyId || credentials.pass !== keySecret) return next(new InvalidCredentialsError);
 
         next();
     });

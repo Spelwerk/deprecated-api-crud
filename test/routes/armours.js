@@ -13,8 +13,14 @@ let app = require('../app'),
 
 describe('/armours', function() {
 
-    let baseRoute = '/armours';
+    function verifyItem(item) {
+        verifier.generic(item);
 
+        assert.isNumber(item.bodypart_id);
+        assert.isNumber(item.price);
+    }
+
+    let baseRoute = '/armours';
     let temporaryId;
 
     before(function(done) {
@@ -33,29 +39,6 @@ describe('/armours', function() {
                 done();
             });
     });
-
-    function verifyList(body) {
-        assert.isNumber(body.length);
-
-        assert.isArray(body.results);
-        assert.lengthOf(body.results, body.length);
-
-        if(body.length > 0) {
-            _.each(body.results, function(item) {
-                verifyItem(item);
-            });
-        }
-
-        assert.isObject(body.fields);
-    }
-
-    function verifyItem(item) {
-        verifier.generic(item);
-
-        assert.isNumber(item.bodypart_id);
-        assert.isNumber(item.price);
-    }
-
 
     describe('POST', function() {
 
@@ -125,7 +108,7 @@ describe('/armours', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });
@@ -137,7 +120,7 @@ describe('/armours', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });
@@ -149,7 +132,7 @@ describe('/armours', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });
@@ -196,7 +179,7 @@ describe('/armours', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(204).end(done);
         });
 
         it('PUT /:id should change the value of the item', function(done) {
@@ -227,7 +210,7 @@ describe('/armours', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(204).end(done);
         });
 
         it('PUT /:id should change the value of the item', function(done) {
@@ -258,7 +241,7 @@ describe('/armours', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(204).end(done);
         });
 
         it('PUT /:id should change the value of the item', function(done) {

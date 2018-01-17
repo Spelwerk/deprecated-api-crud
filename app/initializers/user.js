@@ -29,7 +29,7 @@ module.exports = (app) => {
         try {
             let [rows] = await sql('SELECT user_id AS id FROM user_token WHERE token = ?', [req.user.token]);
 
-            if(rows.length === 0) return next(new UserInvalidTokenError);
+            if(!rows || rows.length === 0) return next(new UserInvalidTokenError);
 
             req.user.id = parseInt(rows[0].id);
         } catch(e) {

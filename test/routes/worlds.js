@@ -13,30 +13,6 @@ let app = require('../app'),
 
 describe('/worlds', function() {
 
-    let baseRoute = '/worlds';
-
-    let temporaryId;
-
-    before(function(done) {
-        app.login(done);
-    });
-
-
-    function verifyList(body) {
-        assert.isNumber(body.length);
-
-        assert.isArray(body.results);
-        assert.lengthOf(body.results, body.length);
-
-        if(body.length > 0) {
-            _.each(body.results, function(item) {
-                verifyItem(item);
-            });
-        }
-
-        assert.isObject(body.fields);
-    }
-
     function verifyItem(item) {
         verifier.generic(item);
 
@@ -44,6 +20,12 @@ describe('/worlds', function() {
         if(item.species_id) assert.isNumber(item.species_id);
     }
 
+    let baseRoute = '/worlds';
+    let temporaryId;
+
+    before(function(done) {
+        app.login(done);
+    });
 
     describe('POST', function() {
 
@@ -105,7 +87,7 @@ describe('/worlds', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });
@@ -117,7 +99,7 @@ describe('/worlds', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });

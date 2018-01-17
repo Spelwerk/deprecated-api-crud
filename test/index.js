@@ -10,17 +10,10 @@ require('./routes/natures');
 require('./routes/languages');
 require('./routes/loyalties');
 
-require('./routes/nicknames');
-require('./routes/nicknamegroups');
-require('./routes/firstnames');
-require('./routes/firstnamegroups');
-require('./routes/lastnames');
-require('./routes/lastnamegroups');
-
-require('./routes/drive');
-require('./routes/pride');
-require('./routes/problem');
-require('./routes/shame');
+//require('./routes/drive');
+//require('./routes/pride');
+//require('./routes/problem');
+//require('./routes/shame');
 
 require('./routes/diseases');
 require('./routes/dementations');

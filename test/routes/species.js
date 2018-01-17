@@ -13,45 +13,6 @@ let app = require('../app'),
 
 describe('/species', function() {
 
-    let baseRoute = '/species';
-
-    let temporaryId,
-        temporaryId2;
-
-    before(function(done) {
-        app.login(done);
-    });
-
-    let worldId;
-    before(function(done) {
-        app.get('/worlds')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                let length = res.body.length - 1;
-                worldId = res.body.results[length].id;
-
-                done();
-            });
-    });
-
-
-    function verifyList(body) {
-        assert.isNumber(body.length);
-
-        assert.isArray(body.results);
-        assert.lengthOf(body.results, body.length);
-
-        if(body.length > 0) {
-            _.each(body.results, function(item) {
-                verifyItem(item);
-            });
-        }
-
-        assert.isObject(body.fields);
-    }
-
     function verifyItem(item) {
         assert.isNumber(item.id);
         assert.isBoolean(item.canon);
@@ -71,6 +32,27 @@ describe('/species', function() {
         if(item.deleted) assert.isString(item.deleted);
     }
 
+    let baseRoute = '/species';
+    let temporaryId;
+    let temporaryId2;
+
+    before(function(done) {
+        app.login(done);
+    });
+
+    let worldId;
+    before(function(done) {
+        app.get('/worlds')
+            .expect(200)
+            .end(function(err, res) {
+                if(err) return done(err);
+
+                let length = res.body.length - 1;
+                worldId = res.body.results[length].id;
+
+                done();
+            });
+    });
 
     describe('POST', function() {
 
@@ -175,7 +157,7 @@ describe('/species', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });
@@ -187,7 +169,7 @@ describe('/species', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });
@@ -199,7 +181,7 @@ describe('/species', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });

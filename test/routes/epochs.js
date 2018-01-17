@@ -13,8 +13,14 @@ let app = require('../app'),
 
 describe('/epochs', function() {
 
-    let baseRoute = '/epochs';
+    function verifyItem(item) {
+        verifier.generic(item);
 
+        if(item.manifestation_id) assert.isNumber(item.manifestation_id);
+        if(item.species_id) assert.isNumber(item.species_id);
+    }
+
+    let baseRoute = '/epochs';
     let temporaryId;
 
     before(function(done) {
@@ -34,30 +40,6 @@ describe('/epochs', function() {
                 done();
             });
     });
-
-
-    function verifyList(body) {
-        assert.isNumber(body.length);
-
-        assert.isArray(body.results);
-        assert.lengthOf(body.results, body.length);
-
-        if(body.length > 0) {
-            _.each(body.results, function(item) {
-                verifyItem(item);
-            });
-        }
-
-        assert.isObject(body.fields);
-    }
-
-    function verifyItem(item) {
-        verifier.generic(item);
-
-        if(item.manifestation_id) assert.isNumber(item.manifestation_id);
-        if(item.species_id) assert.isNumber(item.species_id);
-    }
-
 
     describe('POST', function() {
 
@@ -123,7 +105,7 @@ describe('/epochs', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });
@@ -135,7 +117,7 @@ describe('/epochs', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });

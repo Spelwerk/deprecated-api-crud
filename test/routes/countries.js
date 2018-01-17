@@ -13,8 +13,13 @@ let app = require('../app'),
 
 describe('/countries', function() {
 
-    let baseRoute = '/countries';
+    function verifyItem(item) {
+        verifier.generic(item);
 
+        if(item.language_id) assert.isNumber(item.language_id);
+    }
+
+    let baseRoute = '/countries';
     let temporaryId;
 
     before(function(done) {
@@ -34,80 +39,13 @@ describe('/countries', function() {
             });
     });
 
-    let firstnameGroupId;
-    before(function(done) {
-        app.get('/firstnamegroups')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                firstnameGroupId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
-    let nicknameGroupId;
-    before(function(done) {
-        app.get('/nicknamegroups')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                nicknameGroupId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
-    let lastnameGroupId;
-    before(function(done) {
-        app.get('/lastnamegroups')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                lastnameGroupId = res.body.results[0].id;
-
-                done();
-            });
-    });
-
-    function verifyList(body) {
-        assert.isNumber(body.length);
-
-        assert.isArray(body.results);
-        assert.lengthOf(body.results, body.length);
-
-        if(body.length > 0) {
-            _.each(body.results, function(item) {
-                verifyItem(item);
-            });
-        }
-
-        assert.isObject(body.fields);
-    }
-
-    function verifyItem(item) {
-        verifier.generic(item);
-
-        if(item.language_id) assert.isNumber(item.language_id);
-        if(item.firstnamegroup_id) assert.isNumber(item.firstnamegroup_id);
-        if(item.nicknamegroup_id) assert.isNumber(item.nicknamegroup_id);
-        if(item.lastnamegroup_id) assert.isNumber(item.lastnamegroup_id);
-    }
-
-
     describe('POST', function() {
 
         it('/ should create a new item', function(done) {
             let payload = {
                 name: hasher(20),
                 description: hasher(20),
-                language_id: languageId,
-                firstnamegroup_id: firstnameGroupId,
-                nicknamegroup_id: nicknameGroupId,
-                lastnamegroup_id: lastnameGroupId
+                language_id: languageId
             };
 
             app.post(baseRoute, payload)
@@ -180,7 +118,7 @@ describe('/countries', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });
@@ -192,7 +130,7 @@ describe('/countries', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });

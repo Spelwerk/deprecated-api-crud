@@ -13,8 +13,17 @@ let app = require('../app'),
 
 describe('/software', function() {
 
-    let baseRoute = '/software';
+    function verifyItem(item) {
+        verifier.generic(item);
 
+        assert.isNumber(item.softwaretype_id);
+        assert.isBoolean(item.legal);
+        assert.isNumber(item.price);
+        assert.isNumber(item.hacking_difficulty);
+        assert.isNumber(item.hacking_bonus);
+    }
+
+    let baseRoute = '/software';
     let temporaryId;
 
     before(function(done) {
@@ -33,32 +42,6 @@ describe('/software', function() {
                 done();
             });
     });
-
-    function verifyList(body) {
-        assert.isNumber(body.length);
-
-        assert.isArray(body.results);
-        assert.lengthOf(body.results, body.length);
-
-        if(body.length > 0) {
-            _.each(body.results, function(item) {
-                verifyItem(item);
-            });
-        }
-
-        assert.isObject(body.fields);
-    }
-
-    function verifyItem(item) {
-        verifier.generic(item);
-
-        assert.isNumber(item.softwaretype_id);
-        assert.isBoolean(item.legal);
-        assert.isNumber(item.price);
-        assert.isNumber(item.hacking_difficulty);
-        assert.isNumber(item.hacking_bonus);
-    }
-
 
     describe('POST', function() {
 
@@ -131,7 +114,7 @@ describe('/software', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });
@@ -143,7 +126,7 @@ describe('/software', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });
@@ -155,7 +138,7 @@ describe('/software', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });

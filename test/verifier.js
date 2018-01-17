@@ -18,7 +18,22 @@ function generic(item) {
 
 module.exports.generic = generic;
 
-module.exports.comments = function(err, res, done) {
+module.exports.lists = (body, customFn) => {
+    assert.isNumber(body.length);
+
+    if(body.length > 0) {
+        assert.isArray(body.results);
+        assert.lengthOf(body.results, body.length);
+
+        _.each(body.results, function(item) {
+            customFn(item);
+        });
+    }
+
+    assert.isObject(body.fields);
+};
+
+module.exports.comments = (err, res, done) => {
     if(err) return done(err);
 
     assert.isArray(res.body.results);
@@ -38,17 +53,19 @@ module.exports.comments = function(err, res, done) {
     done();
 };
 
-module.exports.ownership = function(err, res, done) {
+module.exports.ownership = (err, res, done) => {
     if(err) return done(err);
 
-    assert.isBoolean(res.body.favorite);
-    assert.isBoolean(res.body.owner);
-    assert.isBoolean(res.body.edit);
+    if(res.body !== null) {
+        for(let i in res.body) {
+            assert.isBoolean(res.body[i]);
+        }
+    }
 
     done();
 };
 
-module.exports.relations = function(err, res, done) {
+module.exports.relations = (err, res, done) => {
     if(err) return done(err);
 
     assert.isNumber(res.body.length);
@@ -64,7 +81,7 @@ module.exports.relations = function(err, res, done) {
     done();
 };
 
-module.exports.relation = function(err, res, done) {
+module.exports.relation = (err, res, done) => {
     if(err) return done(err);
 
     generic(res.body.result);

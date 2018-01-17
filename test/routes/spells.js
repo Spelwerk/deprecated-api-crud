@@ -13,8 +13,22 @@ let app = require('../app'),
 
 describe('/spell', function() {
 
-    let baseRoute = '/spells';
+    function verifyItem(item) {
+        verifier.generic(item);
 
+        assert.isNumber(item.manifestation_id);
+        assert.isNumber(item.spelltype_id);
+        assert.isNumber(item.effect_dice);
+        assert.isNumber(item.effect_bonus);
+        assert.isNumber(item.damage_dice);
+        assert.isNumber(item.damage_bonus);
+        assert.isNumber(item.critical_dice);
+        assert.isNumber(item.critical_bonus);
+        assert.isNumber(item.distance);
+        assert.isNumber(item.cost);
+    }
+
+    let baseRoute = '/spells';
     let temporaryId;
 
     before(function(done) {
@@ -75,37 +89,6 @@ describe('/spell', function() {
                 done();
             });
     });
-
-    function verifyList(body) {
-        assert.isNumber(body.length);
-
-        assert.isArray(body.results);
-        assert.lengthOf(body.results, body.length);
-
-        if(body.length > 0) {
-            _.each(body.results, function(item) {
-                verifyItem(item);
-            });
-        }
-
-        assert.isObject(body.fields);
-    }
-
-    function verifyItem(item) {
-        verifier.generic(item);
-
-        assert.isNumber(item.manifestation_id);
-        assert.isNumber(item.spelltype_id);
-        assert.isNumber(item.effect_dice);
-        assert.isNumber(item.effect_bonus);
-        assert.isNumber(item.damage_dice);
-        assert.isNumber(item.damage_bonus);
-        assert.isNumber(item.critical_dice);
-        assert.isNumber(item.critical_bonus);
-        assert.isNumber(item.distance);
-        assert.isNumber(item.cost);
-    }
-
 
     describe('POST', function() {
 
@@ -187,7 +170,7 @@ describe('/spell', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });
@@ -199,7 +182,7 @@ describe('/spell', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });

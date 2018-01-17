@@ -13,8 +13,14 @@ let app = require('../app'),
 
 describe('/primal', function() {
 
-    let baseRoute = '/primals';
+    function verifyItem(item) {
+        verifier.generic(item);
 
+        assert.isNumber(item.manifestation_id);
+        assert.isNumber(item.expertise_id);
+    }
+
+    let baseRoute = '/primals';
     let temporaryId;
 
     before(function(done) {
@@ -34,29 +40,6 @@ describe('/primal', function() {
                 done();
             });
     });
-
-    function verifyList(body) {
-        assert.isNumber(body.length);
-
-        assert.isArray(body.results);
-        assert.lengthOf(body.results, body.length);
-
-        if(body.length > 0) {
-            _.each(body.results, function(item) {
-                verifyItem(item);
-            });
-        }
-
-        assert.isObject(body.fields);
-    }
-
-    function verifyItem(item) {
-        verifier.generic(item);
-
-        assert.isNumber(item.manifestation_id);
-        assert.isNumber(item.expertise_id);
-    }
-
 
     describe('POST', function() {
 
@@ -128,7 +111,7 @@ describe('/primal', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });
@@ -140,7 +123,7 @@ describe('/primal', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });

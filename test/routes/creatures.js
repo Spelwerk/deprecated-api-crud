@@ -13,8 +13,11 @@ let app = require('./../app'),
 
 describe('/creature', function() {
 
-    let baseRoute = '/creature';
+    function verifyItem(item) {
+        verifier.generic(item);
+    }
 
+    let baseRoute = '/creature';
     let temporaryId;
 
     before(function(done) {
@@ -133,27 +136,6 @@ describe('/creature', function() {
             });
     });
 
-
-    function verifyList(body) {
-        assert.isNumber(body.length);
-
-        assert.isArray(body.results);
-        assert.lengthOf(body.results, body.length);
-
-        if(body.length > 0) {
-            _.each(body.results, function(item) {
-                verifyItem(item);
-            });
-        }
-
-        assert.isObject(body.fields);
-    }
-
-    function verifyItem(item) {
-        verifier.generic(item);
-    }
-
-
     describe('POST', function() {
 
         it('/ should create a new item', function(done) {
@@ -270,7 +252,7 @@ describe('/creature', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });
@@ -282,7 +264,7 @@ describe('/creature', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });
@@ -294,7 +276,7 @@ describe('/creature', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });

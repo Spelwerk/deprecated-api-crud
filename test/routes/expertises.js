@@ -13,8 +13,15 @@ let app = require('./../app'),
 
 describe('/expertise', function() {
 
-    let baseRoute = '/expertises';
+    function verifyItem(item) {
+        verifier.generic(item);
 
+        assert.isNumber(item.skill_id);
+        if(item.species_id) assert.isNumber(item.species_id);
+        if(item.manifestation_id) assert.isNumber(item.manifestation_id);
+    }
+
+    let baseRoute = '/expertises';
     let temporaryId;
 
     before(function(done) {
@@ -59,30 +66,6 @@ describe('/expertise', function() {
                 done();
             });
     });
-
-    function verifyList(body) {
-        assert.isNumber(body.length);
-
-        assert.isArray(body.results);
-        assert.lengthOf(body.results, body.length);
-
-        if(body.length > 0) {
-            _.each(body.results, function(item) {
-                verifyItem(item);
-            });
-        }
-
-        assert.isObject(body.fields);
-    }
-
-    function verifyItem(item) {
-        verifier.generic(item);
-
-        assert.isNumber(item.skill_id);
-        if(item.species_id) assert.isNumber(item.species_id);
-        if(item.manifestation_id) assert.isNumber(item.manifestation_id);
-    }
-
 
     describe('POST', function() {
 
@@ -151,7 +134,7 @@ describe('/expertise', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });
@@ -163,7 +146,7 @@ describe('/expertise', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });
@@ -175,7 +158,7 @@ describe('/expertise', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });
@@ -187,7 +170,7 @@ describe('/expertise', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });
@@ -199,7 +182,7 @@ describe('/expertise', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });
@@ -211,7 +194,7 @@ describe('/expertise', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });
@@ -223,7 +206,7 @@ describe('/expertise', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });

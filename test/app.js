@@ -3,8 +3,8 @@ let supertest = require('supertest');
 let base = 'http://localhost:4000';
 
 let adminToken = '',
-    adminEmail = 'admin@spelwerk.se',
-    adminPassword = 'admin';
+    adminEmail = 'admin@spelwerk.com',
+    adminPassword = 'password';
 
 let apiId = 'id',
     apiSecret = 'secret';

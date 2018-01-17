@@ -13,8 +13,14 @@ let app = require('../app'),
 
 describe('/corporations', function() {
 
-    let baseRoute = '/corporations';
+    function verifyItem(item) {
+        verifier.generic(item);
 
+        if(item.country_id) assert.isNumber(item.country_id);
+        if(item.location_id) assert.isNumber(item.location_id);
+    }
+
+    let baseRoute = '/corporations';
     let temporaryId;
 
     before(function(done) {
@@ -33,28 +39,6 @@ describe('/corporations', function() {
                 done();
             });
     });
-
-    function verifyList(body) {
-        assert.isNumber(body.length);
-
-        assert.isArray(body.results);
-        assert.lengthOf(body.results, body.length);
-
-        if(body.length > 0) {
-            _.each(body.results, function(item) {
-                verifyItem(item);
-            });
-        }
-
-        assert.isObject(body.fields);
-    }
-
-    function verifyItem(item) {
-        verifier.generic(item);
-
-        if(item.country_id) assert.isNumber(item.country_id);
-        if(item.location_id) assert.isNumber(item.location_id);
-    }
 
     describe('POST', function() {
 
@@ -135,7 +119,7 @@ describe('/corporations', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });
@@ -147,7 +131,7 @@ describe('/corporations', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });

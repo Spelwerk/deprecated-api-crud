@@ -5,8 +5,7 @@ const routes = require('../../lib/generic/routes');
 module.exports = (router) => {
     const tableName = 'creaturetype';
 
-    let query = 'SELECT * FROM ' + tableName + ' ' +
-        'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
+    let query = 'SELECT * FROM ' + tableName;
 
     routes.root(router, tableName, query);
     routes.insert(router, tableName);

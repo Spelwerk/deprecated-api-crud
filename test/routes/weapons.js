@@ -13,10 +13,27 @@ let app = require('../app'),
 
 describe('/weapons', function() {
 
-    let baseRoute = '/weapons';
+    function verifyItem(item) {
+        verifier.generic(item);
 
-    let temporaryId,
-        temporaryId2;
+        assert.isNumber(item.weapontype_id);
+        assert.isNumber(item.attribute_id);
+        assert.isNumber(item.expertise_id);
+        if(item.species_id) assert.isNumber(item.species_id);
+        if(item.augmentation_id) assert.isNumber(item.augmentation_id);
+
+        assert.isBoolean(item.legal);
+        assert.isNumber(item.price);
+        assert.isNumber(item.damage_dice);
+        assert.isNumber(item.damage_bonus);
+        assert.isNumber(item.critical_dice);
+        assert.isNumber(item.critical_bonus);
+        assert.isNumber(item.distance);
+    }
+
+    let baseRoute = '/weapons';
+    let temporaryId;
+    let temporaryId2;
 
     before(function(done) {
         app.login(done);
@@ -63,40 +80,6 @@ describe('/weapons', function() {
                 done();
             });
     });
-
-    function verifyList(body) {
-        assert.isNumber(body.length);
-
-        assert.isArray(body.results);
-        assert.lengthOf(body.results, body.length);
-
-        if(body.length > 0) {
-            _.each(body.results, function(item) {
-                verifyItem(item);
-            });
-        }
-
-        assert.isObject(body.fields);
-    }
-
-    function verifyItem(item) {
-        verifier.generic(item);
-
-        assert.isNumber(item.weapontype_id);
-        assert.isNumber(item.attribute_id);
-        assert.isNumber(item.expertise_id);
-        if(item.species_id) assert.isNumber(item.species_id);
-        if(item.augmentation_id) assert.isNumber(item.augmentation_id);
-
-        assert.isBoolean(item.legal);
-        assert.isNumber(item.price);
-        assert.isNumber(item.damage_dice);
-        assert.isNumber(item.damage_bonus);
-        assert.isNumber(item.critical_dice);
-        assert.isNumber(item.critical_bonus);
-        assert.isNumber(item.distance);
-    }
-
 
     describe('POST', function() {
 
@@ -207,7 +190,7 @@ describe('/weapons', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });
@@ -219,7 +202,7 @@ describe('/weapons', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });
@@ -231,7 +214,7 @@ describe('/weapons', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });
@@ -243,7 +226,7 @@ describe('/weapons', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });
@@ -255,7 +238,7 @@ describe('/weapons', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });

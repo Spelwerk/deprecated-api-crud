@@ -11,25 +11,6 @@ let app = require('./../app'),
 
 describe('/users', function() {
 
-    let baseRoute = '/users',
-        id,
-        token,
-        email = hasher(20) + '@fakemail.com',
-        password = hasher(20);
-
-    function verifyList(body) {
-        assert.isNumber(body.length);
-
-        assert.isArray(body.results);
-        assert.lengthOf(body.results, body.length);
-
-        _.each(body.results, function(item) {
-            verifyItem(item);
-        });
-
-        assert.isObject(body.fields);
-    }
-
     function verifyItem(item) {
         assert.isNumber(item.id);
 
@@ -47,6 +28,11 @@ describe('/users', function() {
         if(item.deleted) assert.isString(item.deleted);
     }
 
+    let baseRoute = '/users';
+    let id;
+    let token;
+    let email = hasher(20) + '@fakemail.com';
+    let password = hasher(20);
 
     describe('POST', function() {
 
@@ -200,7 +186,7 @@ describe('/users', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });

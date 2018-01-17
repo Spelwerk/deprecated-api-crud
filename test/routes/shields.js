@@ -13,8 +13,19 @@ let app = require('../app'),
 
 describe('/shields', function() {
 
-    let baseRoute = '/shields';
+    function verifyItem(item) {
+        verifier.generic(item);
 
+        assert.isNumber(item.price);
+        assert.isNumber(item.attribute_id);
+        assert.isNumber(item.expertise_id);
+        assert.isNumber(item.damage_dice);
+        assert.isNumber(item.damage_bonus);
+        assert.isNumber(item.critical_dice);
+        assert.isNumber(item.critical_bonus);
+    }
+
+    let baseRoute = '/shields';
     let temporaryId,
         temporaryId2;
 
@@ -49,34 +60,6 @@ describe('/shields', function() {
                 done();
             });
     });
-
-    function verifyList(body) {
-        assert.isNumber(body.length);
-
-        assert.isArray(body.results);
-        assert.lengthOf(body.results, body.length);
-
-        if(body.length > 0) {
-            _.each(body.results, function(item) {
-                verifyItem(item);
-            });
-        }
-
-        assert.isObject(body.fields);
-    }
-
-    function verifyItem(item) {
-        verifier.generic(item);
-
-        assert.isNumber(item.price);
-        assert.isNumber(item.attribute_id);
-        assert.isNumber(item.expertise_id);
-        assert.isNumber(item.damage_dice);
-        assert.isNumber(item.damage_bonus);
-        assert.isNumber(item.critical_dice);
-        assert.isNumber(item.critical_bonus);
-    }
-
 
     describe('POST', function() {
 
@@ -193,7 +176,7 @@ describe('/shields', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });
@@ -205,7 +188,7 @@ describe('/shields', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });

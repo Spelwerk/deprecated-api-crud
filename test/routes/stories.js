@@ -13,8 +13,11 @@ let app = require('../app'),
 
 describe('/stories', function() {
 
-    let baseRoute = '/stories';
+    function verifyItem(item) {
+        verifier.generic(item);
+    }
 
+    let baseRoute = '/stories';
     let temporaryId;
 
     before(function(done) {
@@ -33,26 +36,6 @@ describe('/stories', function() {
                 done();
             });
     });
-
-    function verifyList(body) {
-        assert.isNumber(body.length);
-
-        assert.isArray(body.results);
-        assert.lengthOf(body.results, body.length);
-
-        if(body.length > 0) {
-            _.each(body.results, function(item) {
-                verifyItem(item);
-            });
-        }
-
-        assert.isObject(body.fields);
-    }
-
-    function verifyItem(item) {
-        verifier.generic(item);
-    }
-
 
     describe('POST', function() {
 
@@ -111,7 +94,7 @@ describe('/stories', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });
@@ -123,7 +106,7 @@ describe('/stories', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });

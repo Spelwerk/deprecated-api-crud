@@ -3,9 +3,9 @@
 const logger = require('../../lib/logger');
 
 function loopBody(body) {
-    if(!body && body.length === 0) return null;
+    let object = {};
 
-    let array = [];
+    if(!body && body.length === 0) return object;
 
     for(let key in body) {
         if(!body.hasOwnProperty(key)) continue;
@@ -14,10 +14,10 @@ function loopBody(body) {
 
         if(!isNaN(parseInt(body[key]))) body[key] = parseInt(body[key]);
 
-        array[key] = body[key];
+        object[key] = body[key];
     }
 
-    return array;
+    return object;
 }
 
 module.exports = (app) => {

@@ -13,33 +13,16 @@ let app = require('./../app'),
 
 describe('/attributetypes', function() {
 
-    let baseRoute = '/attributetypes';
+    function verifyItem(item) {
+        verifier.generic(item);
+    }
 
+    let baseRoute = '/attributetypes';
     let temporaryId;
 
     before(function(done) {
         app.login(done);
     });
-
-    function verifyList(body) {
-        assert.isNumber(body.length);
-
-        assert.isArray(body.results);
-        assert.lengthOf(body.results, body.length);
-
-        if(body.length > 0) {
-            _.each(body.results, function(item) {
-                verifyItem(item);
-            });
-        }
-
-        assert.isObject(body.fields);
-    }
-
-    function verifyItem(item) {
-        verifier.generic(item);
-    }
-
 
     describe('POST', function() {
 
@@ -89,7 +72,7 @@ describe('/attributetypes', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });
@@ -101,7 +84,7 @@ describe('/attributetypes', function() {
                 .end(function(err, res) {
                     if(err) return done(err);
 
-                    verifyList(res.body);
+                    verifier.lists(res.body, verifyItem);
 
                     done();
                 });
