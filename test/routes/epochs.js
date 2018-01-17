@@ -51,7 +51,7 @@ describe('/epochs', function() {
                 world_id: worldId,
                 begins: 1929,
                 ends: 2000,
-                augmentation: true
+                augmentation: 1
             };
 
             app.post(baseRoute, payload)
@@ -164,7 +164,7 @@ describe('/epochs', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(204).end(done);
         });
 
         it('GET / should get a list of items', function(done) {
@@ -191,7 +191,7 @@ describe('/epochs', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(204).end(done);
         });
 
         it('GET / should get a list of items', function(done) {
@@ -218,7 +218,7 @@ describe('/epochs', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(204).end(done);
         });
 
         it('GET / should get a list of items', function(done) {
@@ -245,7 +245,7 @@ describe('/epochs', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(204).end(done);
         });
 
         it('GET / should get a list of items', function(done) {
@@ -272,7 +272,7 @@ describe('/epochs', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(204).end(done);
         });
 
         it('GET / should get a list of items', function(done) {
@@ -299,7 +299,7 @@ describe('/epochs', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(204).end(done);
         });
 
         it('GET / should get a list of items', function(done) {
@@ -326,7 +326,7 @@ describe('/epochs', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(204).end(done);
         });
 
         it('GET / should get a list of items', function(done) {
@@ -353,7 +353,7 @@ describe('/epochs', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(204).end(done);
         });
 
         it('GET / should get a list of items', function(done) {
@@ -380,7 +380,7 @@ describe('/epochs', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(204).end(done);
         });
 
         it('GET / should get a list of items', function(done) {
@@ -407,7 +407,7 @@ describe('/epochs', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(204).end(done);
         });
 
         it('GET / should get a list of items', function(done) {
@@ -435,7 +435,7 @@ describe('/epochs', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(204).end(done);
         });
 
         it('GET / should get a list of items', function(done) {
@@ -462,7 +462,7 @@ describe('/epochs', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(204).end(done);
         });
 
         it('GET / should get a list of items', function(done) {
@@ -489,7 +489,7 @@ describe('/epochs', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(204).end(done);
         });
 
         it('GET / should get a list of items', function(done) {

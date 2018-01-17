@@ -26,7 +26,7 @@ module.exports = function(router) {
 
             async.series([
                 function(callback) {
-                    query('SELECT id FROM ' + tableName + ' WHERE LOWER(name) = ?', [name.toLowerCase()], function(err, results) {
+                    query('SELECT id FROM ' + tableName + ' WHERE LOWER(name) = ?', [name.toString().toLowerCase()], function(err, results) {
                         if(err) return callback(err);
 
                         if(!results[0]) return callback();

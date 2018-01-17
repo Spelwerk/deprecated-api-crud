@@ -146,7 +146,7 @@ describe('/worlds', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(204).end(done);
         });
 
         it('GET / should get a list of items', function(done) {
@@ -173,7 +173,7 @@ describe('/worlds', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(204).end(done);
         });
 
         it('GET / should get a list of items', function(done) {

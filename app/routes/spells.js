@@ -20,17 +20,16 @@ module.exports = (router) => {
 
                 await permissions.verify(req, 'manifestation', manifestationId);
 
-                let expertise = {
-                    id: req.body.expertise_id,
-                    name: req.body.name + ' Mastery',
-                    manifestation_id: manifestationId
-                };
+                if(req.body.expertise_id) {
+                    let expertiseId = parseInt(req.body.expertise_id);
 
-                if(expertise.id) {
-                    await permissions.verify(req, 'expertise', expertise.id);
-                }
+                    await permissions.verify(req, 'expertise', expertiseId);
+                } else {
+                    let expertise = {
+                        name: req.body.name + ' Mastery',
+                        manifestation_id: manifestationId
+                    };
 
-                if(!expertise.id) {
                     let [rows] = await sql('SELECT skill_id AS id FROM skill_is_manifestation WHERE manifestation_id = ?', [manifestationId]);
                     expertise.skill_id = rows[0].id;
 

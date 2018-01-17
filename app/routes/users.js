@@ -49,7 +49,7 @@ module.exports = function(router) {
         })
         .post(function(req, res, next) {
             let user = {
-                email: req.body.email.toLowerCase(),
+                email: req.body.email.toString().toLowerCase(),
                 displayname: req.body.displayname || null,
                 password: req.body.password || null,
                 encrypted: null,
@@ -135,7 +135,7 @@ module.exports = function(router) {
 
     router.route('/exists/email/:email')
         .get(function(req, res, next) {
-            let email = req.params.email.toLowerCase(),
+            let email = req.params.email.toString().toLowerCase(),
                 exists = false;
 
             query('SELECT id FROM user WHERE LOWER(email) = ?', [email], function(err, results) {
@@ -149,7 +149,7 @@ module.exports = function(router) {
 
     router.route('/exists/name/:name')
         .get(function(req, res, next) {
-            let displayName = req.params.name.toLowerCase(),
+            let displayName = req.params.name.toString().toLowerCase(),
                 exists = false;
 
             query('SELECT id FROM user WHERE LOWER(displayname) = ?', [displayName], function(err, results) {
@@ -228,7 +228,7 @@ module.exports = function(router) {
     router.route('/login/password')
         .post(function(req, res, next) {
             let user = {
-                email: req.body.email.toLowerCase(),
+                email: req.body.email.toString().toLowerCase(),
                 password: req.body.password,
                 passwordError: false
             };
@@ -294,7 +294,7 @@ module.exports = function(router) {
     router.route('/login/email')
         .post(function(req, res, next) {
             let user = {
-                email: req.body.email.toLowerCase(),
+                email: req.body.email.toString().toLowerCase(),
                 secret: hasher(256),
                 timeout: moment().add(nconf.get('timeouts:user:login:amount'), nconf.get('timeouts:user:login:time')).format("YYYY-MM-DD HH:mm:ss")
             };
@@ -327,7 +327,7 @@ module.exports = function(router) {
     router.route('/login/secret')
         .post(function(req, res, next) {
             let user = {
-                email: req.body.email.toLowerCase(),
+                email: req.body.email.toString().toLowerCase(),
                 secret: req.body.secret
             };
 
@@ -392,7 +392,7 @@ module.exports = function(router) {
     router.route('/verify/email')
         .post(function(req, res, next) {
             let user = {
-                email: req.body.email.toLowerCase(),
+                email: req.body.email.toString().toLowerCase(),
                 secret: hasher(256),
                 timeout: moment().add(nconf.get('timeouts:user:verify:amount'), nconf.get('timeouts:user:verify:time')).format("YYYY-MM-DD HH:mm:ss")
             };
@@ -425,8 +425,8 @@ module.exports = function(router) {
     router.route('/verify/secret')
         .post(function(req, res, next) {
             let user = {
-                email: req.body.email.toLowerCase(),
-                displayname: req.body.displayname.toLowerCase(),
+                email: req.body.email.toString().toLowerCase(),
+                displayname: req.body.displayname.toString().toLowerCase(),
                 password: req.body.password || null,
                 encrypted: null,
                 firstname: req.body.firstname || null,
@@ -495,7 +495,7 @@ module.exports = function(router) {
     router.route('/email/email')
         .post(function(req, res, next) {
             let user = {
-                email: req.body.email.toLowerCase(),
+                email: req.body.email.toString().toLowerCase(),
                 secret: hasher(256),
                 timeout: moment().add(nconf.get('timeouts:user:email:amount'), nconf.get('timeouts:user:email:time')).format("YYYY-MM-DD HH:mm:ss")
             };
@@ -528,9 +528,9 @@ module.exports = function(router) {
     router.route('/email/secret')
         .post(function(req, res, next) {
             let user = {
-                email: req.body.email.toLowerCase(),
+                email: req.body.email.toString().toLowerCase(),
                 secret: req.body.secret,
-                newEmail: req.body.newEmail.toLowerCase()
+                newEmail: req.body.newEmail.toString().toLowerCase()
             };
 
             let object = {
@@ -607,7 +607,7 @@ module.exports = function(router) {
     router.route('/password/email')
         .post(function(req, res, next) {
             let user = {
-                email: req.body.email.toLowerCase(),
+                email: req.body.email.toString().toLowerCase(),
                 secret: hasher(256),
                 timeout: moment().add(nconf.get('timeouts:user:password:amount'), nconf.get('timeouts:user:password:time')).format("YYYY-MM-DD HH:mm:ss")
             };
@@ -640,7 +640,7 @@ module.exports = function(router) {
     router.route('/password/secret')
         .post(function(req, res, next) {
             let user = {
-                email: req.body.email.toLowerCase(),
+                email: req.body.email.toString().toLowerCase(),
                 secret: req.body.secret,
                 password: req.body.password
             };

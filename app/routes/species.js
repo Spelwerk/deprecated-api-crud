@@ -23,7 +23,7 @@ module.exports = (router) => {
                     name: req.body.weapon || 'Brawl',
                     description: 'Unarmed combat for the species: ' + req.body.name,
                     weapontype_id: defaults.weaponType.unarmed,
-                    legal: true,
+                    legal: 1,
                     price: 0,
                     damage_dice: 2,
                     damage_bonus: 0,
@@ -34,6 +34,8 @@ module.exports = (router) => {
 
                 let id = await elemental.insert(req, req.body, 'species');
                 weapon.species_id = id;
+
+                console.log(weapon);
 
                 await elemental.insert(req, weapon, 'weapon');
 

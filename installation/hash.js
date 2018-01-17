@@ -1,4 +1,4 @@
-let hasher = require('./../lib/hasher');
+let hasher = require('../lib/hasher');
 
 console.log('secrets:');
 console.log('  jwt: ' + hasher(64));

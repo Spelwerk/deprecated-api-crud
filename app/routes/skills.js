@@ -32,11 +32,12 @@ module.exports = (router) => {
                     species_id: req.body.species_id
                 };
 
-                expertise.skill_id = await elemental.insert(req, skill, 'skill');
+                let id = await elemental.insert(req, skill, 'skill');
+                expertise.skill_id = id;
 
                 await elemental.insert(req, expertise, 'expertise');
 
-                res.status(201).send({id: skillId});
+                res.status(201).send({id: id});
             } catch(e) {
                 next(e);
             }

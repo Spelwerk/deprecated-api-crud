@@ -34,7 +34,7 @@ describe('/augmentations', function() {
             let payload = {
                 name: hasher(20),
                 description: hasher(20),
-                legal: true,
+                legal: 1,
                 price: 10,
                 hacking_difficulty: 10
             };
@@ -156,7 +156,7 @@ describe('/augmentations', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(204).end(done);
         });
 
         it('PUT /:id should change the value of the item', function(done) {
@@ -187,7 +187,7 @@ describe('/augmentations', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(204).end(done);
         });
 
         it('PUT /:id should change the value of the item', function(done) {
@@ -218,7 +218,7 @@ describe('/augmentations', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(204).end(done);
         });
 
         it('PUT /:id should change the value of the item', function(done) {
@@ -249,7 +249,7 @@ describe('/augmentations', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(204).end(done);
         });
 
         it('GET / should get a list of items', function(done) {

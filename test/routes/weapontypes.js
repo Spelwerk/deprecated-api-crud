@@ -93,7 +93,7 @@ describe('/weapontypes', function() {
                 name: hasher(20),
                 description: hasher(20),
                 icon: 'http://fakeicon.com/' + hasher(20) + '.png',
-                augmentation: true,
+                augmentation: 1,
                 attribute_id: attributeId,
                 skill_id: skillId,
                 species_id: speciesId

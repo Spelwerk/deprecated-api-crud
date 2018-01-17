@@ -50,7 +50,7 @@ describe('/software', function() {
                 name: hasher(20),
                 description: hasher(20),
                 softwaretype_id: typeId,
-                legal: true,
+                legal: 1,
                 price: 10,
                 hacking_difficulty: 10,
                 hacking_bonus: 10

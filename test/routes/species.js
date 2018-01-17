@@ -63,8 +63,8 @@ describe('/species', function() {
                 history: hasher(20),
                 icon: 'http://fakeicon.com/' + hasher(20) + '.png',
                 world_id: worldId,
-                playable: true,
-                manifestation: true,
+                playable: 1,
+                manifestation: 1,
                 max_age: 100,
                 multiply_points: 1
             };
@@ -89,8 +89,8 @@ describe('/species', function() {
                 history: hasher(20),
                 icon: 'http://fakeicon.com/' + hasher(20) + '.png',
                 world_id: worldId,
-                playable: true,
-                manifestation: true,
+                playable: 1,
+                manifestation: 1,
                 max_age: 100,
                 multiply_points: 1
             };
@@ -228,7 +228,7 @@ describe('/species', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(204).end(done);
         });
 
         it('PUT /:id should change the value of the item', function(done) {

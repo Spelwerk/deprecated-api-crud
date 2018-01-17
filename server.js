@@ -30,7 +30,6 @@ async function main() {
         require('./app/initializers/log')(app);
         require('./app/initializers/auth')(app);
         require('./app/initializers/user')(app);
-        require('./app/initializers/body-cleaner')(app);
 
         await require('./app/initializers/routes')(app);
 

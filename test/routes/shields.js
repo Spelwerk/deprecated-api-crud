@@ -235,7 +235,7 @@ describe('/shields', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(204).end(done);
         });
 
         it('PUT /:id should change the value of the item', function(done) {
@@ -266,7 +266,7 @@ describe('/shields', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(204).end(done);
         });
 
         it('PUT /:id should change the value of the item', function(done) {
@@ -297,7 +297,7 @@ describe('/shields', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(204).end(done);
         });
 
         it('PUT /:id should change the value of the item', function(done) {

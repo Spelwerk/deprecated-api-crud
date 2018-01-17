@@ -98,7 +98,7 @@ describe('/spell', function() {
                 description: hasher(20),
                 icon: 'http://fakeicon.com/' + hasher(20) + '.png',
                 manifestation_id: manifestationId,
-                spelltype_id: manifestationId,
+                spelltype_id: spellTypeId,
                 effect: hasher(20),
                 effect_dice: 1,
                 effect_bonus: 2,

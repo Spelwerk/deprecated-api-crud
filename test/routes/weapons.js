@@ -88,7 +88,7 @@ describe('/weapons', function() {
                 name: hasher(20),
                 description: hasher(20),
                 weapontype_id: weaponTypeId,
-                legal: true,
+                legal: 1,
                 price: 8,
                 damage_dice: 2,
                 damage_bonus: 3,
@@ -117,7 +117,7 @@ describe('/weapons', function() {
                 name: hasher(20),
                 description: hasher(20),
                 weapontype_id: weaponTypeId,
-                legal: true,
+                legal: 1,
                 price: 8,
                 damage_dice: 2,
                 damage_bonus: 3,
@@ -285,7 +285,7 @@ describe('/weapons', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(204).end(done);
         });
 
         it('PUT /:id should change the value of the item', function(done) {
@@ -316,7 +316,7 @@ describe('/weapons', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(204).end(done);
         });
 
         it('PUT /:id should change the value of the item', function(done) {
@@ -347,7 +347,7 @@ describe('/weapons', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(204).end(done);
         });
 
         it('PUT /:id should change the value of the item', function(done) {
@@ -378,7 +378,7 @@ describe('/weapons', function() {
         });
 
         it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(204).end(done);
         });
 
         it('POST / should add an item for the other weapon', function(done) {

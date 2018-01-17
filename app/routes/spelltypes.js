@@ -15,6 +15,7 @@ module.exports = (router) => {
 
     router.route('/')
         .post(async (req, res, next) => {
+            console.log('post');
             try {
                 let manifestationId = parseInt(req.body.manifestation_id);
 
@@ -25,6 +26,7 @@ module.exports = (router) => {
                 };
 
                 let [rows] = await sql('SELECT skill_id AS id FROM skill_is_manifestation WHERE manifestation_id = ?', [manifestationId]);
+
                 expertise.skill_id = parseInt(rows[0].id);
 
                 req.body.expertise_id = await elemental.insert(req, expertise, 'expertise');
