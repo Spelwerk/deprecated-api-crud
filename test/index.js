@@ -10,10 +10,10 @@ require('./routes/natures');
 require('./routes/languages');
 require('./routes/loyalties');
 
-//require('./routes/drive');
-//require('./routes/pride');
-//require('./routes/problem');
-//require('./routes/shame');
+require('./routes/drive');
+require('./routes/pride');
+require('./routes/problem');
+require('./routes/shame');
 
 require('./routes/diseases');
 require('./routes/dementations');
@@ -61,6 +61,6 @@ require('./routes/milestones');
 
 require('./routes/epochs');
 
-require('./routes/creatures');
+//require('./routes/creatures');
 
 //require('./routes/users');

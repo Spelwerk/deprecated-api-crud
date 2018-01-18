@@ -1,9 +1,9 @@
 'use strict'; //todo ASYNC/AWAIT
 
-let generic = require('../../lib/helper/generic'),
-    creatures = require('../../lib/helper/creatures');
+const generic = require('../../lib/helper/generic');
+const creatures = require('../../lib/helper/creatures');
 
-module.exports = function(router) {
+module.exports = (router) => {
     const tableName = 'creature';
 
     let sql = 'SELECT ' +

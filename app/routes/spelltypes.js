@@ -15,7 +15,6 @@ module.exports = (router) => {
 
     router.route('/')
         .post(async (req, res, next) => {
-            console.log('post');
             try {
                 let manifestationId = parseInt(req.body.manifestation_id);
 

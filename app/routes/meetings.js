@@ -1,7 +1,6 @@
 'use strict';
 
 const basic = require('../../lib/generic/basic');
-
 const meetings = require('../../lib/helper/meetings');
 
 module.exports = function(router) {

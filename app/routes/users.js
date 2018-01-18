@@ -1,4 +1,4 @@
-'use strict';
+'use strict'; //todo ASYNC/AWAIT
 
 const UserDisplaynameAlreadyExistsError = require('../../lib/errors/user-displayname-already-exists-error');
 const UserEmailAlreadyExistsError = require('../../lib/errors/user-email-already-exists-error');

@@ -382,7 +382,7 @@ describe('/weapons', function() {
         });
 
         it('POST / should add an item for the other weapon', function(done) {
-            app.post(baseRoute + '/' + temporaryId2 + '/' + relationRoute, {insert_id: relationId}).expect(201).end(done);
+            app.post(baseRoute + '/' + temporaryId2 + '/' + relationRoute, {insert_id: relationId}).expect(204).end(done);
         });
 
         it('GET / should get a list of items', function(done) {

@@ -278,7 +278,7 @@ async function setup() {
         await setDatabaseArray();
         await setDatabaseSchema();
 
-        //console.log(dbSchema['creature']);
+        console.log(dbSchema['creature']);
     } catch(e) {
         throw e;
     }
@@ -300,9 +300,7 @@ module.exports.setup = setup;
 module.exports.getPool = getPool;
 module.exports.getSchema = getSchema;
 
-/**
- * @deprecated
- */
+/** @deprecated */
 function getOldPool() {
     return oldPool;
 }

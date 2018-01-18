@@ -74,15 +74,7 @@ describe('/countries', function() {
         });
 
         it('/:id/labels should create a label', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/labels', { label: hasher(20) })
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                })
+            app.post(baseRoute + '/' + temporaryId + '/labels', { label: hasher(20) }).expect(204).end(done);
         });
 
     });

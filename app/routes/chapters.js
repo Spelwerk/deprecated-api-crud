@@ -2,7 +2,6 @@
 
 const routes = require('../../lib/generic/routes');
 const basic = require('../../lib/generic/basic');
-
 const chapters = require('../../lib/helper/chapters');
 
 module.exports = (router) => {

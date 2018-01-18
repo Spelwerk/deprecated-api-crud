@@ -35,8 +35,6 @@ module.exports = (router) => {
                 let id = await elemental.insert(req, req.body, 'species');
                 weapon.species_id = id;
 
-                console.log(weapon);
-
                 await elemental.insert(req, weapon, 'weapon');
 
                 res.status(201).send({id: id});
