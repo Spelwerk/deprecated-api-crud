@@ -1,7 +1,7 @@
 'use strict';
 
 const routes = require('../../lib/generic/routes');
-const basic = require('../../lib/generic/basic');
+const basic = require('../../lib/generic/basics');
 const elemental = require('../../lib/database/elemental');
 
 module.exports = (router) => {

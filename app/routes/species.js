@@ -2,7 +2,7 @@
 
 const routes = require('../../lib/generic/routes');
 const relations = require('../../lib/generic/relations');
-const basic = require('../../lib/generic/basic');
+const basic = require('../../lib/generic/basics');
 const elemental = require('../../lib/database/elemental');
 
 const yaml = require('node-yaml');

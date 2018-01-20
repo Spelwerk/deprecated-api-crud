@@ -1,11 +1,8 @@
 'use strict';
 
-let UserNotLoggedInError = require('../../lib/errors/user-not-logged-in-error');
-
 const routes = require('../../lib/generic/routes');
 const relations = require('../../lib/generic/relations');
-const elemental = require('../../lib/database/elemental');
-const sql = require('../../lib/database/sql');
+const worlds = require('../../lib/helper/worlds');
 
 module.exports = function(router) {
     const tableName = 'world';
@@ -18,26 +15,7 @@ module.exports = function(router) {
     router.route('/')
         .post(async (req, res, next) => {
             try {
-                if(!req.user.id) return new UserNotLoggedInError;
-
-                let id = await elemental.insert(req, req.body, tableName);
-
-                let [rows] = await sql('SELECT id,minimum,maximum FROM attribute WHERE optional = 0');
-
-                let attributeQuery = 'INSERT INTO world_has_attribute (world_id,attribute_id,value,minimum,maximum) VALUES ';
-
-                for(let i in rows) {
-                    let attributeId = parseInt(rows[i].id),
-                        value = parseInt(rows[i].minimum),
-                        minimum = parseInt(rows[i].minimum),
-                        maximum = parseInt(rows[i].maximum);
-
-                    attributeQuery += '(' + id + ',' + attributeId + ',' + value + ',' + minimum + ',' + maximum + '),';
-                }
-
-                attributeQuery = attributeQuery.slice(0, -1);
-
-                await sql(attributeQuery);
+                let id = await worlds.insert(req, req.body);
 
                 res.status(201).send({id: id});
             } catch(e) {

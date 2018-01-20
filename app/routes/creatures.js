@@ -1,12 +1,15 @@
 'use strict'; //todo ASYNC/AWAIT
 
-const generic = require('../../lib/helper/generic');
-const creatures = require('../../lib/helper/creatures');
+const routes = require('../../lib/generic/routes');
+const creatures = require('../../lib/creatures/creatures');
+const relations = require('../../lib/creatures/relations');
+const combinations = require('../../lib/creatures/combinations');
+const wounds = require('../../lib/creatures/wounds');
 
 module.exports = (router) => {
     const tableName = 'creature';
 
-    let sql = 'SELECT ' +
+    let query = 'SELECT ' +
         'id, ' +
         'copy_id, ' +
         'user_id, ' +
@@ -34,73 +37,64 @@ module.exports = (router) => {
         'LEFT JOIN creature_with_extra ON creature_with_extra.creature_id = creature.id ' +
         'LEFT JOIN creature_is_copy ON creature_is_copy.creature_id = creature.id';
 
-    generic.root(router, tableName, sql);
+    routes.root(router, tableName, query);
 
     router.route('/')
-        .post(function(req, res, next) {
-            creatures.post(req.user, req.body, function(err, id) {
-                if(err) return next(err);
+        .post(async (req, res, next) => {
+            try {
+                let id = await creatures.insert(req, body);
 
                 res.status(201).send({id: id});
-            });
+            } catch(e) {
+                next(e);
+            }
         });
 
-    generic.deleted(router, tableName, sql);
-    generic.schema(router, tableName);
-    generic.get(router, tableName, sql);
+    routes.removed(router, tableName, query);
+    routes.schema(router, tableName);
+    routes.single(router, tableName, query);
+    routes.update(router, tableName);
 
-    router.route('/:id')
-        .put(function(req, res, next) {
-            let creatureId = parseInt(req.params.id);
-
-            creatures.put(req.user, creatureId, req.body, function(err) {
-                if(err) return next(err);
-
-                res.status(204).send();
-            });
-        });
-
-    generic.automatic(router, tableName);
+    routes.automatic(router, tableName);
 
     // RELATIONS
 
-    creatures.armours(router);
-    creatures.assets(router);
-    creatures.attributes(router);
-    creatures.backgrounds(router);
-    creatures.bionics(router);
-    creatures.expertises(router);
-    creatures.forms(router);
-    creatures.gifts(router);
-    creatures.imperfections(router);
-    creatures.languages(router);
-    creatures.loyalties(router);
-    creatures.manifestations(router);
-    creatures.milestones(router);
-    creatures.primals(router);
-    creatures.relations(router);
-    creatures.shields(router);
-    creatures.skills(router);
-    creatures.species(router);
-    creatures.spells(router);
-    creatures.software(router);
-    creatures.tactics(router);
-    creatures.weapons(router);
+    relations.armours(router);
+    relations.assets(router);
+    relations.attributes(router);
+    relations.backgrounds(router);
+    relations.bionics(router);
+    relations.expertises(router);
+    relations.forms(router);
+    relations.gifts(router);
+    relations.imperfections(router);
+    relations.languages(router);
+    relations.loyalties(router);
+    relations.manifestations(router);
+    relations.milestones(router);
+    relations.primals(router);
+    relations.relations(router);
+    relations.shields(router);
+    relations.skills(router);
+    relations.species(router);
+    relations.spells(router);
+    relations.software(router);
+    relations.tactics(router);
+    relations.weapons(router);
 
     // COMBINATIONS
 
-    creatures.corporation(router);
-    creatures.country(router);
-    creatures.epoch(router);
-    creatures.identity(router);
-    creatures.nature(router);
-    creatures.wealth(router);
-    creatures.world(router);
+    combinations.corporation(router);
+    combinations.country(router);
+    combinations.epoch(router);
+    combinations.identity(router);
+    combinations.nature(router);
+    combinations.wealth(router);
+    combinations.world(router);
 
     // WOUNDS
 
-    creatures.dementations(router);
-    creatures.diseases(router);
-    creatures.traumas(router);
-
+    wounds.dementations(router);
+    wounds.diseases(router);
+    wounds.traumas(router);
 };

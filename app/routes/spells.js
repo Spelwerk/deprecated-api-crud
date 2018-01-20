@@ -3,7 +3,7 @@
 const routes = require('../../lib/generic/routes');
 const elemental = require('../../lib/database/elemental');
 const sql = require('../../lib/database/sql');
-const permissions = require('../../lib/database/permissions');
+const permissions = require('../../lib/database/permission');
 
 module.exports = (router) => {
     const tableName = 'spell';
