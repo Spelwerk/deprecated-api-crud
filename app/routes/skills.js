@@ -2,7 +2,7 @@
 
 const routes = require('../../lib/generic/routes');
 const basic = require('../../lib/generic/basics');
-const elemental = require('../../lib/database/elemental');
+const skills = require('../../lib/helper/skills');
 
 module.exports = (router) => {
     const tableName = 'skill';
@@ -17,25 +17,7 @@ module.exports = (router) => {
     router.route('/')
         .post(async (req, res, next) => {
             try {
-                let skill = {
-                    name: req.body.name,
-                    description: req.body.description,
-                    icon: req.body.icon,
-                    manifestation_id: req.body.manifestation_id,
-                    species_id: req.body.species_id
-                };
-
-                let expertise = {
-                    name: req.body.name,
-                    description: 'Generic expertise used where the other expertises do not fit, and you still want to show you are extra good at something. You can use the Custom Description field to explain where this is applicable for your character. Remember that if you have a suggestion for a new expertise you can easily add it to the game system and your own created worlds. If the new expertise is of great quality it may even be adopted as canon by Spelwerk.',
-                    manifestation_id: req.body.manifestation_id,
-                    species_id: req.body.species_id
-                };
-
-                let id = await elemental.insert(req, skill, 'skill');
-                expertise.skill_id = id;
-
-                await elemental.insert(req, expertise, 'expertise');
+                let id = await skills.insert(req, req.body);
 
                 res.status(201).send({id: id});
             } catch(e) {

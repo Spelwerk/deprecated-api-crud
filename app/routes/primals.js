@@ -2,9 +2,7 @@
 
 const routes = require('../../lib/generic/routes');
 const basic = require('../../lib/generic/basics');
-const elemental = require('../../lib/database/elemental');
-const sql = require('../../lib/database/sql');
-const permissions = require('../../lib/database/permission');
+const primals = require('../../lib/helper/primals');
 
 module.exports = (router) => {
     const tableName = 'primal';
@@ -17,21 +15,7 @@ module.exports = (router) => {
     router.route('/')
         .post(async (req, res, next) => {
             try {
-                let manifestationId = parseInt(req.body.manifestation_id);
-
-                await permissions.verify(req, 'manifestation', manifestationId);
-
-                let expertise = {
-                    name: req.body.name + ' Mastery',
-                    manifestation_id: req.body.manifestation_id
-                };
-
-                let [rows] = await sql('SELECT skill_id AS id FROM skill_is_manifestation WHERE manifestation_id = ?', [manifestationId]);
-                expertise.skill_id = rows[0].id;
-
-                req.body.expertise_id = await elemental.insert(req, expertise, 'expertise');
-
-                let id = await elemental.insert(req, req.body, 'primal');
+                let id = await primals.insert(req, req.body);
 
                 res.status(201).send({id: id});
             } catch(e) {

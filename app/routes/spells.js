@@ -1,9 +1,7 @@
 'use strict';
 
 const routes = require('../../lib/generic/routes');
-const elemental = require('../../lib/database/elemental');
-const sql = require('../../lib/database/sql');
-const permissions = require('../../lib/database/permission');
+const spells = require('../../lib/helper/spells');
 
 module.exports = (router) => {
     const tableName = 'spell';
@@ -16,27 +14,7 @@ module.exports = (router) => {
     router.route('/')
         .post(async (req, res, next) => {
             try {
-                let manifestationId = parseInt(req.body.manifestation_id);
-
-                await permissions.verify(req, 'manifestation', manifestationId);
-
-                if(req.body.expertise_id) {
-                    let expertiseId = parseInt(req.body.expertise_id);
-
-                    await permissions.verify(req, 'expertise', expertiseId);
-                } else {
-                    let expertise = {
-                        name: req.body.name + ' Mastery',
-                        manifestation_id: manifestationId
-                    };
-
-                    let [rows] = await sql('SELECT skill_id AS id FROM skill_is_manifestation WHERE manifestation_id = ?', [manifestationId]);
-                    expertise.skill_id = rows[0].id;
-
-                    req.body.expertise_id = await elemental.insert(req, expertise, 'expertise');
-                }
-
-                let id = await elemental.insert(req, req.body, 'spell');
+                let id = await spells.insert(req, req.body);
 
                 res.status(201).send({id: id});
             } catch(e) {

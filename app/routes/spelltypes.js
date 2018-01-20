@@ -2,8 +2,7 @@
 
 const routes = require('../../lib/generic/routes');
 const basic = require('../../lib/generic/basics');
-const elemental = require('../../lib/database/elemental');
-const sql = require('../../lib/database/sql');
+const spellTypes = require('../../lib/helper/spelltypes');
 
 module.exports = (router) => {
     const tableName = 'spelltype';
@@ -16,21 +15,7 @@ module.exports = (router) => {
     router.route('/')
         .post(async (req, res, next) => {
             try {
-                let manifestationId = parseInt(req.body.manifestation_id);
-
-                let expertise = {
-                    name: req.body.name + ' Mastery',
-                    description: req.body.description,
-                    skill_id: null,
-                };
-
-                let [rows] = await sql('SELECT skill_id AS id FROM skill_is_manifestation WHERE manifestation_id = ?', [manifestationId]);
-
-                expertise.skill_id = parseInt(rows[0].id);
-
-                req.body.expertise_id = await elemental.insert(req, expertise, 'expertise');
-
-                let id = await elemental.insert(req, req.body, 'spelltype');
+                let id = await spellTypes.insert(req, req.body);
 
                 res.status(201).send({id: id});
             } catch(e) {

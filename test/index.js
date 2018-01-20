@@ -61,6 +61,6 @@ require('./routes/milestones');
 
 require('./routes/epochs');
 
-//require('./routes/creatures');
+require('./routes/creatures');
 
 //require('./routes/users');

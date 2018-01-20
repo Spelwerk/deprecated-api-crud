@@ -44,7 +44,6 @@ async function main() {
     }
 
     logger.info('[SERVER] Initialized successfully in ' + environment + ' environment');
-
     console.info('[CRUD] Initialized successfully in ' + environment + ' environment');
 }
 

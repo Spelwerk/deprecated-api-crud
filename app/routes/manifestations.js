@@ -2,10 +2,7 @@
 
 const routes = require('../../lib/generic/routes');
 const relations = require('../../lib/generic/relations');
-const elemental = require('../../lib/database/elemental');
-
-const yaml = require('node-yaml');
-const defaults = yaml.readSync('./../../config/defaults.yml');
+const manifestations = require('../../lib/helper/manifestations');
 
 module.exports = (router) => {
     const tableName = 'manifestation';
@@ -18,34 +15,7 @@ module.exports = (router) => {
     router.route('/')
         .post(async (req, res, next) => {
             try {
-                let attribute = {
-                    name: req.body.power,
-                    description: 'Power attribute for: ' + req.body.name,
-                    icon: req.body.icon,
-                    attributetype_id: defaults.attributeType.power,
-                    optional: 1,
-                    minimum: 0,
-                    maximum: req.body.maximum
-                };
-
-                let manifestation = {
-                    name: req.body.name,
-                    description: req.body.description,
-                    icon: req.body.icon
-                };
-
-                let skill = {
-                    name: req.body.skill,
-                    description: 'Skill for: ' + req.body.name,
-                    icon: req.body.icon
-                };
-
-                manifestation.attribute_id = await elemental.insert(req, attribute, 'attribute');
-
-                let id = await elemental.insert(req, manifestation, 'manifestation');
-                skill.manifestation_id = id;
-
-                await elemental.insert(req, skill, 'skill');
+                let id = await manifestations.insert(req, req.body);
 
                 res.status(201).send({id: id});
             } catch(e) {

@@ -47,15 +47,7 @@ describe('/identities', function() {
         });
 
         it('/:id/comments should create a new comment', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/comments', { comment: hasher(20) })
-                .expect(201)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    assert.isNumber(res.body.id);
-
-                    done();
-                });
+            app.post(baseRoute + '/' + temporaryId + '/comments', { comment: hasher(20) }).expect(204).end(done);
         });
 
     });

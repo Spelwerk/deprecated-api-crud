@@ -3,10 +3,7 @@
 const routes = require('../../lib/generic/routes');
 const relations = require('../../lib/generic/relations');
 const basic = require('../../lib/generic/basics');
-const elemental = require('../../lib/database/elemental');
-
-const yaml = require('node-yaml');
-const defaults = yaml.readSync('./../../config/defaults.yml');
+const species = require('../../lib/helper/species');
 
 module.exports = (router) => {
     const tableName = 'species';
@@ -19,23 +16,7 @@ module.exports = (router) => {
     router.route('/')
         .post(async (req, res, next) => {
             try {
-                let weapon = {
-                    name: req.body.weapon || 'Brawl',
-                    description: 'Unarmed combat for the species: ' + req.body.name,
-                    weapontype_id: defaults.weaponType.unarmed,
-                    legal: 1,
-                    price: 0,
-                    damage_dice: 2,
-                    damage_bonus: 0,
-                    critical_dice: 1,
-                    critical_bonus: 0,
-                    distance: 0
-                };
-
-                let id = await elemental.insert(req, req.body, 'species');
-                weapon.species_id = id;
-
-                await elemental.insert(req, weapon, 'weapon');
+                let id = await species.insert(req, req.body);
 
                 res.status(201).send({id: id});
             } catch(e) {

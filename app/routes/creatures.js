@@ -1,4 +1,4 @@
-'use strict'; //todo ASYNC/AWAIT
+'use strict';
 
 const routes = require('../../lib/generic/routes');
 const creatures = require('../../lib/creatures/creatures');
@@ -42,7 +42,7 @@ module.exports = (router) => {
     router.route('/')
         .post(async (req, res, next) => {
             try {
-                let id = await creatures.insert(req, body);
+                let id = await creatures.insert(req, req.body);
 
                 res.status(201).send({id: id});
             } catch(e) {

@@ -2,7 +2,7 @@
 
 const routes = require('../../lib/generic/routes');
 const relations = require('../../lib/generic/relations');
-const elemental = require('../../lib/database/elemental');
+const augmentations = require('../../lib/helper/augmentations');
 
 module.exports = (router) => {
     const tableName = 'augmentation';
@@ -15,36 +15,8 @@ module.exports = (router) => {
 
     router.route('/')
         .post(async (req, res, next) => {
-            let augmentation = {
-                name: req.body.name,
-                description: req.body.description,
-                legal: !!req.body.legal,
-                price: req.body.price,
-                hacking_difficulty: req.body.hacking_difficulty,
-                corporation_id: req.body.corporation_id
-            };
-
-            let weapon = {
-                name: req.body.name,
-                description: req.body.description,
-                weapontype_id: req.body.weapontype_id,
-                legal: !!req.body.legal,
-                price: req.body.price,
-                damage_dice: req.body.damage_dice,
-                damage_bonus: req.body.damage_bonus,
-                critical_dice: req.body.critical_dice,
-                critical_bonus: req.body.critical_bonus,
-                distance: req.body.distance
-            };
-
             try {
-                let id = await elemental.insert(req, augmentation, 'augmentation');
-
-                weapon.augmentation_id = id;
-
-                if(weapon.weapontype_id) {
-                    await elemental.insert(req, weapon, 'weapon');
-                }
+                let id = await augmentations.insert(req, req.body);
 
                 res.status(201).send({id: id});
             } catch(e) {

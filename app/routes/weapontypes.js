@@ -2,7 +2,7 @@
 
 const routes = require('../../lib/generic/routes');
 const basic = require('../../lib/generic/basics');
-const elemental = require('../../lib/database/elemental');
+const weaponTypes = require('../../lib/helper/weapontypes');
 
 module.exports = (router) => {
     const tableName = 'weapontype';
@@ -15,18 +15,7 @@ module.exports = (router) => {
     router.route('/')
         .post(async (req, res, next) => {
             try {
-                let expertise = {
-                    name: req.body.name + ' Mastery',
-                    description: req.body.description,
-                    skill_id: req.body.skill_id,
-                    species_id: req.body.species_id
-                };
-
-                req.body.equipable = !!req.body.augmentation || !!req.body.form || !!req.body.manifestation || !!req.body.species_id;
-
-                req.body.expertise_id = await elemental.insert(req, expertise, 'expertise');
-
-                let id = await elemental.insert(req, req.body, 'weapontype');
+                let id = await weaponTypes.insert(req, req.body);
 
                 res.status(201).send({id: id});
             } catch(e) {
