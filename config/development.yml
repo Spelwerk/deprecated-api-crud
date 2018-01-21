@@ -15,7 +15,7 @@ secrets:
   aes: aes
   sha: sha
 
-salt: 14
+salt: 4
 
 superuser:
   email: admin@spelwerk.com

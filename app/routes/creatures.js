@@ -8,13 +8,25 @@ const wounds = require('../../lib/creatures/wounds');
 
 module.exports = (router) => {
     const tableName = 'creature';
-
-    let query = 'SELECT ' +
+    const queryList = 'SELECT ' +
+        'id,' +
+        'canon,' +
+        'calculated,' +
+        'firstname,' +
+        'nickname,' +
+        'middlename,' +
+        'lastname,' +
+        'age,' +
+        'gender,' +
+        'occupation ' +
+        'FROM creature ' +
+        'LEFT JOIN creature_with_description ON creature_with_description.creature_id = creature.id ' +
+        'LEFT JOIN creature_with_extra ON creature_with_extra.creature_id = creature.id';
+    const querySingle = 'SELECT ' +
         'id, ' +
         'copy_id, ' +
         'user_id, ' +
         'canon, ' +
-        'updated, ' +
         'calculated, ' +
         'firstname, ' +
         'nickname, ' +
@@ -30,14 +42,17 @@ module.exports = (router) => {
         'drive, ' +
         'pride, ' +
         'problem, ' +
-        'shame ' +
+        'shame, ' +
+        'created, ' +
+        'updated, ' +
+        'deleted ' +
         'FROM creature ' +
         'LEFT JOIN creature_with_description ON creature_with_description.creature_id = creature.id ' +
         'LEFT JOIN creature_with_drive ON creature_with_drive.creature_id = creature.id ' +
         'LEFT JOIN creature_with_extra ON creature_with_extra.creature_id = creature.id ' +
         'LEFT JOIN creature_is_copy ON creature_is_copy.creature_id = creature.id';
 
-    routes.root(router, tableName, query);
+    routes.root(router, tableName, queryList);
 
     router.route('/')
         .post(async (req, res, next) => {
@@ -50,9 +65,9 @@ module.exports = (router) => {
             }
         });
 
-    routes.removed(router, tableName, query);
+    routes.removed(router, tableName, queryList);
     routes.schema(router, tableName);
-    routes.single(router, tableName, query);
+    routes.single(router, tableName, querySingle);
     routes.update(router, tableName);
 
     routes.automatic(router, tableName);

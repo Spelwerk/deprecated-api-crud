@@ -34,7 +34,6 @@ module.exports = (router) => {
     // Relations
 
     relations.route(router, tableName, 'attributes', 'attribute');
-    relations.route(router, tableName, 'expertises', 'expertise');
     relations.route(router, tableName, 'skills', 'skill');
     relations.route(router, tableName, 'software', 'software');
 };

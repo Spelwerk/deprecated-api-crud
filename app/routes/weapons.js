@@ -13,7 +13,6 @@ module.exports = (router) => {
         'weapon.canon, ' +
         'weapon.name, ' +
         'weapon.description, ' +
-        'weapon.weapontype_id, ' +
         'weapon.legal, ' +
         'weapon.price, ' +
         'weapon.damage_dice, ' +
@@ -26,10 +25,13 @@ module.exports = (router) => {
         'weapon.created, ' +
         'weapon.updated, ' +
         'weapon.deleted, ' +
+        'weapon.weapontype_id, ' +
         'weapontype.name AS weapontype_name, ' +
         'weapontype.icon, ' +
         'weapontype.attribute_id, ' +
+        'attribute.name AS attribute_name, ' +
         'weapontype.expertise_id, ' +
+        'expertise.name AS expertise_name, ' +
         'weapon_is_copy.copy_id, ' +
         'weapon_is_augmentation.augmentation_id, ' +
         'weapon_is_form.form_id, ' +
@@ -38,6 +40,8 @@ module.exports = (router) => {
         'weapon_is_corporation.corporation_id ' +
         'FROM weapon ' +
         'LEFT JOIN weapontype ON weapontype.id = weapon.weapontype_id ' +
+        'LEFT JOIN attribute ON attribute.id = weapontype.attribute_id ' +
+        'LEFT JOIN expertise ON expertise.id = weapontype.expertise_id ' +
         'LEFT JOIN weapon_is_copy ON weapon_is_copy.weapon_id = weapon.id ' +
         'LEFT JOIN weapon_is_augmentation ON weapon_is_augmentation.weapon_id = weapon.id ' +
         'LEFT JOIN weapon_is_form ON weapon_is_form.weapon_id = weapon.id ' +
