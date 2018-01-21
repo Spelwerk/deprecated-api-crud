@@ -3,7 +3,7 @@
 const routes = require('../../lib/generic/routes');
 const relations = require('../../lib/generic/relations');
 const basic = require('../../lib/generic/basics');
-const species = require('../../lib/helper/species');
+const species = require('../../lib/tables/species');
 
 module.exports = (router) => {
     const tableName = 'species';

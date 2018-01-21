@@ -1,18 +1,18 @@
 'use strict';
 
-const oldMysql = require('mysql');
-let oldPool;
-
 const mysql = require('mysql2/promise');
 const nconf = require('nconf');
 const logger = require('../../lib/logger');
 
-const restrictedFields = ['id', 'user_id', 'canon', 'calculated', 'template', 'created', 'deleted', 'updated'];
+const restrictedFields = ['id', 'user_id', 'password', 'canon', 'calculated', 'template', 'created', 'deleted', 'updated'];
 
 let pool;
 let dbArray = [];
 let dbSchema = {};
 
+// ////////////////////////////////////////////////////////////////////////////////// //
+// PRIVATE
+// ////////////////////////////////////////////////////////////////////////////////// //
 
 function bootstrapTableSchema() {
     return {
@@ -87,7 +87,6 @@ async function getColumnInformation(tableName) {
     }
 }
 
-
 async function setDatabaseArray() {
     logger.info('[DATABASE] setting database array');
 
@@ -126,7 +125,6 @@ async function setDatabaseSchema() {
         throw e;
     }
 }
-
 
 async function setTableSchema(tableName) {
     logger.info('[DATABASE] setting table schema for ' + tableName);
@@ -254,6 +252,9 @@ function setTableSchemaExtraFields(tableName) {
     }
 }
 
+// ////////////////////////////////////////////////////////////////////////////////// //
+// PUBLIC
+// ////////////////////////////////////////////////////////////////////////////////// //
 
 async function setup() {
     logger.info('[DATABASE] Initializing');
@@ -273,7 +274,6 @@ async function setup() {
         };
 
         pool = mysql.createPool(config);
-        oldPool = oldMysql.createPool(config);
 
         await setDatabaseArray();
         await setDatabaseSchema();
@@ -299,10 +299,3 @@ function getSchema(tableName) {
 module.exports.setup = setup;
 module.exports.getPool = getPool;
 module.exports.getSchema = getSchema;
-
-/** @deprecated */
-function getOldPool() {
-    return oldPool;
-}
-
-module.exports.getOldPool = getOldPool;

@@ -2,7 +2,7 @@
 
 const routes = require('../../lib/generic/routes');
 const basic = require('../../lib/generic/basics');
-const weaponTypes = require('../../lib/helper/weapontypes');
+const weaponTypes = require('../../lib/tables/weapontypes');
 
 module.exports = (router) => {
     const tableName = 'weapontype';

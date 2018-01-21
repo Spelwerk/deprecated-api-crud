@@ -2,7 +2,7 @@
 
 const routes = require('../../lib/generic/routes');
 const relations = require('../../lib/generic/relations');
-const worlds = require('../../lib/helper/worlds');
+const worlds = require('../../lib/tables/worlds');
 
 module.exports = function(router) {
     const tableName = 'world';

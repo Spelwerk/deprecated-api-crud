@@ -3,7 +3,7 @@
 const routes = require('../../lib/generic/routes');
 const relations = require('../../lib/generic/relations');
 const basic = require('../../lib/generic/basics');
-const forms = require('../../lib/helper/forms');
+const forms = require('../../lib/tables/forms');
 
 module.exports = (router) => {
     const tableName = 'form';

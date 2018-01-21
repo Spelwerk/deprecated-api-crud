@@ -1,9 +1,9 @@
-'use strict'; //todo ASYNC/AWAIT loyalties
+'use strict';
 
 const routes = require('../../lib/generic/routes');
 const relations = require('../../lib/generic/relations');
 const basic = require('../../lib/generic/basics');
-const milestones = require('../../lib/helper/milestones');
+const milestones = require('../../lib/tables/milestones');
 
 module.exports = (router) => {
     const tableName = 'milestone';

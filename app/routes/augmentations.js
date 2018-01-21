@@ -2,7 +2,7 @@
 
 const routes = require('../../lib/generic/routes');
 const relations = require('../../lib/generic/relations');
-const augmentations = require('../../lib/helper/augmentations');
+const augmentations = require('../../lib/tables/augmentations');
 
 module.exports = (router) => {
     const tableName = 'augmentation';

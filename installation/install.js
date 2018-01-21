@@ -1,64 +1,52 @@
 'use strict';
 
-let async = require('async'),
-    mysql = require('mysql'),
-    nconf = require('nconf');
+const environment = process.env.NODE_ENV || 'development';
 
-// Set environment
-let environment = process.env.NODE_ENV || 'development';
+const formatter = require('mysql2');
+const mysql = require('mysql2/promise');
+const nconf = require('nconf');
 
-// Load configuration from file
 nconf.file({
     file: './../config/' + environment + '.yml',
     format: require('nconf-yaml')
 });
 
-// Load onion
-let onion = require('./../lib/onion');
-
-// Create the connection pool
-let pool = mysql.createPool({
+let config = {
     host: nconf.get('database:host'),
     database: nconf.get('database:database'),
     user: nconf.get('database:username'),
     password: nconf.get('database:password'),
-    connectionLimit: 1,
+    connectionLimit: 100,
     waitForConnections: true,
     queueLimit: 0,
     debug: false,
     wait_timeout: 28800,
     connect_timeout: 10
-});
+};
 
-let email = nconf.get('superuser:email'),
-    password = nconf.get('superuser:password'),
-    encrypted;
+// Load onion
+const onion = require('./../lib/onion');
 
-async.series([
-    function(callback) {
-        onion.encrypt(password, function(err, result) {
-            if(err) return callback(err);
+async function install() {
+    try {
+        let pool = mysql.createPool(config);
 
-            encrypted = result;
+        let email = nconf.get('superuser:email');
+        let password = await onion.hash(nconf.get('superuser:password'));
 
-            callback();
-        });
-    },
-    function(callback) {
         let query = 'INSERT INTO user (id,email,password,displayname,admin,verified) VALUES (1,?,?,?,1,1) ON DUPLICATE KEY UPDATE email = ?, password = ?, displayname = ?, admin = 1, verified = 1';
-        let array = [email, encrypted, 'administrator'];
+        let array = [email, password, 'administrator', email, password, 'administrator'];
+        let sql = formatter.format(query, array);
 
-        query = mysql.format(query, array);
-        query = mysql.format(query, array);
+        let result = await pool.execute(sql);
+        if(result[0].insertId !== 1) console.log("ERROR", "ID is not 1. ID is " + result[0].insertId);
 
-        pool.query(query, function(err) {
-            callback(err);
-        });
+        console.log("Created Administrator account with...\nemail: " + email + "\npassword: " + nconf.get('superuser:password'));
+        process.exit(0);
+    } catch(e) {
+        console.log(e);
+        process.exit(1);
     }
-], function(err) {
-    if(err) throw new Error(err);
+}
 
-    console.log("Created Super User account with...\nemail: " + email + "\npassword: " + password);
-
-    process.exit(1);
-});
+void install();

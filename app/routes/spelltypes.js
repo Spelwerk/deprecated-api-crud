@@ -2,7 +2,7 @@
 
 const routes = require('../../lib/generic/routes');
 const basic = require('../../lib/generic/basics');
-const spellTypes = require('../../lib/helper/spelltypes');
+const spellTypes = require('../../lib/tables/spelltypes');
 
 module.exports = (router) => {
     const tableName = 'spelltype';

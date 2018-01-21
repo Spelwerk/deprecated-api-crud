@@ -2,7 +2,7 @@
 
 const routes = require('../../lib/generic/routes');
 const relations = require('../../lib/generic/relations');
-const manifestations = require('../../lib/helper/manifestations');
+const manifestations = require('../../lib/tables/manifestations');
 
 module.exports = (router) => {
     const tableName = 'manifestation';

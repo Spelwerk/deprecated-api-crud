@@ -2,7 +2,7 @@
 
 const routes = require('../../lib/generic/routes');
 const basic = require('../../lib/generic/basics');
-const skills = require('../../lib/helper/skills');
+const skills = require('../../lib/tables/skills');
 
 module.exports = (router) => {
     const tableName = 'skill';
