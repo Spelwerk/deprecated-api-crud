@@ -4,7 +4,7 @@ const mysql = require('mysql2/promise');
 const nconf = require('nconf');
 const logger = require('../../lib/logger');
 
-const restrictedFields = ['id', 'user_id', 'password', 'canon', 'calculated', 'template', 'created', 'deleted', 'updated'];
+const restrictedFields = ['id', 'user_id', 'password', 'canon', 'template', 'created', 'deleted', 'updated'];
 
 let pool;
 let dbArray = [];

@@ -47,6 +47,7 @@ describe('/creatures', function() {
 
                 let length = res.body.length - 1;
                 speciesId = res.body.results[length].id;
+                console.log(speciesId);
 
                 done();
             });
@@ -147,12 +148,12 @@ describe('/creatures', function() {
 
                 creaturetype_id: typeId,
                 epoch_id: epochId,
-                species_id: speciesId,
-
-                corporation_id: corporationId,
                 country_id: countryId,
+                corporation_id: corporationId,
+
                 identity_id: identityId,
                 nature_id: natureId,
+                species_id: speciesId,
                 wealth_id: wealthId,
 
                 appearance: hasher(20),
@@ -474,6 +475,40 @@ describe('/creatures', function() {
 
         it('PUT /:id should change the value of the item', function(done) {
             app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {custom: hasher(20)}).expect(204).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+        it('GET /:id should display an item', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId).expect(200).end(function(err, res) { verifier.relation(err, res, done); });
+        });
+    });
+
+    describe('/currencies', function() {
+        let relationRoute = 'currencies',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
+                .expect(200)
+                .end(function(err, res) {
+                    if(err) return done(err);
+
+                    let length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
+
+                    done();
+                });
+        });
+
+        it('POST / should add an item to the creature', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(204).end(done);
+        });
+
+        it('PUT /:id should change the value of the item', function(done) {
+            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {value: 4}).expect(204).end(done);
         });
 
         it('GET / should get a list of items', function(done) {
@@ -939,41 +974,6 @@ describe('/creatures', function() {
         });
     });
 
-    // special adding -2
-    describe('/species', function() {
-        let relationRoute = 'species',
-            relationId;
-
-        before(function(done) {
-            app.get('/' + relationRoute)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    let length = res.body.length - 2;
-                    relationId = res.body.results[length].id;
-
-                    done();
-                });
-        });
-
-        it('POST / should add an item to the creature', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(204).end(done);
-        });
-
-        it('PUT /:id should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {custom: hasher(20)}).expect(204).end(done);
-        });
-
-        it('GET / should get a list of items', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
-        });
-
-        it('GET /:id should display an item', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId).expect(200).end(function(err, res) { verifier.relation(err, res, done); });
-        });
-    });
-
     describe('/spells', function() {
         let relationRoute = 'spells',
             relationId;
@@ -1099,18 +1099,8 @@ describe('/creatures', function() {
 
                 _.each(res.body.results, function(item) {
                     assert.isNumber(item.id);
-                    assert.isString(item.name);
-                    assert.isString(item.icon);
-                    assert.isNumber(item.price);
-                    assert.isNumber(item.damage_dice);
-                    assert.isNumber(item.damage_bonus);
-                    assert.isNumber(item.critical_dice);
-                    assert.isNumber(item.critical_bonus);
-                    assert.isNumber(item.hit);
-                    assert.isNumber(item.hands);
-                    assert.isNumber(item.distance);
-                    assert.isNumber(item.attribute_id);
-                    assert.isNumber(item.expertise_id);
+                    assert.isBoolean(item.equipped);
+                    if(item.custom) assert.isString(item.custom);
                 });
 
                 let length = res.body.length - 1;

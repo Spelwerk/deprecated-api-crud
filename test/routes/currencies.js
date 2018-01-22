@@ -11,46 +11,20 @@ let app = require('../app'),
     verifier = require('../verifier'),
     hasher = require('../../lib/hasher');
 
-describe('/species', function() {
+describe('/currencies', function() {
 
     function verifyItem(item) {
-        assert.isNumber(item.id);
-        assert.isBoolean(item.canon);
+        verifier.generic(item);
 
-        assert.isString(item.name);
-        if(item.description) assert.isString(item.description);
-        if(item.history) assert.isString(item.history);
-        if(item.icon) assert.equal(validator.isURL(item.icon), true);
-        assert.isNumber(item.world_id);
-        assert.isBoolean(item.playable);
-        assert.isBoolean(item.manifestation);
-        assert.isNumber(item.max_age);
-        assert.isNumber(item.multiply_points);
-
-        assert.isString(item.created);
-        if(item.updated) assert.isString(item.updated);
-        if(item.deleted) assert.isString(item.deleted);
+        if(item.manifestation_id) assert.isNumber(item.manifestation_id);
+        if(item.species_id) assert.isNumber(item.species_id);
     }
 
-    let baseRoute = '/species';
+    let baseRoute = '/currencies';
     let temporaryId;
 
     before(function(done) {
         app.login(done);
-    });
-
-    let worldId;
-    before(function(done) {
-        app.get('/worlds')
-            .expect(200)
-            .end(function(err, res) {
-                if(err) return done(err);
-
-                let length = res.body.length - 1;
-                worldId = res.body.results[length].id;
-
-                done();
-            });
     });
 
     describe('POST', function() {
@@ -59,13 +33,8 @@ describe('/species', function() {
             let payload = {
                 name: hasher(20),
                 description: hasher(20),
-                history: hasher(20),
-                icon: 'http://fakeicon.com/' + hasher(20) + '.png',
-                world_id: worldId,
-                playable: 1,
-                manifestation: 1,
-                max_age: 100,
-                multiply_points: 1
+                short: hasher(2),
+                exchange: app.randomNumber(1, 10)
             };
 
             app.post(baseRoute, payload)
@@ -83,6 +52,10 @@ describe('/species', function() {
 
         it('/:id/comments should create a new comment', function(done) {
             app.post(baseRoute + '/' + temporaryId + '/comments', { comment: hasher(20) }).expect(204).end(done);
+        });
+
+        it('/:id/labels should create a new comment', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/labels', { label: hasher(20) }).expect(204).end(done);
         });
 
     });
@@ -136,18 +109,6 @@ describe('/species', function() {
                 });
         });
 
-        it('/playable/:playable should return a list', function(done) {
-            app.get(baseRoute)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    verifier.lists(res.body, verifyItem);
-
-                    done();
-                });
-        });
-
         it('/:id should return one item', function(done) {
             app.get(baseRoute + '/' + temporaryId)
                 .expect(200)
@@ -169,39 +130,6 @@ describe('/species', function() {
         });
 
     });
-
-
-    describe('/attributes', function() {
-        let relationRoute = 'attributes',
-            relationId;
-
-        before(function(done) {
-            app.get('/' + relationRoute)
-                .expect(200)
-                .end(function(err, res) {
-                    if(err) return done(err);
-
-                    let length = res.body.length - 1;
-                    relationId = res.body.results[length].id;
-
-                    done();
-                });
-        });
-
-        it('POST / should add an item', function(done) {
-            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, value: 2}).expect(204).end(done);
-        });
-
-        it('PUT /:id should change the value of the item', function(done) {
-            app.put(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + relationId, {value: 4}).expect(204).end(done);
-        });
-
-        it('GET / should get a list of items', function(done) {
-            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
-        });
-
-    });
-
 
     describe('CLONE', function() {
 

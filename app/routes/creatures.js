@@ -11,7 +11,6 @@ module.exports = (router) => {
     const queryList = 'SELECT ' +
         'id,' +
         'canon,' +
-        'calculated,' +
         'firstname,' +
         'nickname,' +
         'middlename,' +
@@ -22,12 +21,12 @@ module.exports = (router) => {
         'FROM creature ' +
         'LEFT JOIN creature_with_description ON creature_with_description.creature_id = creature.id ' +
         'LEFT JOIN creature_with_extra ON creature_with_extra.creature_id = creature.id';
+
     const querySingle = 'SELECT ' +
         'id, ' +
         'copy_id, ' +
         'user_id, ' +
         'canon, ' +
-        'calculated, ' +
         'firstname, ' +
         'nickname, ' +
         'middlename, ' +
@@ -79,6 +78,7 @@ module.exports = (router) => {
     relations.attributes(router);
     relations.backgrounds(router);
     relations.bionics(router);
+    relations.currencies(router);
     relations.expertises(router);
     relations.forms(router);
     relations.gifts(router);
@@ -91,7 +91,6 @@ module.exports = (router) => {
     relations.relations(router);
     relations.shields(router);
     relations.skills(router);
-    relations.species(router);
     relations.spells(router);
     relations.software(router);
     relations.tactics(router);
@@ -104,6 +103,7 @@ module.exports = (router) => {
     combinations.epoch(router);
     combinations.identity(router);
     combinations.nature(router);
+    combinations.species(router);
     combinations.wealth(router);
     combinations.world(router);
 

@@ -9,6 +9,7 @@ require('./routes/identities');
 require('./routes/natures');
 require('./routes/languages');
 require('./routes/loyalties');
+require('./routes/currencies');
 
 require('./routes/drive');
 require('./routes/pride');
