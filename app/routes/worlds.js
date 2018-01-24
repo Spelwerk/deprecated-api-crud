@@ -32,9 +32,9 @@ module.exports = function(router) {
 
     // Relations
 
-    relations.route(router, tableName, 'attributes', 'attribute');
-    relations.route(router, tableName, 'countries', 'country');
-    relations.route(router, tableName, 'identities', 'identity');
-    relations.route(router, tableName, 'locations', 'location');
-    relations.route(router, tableName, 'natures', 'nature');
+    relations.route(router, tableName, 'attribute');
+    relations.route(router, tableName, 'country');
+    relations.route(router, tableName, 'identity');
+    relations.route(router, tableName, 'location');
+    relations.route(router, tableName, 'nature');
 };

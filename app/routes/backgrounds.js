@@ -40,12 +40,12 @@ module.exports = (router) => {
 
     // Relations
 
-    relations.route(router, tableName, 'armours', 'armour');
-    relations.route(router, tableName, 'assets', 'asset');
-    relations.route(router, tableName, 'attributes', 'attribute');
-    relations.route(router, tableName, 'bionics', 'bionic');
-    relations.route(router, tableName, 'primals', 'primal');
-    relations.route(router, tableName, 'shields', 'shield');
-    relations.route(router, tableName, 'skills', 'skill');
-    relations.route(router, tableName, 'weapons', 'weapon');
+    relations.route(router, tableName, 'armour');
+    relations.route(router, tableName, 'asset');
+    relations.route(router, tableName, 'attribute');
+    relations.route(router, tableName, 'bionic');
+    relations.route(router, tableName, 'primal');
+    relations.route(router, tableName, 'shield');
+    relations.route(router, tableName, 'skill');
+    relations.route(router, tableName, 'weapon');
 };

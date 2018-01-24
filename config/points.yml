@@ -18,9 +18,8 @@ divide:
   spell: 5
 
 maximum:
-  experience: 50
-  expertise: 30
   milestone: 4
+  expertise: 30
   primal: 30
   skill: 30
   spell: 30
@@ -28,5 +27,3 @@ maximum:
 cost:
   form: 10
   language: 10
-  gift: 10
-  milestone: 10

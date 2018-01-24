@@ -2,6 +2,7 @@
 
 const yaml = require('node-yaml').readSync;
 
+const attributes = yaml('./../../config/attributes.yml');
 const defaults = yaml('./../../config/defaults.yml');
 const dice = yaml('./../../config/dice.yml');
 const icons = yaml('./../../config/icons.yml');
@@ -12,6 +13,11 @@ module.exports = (router) => {
     router.route('/')
         .get((req, res) => {
             res.status(204).send();
+        });
+
+    router.route('/config/attributes')
+        .get((req, res) => {
+            res.status(200).send(attributes);
         });
 
     router.route('/config/defaults')

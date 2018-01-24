@@ -20,20 +20,20 @@ module.exports = (router) => {
 
     // Relations
 
-    relations.route(router, tableName, 'armours', 'armour');
-    relations.route(router, tableName, 'assets', 'asset');
-    relations.route(router, tableName, 'backgrounds', 'background');
-    relations.route(router, tableName, 'bionics', 'bionic');
-    relations.route(router, tableName, 'corporations', 'corporation');
-    relations.route(router, tableName, 'expertises', 'expertise');
-    relations.route(router, tableName, 'gifts', 'gift');
-    relations.route(router, tableName, 'identities', 'identity');
-    relations.route(router, tableName, 'imperfections', 'imperfection');
-    relations.route(router, tableName, 'manifestations', 'manifestation');
-    relations.route(router, tableName, 'milestones', 'milestone');
-    relations.route(router, tableName, 'shields', 'shield');
-    relations.route(router, tableName, 'skills', 'skill');
-    relations.route(router, tableName, 'software', 'software');
-    relations.route(router, tableName, 'wealth', 'wealth');
-    relations.route(router, tableName, 'weapons', 'weapon');
+    relations.route(router, tableName, 'armour');
+    relations.route(router, tableName, 'asset');
+    relations.route(router, tableName, 'background');
+    relations.route(router, tableName, 'bionic');
+    relations.route(router, tableName, 'corporation');
+    relations.route(router, tableName, 'expertise');
+    relations.route(router, tableName, 'gift');
+    relations.route(router, tableName, 'identity');
+    relations.route(router, tableName, 'imperfection');
+    relations.route(router, tableName, 'manifestation');
+    relations.route(router, tableName, 'milestone');
+    relations.route(router, tableName, 'shield');
+    relations.route(router, tableName, 'skill');
+    relations.route(router, tableName, 'software');
+    relations.route(router, tableName, 'wealth');
+    relations.route(router, tableName, 'weapon');
 };
