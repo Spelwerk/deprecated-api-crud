@@ -5,14 +5,27 @@ const routes = require('../../lib/generic/routes');
 module.exports = (router) => {
     const tableName = 'assettype';
 
-    let query = 'SELECT * FROM ' + tableName + ' ' +
-        'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
+    const rootQuery = 'SELECT id, canon, name, icon, created FROM ' + tableName;
 
-    routes.root(router, tableName, query);
+    const singleQuery = 'SELECT ' +
+        'assettype.id, ' +
+        'assettype.canon, ' +
+        'assettype.name, ' +
+        'assettype.icon, ' +
+        'assettype.created, ' +
+        'assettype.updated, ' +
+        'assettype.user_id, ' +
+        'user.displayname AS user_displayname, ' +
+        'assettype_is_copy.copy_id ' +
+        'FROM assettype ' +
+        'LEFT JOIN user ON user.id = assettype.user_id ' +
+        'LEFT JOIN assettype_is_copy ON assettype_is_copy.assettype_id = assettype.id';
+
+    routes.root(router, tableName, rootQuery);
     routes.insert(router, tableName);
-    routes.removed(router, tableName, query);
+    routes.removed(router, tableName, rootQuery);
     routes.schema(router, tableName);
-    routes.single(router, tableName, query);
+    routes.single(router, tableName, singleQuery);
     routes.update(router, tableName);
 
     routes.automatic(router, tableName);

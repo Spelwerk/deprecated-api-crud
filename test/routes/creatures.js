@@ -47,7 +47,6 @@ describe('/creatures', function() {
 
                 let length = res.body.length - 1;
                 speciesId = res.body.results[length].id;
-                console.log(speciesId);
 
                 done();
             });

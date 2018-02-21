@@ -27,7 +27,9 @@ module.exports = (app) => {
             if(rows.length === 0) return next(new UserInvalidTokenError);
 
             req.user.id = parseInt(rows[0].id);
-        } catch(e) { return next(e); }
+        } catch(e) {
+            return next(e);
+        }
 
         try {
             let [rows] = await sql('SELECT id,admin,verified FROM user WHERE id = ?', [req.user.id]);
@@ -35,7 +37,9 @@ module.exports = (app) => {
 
             req.user.admin = !!rows[0].admin;
             req.user.verified = !!rows[0].verified;
-        } catch(e) { return next(e); }
+        } catch(e) {
+            return next(e);
+        }
 
         next();
     });

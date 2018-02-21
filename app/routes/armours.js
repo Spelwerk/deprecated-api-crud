@@ -7,24 +7,45 @@ const basic = require('../../lib/generic/basics');
 module.exports = (router) => {
     const tableName = 'armour';
 
-    let query = 'SELECT * FROM ' + tableName + ' ' +
-        'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id ' +
-        'LEFT JOIN ' + tableName + '_is_corporation ON ' + tableName + '_is_corporation.' + tableName + '_id = ' + tableName + '.id';
+    const rootQuery = 'SELECT id, canon, name, icon, created FROM ' + tableName;
 
-    routes.root(router, tableName, query);
+    const singleQuery = 'SELECT ' +
+        'armour.id, ' +
+        'armour.canon, ' +
+        'armour.name, ' +
+        'armour.description, ' +
+        'armour.icon, ' +
+        'armour.price, ' +
+        'armour.created, ' +
+        'armour.updated, ' +
+        'armour.bodypart_id, ' +
+        'bodypart.name AS bodypart_name, ' +
+        'armour_is_corporation.corporation_id, ' +
+        'corporation.name AS corporation_name, ' +
+        'armour.user_id, ' +
+        'user.displayname AS user_displayname, ' +
+        'armour_is_copy.copy_id ' +
+        'FROM armour ' +
+        'LEFT JOIN bodypart ON bodypart.id = armour.bodypart_id ' +
+        'LEFT JOIN armour_is_corporation ON armour_is_corporation.armour_id = armour.id ' +
+        'LEFT JOIN corporation ON (corporation.id = armour_is_corporation.corporation_id AND armour_is_corporation.armour_id = armour.id) ' +
+        'LEFT JOIN user ON user.id = armour.user_id ' +
+        'LEFT JOIN armour_is_copy ON armour_is_copy.armour_id = armour.id';
+
+    routes.root(router, tableName, rootQuery);
     routes.insert(router, tableName);
-    routes.removed(router, tableName, query);
+    routes.removed(router, tableName, rootQuery);
     routes.schema(router, tableName);
 
     router.route('/bodypart/:id')
         .get(async (req, res, next) => {
-            let call = query + ' WHERE deleted IS NULL AND ' +
+            let call = rootQuery + ' WHERE deleted IS NULL AND ' +
                 'bodypart_id = ?';
 
             await basic.select(req, res, next, call, [req.params.id]);
         });
 
-    routes.single(router, tableName, query);
+    routes.single(router, tableName, singleQuery);
     routes.update(router, tableName);
 
     routes.automatic(router, tableName);

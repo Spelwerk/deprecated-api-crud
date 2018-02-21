@@ -19,7 +19,7 @@ module.exports = (router) => {
 
                 res.status(201).send({id: id});
             } catch(e) {
-                next(e);
+                return next(e);
             }
         });
 

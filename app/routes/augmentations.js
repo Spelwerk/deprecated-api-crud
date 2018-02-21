@@ -7,11 +7,30 @@ const augmentations = require('../../lib/tables/augmentations');
 module.exports = (router) => {
     const tableName = 'augmentation';
 
-    let query = 'SELECT * FROM ' + tableName + ' ' +
-        'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id ' +
-        'LEFT JOIN ' + tableName + '_is_corporation ON ' + tableName + '_is_corporation.' + tableName + '_id = ' + tableName + '.id';
+    const rootQuery = 'SELECT id, canon, name, created FROM ' + tableName;
 
-    routes.root(router, tableName, query);
+    const singleQuery = 'SELECT ' +
+        'augmentation.id, ' +
+        'augmentation.canon, ' +
+        'augmentation.name, ' +
+        'augmentation.description, ' +
+        'augmentation.legal, ' +
+        'augmentation.price, ' +
+        'augmentation.hacking_difficulty, ' +
+        'augmentation.created, ' +
+        'augmentation.updated, ' +
+        'augmentation_is_corporation.corporation_id, ' +
+        'corporation.name AS corporation_name, ' +
+        'augmentation.user_id, ' +
+        'user.displayname AS user_displayname, ' +
+        'augmentation_is_copy.copy_id ' +
+        'FROM augmentation ' +
+        'LEFT JOIN augmentation_is_corporation ON augmentation_is_corporation.augmentation_id = augmentation.id ' +
+        'LEFT JOIN corporation ON (corporation.id = augmentation_is_corporation.corporation_id AND augmentation_is_corporation.augmentation_id = augmentation.id) ' +
+        'LEFT JOIN user ON user.id = augmentation.user_id ' +
+        'LEFT JOIN augmentation_is_copy ON augmentation_is_copy.augmentation_id = augmentation.id';
+    
+    routes.root(router, tableName, rootQuery);
 
     router.route('/')
         .post(async (req, res, next) => {
@@ -20,13 +39,13 @@ module.exports = (router) => {
 
                 res.status(201).send({id: id});
             } catch(e) {
-                next(e);
+                return next(e);
             }
         });
 
-    routes.removed(router, tableName, query);
+    routes.removed(router, tableName, rootQuery);
     routes.schema(router, tableName);
-    routes.single(router, tableName, query);
+    routes.single(router, tableName, singleQuery);
     routes.update(router, tableName);
 
     routes.automatic(router, tableName);

@@ -34,7 +34,7 @@ module.exports = function(router) {
 
                 await basics.select(req, res, next, call);
             } catch(e) {
-                next(e);
+                return next(e);
             }
         })
         .post(async (req, res, next) => {
@@ -43,7 +43,7 @@ module.exports = function(router) {
 
                 res.status(201).send({id: result.id, token: result.token});
             } catch(e) {
-                next(e);
+                return next(e);
             }
         });
 
@@ -56,13 +56,13 @@ module.exports = function(router) {
 
                 await basics.select(req, res, next, call);
             } catch(e) {
-                next(e);
+                return next(e);
             }
         });
 
     // Verifying that a user exists
 
-    router.route('/exists/:email')
+    router.route('/exists/email/:email')
         .get(async (req, res, next) => {
             try {
                 let email = req.params.email.toString().toLowerCase();
@@ -72,7 +72,21 @@ module.exports = function(router) {
 
                 res.status(200).send({exists: exists});
             } catch(e) {
-                next(e);
+                return next(e);
+            }
+        });
+
+    router.route('/exists/displayname/:name')
+        .get(async (req, res, next) => {
+            try {
+                let name = req.params.name.toString().toLowerCase();
+
+                let [rows] = await sql('SELECT id FROM user WHERE LOWER(displayname) = ?', [name]);
+                let exists = rows.length > 0;
+
+                res.status(200).send({exists: exists});
+            } catch(e) {
+                return next(e);
             }
         });
 
@@ -89,7 +103,7 @@ module.exports = function(router) {
                     admin: req.user.admin
                 });
             } catch(e) {
-                next(e);
+                return next(e);
             }
         });
 
@@ -104,7 +118,7 @@ module.exports = function(router) {
 
                 res.status(200).send({results: rows, fields: fields});
             } catch(e) {
-                next(e);
+                return next(e);
             }
         });
 
@@ -117,7 +131,7 @@ module.exports = function(router) {
 
                 res.status(200).send({result: rows[0], fields: fields});
             } catch(e) {
-                next(e);
+                return next(e);
             }
         })
         .put(async (req, res, next) => {
@@ -128,7 +142,7 @@ module.exports = function(router) {
 
                 res.status(204).send();
             } catch(e) {
-                next(e);
+                return next(e);
             }
         })
         .delete(async (req, res, next) => {
@@ -139,7 +153,7 @@ module.exports = function(router) {
 
                 res.status(204).send();
             } catch(e) {
-                next(e);
+                return next(e);
             }
         });
 
@@ -152,7 +166,7 @@ module.exports = function(router) {
 
                 res.status(200).send(result);
             } catch(e) {
-                next(e);
+                return next(e);
             }
         });
 
@@ -163,7 +177,7 @@ module.exports = function(router) {
 
                 res.status(204).send();
             } catch(e) {
-                next(e);
+                return next(e);
             }
         });
 
@@ -174,7 +188,7 @@ module.exports = function(router) {
 
                 res.status(200).send(result);
             } catch(e) {
-                next(e);
+                return next(e);
             }
         });
 
@@ -187,7 +201,7 @@ module.exports = function(router) {
 
                 res.status(204).send();
             } catch(e) {
-                next(e);
+                return next(e);
             }
         });
 
@@ -198,7 +212,7 @@ module.exports = function(router) {
 
                 res.status(204).send();
             } catch(e) {
-                next(e);
+                return next(e);
             }
         });
 
@@ -211,7 +225,7 @@ module.exports = function(router) {
 
                 res.status(204).send();
             } catch(e) {
-                next(e);
+                return next(e);
             }
         });
 
@@ -222,7 +236,7 @@ module.exports = function(router) {
 
                 res.status(200).send(result);
             } catch(e) {
-                next(e);
+                return next(e);
             }
         });
 
@@ -235,7 +249,7 @@ module.exports = function(router) {
 
                 res.status(204).send();
             } catch(e) {
-                next(e);
+                return next(e);
             }
         });
 
@@ -246,7 +260,7 @@ module.exports = function(router) {
 
                 res.status(204).send();
             } catch(e) {
-                next(e);
+                return next(e);
             }
         });
 
@@ -264,7 +278,7 @@ module.exports = function(router) {
 
                 res.status(204).send();
             } catch(e) {
-                next(e);
+                return next(e);
             }
         })
         .delete(async (req, res, next) => {
@@ -273,7 +287,7 @@ module.exports = function(router) {
 
                 res.status(204).send();
             } catch(e) {
-                next(e);
+                return next(e);
             }
         });
 
@@ -284,7 +298,7 @@ module.exports = function(router) {
 
                 res.status(204).send();
             } catch(e) {
-                next(e);
+                return next(e);
             }
         });
 
@@ -295,7 +309,7 @@ module.exports = function(router) {
 
                 res.status(204).send();
             } catch(e) {
-                next(e);
+                return next(e);
             }
         });
 

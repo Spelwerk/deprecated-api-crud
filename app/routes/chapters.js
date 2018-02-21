@@ -18,7 +18,7 @@ module.exports = (router) => {
 
                 res.status(201).send({id: id});
             } catch(e) {
-                next(e);
+                return next(e);
             }
         });
 
@@ -44,7 +44,7 @@ module.exports = (router) => {
 
                 res.status(204).send();
             } catch(e) {
-                next(e);
+                return next(e);
             }
         })
         .delete(async (req, res, next) => {
@@ -53,7 +53,7 @@ module.exports = (router) => {
 
                 res.status(204).send();
             } catch(e) {
-                next(e);
+                return next(e);
             }
         });
 

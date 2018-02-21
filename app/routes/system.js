@@ -1,11 +1,11 @@
 'use strict';
 
 const yaml = require('node-yaml').readSync;
-
 const attributes = yaml('./../../config/attributes.yml');
 const defaults = yaml('./../../config/defaults.yml');
 const dice = yaml('./../../config/dice.yml');
 const icons = yaml('./../../config/icons.yml');
+const plural = yaml('./../../config/plural.yml');
 const points = yaml('./../../config/points.yml');
 
 module.exports = (router) => {
@@ -33,6 +33,11 @@ module.exports = (router) => {
     router.route('/config/icons')
         .get((req, res) => {
             res.status(200).send(icons);
+        });
+
+    router.route('/config/plural')
+        .get((req, res) => {
+            res.status(200).send(plural);
         });
 
     router.route('/config/points')
