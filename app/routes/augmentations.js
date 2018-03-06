@@ -19,16 +19,16 @@ module.exports = (router) => {
         'augmentation.hacking_difficulty, ' +
         'augmentation.created, ' +
         'augmentation.updated, ' +
-        'augmentation_is_corporation.corporation_id, ' +
+        'corporation.id AS corporation_id, ' +
         'corporation.name AS corporation_name, ' +
-        'augmentation.user_id, ' +
-        'user.displayname AS user_displayname, ' +
+        'user.id AS user_id, ' +
+        'user.displayname AS user_name, ' +
         'augmentation_is_copy.copy_id ' +
         'FROM augmentation ' +
         'LEFT JOIN augmentation_is_corporation ON augmentation_is_corporation.augmentation_id = augmentation.id ' +
-        'LEFT JOIN corporation ON (corporation.id = augmentation_is_corporation.corporation_id AND augmentation_is_corporation.augmentation_id = augmentation.id) ' +
-        'LEFT JOIN user ON user.id = augmentation.user_id ' +
-        'LEFT JOIN augmentation_is_copy ON augmentation_is_copy.augmentation_id = augmentation.id';
+        'LEFT JOIN augmentation_is_copy ON augmentation_is_copy.augmentation_id = augmentation.id ' +
+        'LEFT JOIN corporation ON corporation.id = augmentation_is_corporation.corporation_id ' +
+        'LEFT JOIN user ON user.id = augmentation.user_id';
     
     routes.root(router, tableName, rootQuery);
 

@@ -8,50 +8,49 @@ const wounds = require('../../lib/creatures/wounds');
 
 module.exports = (router) => {
     const tableName = 'creature';
-    const queryList = 'SELECT ' +
-        'id,' +
-        'canon,' +
-        'firstname,' +
-        'nickname,' +
-        'middlename,' +
-        'lastname,' +
-        'age,' +
-        'gender,' +
-        'occupation ' +
-        'FROM creature ' +
-        'LEFT JOIN creature_with_description ON creature_with_description.creature_id = creature.id ' +
-        'LEFT JOIN creature_with_extra ON creature_with_extra.creature_id = creature.id';
 
-    const querySingle = 'SELECT ' +
-        'id, ' +
-        'copy_id, ' +
-        'user_id, ' +
-        'canon, ' +
-        'firstname, ' +
-        'nickname, ' +
-        'middlename, ' +
-        'lastname, ' +
-        'age, ' +
-        'gender, ' +
-        'occupation, ' +
-        'appearance, ' +
-        'biography, ' +
-        'description, ' +
-        'personality, ' +
-        'drive, ' +
-        'pride, ' +
-        'problem, ' +
-        'shame, ' +
-        'created, ' +
-        'updated, ' +
-        'deleted ' +
+    const rootQuery = 'SELECT ' +
+        'creature.id, ' +
+        'creature.canon, ' +
+        'creature.template, ' +
+        'creature.firstname, ' +
+        'creature.nickname, ' +
+        'creature.middlename, ' +
+        'creature.lastname, ' +
+        'creature.age, ' +
+        'creature.gender, ' +
+        'creature.occupation,' +
+        'creature.created ' +
+        'FROM creature';
+
+    const singleQuery = 'SELECT ' +
+        'creature.id, ' +
+        'creature.user_id, ' +
+        'creature.canon, ' +
+        'creature.firstname, ' +
+        'creature.nickname, ' +
+        'creature.middlename, ' +
+        'creature.lastname, ' +
+        'creature.age, ' +
+        'creature.gender, ' +
+        'creature.occupation, ' +
+        'creature_with_description.appearance, ' +
+        'creature_with_description.biography, ' +
+        'creature_with_description.description, ' +
+        'creature_with_description.personality, ' +
+        'creature_with_description.species, ' +
+        'creature_with_description.drive, ' +
+        'creature_with_description.pride, ' +
+        'creature_with_description.problem, ' +
+        'creature_with_description.shame, ' +
+        'creature.created, ' +
+        'creature.updated, ' +
+        'creature_is_copy.copy_id ' +
         'FROM creature ' +
         'LEFT JOIN creature_with_description ON creature_with_description.creature_id = creature.id ' +
-        'LEFT JOIN creature_with_drive ON creature_with_drive.creature_id = creature.id ' +
-        'LEFT JOIN creature_with_extra ON creature_with_extra.creature_id = creature.id ' +
         'LEFT JOIN creature_is_copy ON creature_is_copy.creature_id = creature.id';
 
-    routes.root(router, tableName, queryList);
+    routes.root(router, tableName, rootQuery);
 
     router.route('/')
         .post(async (req, res, next) => {
@@ -64,9 +63,9 @@ module.exports = (router) => {
             }
         });
 
-    routes.removed(router, tableName, queryList);
+    routes.removed(router, tableName, rootQuery);
     routes.schema(router, tableName);
-    routes.single(router, tableName, querySingle);
+    routes.single(router, tableName, singleQuery);
     routes.update(router, tableName);
 
     routes.automatic(router, tableName);

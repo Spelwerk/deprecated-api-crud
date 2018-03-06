@@ -7,10 +7,25 @@ const worlds = require('../../lib/tables/worlds');
 module.exports = function(router) {
     const tableName = 'world';
 
-    let query = 'SELECT * FROM ' + tableName + ' ' +
-        'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
+    const rootQuery = 'SELECT id, canon, name, created FROM ' + tableName;
 
-    routes.root(router, tableName, query);
+    const singleQuery = 'SELECT ' +
+        'world.id, ' +
+        'world.canon, ' +
+        'world.template, ' +
+        'world.name, ' +
+        'world.description, ' +
+        'world.min_age, ' +
+        'world.created, ' +
+        'world.updated, ' +
+        'world_is_copy.copy_id, ' +
+        'user.id AS user_id, ' +
+        'user.displayname AS user_name ' +
+        'FROM world ' +
+        'LEFT JOIN world_is_copy ON world_is_copy.world_id = world.id ' +
+        'LEFT JOIN user ON user.id = world.user_id';
+
+    routes.root(router, tableName, rootQuery);
 
     router.route('/')
         .post(async (req, res, next) => {
@@ -23,9 +38,9 @@ module.exports = function(router) {
             }
         });
 
-    routes.removed(router, tableName, query);
+    routes.removed(router, tableName, rootQuery);
     routes.schema(router, tableName);
-    routes.single(router, tableName, query);
+    routes.single(router, tableName, singleQuery);
     routes.update(router, tableName);
 
     routes.automatic(router, tableName);

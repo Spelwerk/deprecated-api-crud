@@ -27,19 +27,19 @@ module.exports = (router) => {
         'asset.price, ' +
         'asset.created, ' +
         'asset.updated, ' +
-        'asset.assettype_id AS type_id, ' +
+        'assettype.id AS type_id, ' +
         'assettype.name AS type_name, ' +
-        'asset_is_corporation.corporation_id, ' +
+        'corporation.id AS corporation_id, ' +
         'corporation.name AS corporation_name, ' +
+        'asset_is_copy.copy_id, ' +
         'asset.user_id, ' +
-        'user.displayname AS user_displayname, ' +
-        'asset_is_copy.copy_id ' +
+        'user.displayname AS user_name ' +
         'FROM asset ' +
-        'LEFT JOIN assettype ON assettype.id = asset.assettype_id ' +
         'LEFT JOIN asset_is_corporation ON asset_is_corporation.asset_id = asset.id ' +
-        'LEFT JOIN corporation ON (corporation.id = asset_is_corporation.corporation_id AND asset_is_corporation.asset_id = asset.id) ' +
-        'LEFT JOIN user ON user.id = asset.user_id ' +
-        'LEFT JOIN asset_is_copy ON asset_is_copy.asset_id = asset.id';
+        'LEFT JOIN asset_is_copy ON asset_is_copy.asset_id = asset.id ' +
+        'LEFT JOIN assettype ON assettype.id = asset.assettype_id ' +
+        'LEFT JOIN corporation ON corporation.id = asset_is_corporation.corporation_id ' +
+        'LEFT JOIN user ON user.id = asset.user_id';
 
     routes.root(router, tableName, rootQuery);
     routes.insert(router, tableName);
@@ -48,8 +48,10 @@ module.exports = (router) => {
 
     router.route('/type/:id')
         .get(async (req, res, next) => {
-            let call = rootQuery + ' WHERE deleted IS NULL AND ' +
-                'assettype_id = ?';
+            let call = rootQuery + ' ' +
+                'WHERE ' +
+                'asset.deleted IS NULL AND ' +
+                'asset.assettype_id = ?';
 
             await basic.select(req, res, next, call, [req.params.id]);
         });

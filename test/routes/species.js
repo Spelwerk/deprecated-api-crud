@@ -1,35 +1,13 @@
-let async = require('async'),
-    _ = require('underscore'),
-    chai = require('chai'),
-    validator = require('validator');
+const assert = require('chai').assert;
 
-let should = chai.should(),
-    assert = chai.assert,
-    expect = chai.expect;
-
-let app = require('../app'),
-    verifier = require('../verifier'),
-    hasher = require('../../lib/hasher');
+const app = require('../app');
+const verifier = require('../verifier');
+const hasher = require('../../lib/hasher');
 
 describe('/species', function() {
 
     function verifyItem(item) {
-        assert.isNumber(item.id);
-        assert.isBoolean(item.canon);
-
-        assert.isString(item.name);
-        if(item.description) assert.isString(item.description);
-        if(item.history) assert.isString(item.history);
-        if(item.icon) assert.equal(validator.isURL(item.icon), true);
-        assert.isNumber(item.world_id);
-        assert.isBoolean(item.playable);
-        assert.isBoolean(item.manifestation);
-        assert.isNumber(item.max_age);
-        assert.isNumber(item.multiply_points);
-
-        assert.isString(item.created);
-        if(item.updated) assert.isString(item.updated);
-        if(item.deleted) assert.isString(item.deleted);
+        verifier.generic(item);
     }
 
     let baseRoute = '/species';

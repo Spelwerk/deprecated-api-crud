@@ -19,15 +19,15 @@ module.exports = (router) => {
         'attribute.maximum, ' +
         'attribute.created, ' +
         'attribute.updated, ' +
-        'attributetype_id AS type_id, ' +
+        'attributetype.id AS type_id, ' +
         'attributetype.name AS type_name, ' +
-        'attribute.user_id, ' +
-        'user.displayname AS user_displayname, ' +
-        'attribute_is_copy.copy_id ' +
+        'attribute_is_copy.copy_id, ' +
+        'user.id AS user_id, ' +
+        'user.displayname AS user_name ' +
         'FROM attribute ' +
+        'LEFT JOIN attribute_is_copy ON attribute_is_copy.attribute_id = attribute.id ' +
         'LEFT JOIN attributetype ON attributetype.id = attribute.attributetype_id ' +
-        'LEFT JOIN user ON user.id = attribute.user_id ' +
-        'LEFT JOIN attribute_is_copy ON attribute_is_copy.attribute_id = attribute.id';
+        'LEFT JOIN user ON user.id = attribute.user_id';
 
     routes.root(router, tableName, rootQuery);
     routes.insert(router, tableName);

@@ -6,15 +6,43 @@ const relations = require('../../lib/generic/relations');
 module.exports = (router) => {
     const tableName = 'shield';
 
-    let query = 'SELECT * FROM ' + tableName + ' ' +
-        'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id ' +
-        'LEFT JOIN ' + tableName + '_is_corporation ON ' + tableName + '_is_corporation.' + tableName + '_id = ' + tableName + '.id';
+    const rootQuery = 'SELECT id, canon, name, icon, created FROM ' + tableName;
 
-    routes.root(router, tableName, query);
+    const singleQuery = 'SELECT ' +
+        'shield.id, ' +
+        'shield.canon, ' +
+        'shield.name, ' +
+        'shield.description, ' +
+        'shield.icon, ' +
+        'shield.price, ' +
+        'shield.created, ' +
+        'shield.updated, ' +
+        'attribute.id AS damage_id, ' +
+        'attribute.name AS damage_name, ' +
+        'shield.damage_dice, ' +
+        'shield.damage_bonus, ' +
+        'shield.critical_dice, ' +
+        'shield.critical_bonus, ' +
+        'expertise.id AS expertise_id, ' +
+        'expertise.name AS expertise_name, ' +
+        'corporation.id AS corporation_id, ' +
+        'corporation.name AS corporation_name, ' +
+        'shield_is_copy.copy_id, ' +
+        'user.id AS user_id, ' +
+        'user.displayname AS user_name ' +
+        'FROM shield ' +
+        'LEFT JOIN shield_is_corporation ON shield_is_corporation.shield_id = shield.id ' +
+        'LEFT JOIN shield_is_copy ON shield_is_copy.shield_id = shield.id ' +
+        'LEFT JOIN attribute ON attribute.id = shield.attribute_id ' +
+        'LEFT JOIN expertise ON expertise.id = shield.expertise_id ' +
+        'LEFT JOIN corporation ON corporation.id = shield_is_corporation.corporation_id ' +
+        'LEFT JOIN user ON user.id = shield.user_id';
+
+    routes.root(router, tableName, rootQuery);
     routes.insert(router, tableName);
-    routes.removed(router, tableName, query);
+    routes.removed(router, tableName, rootQuery);
     routes.schema(router, tableName);
-    routes.single(router, tableName, query);
+    routes.single(router, tableName, singleQuery);
     routes.update(router, tableName);
 
     routes.automatic(router, tableName);

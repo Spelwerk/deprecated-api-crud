@@ -7,24 +7,44 @@ const basic = require('../../lib/generic/basics');
 module.exports = (router) => {
     const tableName = 'bionic';
 
-    let query = 'SELECT * FROM ' + tableName + ' ' +
-        'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id ' +
-        'LEFT JOIN ' + tableName + '_is_corporation ON ' + tableName + '_is_corporation.' + tableName + '_id = ' + tableName + '.id';
+    const rootQuery = 'SELECT id, canon, name, icon, created FROM ' + tableName;
 
-    routes.root(router, tableName, query);
+    const singleQuery = 'SELECT ' +
+        'bionic.id, ' +
+        'bionic.canon, ' +
+        'bionic.name, ' +
+        'bionic.description, ' +
+        'bionic.icon, ' +
+        'bionic.legal, ' +
+        'bionic.price, ' +
+        'bionic.hacking_difficulty, ' +
+        'bionic.created, ' +
+        'bionic.updated, ' +
+        'corporation.id AS corporation_id, ' +
+        'corporation.name AS corporation_name, ' +
+        'user.id AS user_id, ' +
+        'user.displayname AS user_name, ' +
+        'bionic_is_copy.copy_id ' +
+        'FROM bionic ' +
+        'LEFT JOIN bionic_is_corporation ON bionic_is_corporation.bionic_id = bionic.id ' +
+        'LEFT JOIN bionic_is_copy ON bionic_is_copy.bionic_id = bionic.id ' +
+        'LEFT JOIN corporation ON corporation.id = bionic_is_corporation.corporation_id ' +
+        'LEFT JOIN user ON user.id = bionic.user_id';
+
+    routes.root(router, tableName, rootQuery);
     routes.insert(router, tableName);
-    routes.removed(router, tableName, query);
+    routes.removed(router, tableName, rootQuery);
     routes.schema(router, tableName);
 
     router.route('/bodypart/:id')
         .get(async (req, res, next) => {
-            let call = query + ' WHERE deleted IS NULL AND ' +
+            let call = rootQuery + ' WHERE deleted IS NULL AND ' +
                 'bodypart_id = ?';
 
             await basic.select(req, res, next, call, [req.params.id]);
         });
 
-    routes.single(router, tableName, query);
+    routes.single(router, tableName, singleQuery);
     routes.update(router, tableName);
 
     routes.automatic(router, tableName);

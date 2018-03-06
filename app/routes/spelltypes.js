@@ -7,10 +7,29 @@ const spellTypes = require('../../lib/tables/spelltypes');
 module.exports = (router) => {
     const tableName = 'spelltype';
 
-    let query = 'SELECT * FROM ' + tableName + ' ' +
-        'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
+    const rootQuery = 'SELECT id, canon, name, created FROM ' + tableName;
 
-    routes.root(router, tableName, query);
+    const singleQuery = 'SELECT ' +
+        'spelltype.id, ' +
+        'spelltype.canon, ' +
+        'spelltype.name, ' +
+        'spelltype.description, ' +
+        'spelltype.created, ' +
+        'spelltype.updated, ' +
+        'manifestation.id AS manifestation_id, ' +
+        'manifestation.name AS manifestation_name, ' +
+        'expertise.id AS expertise_id, ' +
+        'expertise.name AS expertise_name, ' +
+        'spelltype_is_copy.copy_id, ' +
+        'user.id AS user_id, ' +
+        'user.displayname AS user_name ' +
+        'FROM spelltype ' +
+        'LEFT JOIN spelltype_is_copy ON spelltype_is_copy.spelltype_id = spelltype.id ' +
+        'LEFT JOIN manifestation ON manifestation.id = spelltype.manifestation_id ' +
+        'LEFT JOIN expertise ON expertise.id = spelltype.expertise_id ' +
+        'LEFT JOIN user ON user.id = spelltype.user_id';
+
+    routes.root(router, tableName, rootQuery);
 
     router.route('/')
         .post(async (req, res, next) => {
@@ -23,18 +42,18 @@ module.exports = (router) => {
             }
         });
 
-    routes.removed(router, tableName, query);
+    routes.removed(router, tableName, rootQuery);
     routes.schema(router, tableName);
 
     router.route('/manifestation/:id')
         .get(async (req, res, next) => {
-            let call = query + ' WHERE deleted IS NULL AND ' +
+            let call = rootQuery + ' WHERE deleted IS NULL AND ' +
                 'manifestation_id = ?';
 
             await basic.select(req, res, next, call, [req.params.id]);
         });
 
-    routes.single(router, tableName, query);
+    routes.single(router, tableName, singleQuery);
     routes.update(router, tableName);
 
     routes.automatic(router, tableName);

@@ -8,11 +8,24 @@ const icons = yaml('./../../config/icons.yml');
 const plural = yaml('./../../config/plural.yml');
 const points = yaml('./../../config/points.yml');
 
-module.exports = (router) => {
+const config = {
+    attributes: attributes,
+    defaults: defaults,
+    dice: dice,
+    icons: icons,
+    plural: plural,
+    points: points
+};
 
+module.exports = (router) => {
     router.route('/')
         .get((req, res) => {
             res.status(204).send();
+        });
+
+    router.route('/config')
+        .get((req, res) => {
+            res.status(204).send(config);
         });
 
     router.route('/config/attributes')
@@ -44,5 +57,4 @@ module.exports = (router) => {
         .get((req, res) => {
             res.status(200).send(points);
         });
-
 };

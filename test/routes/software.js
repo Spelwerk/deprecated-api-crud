@@ -1,26 +1,13 @@
-let async = require('async'),
-    _ = require('underscore'),
-    chai = require('chai'),
-    validator = require('validator');
+const assert = require('chai').assert;
 
-let should = chai.should(),
-    assert = chai.assert,
-    expect = chai.expect;
-
-let app = require('../app'),
-    verifier = require('../verifier'),
-    hasher = require('../../lib/hasher');
+const app = require('../app');
+const verifier = require('../verifier');
+const hasher = require('../../lib/hasher');
 
 describe('/software', function() {
 
     function verifyItem(item) {
         verifier.generic(item);
-
-        assert.isNumber(item.softwaretype_id);
-        assert.isBoolean(item.legal);
-        assert.isNumber(item.price);
-        assert.isNumber(item.hacking_difficulty);
-        assert.isNumber(item.hacking_bonus);
     }
 
     let baseRoute = '/software';

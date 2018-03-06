@@ -1,22 +1,13 @@
-let async = require('async'),
-    _ = require('underscore'),
-    chai = require('chai'),
-    validator = require('validator');
+const assert = require('chai').assert;
 
-let should = chai.should(),
-    assert = chai.assert,
-    expect = chai.expect;
-
-let app = require('../app'),
-    verifier = require('./../verifier'),
-    hasher = require('../../lib/hasher');
+const app = require('../app');
+const verifier = require('../verifier');
+const hasher = require('../../lib/hasher');
 
 describe('/countries', function() {
 
     function verifyItem(item) {
         verifier.generic(item);
-
-        if(item.language_id) assert.isNumber(item.language_id);
     }
 
     let baseRoute = '/countries';

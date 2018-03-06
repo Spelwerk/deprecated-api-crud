@@ -14,12 +14,12 @@ module.exports = (router) => {
         'assettype.icon, ' +
         'assettype.created, ' +
         'assettype.updated, ' +
-        'assettype.user_id, ' +
-        'user.displayname AS user_displayname, ' +
-        'assettype_is_copy.copy_id ' +
+        'assettype_is_copy.copy_id, ' +
+        'user.id AS user_id, ' +
+        'user.displayname AS user_name ' +
         'FROM assettype ' +
-        'LEFT JOIN user ON user.id = assettype.user_id ' +
-        'LEFT JOIN assettype_is_copy ON assettype_is_copy.assettype_id = assettype.id';
+        'LEFT JOIN assettype_is_copy ON assettype_is_copy.assettype_id = assettype.id ' +
+        'LEFT JOIN user ON user.id = assettype.user_id';
 
     routes.root(router, tableName, rootQuery);
     routes.insert(router, tableName);

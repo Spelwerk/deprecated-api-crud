@@ -18,19 +18,19 @@ module.exports = (router) => {
         'armour.price, ' +
         'armour.created, ' +
         'armour.updated, ' +
-        'armour.bodypart_id, ' +
+        'bodypart.id AS bodypart_id, ' +
         'bodypart.name AS bodypart_name, ' +
-        'armour_is_corporation.corporation_id, ' +
+        'corporation.id AS corporation_id, ' +
         'corporation.name AS corporation_name, ' +
-        'armour.user_id, ' +
-        'user.displayname AS user_displayname, ' +
-        'armour_is_copy.copy_id ' +
+        'armour_is_copy.copy_id, ' +
+        'user.id AS user_id, ' +
+        'user.displayname AS user_name ' +
         'FROM armour ' +
-        'LEFT JOIN bodypart ON bodypart.id = armour.bodypart_id ' +
         'LEFT JOIN armour_is_corporation ON armour_is_corporation.armour_id = armour.id ' +
-        'LEFT JOIN corporation ON (corporation.id = armour_is_corporation.corporation_id AND armour_is_corporation.armour_id = armour.id) ' +
-        'LEFT JOIN user ON user.id = armour.user_id ' +
-        'LEFT JOIN armour_is_copy ON armour_is_copy.armour_id = armour.id';
+        'LEFT JOIN armour_is_copy ON armour_is_copy.armour_id = armour.id ' +
+        'LEFT JOIN bodypart ON bodypart.id = armour.bodypart_id ' +
+        'LEFT JOIN corporation ON corporation.id = armour_is_corporation.corporation_id ' +
+        'LEFT JOIN user ON user.id = armour.user_id';
 
     routes.root(router, tableName, rootQuery);
     routes.insert(router, tableName);

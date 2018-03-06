@@ -6,14 +6,34 @@ const relations = require('../../lib/generic/relations');
 module.exports = (router) => {
     const tableName = 'epoch';
 
-    let query = 'SELECT * FROM ' + tableName + ' ' +
-        'LEFT JOIN ' + tableName + '_is_copy ON ' + tableName + '_is_copy.' + tableName + '_id = ' + tableName + '.id';
+    const rootQuery = 'SELECT id, canon, name, created FROM ' + tableName;
 
-    routes.root(router, tableName, query);
+    const singleQuery = 'SELECT ' +
+        'epoch.id, ' +
+        'epoch.canon, ' +
+        'epoch.name, ' +
+        'epoch.description, ' +
+        'epoch.history, ' +
+        'epoch.begins, ' +
+        'epoch.ends, ' +
+        'epoch.augmentation, ' +
+        'epoch.created, ' +
+        'epoch.updated, ' +
+        'world.id AS world_id, ' +
+        'world.name AS world_name, ' +
+        'epoch_is_copy.copy_id, ' +
+        'user.id AS user_id, ' +
+        'user.displayname AS user_name ' +
+        'FROM epoch ' +
+        'LEFT JOIN epoch_is_copy ON epoch_is_copy.epoch_id = epoch.id ' +
+        'LEFT JOIN world ON world.id = epoch.world_id ' +
+        'LEFT JOIN user ON user.id = epoch.user_id';
+
+    routes.root(router, tableName, rootQuery);
     routes.insert(router, tableName);
-    routes.removed(router, tableName, query);
+    routes.removed(router, tableName, rootQuery);
     routes.schema(router, tableName);
-    routes.single(router, tableName, query);
+    routes.single(router, tableName, singleQuery);
     routes.update(router, tableName);
 
     routes.automatic(router, tableName);

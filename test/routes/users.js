@@ -1,13 +1,8 @@
-let async = require('async'),
-    _ = require('underscore'),
-    chai = require('chai');
+const _ = require('underscore');
+const assert = require('chai').assert;
 
-let should = chai.should(),
-    assert = chai.assert,
-    expect = chai.expect;
-
-let app = require('./../app'),
-    hasher = require('./../../lib/hasher');
+const app = require('./../app');
+const hasher = require('./../../lib/hasher');
 
 describe('/users', function() {
 

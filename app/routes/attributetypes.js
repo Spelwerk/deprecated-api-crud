@@ -13,8 +13,8 @@ module.exports = (router) => {
         'attributetype.name, ' +
         'attributetype.created, ' +
         'attributetype.updated, ' +
-        'attributetype.user_id, ' +
-        'user.displayname AS user_displayname ' +
+        'user.id AS user_id, ' +
+        'user.displayname AS user_name ' +
         'FROM attributetype ' +
         'LEFT JOIN user ON user.id = attributetype.user_id';
 

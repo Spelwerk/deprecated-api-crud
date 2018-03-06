@@ -1,15 +1,9 @@
-let async = require('async'),
-    _ = require('underscore'),
-    chai = require('chai'),
-    validator = require('validator');
+const assert = require('chai').assert;
+const validator = require('validator');
 
-let should = chai.should(),
-    assert = chai.assert,
-    expect = chai.expect;
-
-let app = require('../app'),
-    verifier = require('../verifier'),
-    hasher = require('../../lib/hasher');
+const app = require('../app');
+const verifier = require('../verifier');
+const hasher = require('../../lib/hasher');
 
 describe('/images', function() {
 
