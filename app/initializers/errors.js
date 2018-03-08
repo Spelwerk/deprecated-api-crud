@@ -14,7 +14,7 @@ module.exports = (app) => {
 
         logger.error(req.log);
 
-        if(environment !== 'production') console.error(req.log);
+        if (environment !== 'production') console.error(req.log);
 
         res.status(err.status).send({title: err.title, message: err.message});
     });

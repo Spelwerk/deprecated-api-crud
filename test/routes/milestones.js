@@ -23,7 +23,7 @@ describe('/milestones', function() {
         app.get('/backgrounds')
             .expect(200)
             .end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 backgroundId = res.body.results[0].id;
 
@@ -36,7 +36,7 @@ describe('/milestones', function() {
         app.get('/manifestations')
             .expect(200)
             .end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 manifestationId = res.body.results[0].id;
 
@@ -49,7 +49,7 @@ describe('/milestones', function() {
         app.get('/species')
             .expect(200)
             .end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 speciesId = res.body.results[0].id;
 
@@ -71,7 +71,7 @@ describe('/milestones', function() {
             app.post(baseRoute, payload)
                 .expect(201)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     assert.isNumber(res.body.id);
 
@@ -116,7 +116,7 @@ describe('/milestones', function() {
             app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     verifier.lists(res.body, verifyItem);
 
@@ -128,7 +128,7 @@ describe('/milestones', function() {
             app.get(baseRoute + '/deleted')
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     verifier.lists(res.body, verifyItem);
 
@@ -140,7 +140,7 @@ describe('/milestones', function() {
             app.get('/milestones/manifestation/' + manifestationId)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     verifier.lists(res.body, verifyItem);
 
@@ -152,7 +152,7 @@ describe('/milestones', function() {
             app.get('/milestones/species/' + speciesId)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     verifier.lists(res.body, verifyItem);
 
@@ -164,7 +164,7 @@ describe('/milestones', function() {
             app.get(baseRoute + '/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     verifyItem(res.body.result);
 
@@ -191,7 +191,7 @@ describe('/milestones', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -218,7 +218,7 @@ describe('/milestones', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -249,7 +249,7 @@ describe('/milestones', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -280,7 +280,7 @@ describe('/milestones', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -307,7 +307,7 @@ describe('/milestones', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -340,7 +340,7 @@ describe('/milestones', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -353,7 +353,7 @@ describe('/milestones', function() {
             app.get('/wealth')
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     wealthId = res.body.results[length].id;
@@ -364,7 +364,7 @@ describe('/milestones', function() {
 
         it('POST / should add an item', function(done) {
             app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId, wealth_id: wealthId, occupation: hasher(20)}).expect(201).end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 assert.isNumber(res.body.id);
                 uqId = res.body.id;
@@ -379,7 +379,7 @@ describe('/milestones', function() {
 
         it('GET / should get a list of items', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 assert.isNumber(res.body.length);
                 assert.isArray(res.body.results);
@@ -405,7 +405,7 @@ describe('/milestones', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -432,7 +432,7 @@ describe('/milestones', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -463,7 +463,7 @@ describe('/milestones', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -489,7 +489,7 @@ describe('/milestones', function() {
             app.post(baseRoute + '/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     assert.isNumber(res.body.id);
 

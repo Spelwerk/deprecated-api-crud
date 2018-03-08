@@ -17,9 +17,7 @@ module.exports = (router) => {
                 let id = await chapters.insert(req, req.body);
 
                 res.status(201).send({id: id});
-            } catch(e) {
-                return next(e);
-            }
+            } catch(e) { return next(e); }
         });
 
     routes.removed(router, tableName, query);
@@ -43,18 +41,14 @@ module.exports = (router) => {
                 await chapters.update(req, req.body, req.params.id);
 
                 res.status(204).send();
-            } catch(e) {
-                return next(e);
-            }
+            } catch(e) { return next(e); }
         })
         .delete(async (req, res, next) => {
             try {
                 await chapters.remove(req, req.params.id);
 
                 res.status(204).send();
-            } catch(e) {
-                return next(e);
-            }
+            } catch(e) { return next(e); }
         });
 
     routes.automatic(router, tableName);

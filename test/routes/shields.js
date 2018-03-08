@@ -23,7 +23,7 @@ describe('/shields', function() {
         app.get('/attributes')
             .expect(200)
             .end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 let length = res.body.length - 1;
                 attributeId = res.body.results[length].id;
@@ -37,7 +37,7 @@ describe('/shields', function() {
         app.get('/expertises')
             .expect(200)
             .end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 let length = res.body.length - 1;
                 expertiseId = res.body.results[length].id;
@@ -64,7 +64,7 @@ describe('/shields', function() {
             app.post(baseRoute, payload)
                 .expect(201)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     assert.isNumber(res.body.id);
 
@@ -90,7 +90,7 @@ describe('/shields', function() {
             app.post(baseRoute, payload)
                 .expect(201)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     assert.isNumber(res.body.id);
 
@@ -143,7 +143,7 @@ describe('/shields', function() {
             app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     verifier.lists(res.body, verifyItem);
 
@@ -155,7 +155,7 @@ describe('/shields', function() {
             app.get(baseRoute + '/deleted')
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     verifier.lists(res.body, verifyItem);
 
@@ -167,7 +167,7 @@ describe('/shields', function() {
             app.get(baseRoute + '/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     verifyItem(res.body.result);
 
@@ -194,7 +194,7 @@ describe('/shields', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -225,7 +225,7 @@ describe('/shields', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -256,7 +256,7 @@ describe('/shields', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -286,7 +286,7 @@ describe('/shields', function() {
             app.post(baseRoute + '/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     assert.isNumber(res.body.id);
 

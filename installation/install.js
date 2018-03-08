@@ -42,14 +42,14 @@ async function install() {
         let s1 = formatter.format(q1, a1);
 
         let r1 = await pool.execute(s1);
-        if(r1[0].insertId !== id) console.log("ERROR", "ID is not 1. ID is " + r1[0].insertId);
+        if (r1[0].insertId !== id) console.log("ERROR", "ID is not 1. ID is " + r1[0].insertId);
 
         let q2 = 'INSERT INTO user_token (user_id,token) VALUES (?,?)';
         let a2 = [id, token];
         let s2 = formatter.format(q2, a2);
 
         let r2 = await pool.execute(s2);
-        if(r2[0].affectedRows !== 1) console.log("ERROR", "Token was not inserted.");
+        if (r2[0].affectedRows !== 1) console.log("ERROR", "Token was not inserted.");
 
         console.log("Created Administrator account with...\nemail: " + email + "\npassword: " + nconf.get('superuser:password') + "\ntoken: " + token);
         process.exit(0);

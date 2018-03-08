@@ -12,9 +12,7 @@ module.exports = function(router) {
                 let id = await meetings.insert(req, req.body);
 
                 res.status(201).send({id: id});
-            } catch(e) {
-                return next(e);
-            }
+            } catch(e) { return next(e); }
         });
 
     router.route('/story/:id')
@@ -35,8 +33,6 @@ module.exports = function(router) {
                 await meetings.update(req, req.body, req.params.id);
 
                 res.status(204).send();
-            } catch(e) {
-                return next(e);
-            }
+            } catch(e) { return next(e); }
         });
 };

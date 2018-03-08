@@ -15,9 +15,9 @@ module.exports = (app) => {
         let keyId = nconf.get('api-key:id');
         let keySecret = nconf.get('api-key:secret');
 
-        if(!credentials) return next(new MissingCredentialsError);
+        if (!credentials) return next(new MissingCredentialsError);
 
-        if(credentials.name !== keyId || credentials.pass !== keySecret) return next(new InvalidCredentialsError);
+        if (credentials.name !== keyId || credentials.pass !== keySecret) return next(new InvalidCredentialsError);
 
         next();
     });

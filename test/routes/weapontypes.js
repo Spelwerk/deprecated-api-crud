@@ -22,7 +22,7 @@ describe('/weapontypes', function() {
         app.get('/attributes')
             .expect(200)
             .end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 let length = res.body.length - 1;
                 attributeId = res.body.results[length].id;
@@ -36,7 +36,7 @@ describe('/weapontypes', function() {
         app.get('/expertises')
             .expect(200)
             .end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 let length = res.body.length - 1;
                 expertiseId = res.body.results[length].id;
@@ -50,7 +50,7 @@ describe('/weapontypes', function() {
         app.get('/skills')
             .expect(200)
             .end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 let length = res.body.length - 1;
                 skillId = res.body.results[length].id;
@@ -64,7 +64,7 @@ describe('/weapontypes', function() {
         app.get('/species')
             .expect(200)
             .end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 let length = res.body.length - 1;
                 speciesId = res.body.results[length].id;
@@ -89,7 +89,7 @@ describe('/weapontypes', function() {
             app.post(baseRoute, payload)
                 .expect(201)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     assert.isNumber(res.body.id);
 
@@ -134,7 +134,7 @@ describe('/weapontypes', function() {
             app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     verifier.lists(res.body, verifyItem);
 
@@ -146,7 +146,7 @@ describe('/weapontypes', function() {
             app.get(baseRoute + '/deleted')
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     verifier.lists(res.body, verifyItem);
 
@@ -158,7 +158,7 @@ describe('/weapontypes', function() {
             app.get('/weapontypes/augmentation/1')
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     verifier.lists(res.body, verifyItem);
 
@@ -170,7 +170,7 @@ describe('/weapontypes', function() {
             app.get('/weapontypes/damage/' + attributeId)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     verifier.lists(res.body, verifyItem);
 
@@ -182,7 +182,7 @@ describe('/weapontypes', function() {
             app.get('/weapontypes/expertise/' + expertiseId)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     verifier.lists(res.body, verifyItem);
 
@@ -194,7 +194,7 @@ describe('/weapontypes', function() {
             app.get('/weapontypes/species/1')
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     verifier.lists(res.body, verifyItem);
 
@@ -206,7 +206,7 @@ describe('/weapontypes', function() {
             app.get(baseRoute + '/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     verifyItem(res.body.result);
 
@@ -230,7 +230,7 @@ describe('/weapontypes', function() {
             app.post(baseRoute + '/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     assert.isNumber(res.body.id);
 

@@ -21,7 +21,7 @@ module.exports.login = function(callback) {
         .auth(apiId, apiSecret)
         .expect(200)
         .end(function(err, res) {
-            if(err) return callback(err);
+            if (err) return callback(err);
 
             adminToken = res.body.token;
 

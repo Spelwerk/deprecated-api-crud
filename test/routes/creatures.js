@@ -23,7 +23,7 @@ describe('/creatures', function() {
         app.get('/creaturetypes')
             .expect(200)
             .end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 let length = res.body.length - 1;
                 typeId = res.body.results[length].id;
@@ -37,7 +37,7 @@ describe('/creatures', function() {
         app.get('/species')
             .expect(200)
             .end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 let length = res.body.length - 1;
                 speciesId = res.body.results[length].id;
@@ -51,7 +51,7 @@ describe('/creatures', function() {
         app.get('/epochs')
             .expect(200)
             .end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 let rand = app.randomNumber(0, res.body.length - 1);
                 epochId = res.body.results[rand].id;
@@ -65,7 +65,7 @@ describe('/creatures', function() {
         app.get('/corporations')
             .expect(200)
             .end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 let rand = app.randomNumber(0, res.body.length - 1);
                 corporationId = res.body.results[rand].id;
@@ -79,7 +79,7 @@ describe('/creatures', function() {
         app.get('/countries')
             .expect(200)
             .end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 let rand = app.randomNumber(0, res.body.length - 1);
                 countryId = res.body.results[rand].id;
@@ -93,7 +93,7 @@ describe('/creatures', function() {
         app.get('/identities')
             .expect(200)
             .end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 let rand = app.randomNumber(0, res.body.length - 1);
                 identityId = res.body.results[rand].id;
@@ -107,7 +107,7 @@ describe('/creatures', function() {
         app.get('/natures')
             .expect(200)
             .end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 let rand = app.randomNumber(0, res.body.length - 1);
                 natureId = res.body.results[rand].id;
@@ -121,7 +121,7 @@ describe('/creatures', function() {
         app.get('/wealth')
             .expect(200)
             .end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 let rand = app.randomNumber(0, res.body.length - 1);
                 wealthId = res.body.results[rand].id;
@@ -165,7 +165,7 @@ describe('/creatures', function() {
             app.post(baseRoute, payload)
                 .expect(201)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     assert.isNumber(res.body.id);
 
@@ -228,7 +228,7 @@ describe('/creatures', function() {
             app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     verifier.lists(res.body, verifyItem);
 
@@ -240,7 +240,7 @@ describe('/creatures', function() {
             app.get(baseRoute + '/deleted')
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     verifier.lists(res.body, verifyItem);
 
@@ -252,7 +252,7 @@ describe('/creatures', function() {
             app.get('/assets/type/' + speciesId)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     verifier.lists(res.body, verifyItem);
 
@@ -264,7 +264,7 @@ describe('/creatures', function() {
             app.get(baseRoute + '/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     verifyItem(res.body.result);
 
@@ -290,7 +290,7 @@ describe('/creatures', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -324,7 +324,7 @@ describe('/creatures', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -358,7 +358,7 @@ describe('/creatures', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -392,7 +392,7 @@ describe('/creatures', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     bionicId = res.body.results[length].id;
@@ -424,7 +424,7 @@ describe('/creatures', function() {
                 app.get('/bionics/' + bionicId + '/augmentations')
                     .expect(200)
                     .end(function(err, res) {
-                        if(err) return done(err);
+                        if (err) return done(err);
 
                         let length = res.body.length - 1;
                         augmentationId = res.body.results[length].augmentation_id;
@@ -452,7 +452,7 @@ describe('/creatures', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -486,7 +486,7 @@ describe('/creatures', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -520,7 +520,7 @@ describe('/creatures', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -554,7 +554,7 @@ describe('/creatures', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -584,7 +584,7 @@ describe('/creatures', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -618,7 +618,7 @@ describe('/creatures', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -652,7 +652,7 @@ describe('/creatures', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -689,7 +689,7 @@ describe('/creatures', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -702,7 +702,7 @@ describe('/creatures', function() {
             app.get('/wealth')
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     wealthId = res.body.results[length].id;
@@ -715,7 +715,7 @@ describe('/creatures', function() {
             app.get('/species')
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     speciesId = res.body.results[length].id;
@@ -730,7 +730,7 @@ describe('/creatures', function() {
 
         it('GET / should get a list of items', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 assert.isNumber(res.body.length);
                 assert.isArray(res.body.results);
@@ -739,7 +739,7 @@ describe('/creatures', function() {
                     assert.isNumber(item.id);
                     assert.isNumber(item.loyalty_id);
                     assert.isNumber(item.wealth_id);
-                    if(item.name) assert.isString(item.name);
+                    if (item.name) assert.isString(item.name);
                     assert.isString(item.occupation);
                 });
 
@@ -756,12 +756,12 @@ describe('/creatures', function() {
 
         it('GET /:id should display an item', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + uniqueId).expect(200).end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 assert.isNumber(res.body.result.id);
                 assert.isNumber(res.body.result.loyalty_id);
                 assert.isNumber(res.body.result.wealth_id);
-                if(res.body.result.name) assert.isString(res.body.result.name);
+                if (res.body.result.name) assert.isString(res.body.result.name);
                 assert.isString(res.body.result.occupation);
 
                 done();
@@ -782,7 +782,7 @@ describe('/creatures', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -795,7 +795,7 @@ describe('/creatures', function() {
             app.get('/focuses')
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     focusId = res.body.results[length].id;
@@ -829,7 +829,7 @@ describe('/creatures', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -863,7 +863,7 @@ describe('/creatures', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -906,7 +906,7 @@ describe('/creatures', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 2;
                     relationId = res.body.results[length].id;
@@ -940,7 +940,7 @@ describe('/creatures', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -974,7 +974,7 @@ describe('/creatures', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -1004,7 +1004,7 @@ describe('/creatures', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -1034,7 +1034,7 @@ describe('/creatures', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 1;
                     relationId = res.body.results[length].id;
@@ -1065,7 +1065,7 @@ describe('/creatures', function() {
             app.get('/' + relationRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     let length = res.body.length - 2;
                     relationId = res.body.results[length].id;
@@ -1084,7 +1084,7 @@ describe('/creatures', function() {
 
         it('GET / should get a list of items', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 assert.isNumber(res.body.length);
                 assert.isArray(res.body.results);
@@ -1092,7 +1092,7 @@ describe('/creatures', function() {
                 _.each(res.body.results, function(item) {
                     assert.isNumber(item.id);
                     assert.isBoolean(item.equipped);
-                    if(item.custom) assert.isString(item.custom);
+                    if (item.custom) assert.isString(item.custom);
                 });
 
                 let length = res.body.length - 1;
@@ -1113,7 +1113,7 @@ describe('/creatures', function() {
                 app.get('/weaponmods')
                     .expect(200)
                     .end(function(err, res) {
-                        if(err) return done(err);
+                        if (err) return done(err);
 
                         let length = res.body.length - 1;
                         modId = res.body.results[length].id;
@@ -1142,7 +1142,7 @@ describe('/creatures', function() {
 
         it('GET / should get a list of items', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 assert.isNumber(res.body.length);
                 assert.isArray(res.body.results);
@@ -1174,7 +1174,7 @@ describe('/creatures', function() {
 
         it('GET /:id should display an item', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + uniqueId).expect(200).end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 assert.isObject(res.body.result);
                 assert.isNumber(res.body.result.id);
@@ -1197,7 +1197,7 @@ describe('/creatures', function() {
 
         it('GET / should get a list of items', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 assert.isNumber(res.body.length);
                 assert.isArray(res.body.results);
@@ -1229,7 +1229,7 @@ describe('/creatures', function() {
 
         it('GET /:id should display an item', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + uniqueId).expect(200).end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 assert.isObject(res.body.result);
                 assert.isNumber(res.body.result.id);
@@ -1252,7 +1252,7 @@ describe('/creatures', function() {
 
         it('GET / should get a list of items', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 assert.isNumber(res.body.length);
                 assert.isArray(res.body.results);
@@ -1284,7 +1284,7 @@ describe('/creatures', function() {
 
         it('GET /:id should display an item', function(done) {
             app.get(baseRoute + '/' + temporaryId + '/' + relationRoute + '/' + uniqueId).expect(200).end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 assert.isObject(res.body.result);
                 assert.isNumber(res.body.result.id);
@@ -1303,7 +1303,7 @@ describe('/creatures', function() {
             app.post(baseRoute + '/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     assert.isNumber(res.body.id);
 

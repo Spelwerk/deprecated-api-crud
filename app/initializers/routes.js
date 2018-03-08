@@ -13,12 +13,12 @@ module.exports = async (app) => {
     const folder = appRoot + '/app/routes';
     const files = await readDir(folder);
 
-    for(let i in files) {
+    for (let i in files) {
         try {
             let name = path.parse(files[i]).name,
                 ext = path.parse(files[i]).ext;
 
-            if(ext !== '.js') continue;
+            if (ext !== '.js') continue;
 
             logger.info('[ROUTES] Setting up router path for /' + name);
 
@@ -27,8 +27,6 @@ module.exports = async (app) => {
             require(path.join(folder, name))(router);
 
             app.use('/' + name, router);
-        } catch(e) {
-            throw e;
-        }
+        } catch(e) { throw e; }
     }
 };

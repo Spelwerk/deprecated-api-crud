@@ -33,18 +33,14 @@ module.exports = function(router) {
                 let call = query + ' WHERE deleted is NULL';
 
                 await basics.select(req, res, next, call);
-            } catch(e) {
-                return next(e);
-            }
+            } catch(e) { return next(e); }
         })
         .post(async (req, res, next) => {
             try {
                 let result = await users.insert(req);
 
                 res.status(201).send({id: result.id, token: result.token});
-            } catch(e) {
-                return next(e);
-            }
+            } catch(e) { return next(e); }
         });
 
     // List administrators
@@ -55,9 +51,7 @@ module.exports = function(router) {
                 let call = query + ' WHERE admin = 1 AND deleted is NULL';
 
                 await basics.select(req, res, next, call);
-            } catch(e) {
-                return next(e);
-            }
+            } catch(e) { return next(e); }
         });
 
     // Verifying that a user exists
@@ -71,9 +65,7 @@ module.exports = function(router) {
                 let exists = rows.length > 0;
 
                 res.status(200).send({exists: exists});
-            } catch(e) {
-                return next(e);
-            }
+            } catch(e) { return next(e); }
         });
 
     router.route('/exists/displayname/:name')
@@ -85,9 +77,7 @@ module.exports = function(router) {
                 let exists = rows.length > 0;
 
                 res.status(200).send({exists: exists});
-            } catch(e) {
-                return next(e);
-            }
+            } catch(e) { return next(e); }
         });
 
     // Information about current logged in user
@@ -95,16 +85,14 @@ module.exports = function(router) {
     router.route('/info')
         .get(async (req, res, next) => {
             try {
-                if(!req.user.id) return next(new UserNotLoggedInError);
+                if (!req.user.id) return next(new UserNotLoggedInError);
 
                 res.status(200).send({
                     id: req.user.id,
                     verified: req.user.verified,
                     admin: req.user.admin
                 });
-            } catch(e) {
-                return next(e);
-            }
+            } catch(e) { return next(e); }
         });
 
     // Tokens belonging to current logged in user
@@ -112,49 +100,41 @@ module.exports = function(router) {
     router.route('/tokens')
         .get(async (req, res, next) => {
             try {
-                if(!req.user.id) return next(new UserNotLoggedInError);
+                if (!req.user.id) return next(new UserNotLoggedInError);
 
                 let [rows, fields] = await sql('SELECT * FROM user_token WHERE user_id = ?', [req.user.id]);
 
                 res.status(200).send({results: rows, fields: fields});
-            } catch(e) {
-                return next(e);
-            }
+            } catch(e) { return next(e); }
         });
 
     router.route('/tokens/:id')
         .get(async (req, res, next) => {
             try {
-                if(!req.user.id) return next(new UserNotLoggedInError);
+                if (!req.user.id) return next(new UserNotLoggedInError);
 
                 let [rows, fields] = await sql('SELECT * FROM user_token WHERE user_id = ? AND id = ?', [req.user.id, req.params.id]);
 
                 res.status(200).send({result: rows[0], fields: fields});
-            } catch(e) {
-                return next(e);
-            }
+            } catch(e) { return next(e); }
         })
         .put(async (req, res, next) => {
             try {
-                if(!req.user.id) return next(new UserNotLoggedInError);
+                if (!req.user.id) return next(new UserNotLoggedInError);
 
                 await sql('UPDATE user_token SET name = ? WHERE user_id = ? AND id = ?', [req.body.name, req.user.id, req.params.id]);
 
                 res.status(204).send();
-            } catch(e) {
-                return next(e);
-            }
+            } catch(e) { return next(e); }
         })
         .delete(async (req, res, next) => {
             try {
-                if(!req.user.id) return next(new UserNotLoggedInError);
+                if (!req.user.id) return next(new UserNotLoggedInError);
 
                 await sql('DELETE FROM user_token WHERE user_id = ? AND id = ?', [req.user.id, req.params.id]);
 
                 res.status(204).send();
-            } catch(e) {
-                return next(e);
-            }
+            } catch(e) { return next(e); }
         });
 
     // Login
@@ -165,9 +145,7 @@ module.exports = function(router) {
                 let result = await login.password(req);
 
                 res.status(200).send(result);
-            } catch(e) {
-                return next(e);
-            }
+            } catch(e) { return next(e); }
         });
 
     router.route('/login/email')
@@ -176,9 +154,7 @@ module.exports = function(router) {
                 await login.email(req);
 
                 res.status(204).send();
-            } catch(e) {
-                return next(e);
-            }
+            } catch(e) { return next(e); }
         });
 
     router.route('/login/secret')
@@ -187,9 +163,7 @@ module.exports = function(router) {
                 let result = await login.validate(req);
 
                 res.status(200).send(result);
-            } catch(e) {
-                return next(e);
-            }
+            } catch(e) { return next(e); }
         });
 
     // Verifying
@@ -200,9 +174,7 @@ module.exports = function(router) {
                 await verify.email(req);
 
                 res.status(204).send();
-            } catch(e) {
-                return next(e);
-            }
+            } catch(e) { return next(e); }
         });
 
     router.route('/verify/secret')
@@ -211,9 +183,7 @@ module.exports = function(router) {
                 await verify.validate(req);
 
                 res.status(204).send();
-            } catch(e) {
-                return next(e);
-            }
+            } catch(e) { return next(e); }
         });
 
     // Email
@@ -224,9 +194,7 @@ module.exports = function(router) {
                 await email.email(req);
 
                 res.status(204).send();
-            } catch(e) {
-                return next(e);
-            }
+            } catch(e) { return next(e); }
         });
 
     router.route('/email/secret')
@@ -235,9 +203,7 @@ module.exports = function(router) {
                 let result = await email.validate(req);
 
                 res.status(200).send(result);
-            } catch(e) {
-                return next(e);
-            }
+            } catch(e) { return next(e); }
         });
 
     // Password
@@ -248,9 +214,7 @@ module.exports = function(router) {
                 await password.email(req);
 
                 res.status(204).send();
-            } catch(e) {
-                return next(e);
-            }
+            } catch(e) { return next(e); }
         });
 
     router.route('/password/secret')
@@ -259,9 +223,7 @@ module.exports = function(router) {
                 await password.validate(req);
 
                 res.status(204).send();
-            } catch(e) {
-                return next(e);
-            }
+            } catch(e) { return next(e); }
         });
 
     // Specific User
@@ -277,18 +239,14 @@ module.exports = function(router) {
                 await users.update(req, req.params.id);
 
                 res.status(204).send();
-            } catch(e) {
-                return next(e);
-            }
+            } catch(e) { return next(e); }
         })
         .delete(async (req, res, next) => {
             try {
                 await users.remove(req, req.params.id);
 
                 res.status(204).send();
-            } catch(e) {
-                return next(e);
-            }
+            } catch(e) { return next(e); }
         });
 
     router.route('/:id/admin')
@@ -297,9 +255,7 @@ module.exports = function(router) {
                 await users.admin(req, req.params.id);
 
                 res.status(204).send();
-            } catch(e) {
-                return next(e);
-            }
+            } catch(e) { return next(e); }
         });
 
     router.route('/:id/password/remove')
@@ -308,9 +264,7 @@ module.exports = function(router) {
                 await password.remove(req, req.params.id);
 
                 res.status(204).send();
-            } catch(e) {
-                return next(e);
-            }
+            } catch(e) { return next(e); }
         });
 
     // Relations

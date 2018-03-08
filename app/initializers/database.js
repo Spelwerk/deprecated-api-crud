@@ -72,7 +72,7 @@ async function getColumnInformation(tableName) {
     try {
         let [rows] = await pool.execute(query, params);
 
-        for(let i in rows) {
+        for (let i in rows) {
             let name = rows[i].name;
             let type = rows[i].type;
             let length = rows[i].length;
@@ -82,9 +82,7 @@ async function getColumnInformation(tableName) {
         }
 
         return object;
-    } catch(e) {
-        throw e;
-    }
+    } catch(e) { throw e; }
 }
 
 async function setDatabaseArray() {
@@ -96,34 +94,30 @@ async function setDatabaseArray() {
     try {
         let [rows] = await pool.execute(sql, params);
 
-        for(let i in rows) {
+        for (let i in rows) {
             dbArray.push(rows[i].table_name);
         }
 
         return null;
-    } catch(e) {
-        throw e;
-    }
+    } catch(e) { throw e; }
 }
 
 async function setDatabaseSchema() {
     logger.info('[DATABASE] setting database schema');
 
     try {
-        for(let i in dbArray) {
+        for (let i in dbArray) {
             let tableName = dbArray[i];
 
             void await setTableSchema(tableName);
         }
 
-        for(let i in dbArray) {
+        for (let i in dbArray) {
             let tableName = dbArray[i];
 
             setTableSchemaExtraFields(tableName);
         }
-    } catch(e) {
-        throw e;
-    }
+    } catch(e) { throw e; }
 }
 
 async function setTableSchema(tableName) {
@@ -133,7 +127,7 @@ async function setTableSchema(tableName) {
     dbSchema[tableName] = bootstrapTableSchema();
 
     // Top Table
-    if(tableName.indexOf('_') === -1) dbSchema[tableName].topTable = true;
+    if (tableName.indexOf('_') === -1) dbSchema[tableName].topTable = true;
 
     try {
         // General Schema
@@ -144,9 +138,7 @@ async function setTableSchema(tableName) {
 
         // Admin Restriction
         dbSchema[tableName].security.admin = !dbSchema[tableName].security.user;
-    } catch(e) {
-        throw e;
-    }
+    } catch(e) { throw e; }
 }
 
 async function setTableSchemaGeneral(tableName) {
@@ -155,76 +147,74 @@ async function setTableSchemaGeneral(tableName) {
     try {
         let object = await getColumnInformation(tableName);
 
-        for(let key in object) {
+        for (let key in object) {
             let name = key;
             let options = object[key];
 
             dbSchema[tableName].fields.all.push(name);
 
-            if(name === 'canon') dbSchema[tableName].fields.canon = true;
-            if(name === 'updated') dbSchema[tableName].fields.updated = true;
-            if(name === 'deleted') dbSchema[tableName].fields.deleted = true;
+            if (name === 'canon') dbSchema[tableName].fields.canon = true;
+            if (name === 'updated') dbSchema[tableName].fields.updated = true;
+            if (name === 'deleted') dbSchema[tableName].fields.deleted = true;
 
-            if(restrictedFields.indexOf(name) === -1) {
+            if (restrictedFields.indexOf(name) === -1) {
                 dbSchema[tableName].fields.accepted.push(name);
                 dbSchema[tableName].fields.options[name] = options;
             }
         }
-    } catch(e) {
-        throw e;
-    }
+    } catch(e) { throw e; }
 }
 
 function setTableSchemaRelations(tableName) {
     logger.info('[DATABASE] setting table schema relations for ' + tableName);
 
-    for(let i in dbArray) {
+    for (let i in dbArray) {
         let compareName = dbArray[i];
 
-        if(compareName === tableName) continue;
-        if(compareName.indexOf(tableName) === -1) continue;
+        if (compareName === tableName) continue;
+        if (compareName.indexOf(tableName) === -1) continue;
 
         // Setting User Security
-        if(compareName === 'user_has_' + tableName) {
+        if (compareName === 'user_has_' + tableName) {
             dbSchema[tableName].security.user = true;
         }
 
         // Setting "many to many" relations
-        if(compareName.indexOf(tableName + '_has_') !== -1) {
+        if (compareName.indexOf(tableName + '_has_') !== -1) {
             let pushName = compareName.split('_has_')[1];
 
-            if(pushName === 'comment') {
+            if (pushName === 'comment') {
                 dbSchema[tableName].supports.comments = true;
             }
 
-            if(pushName === 'image') {
+            if (pushName === 'image') {
                 dbSchema[tableName].supports.images = true;
             }
 
-            if(pushName === 'label') {
+            if (pushName === 'label') {
                 dbSchema[tableName].supports.labels = true;
             }
 
-            if(['comment', 'image', 'label'].indexOf(pushName) === -1) {
+            if (['comment', 'image', 'label'].indexOf(pushName) === -1) {
                 dbSchema[tableName].tables.hasMany.push(pushName);
             }
         }
 
         // Setting "one to one" relations
-        if(compareName.indexOf(tableName + '_is_') !== -1) {
+        if (compareName.indexOf(tableName + '_is_') !== -1) {
             let pushName = compareName.split('_is_')[1];
 
-            if(pushName === 'copy') {
+            if (pushName === 'copy') {
                 dbSchema[tableName].supports.copies = true;
             }
 
-            if(pushName !== 'copy') {
+            if (pushName !== 'copy') {
                 dbSchema[tableName].tables.isOne.push(pushName);
             }
         }
 
         // Setting "with data" relations
-        if(compareName.indexOf(tableName + '_with_') !== -1) {
+        if (compareName.indexOf(tableName + '_with_') !== -1) {
             let pushName = compareName.split('_with_')[1];
 
             dbSchema[tableName].tables.withData.push(pushName);
@@ -237,15 +227,15 @@ function setTableSchemaExtraFields(tableName) {
 
     let array = dbSchema[tableName].tables.withData;
 
-    for(let i in array) {
+    for (let i in array) {
         let extraName = array[i];
         let table_with_extra = tableName + '_with_' + extraName;
         let extraArray = dbSchema[table_with_extra].fields.accepted;
 
         dbSchema[tableName].fields.extra[extraName] = [];
 
-        for(let i in extraArray) {
-            if(extraArray[i] === tableName + '_id') continue;
+        for (let i in extraArray) {
+            if (extraArray[i] === tableName + '_id') continue;
 
             dbSchema[tableName].fields.extra[extraName].push(extraArray[i]);
         }
@@ -279,9 +269,7 @@ async function setup() {
         await setDatabaseSchema();
 
         //console.log(dbSchema['creature']);
-    } catch(e) {
-        throw e;
-    }
+    } catch(e) { throw e; }
 }
 
 function getPool() {

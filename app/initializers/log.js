@@ -17,9 +17,9 @@ module.exports = (app) => {
             body: {}
         };
 
-        for(let key in req.body) {
-            if(key === 'password') continue;
-            if(key === 'secret') continue;
+        for (let key in req.body) {
+            if (key === 'password') continue;
+            if (key === 'secret') continue;
 
             req.log.body[key] = req.body[key];
         }

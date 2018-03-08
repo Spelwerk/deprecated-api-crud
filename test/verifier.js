@@ -4,16 +4,16 @@ let validator = require('validator'),
 
 function generic(item) {
     assert.isNumber(item.id);
-    if(item.user_id) assert.isNumber(item.user_id);
-    if(item.canon) assert.isBoolean(item.canon);
+    if (item.user_id) assert.isNumber(item.user_id);
+    if (item.canon) assert.isBoolean(item.canon);
 
-    if(item.name) assert.isString(item.name);
-    if(item.description) assert.isString(item.description);
-    if(item.icon) assert.equal(validator.isURL(item.icon), true);
+    if (item.name) assert.isString(item.name);
+    if (item.description) assert.isString(item.description);
+    if (item.icon) assert.equal(validator.isURL(item.icon), true);
 
-    if(item.created) assert.isString(item.created);
-    if(item.updated) assert.isString(item.updated);
-    if(item.deleted) assert.isNull(item.deleted);
+    if (item.created) assert.isString(item.created);
+    if (item.updated) assert.isString(item.updated);
+    if (item.deleted) assert.isNull(item.deleted);
 }
 
 module.exports.generic = generic;
@@ -21,7 +21,7 @@ module.exports.generic = generic;
 module.exports.lists = (body, customFn) => {
     assert.isNumber(body.length);
 
-    if(body.length > 0) {
+    if (body.length > 0) {
         assert.isArray(body.results);
         assert.lengthOf(body.results, body.length);
 
@@ -34,7 +34,7 @@ module.exports.lists = (body, customFn) => {
 };
 
 module.exports.comments = (err, res, done) => {
-    if(err) return done(err);
+    if (err) return done(err);
 
     assert.isArray(res.body.results);
 
@@ -46,7 +46,7 @@ module.exports.comments = (err, res, done) => {
         assert.isString(item.displayname);
 
         assert.isString(item.created);
-        if(item.updated) assert.isString(item.updated);
+        if (item.updated) assert.isString(item.updated);
         assert.isNull(item.deleted);
     });
 
@@ -54,10 +54,10 @@ module.exports.comments = (err, res, done) => {
 };
 
 module.exports.ownership = (err, res, done) => {
-    if(err) return done(err);
+    if (err) return done(err);
 
-    if(res.body !== null) {
-        for(let i in res.body) {
+    if (res.body !== null) {
+        for (let i in res.body) {
             assert.isBoolean(res.body[i]);
         }
     }
@@ -66,7 +66,7 @@ module.exports.ownership = (err, res, done) => {
 };
 
 module.exports.relations = (err, res, done) => {
-    if(err) return done(err);
+    if (err) return done(err);
 
     assert.isNumber(res.body.length);
     assert.isArray(res.body.results);
@@ -82,7 +82,7 @@ module.exports.relations = (err, res, done) => {
 };
 
 module.exports.relation = (err, res, done) => {
-    if(err) return done(err);
+    if (err) return done(err);
 
     generic(res.body.result);
 

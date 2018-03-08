@@ -41,9 +41,7 @@ module.exports = (router) => {
                 let id = await species.insert(req, req.body);
 
                 res.status(201).send({id: id});
-            } catch(e) {
-                return next(e);
-            }
+            } catch(e) { return next(e); }
         });
 
     routes.removed(router, tableName, rootQuery);

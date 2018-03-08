@@ -2,3 +2,4 @@
 /config/mailgun.yml
 /test.js
 /node_modules
+/logs

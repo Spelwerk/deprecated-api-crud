@@ -22,7 +22,7 @@ describe('/expertise', function() {
         app.get('/manifestations')
             .expect(200)
             .end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 manifestationId = res.body.results[0].id;
 
@@ -35,7 +35,7 @@ describe('/expertise', function() {
         app.get('/skills')
             .expect(200)
             .end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 skillId = res.body.results[0].id;
 
@@ -48,7 +48,7 @@ describe('/expertise', function() {
         app.get('/species')
             .expect(200)
             .end(function(err, res) {
-                if(err) return done(err);
+                if (err) return done(err);
 
                 speciesId = res.body.results[0].id;
 
@@ -68,7 +68,7 @@ describe('/expertise', function() {
             app.post(baseRoute, payload)
                 .expect(201)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     assert.isNumber(res.body.id);
 
@@ -113,7 +113,7 @@ describe('/expertise', function() {
             app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     verifier.lists(res.body, verifyItem);
 
@@ -125,7 +125,7 @@ describe('/expertise', function() {
             app.get(baseRoute + '/deleted')
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     verifier.lists(res.body, verifyItem);
 
@@ -137,7 +137,7 @@ describe('/expertise', function() {
             app.get(baseRoute + '/manifestation/' + manifestationId)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     verifier.lists(res.body, verifyItem);
 
@@ -149,7 +149,7 @@ describe('/expertise', function() {
             app.get(baseRoute + '/skill/' + skillId)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     verifier.lists(res.body, verifyItem);
 
@@ -161,7 +161,7 @@ describe('/expertise', function() {
             app.get(baseRoute + '/species/' + speciesId)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     verifier.lists(res.body, verifyItem);
 
@@ -173,7 +173,7 @@ describe('/expertise', function() {
             app.get(baseRoute + '/skill/' + skillId + '/manifestation/' + manifestationId)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     verifier.lists(res.body, verifyItem);
 
@@ -185,7 +185,7 @@ describe('/expertise', function() {
             app.get(baseRoute + '/skill/' + skillId + '/species/' + speciesId)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     verifier.lists(res.body, verifyItem);
 
@@ -197,7 +197,7 @@ describe('/expertise', function() {
             app.get(baseRoute + '/' + temporaryId)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     verifyItem(res.body.result);
 
@@ -221,7 +221,7 @@ describe('/expertise', function() {
             app.post(baseRoute + '/' + temporaryId + '/clone')
                 .expect(201)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     assert.isNumber(res.body.id);
 

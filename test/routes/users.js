@@ -15,12 +15,12 @@ describe('/users', function() {
         assert.isBoolean(item.verify);
         assert.isBoolean(item.admin);
 
-        if(item.firstname) assert.isString(item.firstname);
-        if(item.surname) assert.isString(item.surname);
+        if (item.firstname) assert.isString(item.firstname);
+        if (item.surname) assert.isString(item.surname);
 
         assert.isString(item.created);
-        if(item.updated) assert.isString(item.updated);
-        if(item.deleted) assert.isString(item.deleted);
+        if (item.updated) assert.isString(item.updated);
+        if (item.deleted) assert.isString(item.deleted);
     }
 
     let baseRoute = '/users';
@@ -42,7 +42,7 @@ describe('/users', function() {
             app.post(baseRoute, payload)
                 .expect(201)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     assert.isNumber(res.body.id);
                     assert.isString(res.body.token);
@@ -67,7 +67,7 @@ describe('/users', function() {
             app.post(baseRoute + '/login/password', payload)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     assert.isNumber(res.body.id);
                     assert.isString(res.body.token);
@@ -140,7 +140,7 @@ describe('/users', function() {
             app.get('/users/info', token)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     assert.isObject(res.body.user);
                     assert.isNumber(res.body.user.id);
@@ -156,7 +156,7 @@ describe('/users', function() {
             app.get('/users/tokens', token)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     assert.isArray(res.body.results);
 
@@ -179,7 +179,7 @@ describe('/users', function() {
             app.get(baseRoute)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     verifier.lists(res.body, verifyItem);
 
@@ -191,7 +191,7 @@ describe('/users', function() {
             app.get('/users/' + id)
                 .expect(200)
                 .end(function(err, res) {
-                    if(err) return done(err);
+                    if (err) return done(err);
 
                     verifyItem(res.body.result);
 
