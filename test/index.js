@@ -11,11 +11,6 @@ require('./routes/languages');
 require('./routes/loyalties');
 require('./routes/currencies');
 
-require('./routes/drive');
-require('./routes/pride');
-require('./routes/problem');
-require('./routes/shame');
-
 require('./routes/diseases');
 require('./routes/dementations');
 require('./routes/traumas');

@@ -427,7 +427,7 @@ describe('/creatures', function() {
                         if (err) return done(err);
 
                         let length = res.body.length - 1;
-                        augmentationId = res.body.results[length].augmentation_id;
+                        augmentationId = res.body.results[length].id;
 
                         done();
                     });

@@ -1,7 +1,8 @@
 'use strict';
 
 const routes = require('../../lib/generic/routes');
-const relations = require('../../lib/generic/relations');
+const relations = require('../../lib/relations/generic');
+const epochRelations = require('../../lib/relations/epochs');
 
 module.exports = (router) => {
     const tableName = 'epoch';
@@ -38,19 +39,22 @@ module.exports = (router) => {
 
     routes.automatic(router, tableName);
 
-    // Relations
+    // Epoch Relations
+
+    epochRelations.backgrounds(router);
+    epochRelations.expertises(router);
+    epochRelations.gifts(router);
+    epochRelations.imperfections(router);
+    epochRelations.manifestations(router);
+    epochRelations.milestones(router);
+
+    // Generic Relations
 
     relations.route(router, tableName, 'armour');
     relations.route(router, tableName, 'asset');
-    relations.route(router, tableName, 'background');
     relations.route(router, tableName, 'bionic');
     relations.route(router, tableName, 'corporation');
-    relations.route(router, tableName, 'expertise');
-    relations.route(router, tableName, 'gift');
-    relations.route(router, tableName, 'identity');
-    relations.route(router, tableName, 'imperfection');
-    relations.route(router, tableName, 'manifestation');
-    relations.route(router, tableName, 'milestone');
+    relations.route(router, tableName, 'location');
     relations.route(router, tableName, 'shield');
     relations.route(router, tableName, 'skill');
     relations.route(router, tableName, 'software');

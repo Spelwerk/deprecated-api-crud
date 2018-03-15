@@ -1,7 +1,7 @@
 'use strict';
 
 const routes = require('../../lib/generic/routes');
-const relations = require('../../lib/generic/relations');
+const relations = require('../../lib/relations/generic');
 const manifestations = require('../../lib/tables/manifestations');
 
 module.exports = (router) => {

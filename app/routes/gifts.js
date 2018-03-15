@@ -1,27 +1,26 @@
 'use strict';
 
 const routes = require('../../lib/generic/routes');
-const relations = require('../../lib/generic/relations');
+const relations = require('../../lib/relations/generic');
 const basic = require('../../lib/generic/basics');
 
 module.exports = (router) => {
     const tableName = 'gift';
 
-    const rootQuery = 'SELECT id, canon, name, created FROM ' + tableName;
+    const rootQuery = 'SELECT id, canon, name, icon, created FROM ' + tableName;
 
     const singleQuery = 'SELECT ' +
         'gift.id, ' +
         'gift.canon, ' +
         'gift.name, ' +
         'gift.description, ' +
+        'gift.icon, ' +
         'gift.created, ' +
         'gift.updated, ' +
         'manifestation.id AS manifestation_id, ' +
         'manifestation.name AS manifestation_name, ' +
-        'manifestation.icon  AS manifestation_icon, ' +
         'species.id AS species_id, ' +
         'species.name AS species_name, ' +
-        'species.icon AS species_icon, ' +
         'gift_is_copy.copy_id, ' +
         'user.id AS user_id, ' +
         'user.displayname AS user_name ' +

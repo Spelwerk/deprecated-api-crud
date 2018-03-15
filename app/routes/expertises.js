@@ -13,13 +13,13 @@ module.exports = function(router) {
         'expertise.canon, ' +
         'expertise.name, ' +
         'expertise.description, ' +
-        'skill.icon, ' +
         'expertise.maximum, ' +
         'expertise.created, ' +
         'expertise.updated, ' +
         'skill.id AS skill_id, ' +
         'skill.name AS skill_name, ' +
         'expertise.skill_requirement, ' +
+        'skill.icon AS skill_icon, ' +
         'manifestation.id AS manifestation_id, ' +
         'manifestation.name AS manifestation_name, ' +
         'species.id AS species_id, ' +

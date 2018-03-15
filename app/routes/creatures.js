@@ -2,7 +2,7 @@
 
 const routes = require('../../lib/generic/routes');
 const creatures = require('../../lib/creatures/creatures');
-const relations = require('../../lib/creatures/relations');
+const relations = require('../../lib/relations/creatures');
 const combinations = require('../../lib/creatures/combinations');
 const wounds = require('../../lib/creatures/wounds');
 
@@ -13,8 +13,8 @@ module.exports = (router) => {
         'creature.id, ' +
         'creature.canon, ' +
         'creature.template, ' +
-        'creature.firstname, ' +
         'creature.nickname, ' +
+        'creature.firstname, ' +
         'creature.middlename, ' +
         'creature.lastname, ' +
         'creature.age, ' +
@@ -25,10 +25,10 @@ module.exports = (router) => {
 
     const singleQuery = 'SELECT ' +
         'creature.id, ' +
-        'creature.user_id, ' +
         'creature.canon, ' +
-        'creature.firstname, ' +
+        'creature.template, ' +
         'creature.nickname, ' +
+        'creature.firstname, ' +
         'creature.middlename, ' +
         'creature.lastname, ' +
         'creature.age, ' +
@@ -45,10 +45,13 @@ module.exports = (router) => {
         'creature_with_description.shame, ' +
         'creature.created, ' +
         'creature.updated, ' +
-        'creature_is_copy.copy_id ' +
+        'creature_is_copy.copy_id, ' +
+        'user.id AS user_id, ' +
+        'user.displayname AS user_name ' +
         'FROM creature ' +
         'LEFT JOIN creature_with_description ON creature_with_description.creature_id = creature.id ' +
-        'LEFT JOIN creature_is_copy ON creature_is_copy.creature_id = creature.id';
+        'LEFT JOIN creature_is_copy ON creature_is_copy.creature_id = creature.id ' +
+        'LEFT JOIN user ON user.id = creature.user_id';
 
     routes.root(router, tableName, rootQuery);
 

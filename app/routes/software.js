@@ -37,7 +37,7 @@ module.exports = (router) => {
     router.route('/type/:id')
         .get(async (req, res, next) => {
             let call = rootQuery + ' WHERE deleted IS NULL AND ' +
-                'softwaretype_id = ?';
+                'software.softwaretype_id = ?';
 
             await basic.select(req, res, next, call, [req.params.id]);
         });
