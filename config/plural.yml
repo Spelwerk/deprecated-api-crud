@@ -10,6 +10,7 @@ corporation: corporations
 country: countries
 creature: creatures
 currency: currencies
+epoch: epochs
 expertise: expertises
 focus: focuses
 form: forms
@@ -32,3 +33,4 @@ tactic: tactics
 wealth: wealth
 weaponmod: mods
 weapon: weapons
+world: worlds
