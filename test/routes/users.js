@@ -1,8 +1,8 @@
 const _ = require('underscore');
 const assert = require('chai').assert;
 
-const app = require('./../app');
-const hasher = require('./../../lib/hasher');
+const app = require('../app');
+const hasher = require('../../lib/hasher');
 
 describe('/users', function() {
 

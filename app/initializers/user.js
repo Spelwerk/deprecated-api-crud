@@ -3,9 +3,9 @@
 const UserInvalidTokenError = require('../../lib/errors/user-invalid-token-error');
 const UserNotFoundError = require('../../lib/errors/user-not-found-error');
 
-const tokens = require('./../../lib/tokens');
+const tokens = require('../../lib/tokens');
 const logger = require('../../lib/logger');
-const sql = require('./../../lib/database/sql');
+const sql = require('../../lib/database/sql');
 
 module.exports = (app) => {
     logger.info('[USER] Initializing');

@@ -1,7 +1,7 @@
 'use strict';
 
-const routes = require('../../lib/generic/routes');
-const spells = require('../../lib/tables/spells');
+const routes = require('../../lib/routes/generic/routes');
+const spells = require('../../lib/routes/spells/spells');
 
 module.exports = (router) => {
     const tableName = 'spell';

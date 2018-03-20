@@ -1,7 +1,7 @@
 'use strict';
 
-const basic = require('../../lib/generic/basics');
-const meetings = require('../../lib/tables/meetings');
+const basic = require('../../lib/routes/generic/generic');
+const meetings = require('../../lib/routes/meetings/meetings');
 
 module.exports = function(router) {
     let query = 'SELECT * FROM meeting';

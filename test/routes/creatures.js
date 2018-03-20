@@ -1,9 +1,9 @@
 const assert = require('chai').assert;
 const _ = require('underscore');
 
-const app = require('./../app');
-const verifier = require('./../verifier');
-const hasher = require('./../../lib/hasher');
+const app = require('../app');
+const verifier = require('../verifier');
+const hasher = require('../../lib/hasher');
 
 describe('/creatures', function() {
 

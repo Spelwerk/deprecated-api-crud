@@ -1,10 +1,10 @@
 'use strict';
 
-const routes = require('../../lib/generic/routes');
-const creatures = require('../../lib/creatures/creatures');
-const relations = require('../../lib/relations/creatures');
-const combinations = require('../../lib/creatures/combinations');
-const wounds = require('../../lib/creatures/wounds');
+const routes = require('../../lib/routes/generic/routes');
+const creatures = require('../../lib/routes/creatures/creatures');
+const relations = require('../../lib/routes/creatures/relations/routes');
+const combinations = require('../../lib/routes/creatures/combinations/routes');
+const wounds = require('../../lib/routes/creatures/wounds/routes');
 
 module.exports = (router) => {
     const tableName = 'creature';

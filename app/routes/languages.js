@@ -1,6 +1,6 @@
 'use strict';
 
-const routes = require('../../lib/generic/routes');
+const routes = require('../../lib/routes/generic/routes');
 
 module.exports = (router) => {
     const tableName = 'language';

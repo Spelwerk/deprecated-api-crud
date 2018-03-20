@@ -1,8 +1,8 @@
 'use strict';
 
-const routes = require('../../lib/generic/routes');
-const relations = require('../../lib/relations/generic');
-const augmentations = require('../../lib/tables/augmentations');
+const routes = require('../../lib/routes/generic/routes');
+const relations = require('../../lib/routes/generic/relations/routes');
+const augmentations = require('../../lib/routes/augmentations/augmentations');
 
 module.exports = (router) => {
     const tableName = 'augmentation';

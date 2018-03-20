@@ -1,8 +1,8 @@
 'use strict';
 
-const routes = require('../../lib/generic/routes');
-const basic = require('../../lib/generic/basics');
-const chapters = require('../../lib/tables/chapters');
+const routes = require('../../lib/routes/generic/routes');
+const basic = require('../../lib/routes/generic/generic');
+const chapters = require('../../lib/routes/chapters/chapters');
 
 module.exports = (router) => {
     const tableName = 'chapter';

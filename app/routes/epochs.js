@@ -1,8 +1,8 @@
 'use strict';
 
-const routes = require('../../lib/generic/routes');
-const relations = require('../../lib/relations/generic');
-const epochRelations = require('../../lib/relations/epochs');
+const routes = require('../../lib/routes/generic/routes');
+const relations = require('../../lib/routes/generic/relations/routes');
+const epochRelations = require('../../lib/routes/epochs/relations/routes');
 
 module.exports = (router) => {
     const tableName = 'epoch';

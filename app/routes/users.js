@@ -3,7 +3,7 @@
 const UserNotLoggedInError = require('../../lib/errors/user-not-logged-in-error');
 
 const sql = require('../../lib/database/sql');
-const basics = require('../../lib/generic/basics');
+const basics = require('../../lib/routes/generic/generic');
 const users = require('../../lib/users/users');
 const email = require('../../lib/users/email');
 const login = require('../../lib/users/login');

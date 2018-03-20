@@ -1,12 +1,12 @@
 'use strict';
 
 const yaml = require('node-yaml').readSync;
-const attributes = yaml('./../../config/attributes.yml');
-const defaults = yaml('./../../config/defaults.yml');
-const dice = yaml('./../../config/dice.yml');
-const icons = yaml('./../../config/icons.yml');
-const plural = yaml('./../../config/plural.yml');
-const points = yaml('./../../config/points.yml');
+const attributes = yaml('../../config/attributes.yml');
+const defaults = yaml('../../config/defaults.yml');
+const dice = yaml('../../config/dice.yml');
+const icons = yaml('../../config/icons.yml');
+const plural = yaml('../../config/plural.yml');
+const points = yaml('../../config/points.yml');
 
 const config = {
     attributes: attributes,
