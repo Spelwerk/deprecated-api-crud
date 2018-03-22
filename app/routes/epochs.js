@@ -54,7 +54,10 @@ module.exports = (router) => {
     relations.route(router, tableName, 'asset');
     relations.route(router, tableName, 'bionic');
     relations.route(router, tableName, 'corporation');
+    relations.route(router, tableName, 'country');
+    relations.route(router, tableName, 'identity');
     relations.route(router, tableName, 'location');
+    relations.route(router, tableName, 'nature');
     relations.route(router, tableName, 'shield');
     relations.route(router, tableName, 'skill');
     relations.route(router, tableName, 'software');

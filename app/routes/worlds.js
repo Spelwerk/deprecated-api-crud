@@ -46,8 +46,4 @@ module.exports = function(router) {
     // Relations
 
     relations.route(router, tableName, 'attribute');
-    relations.route(router, tableName, 'country');
-    relations.route(router, tableName, 'identity');
-    relations.route(router, tableName, 'location');
-    relations.route(router, tableName, 'nature');
 };

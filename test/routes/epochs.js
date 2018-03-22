@@ -127,7 +127,6 @@ describe('/epochs', function() {
 
     });
 
-
     describe('/armours', function() {
         let relationRoute = 'armours',
             relationId;
@@ -236,6 +235,60 @@ describe('/epochs', function() {
 
     });
 
+    describe('/corporations', function() {
+        let relationRoute = 'corporations',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
+                .expect(200)
+                .end(function(err, res) {
+                    if (err) return done(err);
+
+                    let length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
+
+                    done();
+                });
+        });
+
+        it('POST / should add an item', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(204).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+    });
+
+    describe('/countries', function() {
+        let relationRoute = 'countries',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
+                .expect(200)
+                .end(function(err, res) {
+                    if (err) return done(err);
+
+                    let length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
+
+                    done();
+                });
+        });
+
+        it('POST / should add an item', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(204).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+    });
+
     describe('/expertises', function() {
         let relationRoute = 'expertises',
             relationId;
@@ -265,6 +318,33 @@ describe('/epochs', function() {
 
     describe('/gifts', function() {
         let relationRoute = 'gifts',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
+                .expect(200)
+                .end(function(err, res) {
+                    if (err) return done(err);
+
+                    let length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
+
+                    done();
+                });
+        });
+
+        it('POST / should add an item', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(204).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+    });
+
+    describe('/identities', function() {
+        let relationRoute = 'identities',
             relationId;
 
         before(function(done) {
@@ -346,6 +426,33 @@ describe('/epochs', function() {
 
     describe('/milestones', function() {
         let relationRoute = 'milestones',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
+                .expect(200)
+                .end(function(err, res) {
+                    if (err) return done(err);
+
+                    let length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
+
+                    done();
+                });
+        });
+
+        it('POST / should add an item', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(204).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+    });
+
+    describe('/natures', function() {
+        let relationRoute = 'natures',
             relationId;
 
         before(function(done) {
@@ -453,6 +560,33 @@ describe('/epochs', function() {
 
     });
 
+    describe('/wealth', function() {
+        let relationRoute = 'wealth',
+            relationId;
+
+        before(function(done) {
+            app.get('/' + relationRoute)
+                .expect(200)
+                .end(function(err, res) {
+                    if (err) return done(err);
+
+                    let length = res.body.length - 1;
+                    relationId = res.body.results[length].id;
+
+                    done();
+                });
+        });
+
+        it('POST / should add an item', function(done) {
+            app.post(baseRoute + '/' + temporaryId + '/' + relationRoute, {insert_id: relationId}).expect(204).end(done);
+        });
+
+        it('GET / should get a list of items', function(done) {
+            app.get(baseRoute + '/' + temporaryId + '/' + relationRoute).expect(200).end(function(err, res) { verifier.relations(err, res, done); });
+        });
+
+    });
+
     describe('/weapons', function() {
         let relationRoute = 'weapons',
             relationId;
@@ -479,7 +613,6 @@ describe('/epochs', function() {
         });
 
     });
-
 
     describe('CLONE', function() {
 
