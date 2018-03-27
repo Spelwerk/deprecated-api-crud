@@ -2,7 +2,15 @@
 
 const routes = require('../../lib/routes/generic/routes');
 const relations = require('../../lib/routes/generic/relations/routes');
-const epochRelations = require('../../lib/routes/epochs/relations/routes');
+
+const armours = require('../../lib/routes/epochs/relations/armours');
+const backgrounds = require('../../lib/routes/epochs/relations/backgrounds');
+const expertises = require('../../lib/routes/epochs/relations/expertises');
+const gifts = require('../../lib/routes/epochs/relations/gifts');
+const imperfections = require('../../lib/routes/epochs/relations/imperfections');
+const manifestations = require('../../lib/routes/epochs/relations/manifestations');
+const milestones = require('../../lib/routes/epochs/relations/milestones');
+const weapons = require('../../lib/routes/epochs/relations/weapons');
 
 module.exports = (router) => {
     const tableName = 'epoch';
@@ -41,16 +49,17 @@ module.exports = (router) => {
 
     // Epoch Relations
 
-    epochRelations.backgrounds(router);
-    epochRelations.expertises(router);
-    epochRelations.gifts(router);
-    epochRelations.imperfections(router);
-    epochRelations.manifestations(router);
-    epochRelations.milestones(router);
+    armours(router);
+    backgrounds(router);
+    expertises(router);
+    gifts(router);
+    imperfections(router);
+    manifestations(router);
+    milestones(router);
+    weapons(router);
 
     // Generic Relations
 
-    relations.route(router, tableName, 'armour');
     relations.route(router, tableName, 'asset');
     relations.route(router, tableName, 'bionic');
     relations.route(router, tableName, 'corporation');
@@ -62,5 +71,4 @@ module.exports = (router) => {
     relations.route(router, tableName, 'skill');
     relations.route(router, tableName, 'software');
     relations.route(router, tableName, 'wealth');
-    relations.route(router, tableName, 'weapon');
 };

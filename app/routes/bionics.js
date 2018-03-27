@@ -4,6 +4,8 @@ const routes = require('../../lib/routes/generic/routes');
 const relations = require('../../lib/routes/generic/relations/routes');
 const basic = require('../../lib/routes/generic/generic');
 
+const augmentations = require('../../lib/routes/bionics/relations/augmentations');
+
 module.exports = (router) => {
     const tableName = 'bionic';
 
@@ -49,10 +51,13 @@ module.exports = (router) => {
 
     routes.automatic(router, tableName);
 
+    // Specific Relations
+
+    augmentations(router);
+
     // Relations
 
     relations.route(router, tableName, 'attribute');
-    relations.route(router, tableName, 'augmentation');
     relations.route(router, tableName, 'skill');
     relations.route(router, tableName, 'software');
 };

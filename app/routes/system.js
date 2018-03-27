@@ -8,24 +8,24 @@ const icons = yaml('../../config/icons.yml');
 const plural = yaml('../../config/plural.yml');
 const points = yaml('../../config/points.yml');
 
-const config = {
-    attributes: attributes,
-    defaults: defaults,
-    dice: dice,
-    icons: icons,
-    plural: plural,
-    points: points
-};
+const schema = require('../../app/initializers/database').getDbSchema();
 
 module.exports = (router) => {
     router.route('/')
         .get((req, res) => {
-            res.status(204).send();
+            res.status(204).send({success: true});
         });
 
     router.route('/config')
         .get((req, res) => {
-            res.status(204).send(config);
+            res.status(200).send({
+                attributes: attributes,
+                defaults: defaults,
+                dice: dice,
+                icons: icons,
+                plural: plural,
+                points: points
+            });
         });
 
     router.route('/config/attributes')
@@ -57,4 +57,9 @@ module.exports = (router) => {
         .get((req, res) => {
             res.status(200).send(points);
         });
+
+    router.route('/schema')
+        .get((req, res) => {
+            res.status(200).send(schema);
+        })
 };

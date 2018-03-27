@@ -267,8 +267,6 @@ async function setup() {
 
         await setDatabaseArray();
         await setDatabaseSchema();
-
-        //console.log(dbSchema['creature']);
     } catch(e) { throw e; }
 }
 
@@ -280,6 +278,10 @@ function getSchema(tableName) {
     return dbSchema[tableName];
 }
 
+function getDbSchema() {
+    return dbSchema;
+}
+
 // ////////////////////////////////////////////////////////////////////////////////// //
 // EXPORTS
 // ////////////////////////////////////////////////////////////////////////////////// //
@@ -287,3 +289,4 @@ function getSchema(tableName) {
 module.exports.setup = setup;
 module.exports.getPool = getPool;
 module.exports.getSchema = getSchema;
+module.exports.getDbSchema = getDbSchema;
